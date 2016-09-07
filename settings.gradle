@@ -1,0 +1,3 @@
+include ':nanolrs-ormlite', ':nanolrs-android'
+include ":nanolrs-core"
+
