@@ -6,3 +6,32 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
+task coreJar(type :Jar)
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        nanolrscore(MavenPublication) {
+            from components.java
+
+            groupId 'com.ustadmobile.nanolrs'
+            artifactId 'nanolrs-core'
+            version '0.1'
+            artifact(sourceJar) {
+                classifier = 'sources'
+            }
+        }
+    }
+
+    repositories {
+        //Set this in projectdir/extrasettings.gradle
+        maven {
+            url rootProject.ext.repoDir
+        }
+    }
+}

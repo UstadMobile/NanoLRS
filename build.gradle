@@ -3,6 +3,10 @@
 //Local settings
 apply from: "localsettings.gradle"
 
+ext {
+    nanolrsversion = "0.1"
+}
+
 buildscript {
     repositories {
         jcenter()
