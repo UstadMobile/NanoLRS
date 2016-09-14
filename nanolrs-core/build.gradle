@@ -7,8 +7,6 @@ dependencies {
     compile "org.json:json:20160212";
 }
 
-task coreJar(type :Jar)
-
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
@@ -23,14 +21,8 @@ publishing {
             version rootProject.ext.nanolrsversion
 
             from components.java
-        }
 
-        nanolrscoresrc(MavenPublication) {
-            groupId 'com.ustadmobile.nanolrs'
-            artifactId 'nanolrs-core'
-            version rootProject.ext.nanolrsversion
-
-            artifact(sourceJar) {
+            artifact sourceJar {
                 classifier = 'sources'
             }
         }

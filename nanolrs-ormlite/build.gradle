@@ -10,9 +10,8 @@ dependencies {
     compile project(":nanolrs-core")
 }
 
-task ormLiteJar(type :Jar)
-
 task sourceJar(type: Jar) {
+    classifier = "sources"
     from sourceSets.main.allJava
 }
 
@@ -25,16 +24,8 @@ publishing {
             version rootProject.ext.nanolrsversion
 
             from components.java
-        }
 
-
-        nanolrsormlitesrc(MavenPublication) {
-            groupId 'com.ustadmobile.nanolrs'
-            artifactId 'nanolrs-ormlite'
-            version rootProject.ext.nanolrsversion
-
-
-            artifact sourceJar {
+            artifact sourceJar{
                 classifier "sources"
             }
         }
