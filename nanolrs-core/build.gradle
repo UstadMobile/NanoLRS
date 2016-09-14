@@ -18,11 +18,18 @@ apply plugin: 'maven-publish'
 publishing {
     publications {
         nanolrscore(MavenPublication) {
-            from components.java
-
             groupId 'com.ustadmobile.nanolrs'
             artifactId 'nanolrs-core'
             version rootProject.ext.nanolrsversion
+
+            from components.java
+        }
+
+        nanolrscoresrc(MavenPublication) {
+            groupId 'com.ustadmobile.nanolrs'
+            artifactId 'nanolrs-core'
+            version rootProject.ext.nanolrsversion
+
             artifact(sourceJar) {
                 classifier = 'sources'
             }

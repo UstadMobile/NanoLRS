@@ -19,12 +19,20 @@ task sourceJar(type: Jar) {
 
 publishing {
     publications {
-        nanolrscore(MavenPublication) {
-            from components.java
-
+        nanolrsormlite(MavenPublication) {
             groupId 'com.ustadmobile.nanolrs'
             artifactId 'nanolrs-ormlite'
             version rootProject.ext.nanolrsversion
+
+            from components.java
+        }
+
+
+        nanolrsormlitesrc(MavenPublication) {
+            groupId 'com.ustadmobile.nanolrs'
+            artifactId 'nanolrs-ormlite'
+            version rootProject.ext.nanolrsversion
+
 
             artifact sourceJar {
                 classifier "sources"
