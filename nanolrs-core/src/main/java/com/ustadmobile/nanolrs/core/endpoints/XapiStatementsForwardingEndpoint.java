@@ -25,6 +25,12 @@ public class XapiStatementsForwardingEndpoint {
 
     public static final String LOGTAG = "XapiStatementsForwardingEndpoint";
 
+    public static void putAndQueueStatement(Object dbContext, JSONObject statement, String destinationURL, String httpUser, String httpPassword) {
+        String uuid = XapiStatementsEndpoint.putStatement(statement, dbContext);
+        XapiStatementProxy statementProxy = PersistenceManager.getInstance().getStatementManager().findByUuidSync(dbContext, uuid);
+        queueStatement(dbContext, statementProxy, destinationURL, httpUser, httpPassword);
+    }
+
     public static void queueStatement(Object dbContext, XapiStatementProxy statement, String destinationURL, String httpUser, String httpPassword) {
         XapiForwardingStatementManager manager =PersistenceManager.getInstance().getForwardingStatementManager();
         XapiForwardingStatementProxy fwdStmt = manager.createSync(dbContext, statement.getId());
