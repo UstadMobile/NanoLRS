@@ -4,11 +4,12 @@ import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
 import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
-import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by mike on 9/6/16.
@@ -19,8 +20,24 @@ public class PersistenceManagerAndroid extends PersistenceManagerORMLite {
 
     private Dao<XapiStatementManager, String> xapiStatementDao;
 
+    private List<DatabaseCreateOrUpdateListener> createOrUpdateListeners;
+
+
     public PersistenceManagerAndroid() {
         helpersMap = new HashMap<>();
+        createOrUpdateListeners = new ArrayList<>();
+    }
+
+    /**
+     * Add a Create or Update Listener : use this BEFORE any database operation
+     * @param listener
+     */
+    public void addDatabaseCreateOrUpdateListener(DatabaseCreateOrUpdateListener listener) {
+        createOrUpdateListeners.add(listener);
+    }
+
+    public void removeDatabaseCreateOrUpdateListener(DatabaseCreateOrUpdateListener listener) {
+        createOrUpdateListeners.remove(listener);
     }
 
 

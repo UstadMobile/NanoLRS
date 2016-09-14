@@ -24,7 +24,7 @@ publishing {
 
             groupId 'com.ustadmobile.nanolrs'
             artifactId 'nanolrs-ormlite'
-            version '0.1'
+            version rootProject.ext.nanolrsversion
 
             artifact sourceJar {
                 classifier "sources"

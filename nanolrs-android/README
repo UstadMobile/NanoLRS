@@ -1,0 +1,17 @@
+Basic Usage:
+
+Set to use the Android Persistence Manager in onCreate
+before running any database operation (not a problem if this is
+called repeatedly):
+
+PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
+
+To add extra tables to the database:
+
+((PersistenceManagerAndroid)PersistenceManager.getInstance()).addDatabaseCreateOrUpdateListener
+
+Implement onCreate and onUpgrade methods
+
+
+
+

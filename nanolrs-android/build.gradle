@@ -10,6 +10,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "TESTUSER", "\"" + rootProject.ext.testUser + "\""
+        buildConfigField "String", "TESTPASSWORD", "\"" + rootProject.ext.testPassword + "\""
+        buildConfigField "String", "TESTLRSENDPOINT", "\"" + rootProject.ext.testLrsEndpoint + "\""
     }
 
     buildTypes {
@@ -24,6 +27,8 @@ android {
     }
 }
 
+
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -31,6 +36,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile project(":nanolrs-ormlite")
     compile "com.j256.ormlite:ormlite-android:5.0"
+    compile "commons-io:commons-io:+"
 }
 
 apply plugin: 'maven-publish'
@@ -48,7 +54,7 @@ publishing {
         nanolrsandroid(MavenPublication) {
             groupId 'com.ustadmobile.nanolrs'
             artifactId 'nanolrs-android'
-            version '0.1'
+            version rootProject.ext.nanolrsversion
             artifact(sourceJar)
             artifact("$buildDir/outputs/aar/nanolrs-android-release.aar")
 

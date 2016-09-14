@@ -2,11 +2,14 @@ package com.ustadmobile.nanolrs.ormlite.model;
 
 import com.j256.ormlite.dao.Dao;
 import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
+import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by mike on 9/6/16.
@@ -22,24 +25,59 @@ public class XapiStatementManagerOrmLite implements XapiStatementManager {
 
     @Override
     public void findByUuid(Object dbContext, int requestId, PersistenceReceiver receiver, String uuid) {
+        XapiStatementProxy stmt = findByUuidSync(dbContext, uuid);
+        if(stmt != null) {
+            receiver.onPersistenceSuccess(stmt, requestId);
+        }else {
+            receiver.onPersistenceFailure(null, requestId);
+        }
+
+    }
+
+    @Override
+    public XapiStatementProxy findByUuidSync(Object dbContext, String uuid) {
+        XapiStatementEntity result = null;
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
-            receiver.onPersistenceSuccess(dao.queryForId(uuid),requestId);
+            result = dao.queryForId(uuid);
         }catch(SQLException e) {
-            receiver.onPersistenceFailure(e, requestId);
+
         }
+
+        return result;
     }
 
     @Override
     public void create(Object dbContext, int requestId, PersistenceReceiver receiver) {
+        XapiStatementProxy entity = createSync(dbContext);
+        if(entity != null) {
+            receiver.onPersistenceSuccess(entity, requestId);
+        }else {
+            receiver.onPersistenceFailure("err", requestId);
+        }
+    }
+
+    @Override
+    public XapiStatementProxy createSync(Object dbContext) {
+        XapiStatementEntity obj = null;
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
-            XapiStatementEntity obj = new XapiStatementEntity();
-            obj.setUuid(UUID.randomUUID().toString());
+            obj = new XapiStatementEntity();
+            obj.setId(UUID.randomUUID().toString());
             dao.create(obj);
-            receiver.onPersistenceSuccess(obj, requestId);
         }catch(SQLException e) {
-            receiver.onPersistenceFailure(e, requestId);
+
+        }
+        return obj;
+    }
+
+    public void persistSync(Object dbContext, XapiStatementProxy stmt) {
+        try {
+            Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
+            dao.createOrUpdate((XapiStatementEntity)stmt);
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "persisted stmt");
+        }catch(SQLException e) {
+
         }
     }
 }

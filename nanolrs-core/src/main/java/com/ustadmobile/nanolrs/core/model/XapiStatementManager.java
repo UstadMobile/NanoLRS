@@ -15,6 +15,12 @@ public interface XapiStatementManager {
     
     public void findByUuid(Object dbContext, int requestId, PersistenceReceiver receiver, String uuid);
 
+    public XapiStatementProxy findByUuidSync(Object dbContext, String uuid);
+
     public void create(Object dbContext, int requestId, PersistenceReceiver receiver);
+
+    public XapiStatementProxy createSync(Object dbContext);
+
+    public void persistSync(Object dbContext, XapiStatementProxy stmt);
 
 }
