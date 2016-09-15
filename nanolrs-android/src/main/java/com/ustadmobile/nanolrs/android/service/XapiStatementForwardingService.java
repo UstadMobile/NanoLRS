@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerAndroid;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEndpoint;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
@@ -52,6 +53,7 @@ public class XapiStatementForwardingService extends Service {
     public void onDestroy() {
         mTimer.cancel();
         mTimer = null;
+        PersistenceManagerAndroid.getInstanceAndroid().releaseHelperForContext(this);
     }
 
 

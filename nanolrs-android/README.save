@@ -1,0 +1,11 @@
+Basic Usage:
+
+Set NanoLRS to use the Android Persistence Manager:
+
+PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
+
+If desired immediately thereafter set create or update listeners used 
+to add extra tables:
+
+((PersistenceManagerAndroid)PersistenceManager.getInstance())./home/mike/src/NanoLRS/nanolrs-android/src/main/java/com/ustadmobile/nanolrs/android/persistence/PersistenceManagerAndroid.java 
+
