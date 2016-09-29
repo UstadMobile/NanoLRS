@@ -9,6 +9,10 @@ public interface XapiAgentProxy {
 
     void setId(String id);
 
+    XapiUserProxy getUser();
+
+    void setUser(XapiUserProxy user);
+
     String getName();
 
     void setName(String name);

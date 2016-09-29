@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.ormlite.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
+import com.ustadmobile.nanolrs.core.model.XapiUserProxy;
 
 /**
  * Created by mike on 9/12/16.
@@ -33,6 +34,9 @@ public class XapiAgentEntity implements XapiAgentProxy {
 
     @DatabaseField
     private String accountName;
+
+    @DatabaseField(foreign =  true)
+    private XapiUserEntity user;
 
     @Override
     public String getId() {
@@ -112,5 +116,15 @@ public class XapiAgentEntity implements XapiAgentProxy {
     @Override
     public void setAccountName(String accountName) {
         this.accountName = accountName;
+    }
+
+    @Override
+    public XapiUserProxy getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(XapiUserProxy user) {
+        this.user = (XapiUserEntity)user;
     }
 }

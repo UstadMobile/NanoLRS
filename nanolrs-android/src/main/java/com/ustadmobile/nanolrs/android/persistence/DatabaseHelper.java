@@ -13,6 +13,7 @@ import com.ustadmobile.nanolrs.ormlite.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiForwardingStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiStatementEntity;
+import com.ustadmobile.nanolrs.ormlite.model.XapiUserEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiVerbEntity;
 
 import java.sql.SQLException;
@@ -22,6 +23,8 @@ import java.sql.SQLException;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
+
+    public static final String LOGTAG = "NanoLRS/DatabaseHelper";
 
     private static final String DATABASE_NAME="nanolrs.db";
 
@@ -36,7 +39,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
-            XapiStatementEntity.class, XapiVerbEntity.class};
+            XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
+            XapiUserEntity.class
+    };
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
@@ -45,8 +50,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             for(Class clazz : TABLE_CLASSES) {
                 TableUtils.createTable(connectionSource, clazz);
             }
-
-            TableUtils.createTable(connectionSource, XapiForwardingStatementEntity.class);
         }catch(SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "can't create database", e);
             throw new RuntimeException(e);
@@ -57,32 +60,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-        /*
         try {
             if(oldVersion <= 9) {
-
+                TableUtils.createTable(connectionSource, XapiUserEntity.class);
             }
-
-
-            for(Class clazz : TABLE_CLASSES) {
-                TableUtils.dropTable(connectionSource, clazz, false);
-            }
-
-            if(oldVersion >= 3) {
-                TableUtils.dropTable(connectionSource, XapiForwardingStatementEntity.class, false);
-            }
-
-            onCreate(database, connectionSource);
         }catch(SQLException e) {
-            Log.i(DatabaseHelper.class.getName(), "exception onUpgrade", e);
+            Log.e(LOGTAG, "Exception onUpgrade", e);
             throw new RuntimeException(e);
         }
-        */
     }
-
-
-
-
-
-
 }
