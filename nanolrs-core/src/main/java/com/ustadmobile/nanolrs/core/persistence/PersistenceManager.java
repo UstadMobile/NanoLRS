@@ -5,7 +5,9 @@
  */
 package com.ustadmobile.nanolrs.core.persistence;
 
+import com.ustadmobile.nanolrs.core.model.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
+import com.ustadmobile.nanolrs.core.model.XapiStateManager;
 import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiUserManager;
 
@@ -38,5 +40,10 @@ public abstract class PersistenceManager {
     public abstract XapiForwardingStatementManager getForwardingStatementManager();
 
     public abstract XapiUserManager getUserManager();
+
+    public abstract XapiStateManager getStateManager();
+
+    public abstract XapiActivityManager getActivityManager();
+
     
 }

@@ -13,12 +13,10 @@ import java.util.logging.Level;
 /**
  * Created by mike on 9/13/16.
  */
-public class XapiForwardingStatementManagerOrmLite implements XapiForwardingStatementManager {
-
-    private PersistenceManagerORMLite persistenceManager;
+public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite implements XapiForwardingStatementManager {
 
     public XapiForwardingStatementManagerOrmLite(PersistenceManagerORMLite persistenceManager) {
-        this.persistenceManager = persistenceManager;
+        super(persistenceManager);
     }
 
     @Override

@@ -24,6 +24,8 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
 
     private XapiUserManager xapiUserManager;
 
+
+
     public PersistenceManagerORMLite() {
         xapiStatementManager = new XapiStatementManagerOrmLite(this);
         xapiForwardingStatementManager = new XapiForwardingStatementManagerOrmLite(this);

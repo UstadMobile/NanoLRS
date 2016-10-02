@@ -14,12 +14,10 @@ import java.util.logging.Logger;
 /**
  * Created by mike on 9/6/16.
  */
-public class XapiStatementManagerOrmLite implements XapiStatementManager {
-
-    private PersistenceManagerORMLite persistenceManager;
+public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements XapiStatementManager {
 
     public XapiStatementManagerOrmLite(PersistenceManagerORMLite persistenceManager) {
-        this.persistenceManager = persistenceManager;
+        super(persistenceManager);
     }
 
 

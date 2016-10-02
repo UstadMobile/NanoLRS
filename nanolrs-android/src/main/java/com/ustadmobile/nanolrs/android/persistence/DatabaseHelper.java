@@ -11,7 +11,9 @@ import com.j256.ormlite.table.TableUtils;
 import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
 import com.ustadmobile.nanolrs.ormlite.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiAgentEntity;
+import com.ustadmobile.nanolrs.ormlite.model.XapiDocumentEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiForwardingStatementEntity;
+import com.ustadmobile.nanolrs.ormlite.model.XapiStateEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiUserEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiVerbEntity;
@@ -28,7 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME="nanolrs.db";
 
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private Context context;
 
@@ -40,7 +42,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
             XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
-            XapiUserEntity.class
+            XapiUserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class
     };
 
     @Override
@@ -61,9 +63,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-            if(oldVersion <= 9) {
+            if(oldVersion < 9) {
                 TableUtils.createTable(connectionSource, XapiUserEntity.class);
             }
+
+            if(oldVersion < 10) {
+                TableUtils.createTable(connectionSource, XapiDocumentEntity.class);
+                TableUtils.createTable(connectionSource, XapiStateEntity.class);
+            }
+
         }catch(SQLException e) {
             Log.e(LOGTAG, "Exception onUpgrade", e);
             throw new RuntimeException(e);
