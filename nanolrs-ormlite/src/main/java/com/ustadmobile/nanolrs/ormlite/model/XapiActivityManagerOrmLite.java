@@ -18,15 +18,11 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
     }
 
     @Override
-    public XapiActivityProxy findOrCreateById(Object dbContext, String id) {
+    public XapiActivityProxy findById(Object dbContext, String id) {
         XapiActivityProxy result = null;
         try {
             Dao<XapiActivityEntity, String> dao = persistenceManager.getDao(XapiActivityEntity.class, dbContext);
             result = dao.queryForId(id);
-            if(result == null) {
-                result = new XapiActivityEntity();
-                result.setActivityId(id);
-            }
         }catch(SQLException e) {
             System.err.println("Exception findorcreatebyid");
             e.printStackTrace();
@@ -34,4 +30,21 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
 
         return result;
     }
+
+    @Override
+    public XapiActivityProxy makeNew(Object dbContext) {
+        return new XapiActivityEntity();
+    }
+
+    @Override
+    public void createOrUpdate(Object dbContext, XapiActivityProxy data) {
+        try {
+            Dao<XapiActivityEntity, String> dao = persistenceManager.getDao(XapiActivityEntity.class, dbContext);
+            dao.createOrUpdate((XapiActivityEntity)data);
+        }catch(SQLException e) {
+            System.err.println("Exception createOrUpdate");
+        }
+    }
+
+
 }

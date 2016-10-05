@@ -6,6 +6,10 @@ package com.ustadmobile.nanolrs.core.model;
 
 public interface XapiActivityManager {
 
-    XapiActivityProxy findOrCreateById(Object dbContext, String id);
+    XapiActivityProxy findById(Object dbContext, String id);
+
+    XapiActivityProxy makeNew(Object dbContext);
+
+    void createOrUpdate(Object dbContext, XapiActivityProxy data);
 
 }
