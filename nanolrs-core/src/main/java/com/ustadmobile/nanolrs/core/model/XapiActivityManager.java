@@ -12,4 +12,6 @@ public interface XapiActivityManager {
 
     void createOrUpdate(Object dbContext, XapiActivityProxy data);
 
+    void deleteById(Object dbContext, String id);
+
 }

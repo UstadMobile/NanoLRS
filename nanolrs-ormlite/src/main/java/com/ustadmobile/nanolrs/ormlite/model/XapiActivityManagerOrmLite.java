@@ -43,8 +43,18 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
             dao.createOrUpdate((XapiActivityEntity)data);
         }catch(SQLException e) {
             System.err.println("Exception createOrUpdate");
+            e.printStackTrace();
         }
     }
 
-
+    @Override
+    public void deleteById(Object dbContext, String id) {
+        try {
+            Dao<XapiActivityEntity, String> dao = persistenceManager.getDao(XapiActivityEntity.class, dbContext);
+            dao.deleteById(id);
+        }catch(SQLException e) {
+            System.err.println("Exception deleteById");
+            e.printStackTrace();
+        }
+    }
 }

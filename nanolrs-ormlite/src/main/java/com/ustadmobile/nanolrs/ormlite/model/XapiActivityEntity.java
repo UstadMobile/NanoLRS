@@ -1,5 +1,6 @@
 package com.ustadmobile.nanolrs.ormlite.model;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
@@ -17,7 +18,7 @@ public class XapiActivityEntity implements XapiActivityProxy{
     @DatabaseField(foreign = true)
     private XapiAgentEntity authority;
 
-    @DatabaseField
+    @DatabaseField(dataType = DataType.LONG_STRING)
     private String canonicalData;
 
     @Override

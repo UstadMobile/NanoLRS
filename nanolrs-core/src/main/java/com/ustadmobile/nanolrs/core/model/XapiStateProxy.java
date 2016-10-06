@@ -35,6 +35,10 @@ public interface XapiStateProxy {
 
     void setDocument(XapiDocumentProxy document);
 
+    String getCanonicalData();
+
+    void setCanonicalData(String canonicalData);
+
 
 
 }

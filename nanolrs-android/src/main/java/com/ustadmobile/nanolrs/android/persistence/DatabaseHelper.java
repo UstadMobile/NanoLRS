@@ -30,7 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME="nanolrs.db";
 
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     private Context context;
 
@@ -71,7 +71,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 TableUtils.createTable(connectionSource, XapiDocumentEntity.class);
                 TableUtils.createTable(connectionSource, XapiStateEntity.class);
             }
-
         }catch(SQLException e) {
             Log.e(LOGTAG, "Exception onUpgrade", e);
             throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package com.ustadmobile.nanolrs.ormlite.model;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
@@ -13,6 +14,8 @@ import com.ustadmobile.nanolrs.core.model.XapiStateProxy;
 
 @DatabaseTable(tableName = "xapi_state")
 public class XapiStateEntity implements XapiStateProxy {
+
+    public static final String COLNAME_CANONICAL_DATA = "canonical_data";
 
     @DatabaseField(id = true)
     private String id;
@@ -34,6 +37,9 @@ public class XapiStateEntity implements XapiStateProxy {
 
     @DatabaseField(foreign = true)
     private XapiDocumentEntity document;
+
+    @DatabaseField(dataType = DataType.LONG_STRING, columnName = COLNAME_CANONICAL_DATA)
+    private String canonicalData;
 
 
     public String getId() {
@@ -92,5 +98,15 @@ public class XapiStateEntity implements XapiStateProxy {
     @Override
     public void setDocument(XapiDocumentProxy document) {
         this.document = (XapiDocumentEntity)document;
+    }
+
+    @Override
+    public String getCanonicalData() {
+        return canonicalData;
+    }
+
+    @Override
+    public void setCanonicalData(String canonicalData) {
+        this.canonicalData = canonicalData;
     }
 }
