@@ -54,50 +54,6 @@ public class TestXapiHttpdStatements {
         HttpLrs lrs = new HttpLrs(xapiUrl);
         HttpLrs.LrsResponse response = lrs.putStatement(new JSONObject(stmtStr), "username", "password");
         Assert.assertEquals(response.getStatus(), 204);
-
-        /*
-        URL getStmtURL = new URL(xapiUrl + "statements");
-        HttpURLConnection con = (HttpURLConnection)getStmtURL.openConnection();
-        int status = con.getResponseCode();
-        StringWriter writer2 = new StringWriter();
-        InputStream getIn = con.getInputStream();
-        IOUtils.copy(getIn, writer2, "UTF-8");
-        getIn.close();
-        con.disconnect();
-        String serverSays= writer2.toString();
-
-        con = (HttpURLConnection)getStmtURL.openConnection();
-        con.setRequestMethod("PUT");
-        writer2 = new StringWriter();
-        status = con.getResponseCode();
-        getIn = con.getInputStream();
-        IOUtils.copy(getIn, writer2, "UTF-8");
-        getIn.close();
-        con.disconnect();
-
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(stmtIn, writer, "UTF-8");
-        JSONObject stmtObj = new JSONObject(writer.toString());
-        String uuid = UUID.randomUUID().toString();
-        stmtObj.put("id", uuid);
-
-        con = (HttpURLConnection)getStmtURL.openConnection();
-        con.setRequestMethod("PUT");
-        byte[] payload = stmtObj.toString().getBytes("UTF-8");
-        con.setFixedLengthStreamingMode(payload.length);
-        con.setDoOutput(true);
-        OutputStream conOut = con.getOutputStream();
-        conOut.write(payload);
-        conOut.flush();
-        conOut.close();
-        status = con.getResponseCode();
-        */
-
-
-
-
-
-
     }
 
 }

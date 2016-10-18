@@ -11,13 +11,19 @@ import com.ustadmobile.nanolrs.core.model.XapiUserProxy;
 @DatabaseTable(tableName="xapi_agents")
 public class XapiAgentEntity implements XapiAgentProxy {
 
+    public static final String COLNAME_MBOX = "mbox";
+
+    public static final String COLNAME_ACCOUNT_NAME = "account_name";
+
+    public static final String COLNAME_ACCOUNT_HOMEPAGE = "account_homepage";
+
     @DatabaseField(id =  true)
     private String id;
 
     @DatabaseField
     private String name;
 
-    @DatabaseField
+    @DatabaseField(columnName = COLNAME_MBOX)
     private String mbox;
 
     @DatabaseField
@@ -29,10 +35,10 @@ public class XapiAgentEntity implements XapiAgentProxy {
     @DatabaseField
     private String oAuthIdentifier;
 
-    @DatabaseField
+    @DatabaseField(columnName =  COLNAME_ACCOUNT_HOMEPAGE)
     private String accountHomepage;
 
-    @DatabaseField
+    @DatabaseField(columnName = COLNAME_ACCOUNT_NAME)
     private String accountName;
 
     @DatabaseField(foreign =  true)

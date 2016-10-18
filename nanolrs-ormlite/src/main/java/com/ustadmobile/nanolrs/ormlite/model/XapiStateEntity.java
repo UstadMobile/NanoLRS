@@ -15,32 +15,47 @@ import com.ustadmobile.nanolrs.core.model.XapiStateProxy;
 @DatabaseTable(tableName = "xapi_state")
 public class XapiStateEntity implements XapiStateProxy {
 
-    public static final String COLNAME_CANONICAL_DATA = "canonical_data";
+    public static final String COLNAME_CONTENT = "content";
+
+    public static final String COLNAME_ACTIVITY = "activity";
+
+    public static final String COLNAME_AGENT = "agent";
+
+    public static final String COLNAME_REGISTRATION = "registration";
+
+    public static final String COLNAME_DATESTORED = "date_stored";
+
+    public static final String COLNAME_STATEID = "stateid";
+
+    public static final String COLNAME_CONTENT_TYPE = "content_type";
+
 
     @DatabaseField(id = true)
     private String id;
 
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, columnName =  COLNAME_ACTIVITY)
     private XapiActivityEntity activity;
 
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, columnName =  COLNAME_AGENT)
     private XapiAgentEntity agent;
 
-    @DatabaseField(index = true)
+    @DatabaseField(index = true, columnName =  COLNAME_REGISTRATION)
     private String registration;
 
-    @DatabaseField
+    @DatabaseField(index = true, columnName = COLNAME_STATEID)
     private String stateId;
 
-    @DatabaseField
+    @DatabaseField(index = true, columnName =  COLNAME_DATESTORED)
     private long dateStored;
 
     @DatabaseField(foreign = true)
     private XapiDocumentEntity document;
 
-    @DatabaseField(dataType = DataType.LONG_STRING, columnName = COLNAME_CANONICAL_DATA)
-    private String canonicalData;
+    @DatabaseField(dataType = DataType.BYTE_ARRAY, columnName = COLNAME_CONTENT)
+    private byte[] content;
 
+    @DatabaseField(columnName =  COLNAME_CONTENT_TYPE)
+    private String contentType;
 
     public String getId() {
         return id;
@@ -101,12 +116,22 @@ public class XapiStateEntity implements XapiStateProxy {
     }
 
     @Override
-    public String getCanonicalData() {
-        return canonicalData;
+    public byte[] getContent() {
+        return content;
     }
 
     @Override
-    public void setCanonicalData(String canonicalData) {
-        this.canonicalData = canonicalData;
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
+    @Override
+    public String getContentType() {
+        return contentType;
+    }
+
+    @Override
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }

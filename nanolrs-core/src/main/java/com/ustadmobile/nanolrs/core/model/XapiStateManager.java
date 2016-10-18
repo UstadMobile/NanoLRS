@@ -6,6 +6,12 @@ package com.ustadmobile.nanolrs.core.model;
 
 public interface XapiStateManager {
 
-    XapiStateProxy findByActivityAndAgent(Object dbContext, String activityId, String agentJSON, String registrationUuid, String stateId);
+    //XapiStateProxy findByActivityAndAgent(Object dbContext, XapiActivityProxy activity, XapiAgentProxy agent, String registrationUuid, String stateId);
+
+    XapiStateProxy makeNew(Object dbContext);
+
+    XapiStateProxy findByActivityAndAgent(Object dbContext, String activityId, String agentMbox, String agentAccountName, String agentAccountHomepage, String registrationUuid, String stateId);
+
+    void persist(Object dbContext, XapiStateProxy data);
 
 }

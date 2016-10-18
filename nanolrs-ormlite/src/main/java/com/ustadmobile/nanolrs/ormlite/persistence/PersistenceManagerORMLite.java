@@ -2,12 +2,14 @@ package com.ustadmobile.nanolrs.ormlite.persistence;
 
 import com.j256.ormlite.dao.Dao;
 import com.ustadmobile.nanolrs.core.model.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.model.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiStateManager;
 import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiUserManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.model.XapiActivityManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.model.XapiAgentManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.model.XapiForwardingStatementManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.model.XapiStateManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.model.XapiStatementManagerOrmLite;
@@ -32,12 +34,16 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
 
     private XapiStateManager xapiStateManager;
 
+    private XapiAgentManager xapiAgentManager;
+
     public PersistenceManagerORMLite() {
         xapiStatementManager = new XapiStatementManagerOrmLite(this);
         xapiForwardingStatementManager = new XapiForwardingStatementManagerOrmLite(this);
         xapiUserManager = new XapiUserManagerOrmLite(this);
         xapiActivityManager = new XapiActivityManagerOrmLite(this);
         xapiStateManager = new XapiStateManagerOrmLite(this);
+        xapiAgentManager = new XapiAgentManagerOrmLite(this);
+
     }
 
     @Override
@@ -63,5 +69,10 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
     @Override
     public XapiStateManager getStateManager() {
         return xapiStateManager;
+    }
+
+    @Override
+    public XapiAgentManager getAgentManager() {
+        return xapiAgentManager;
     }
 }

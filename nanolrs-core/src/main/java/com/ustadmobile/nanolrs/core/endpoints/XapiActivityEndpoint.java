@@ -17,11 +17,12 @@ public class XapiActivityEndpoint {
 
     /**
      * As per the Xapi spec: create or update the given object
+     *
      * @param object
      * @param dbContext
      * @return
      */
-    public static XapiActivityProxy createOrUpdateById(Object dbContext, JSONObject object) {
+    public static XapiActivityProxy createOrUpdate(Object dbContext, JSONObject object) {
         XapiActivityManager manager = PersistenceManager.getInstance().getActivityManager();
         String activityId = object.getString("id");
         XapiActivityProxy data = manager.findById(dbContext, activityId);
@@ -43,6 +44,12 @@ public class XapiActivityEndpoint {
         manager.createOrUpdate(dbContext, data);
 
         return data;
+    }
+
+    public static XapiActivityProxy createOrUpdate(Object dbContext, String activityId) {
+        JSONObject activityObj = new JSONObject();
+        activityObj.put("id", activityId);
+        return createOrUpdate(dbContext, activityObj);
     }
 
 

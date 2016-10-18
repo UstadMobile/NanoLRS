@@ -39,7 +39,7 @@ public class TestXapiActivityEndpoint {
 
         String activityStr = writer.toString();
         JSONObject activityObj = new JSONObject(activityStr);
-        XapiActivityProxy activity = XapiActivityEndpoint.createOrUpdateById(context, activityObj);
+        XapiActivityProxy activity = XapiActivityEndpoint.createOrUpdate(context, activityObj);
         Assert.assertNotNull(activity);
 
         //now we should be able to find it by ID

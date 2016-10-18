@@ -23,4 +23,5 @@ public interface XapiStatementManager {
 
     public void persistSync(Object dbContext, XapiStatementProxy stmt);
 
+
 }
