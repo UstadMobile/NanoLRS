@@ -59,7 +59,7 @@ public class StateUriResponder extends NanoLrsResponder implements RouterNanoHTT
         String activityId = getFirstParamVal(session, "activityid");
         String agentJson = getFirstParamVal(session, "agent");
         String registration = getFirstParamVal(session, "registration");
-        String stateId = getFirstParamVal(session, "stateid");
+        String stateId = getFirstParamVal(session, "stateId");
 
         if(activityId == null || agentJson == null || stateId == null) {
             return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.BAD_REQUEST, "text/plain",
