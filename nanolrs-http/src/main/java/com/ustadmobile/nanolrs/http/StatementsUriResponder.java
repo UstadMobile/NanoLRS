@@ -72,6 +72,13 @@ public class StatementsUriResponder implements RouterNanoHTTPD.UriResponder {
 
     @Override
     public NanoHTTPD.Response other(String method, RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
+        if(method.equalsIgnoreCase("options")) {
+            NanoHTTPD.Response response = NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "text/plain", null);
+            response.addHeader("Allow", "GET,PUT,POST,DELETE");
+            return response;
+        }
+
+
         return null;
     }
 
