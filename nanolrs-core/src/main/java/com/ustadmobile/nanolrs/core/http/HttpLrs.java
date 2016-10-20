@@ -194,7 +194,7 @@ public class HttpLrs {
             if(registration != null) {
                 destURL += "&registration=" + registration;//UUID does not URL escaped
             }
-            destURL += "&stateid=" + stateId;
+            destURL += "&stateId=" + stateId;
             return destURL;
         }catch(UnsupportedEncodingException e) {
             throw new RuntimeException(e);//NO UTF-8 - Not going to happen!

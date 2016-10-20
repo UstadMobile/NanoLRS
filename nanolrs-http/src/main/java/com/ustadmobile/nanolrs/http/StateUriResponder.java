@@ -30,7 +30,7 @@ public class StateUriResponder extends NanoLrsResponder implements RouterNanoHTT
         String activityId = getFirstParamVal(session, "activityid");
         String agentJson = getFirstParamVal(session, "agent");
         String registration = getFirstParamVal(session, "registration");
-        String stateId = getFirstParamVal(session, "stateid");
+        String stateId = getFirstParamVal(session, "stateId");
 
         Object dbContext = uriResource.initParameter(0, Object.class);
         XapiStateProxy stateProxy = XapiStateEndpoint.getState(dbContext, activityId, agentJson, registration, stateId);
