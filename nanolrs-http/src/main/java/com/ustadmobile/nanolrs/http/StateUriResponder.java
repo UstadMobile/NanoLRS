@@ -15,7 +15,7 @@ import fi.iki.elonen.router.RouterNanoHTTPD;
  * Created by mike on 10/8/16.
  */
 
-public class StateUriResponder implements RouterNanoHTTPD.UriResponder {
+public class StateUriResponder extends NanoLrsResponder implements RouterNanoHTTPD.UriResponder {
 
     private String getFirstParamVal(NanoHTTPD.IHTTPSession session, String paramName) {
         if(session.getParameters().containsKey(paramName)) {
@@ -76,8 +76,6 @@ public class StateUriResponder implements RouterNanoHTTPD.UriResponder {
         return null;
     }
 
-    @Override
-    public NanoHTTPD.Response other(String method, RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
-        return null;
-    }
+
+
 }

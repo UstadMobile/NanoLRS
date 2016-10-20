@@ -23,7 +23,7 @@ import fi.iki.elonen.router.RouterNanoHTTPD;
  * Created by mike on 9/27/16.
  */
 
-public class StatementsUriResponder implements RouterNanoHTTPD.UriResponder {
+public class StatementsUriResponder extends NanoLrsResponder implements RouterNanoHTTPD.UriResponder {
 
     @Override
     public NanoHTTPD.Response get(RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
@@ -70,17 +70,7 @@ public class StatementsUriResponder implements RouterNanoHTTPD.UriResponder {
         return null;
     }
 
-    @Override
-    public NanoHTTPD.Response other(String method, RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
-        if(method.equalsIgnoreCase("options")) {
-            NanoHTTPD.Response response = NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "text/plain", null);
-            response.addHeader("Allow", "GET,PUT,POST,DELETE");
-            return response;
-        }
 
-
-        return null;
-    }
 
 
 }
