@@ -4,7 +4,7 @@
 apply from: "localsettings.gradle"
 
 ext {
-    nanolrsversion = "0.1.10"
+    nanolrsversion = "0.1.11"
 }
 
 buildscript {

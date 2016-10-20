@@ -26,12 +26,23 @@ public class NanoLrsHttpd extends RouterNanoHTTPD {
     }
 
     public void mapXapiEndpoints(String basePath) {
+        mountXapiEndpointsOnServer(this, dbContext, basePath);
+    }
+
+    /**
+     * Mount the xAPI server endpoint responders to the given RouterNanoHTTPD server
+     *
+     * @param server Server to mount to
+     * @param dbContext Database context to use for Orm purposes
+     * @param basePath prefix for xAPI endpoints (e.g. /xapi)
+     */
+    public static void mountXapiEndpointsOnServer(RouterNanoHTTPD server, Object dbContext, String basePath) {
         if(!basePath.endsWith("/")) {
             basePath += "/";
         }
 
-        addRoute(basePath + "statements", StatementsUriResponder.class, dbContext);
-        addRoute(basePath + "activities/state", StateUriResponder.class, dbContext);
+        server.addRoute(basePath + "statements", StatementsUriResponder.class, dbContext);
+        server.addRoute(basePath + "activities/state", StateUriResponder.class, dbContext);
     }
 
     public static byte[] getRequestContent(NanoHTTPD.IHTTPSession session) {
