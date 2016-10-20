@@ -47,6 +47,15 @@ public class StateUriResponder extends NanoLrsResponder implements RouterNanoHTT
 
     @Override
     public NanoHTTPD.Response put(RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
+        return processSaveState(uriResource, urlParams, session);
+    }
+
+    @Override
+    public NanoHTTPD.Response post(RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
+        return processSaveState(uriResource, urlParams, session);
+    }
+
+    private NanoHTTPD.Response processSaveState(RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
         String activityId = getFirstParamVal(session, "activityid");
         String agentJson = getFirstParamVal(session, "agent");
         String registration = getFirstParamVal(session, "registration");
@@ -59,16 +68,12 @@ public class StateUriResponder extends NanoLrsResponder implements RouterNanoHTT
 
         byte[] stateData = NanoLrsHttpd.getRequestContent(session);
         Object dbContext = uriResource.initParameter(0, Object.class);
-        XapiStateEndpoint.createOrUpdateState(dbContext, "put", session.getHeaders().get("content-type"),
+        XapiStateEndpoint.createOrUpdateState(dbContext, session.getMethod().toString(),
+                session.getHeaders().get("content-type"),
                 activityId,agentJson, registration, stateId, stateData);
 
         return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.NO_CONTENT, "application/json",
                 null);
-    }
-
-    @Override
-    public NanoHTTPD.Response post(RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
-        return null;
     }
 
     @Override
