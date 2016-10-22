@@ -189,7 +189,7 @@ public class HttpLrs {
         }
         try {
             destURL += "activities/state";
-            destURL += "?activityid=" + URLEncoder.encode(activityId, "UTF-8");
+            destURL += "?activityId=" + URLEncoder.encode(activityId, "UTF-8");
             destURL += "&agent=" + URLEncoder.encode(agentJson, "UTF-8");
             if(registration != null) {
                 destURL += "&registration=" + registration;//UUID does not URL escaped

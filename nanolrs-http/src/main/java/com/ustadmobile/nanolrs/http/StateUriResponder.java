@@ -27,7 +27,7 @@ public class StateUriResponder extends NanoLrsResponder implements RouterNanoHTT
 
     @Override
     public NanoHTTPD.Response get(RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
-        String activityId = getFirstParamVal(session, "activityid");
+        String activityId = getFirstParamVal(session, "activityId");
         String agentJson = getFirstParamVal(session, "agent");
         String registration = getFirstParamVal(session, "registration");
         String stateId = getFirstParamVal(session, "stateId");
@@ -56,7 +56,7 @@ public class StateUriResponder extends NanoLrsResponder implements RouterNanoHTT
     }
 
     private NanoHTTPD.Response processSaveState(RouterNanoHTTPD.UriResource uriResource, Map<String, String> urlParams, NanoHTTPD.IHTTPSession session) {
-        String activityId = getFirstParamVal(session, "activityid");
+        String activityId = getFirstParamVal(session, "activityId");
         String agentJson = getFirstParamVal(session, "agent");
         String registration = getFirstParamVal(session, "registration");
         String stateId = getFirstParamVal(session, "stateId");
