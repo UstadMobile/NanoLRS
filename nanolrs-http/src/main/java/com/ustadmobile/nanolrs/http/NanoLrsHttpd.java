@@ -45,6 +45,14 @@ public class NanoLrsHttpd extends RouterNanoHTTPD {
         server.addRoute(basePath + "activities/state", StateUriResponder.class, dbContext);
     }
 
+    /**
+     * Gets the payload of a request body.  When NanoHTTPD is sent a PUT request this seems to
+     * wind up providing a temporary file pointed to by "content".  When receiving POST postData
+     * seems to contain the content.
+     *
+     * @param session
+     * @return
+     */
     public static byte[] getRequestContent(NanoHTTPD.IHTTPSession session) {
         byte[] content = null;
         FileInputStream fin = null;
@@ -52,12 +60,16 @@ public class NanoLrsHttpd extends RouterNanoHTTPD {
         try {
             Map<String, String> map = new HashMap<>();
             session.parseBody(map);
-            tmpFileName =  map.get("content");
-            fin = new FileInputStream(tmpFileName);
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            IOUtils.copy(fin, bout);
-            bout.flush();
-            content = bout.toByteArray();
+            if(map.containsKey("content")) {
+                tmpFileName =  map.get("content");
+                fin = new FileInputStream(tmpFileName);
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                IOUtils.copy(fin, bout);
+                bout.flush();
+                content = bout.toByteArray();
+            }else if(map.containsKey("postData")) {
+                content = map.get("postData").getBytes("UTF-8");
+            }
         }catch(IOException | NanoHTTPD.ResponseException e) {
             System.err.println("Exception getRequestContent");
             e.printStackTrace();

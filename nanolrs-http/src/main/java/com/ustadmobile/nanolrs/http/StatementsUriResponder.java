@@ -36,21 +36,15 @@ public class StatementsUriResponder extends NanoLrsResponder implements RouterNa
         NanoHTTPD.Response r = null;
         FileInputStream fin = null;
         try {
-            Map<String, String> map = new HashMap<>();
-            session.parseBody(map);
-            String tmpFile =  map.get("content");
-            StringWriter strWriter = new StringWriter();
-            fin = new FileInputStream(tmpFile);
-            IOUtils.copy(fin, strWriter, "UTF-8");
-
-            JSONObject stmtObj = new JSONObject(strWriter.toString());
+            byte[] requestContent = NanoLrsHttpd.getRequestContent(session);
+            JSONObject stmtObj = new JSONObject(new String(requestContent, "UTF-8"));
             Object dbContext = uriResource.initParameter(0, Object.class);
             String storedId = XapiStatementsEndpoint.putStatement(stmtObj, dbContext);
 
             //TODO: check that storedID is the same as the statement's id
             r = NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.NO_CONTENT, "text/plain",
                 null);
-        }catch(IOException|NanoHTTPD.ResponseException e) {
+        }catch(IOException e) {
             r = NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.INTERNAL_ERROR, "text/plain",
                     e.getMessage());
         }finally {
