@@ -74,6 +74,7 @@ public class XapiStatementsEndpoint {
             stmtProxy.setTimestamp(cal.getTime().getTime());
         }else {
             stmtProxy.setTimestamp(new Date().getTime());
+            stmt.put("timestamp", ParseUtil.format8601Timestamp(Calendar.getInstance()));
         }
 
         stmtProxy.setFullStatement(stmt.toString());
