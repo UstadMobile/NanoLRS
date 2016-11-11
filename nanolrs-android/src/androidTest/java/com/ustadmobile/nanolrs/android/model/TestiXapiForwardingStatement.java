@@ -50,8 +50,11 @@ public class TestiXapiForwardingStatement {
         String password = BuildConfig.TESTPASSWORD;
         String endpointURL = BuildConfig.TESTLRSENDPOINT;
 
+        int countUnsentBefore = manager.getUnsentStatementCount(context);
         XapiStatementsForwardingEndpoint.queueStatement(context, stmtProxy,
                 endpointURL, username, password);
+        Assert.assertEquals("Unsent count increases by one after queueing stmt",
+                countUnsentBefore +1, manager.getUnsentStatementCount(context));
 
         XapiForwardingStatementProxy forwardingStmt = manager.findByUuidSync(context, generatedUUID);
         Assert.assertNotNull(forwardingStmt);

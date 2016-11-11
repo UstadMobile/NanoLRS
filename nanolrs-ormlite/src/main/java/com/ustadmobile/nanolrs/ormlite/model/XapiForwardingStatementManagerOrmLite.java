@@ -56,18 +56,37 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
         return null;
     }
 
+    private QueryBuilder<XapiForwardingStatementEntity, String> getUnsentStatementsQueryBuilder(Object dbContext, Dao<XapiForwardingStatementEntity, String> dao) throws SQLException {
+        QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = dao.queryBuilder();
+        queryBuilder.where().le(XapiForwardingStatementEntity.FIELD_NAME_STATUS, 2);
+        return queryBuilder;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public List<XapiForwardingStatementProxy> getAllUnsentStatementsSync(Object dbContext) {
         try {
             Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
-            QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = dao.queryBuilder();
-            queryBuilder.where().le(XapiForwardingStatementEntity.FIELD_NAME_STATUS, 2);
+            QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = getUnsentStatementsQueryBuilder(dbContext, dao);
             return (List<XapiForwardingStatementProxy>)(Object)dao.query(queryBuilder.prepare());
         }catch(SQLException e) {
 
         }
 
         return null;
+    }
+
+    @Override
+    public int getUnsentStatementCount(Object dbContext) {
+        try {
+            Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
+            QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = getUnsentStatementsQueryBuilder(dbContext, dao);
+            queryBuilder.setCountOf(true);
+            return (int)dao.countOf(queryBuilder.prepare());
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
     }
 }

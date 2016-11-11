@@ -15,4 +15,6 @@ public interface XapiForwardingStatementManager {
 
     XapiForwardingStatementProxy findByUuidSync(Object dbContext, String uuid);
 
+    int getUnsentStatementCount(Object dbContext);
+
 }
