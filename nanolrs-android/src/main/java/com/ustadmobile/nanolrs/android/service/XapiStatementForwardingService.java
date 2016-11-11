@@ -21,7 +21,6 @@ public class XapiStatementForwardingService extends Service {
     //Frequency of forwarding statements
     public static int FORWARD_INTERVAL = 60000;
 
-
     public XapiStatementForwardingService() {
     }
 
@@ -45,7 +44,7 @@ public class XapiStatementForwardingService extends Service {
 
     public class XapiStatementForwardingTimerTask extends TimerTask {
         public void run() {
-            XapiStatementsForwardingEndpoint.sendQueue(XapiStatementForwardingService.this);
+            int numSent = XapiStatementsForwardingEndpoint.sendQueue(XapiStatementForwardingService.this);
         }
     }
 

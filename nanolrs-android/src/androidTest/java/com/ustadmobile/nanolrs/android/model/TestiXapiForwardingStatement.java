@@ -5,6 +5,8 @@ import android.support.test.InstrumentationRegistry;
 
 import com.ustadmobile.nanolrs.android.BuildConfig;
 import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
+import com.ustadmobile.nanolrs.core.endpoints.XapiQueueStatusEvent;
+import com.ustadmobile.nanolrs.core.endpoints.XapiQueueStatusListener;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEndpoint;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
@@ -26,7 +28,9 @@ import java.util.List;
 /**
  * Created by mike on 9/13/16.
  */
-public class TestiXapiForwardingStatement {
+public class TestiXapiForwardingStatement implements XapiQueueStatusListener{
+
+    private boolean receivedUpdate = false;
 
 
     @Before
@@ -42,6 +46,7 @@ public class TestiXapiForwardingStatement {
         StringWriter writer = new StringWriter();
         IOUtils.copy(stmtIn, writer, "UTF-8");
         JSONObject stmtObj = new JSONObject(writer.toString());
+        XapiStatementsForwardingEndpoint.addQueueStatusListener(this);
         String generatedUUID = XapiStatementsEndpoint.putStatement(stmtObj, context);
         XapiForwardingStatementManager manager = PersistenceManager.getInstance().getForwardingStatementManager();
         XapiStatementProxy stmtProxy = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
@@ -56,6 +61,9 @@ public class TestiXapiForwardingStatement {
         Assert.assertEquals("Unsent count increases by one after queueing stmt",
                 countUnsentBefore +1, manager.getUnsentStatementCount(context));
 
+        Assert.assertTrue("Received event for adding statement to queue", this.receivedUpdate);
+        this.receivedUpdate = false;
+
         XapiForwardingStatementProxy forwardingStmt = manager.findByUuidSync(context, generatedUUID);
         Assert.assertNotNull(forwardingStmt);
 
@@ -63,6 +71,9 @@ public class TestiXapiForwardingStatement {
         Assert.assertTrue(sendQueue.size() > 0);
 
         XapiStatementsForwardingEndpoint.sendQueue(context);
+        Assert.assertTrue("Received event after queue sent", this.receivedUpdate);
+
+        XapiStatementsForwardingEndpoint.removeQueueStatusListener(this);
 
         //Send queue should be empty now
         int numUnsentStatements =manager.getAllUnsentStatementsSync(context).size();
@@ -70,7 +81,8 @@ public class TestiXapiForwardingStatement {
     }
 
 
-
-
-
+    @Override
+    public void queueStatusUpdated(XapiQueueStatusEvent event) {
+        this.receivedUpdate = true;
+    }
 }
