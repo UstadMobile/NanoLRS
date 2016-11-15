@@ -5,15 +5,14 @@ import android.support.test.InstrumentationRegistry;
 
 import com.ustadmobile.nanolrs.android.BuildConfig;
 import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
-import com.ustadmobile.nanolrs.core.endpoints.XapiQueueStatusEvent;
-import com.ustadmobile.nanolrs.core.endpoints.XapiQueueStatusListener;
+import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEvent;
+import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingListener;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEndpoint;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementProxy;
 import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
-import com.ustadmobile.nanolrs.ormlite.model.XapiStatementEntity;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
@@ -28,10 +27,15 @@ import java.util.List;
 /**
  * Created by mike on 9/13/16.
  */
-public class TestiXapiForwardingStatement implements XapiQueueStatusListener{
+public class TestiXapiForwardingStatement implements XapiStatementsForwardingListener {
 
     private boolean receivedUpdate = false;
 
+    private XapiStatementProxy watchedStmt;
+
+    private boolean watchedStmtQueueEvtReceived = false;
+
+    private boolean watchedStmtSentEvtReceived = false;
 
     @Before
     public void setUp() throws Exception {
@@ -49,19 +53,20 @@ public class TestiXapiForwardingStatement implements XapiQueueStatusListener{
         XapiStatementsForwardingEndpoint.addQueueStatusListener(this);
         String generatedUUID = XapiStatementsEndpoint.putStatement(stmtObj, context);
         XapiForwardingStatementManager manager = PersistenceManager.getInstance().getForwardingStatementManager();
-        XapiStatementProxy stmtProxy = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
+        this.watchedStmt = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
 
         String username = BuildConfig.TESTUSER;
         String password = BuildConfig.TESTPASSWORD;
         String endpointURL = BuildConfig.TESTLRSENDPOINT;
 
         int countUnsentBefore = manager.getUnsentStatementCount(context);
-        XapiStatementsForwardingEndpoint.queueStatement(context, stmtProxy,
+        XapiStatementsForwardingEndpoint.queueStatement(context, this.watchedStmt,
                 endpointURL, username, password);
         Assert.assertEquals("Unsent count increases by one after queueing stmt",
                 countUnsentBefore +1, manager.getUnsentStatementCount(context));
 
         Assert.assertTrue("Received event for adding statement to queue", this.receivedUpdate);
+        Assert.assertTrue("Statement queued event received with statement", watchedStmtQueueEvtReceived);
         this.receivedUpdate = false;
 
         XapiForwardingStatementProxy forwardingStmt = manager.findByUuidSync(context, generatedUUID);
@@ -71,7 +76,9 @@ public class TestiXapiForwardingStatement implements XapiQueueStatusListener{
         Assert.assertTrue(sendQueue.size() > 0);
 
         XapiStatementsForwardingEndpoint.sendQueue(context);
+        Assert.assertTrue("Received event for watched statement being sent", watchedStmtSentEvtReceived);
         Assert.assertTrue("Received event after queue sent", this.receivedUpdate);
+
 
         XapiStatementsForwardingEndpoint.removeQueueStatusListener(this);
 
@@ -80,9 +87,22 @@ public class TestiXapiForwardingStatement implements XapiQueueStatusListener{
         Assert.assertTrue(numUnsentStatements == 0);
     }
 
+    @Override
+    public void queueStatementSent(XapiStatementsForwardingEvent event) {
+        if(event.getStatement() != null && event.getStatement().getId().equals(watchedStmt.getId())) {
+            watchedStmtSentEvtReceived = true;
+        }
+    }
 
     @Override
-    public void queueStatusUpdated(XapiQueueStatusEvent event) {
+    public void statementQueued(XapiStatementsForwardingEvent event) {
+        if(event.getStatement() != null && event.getStatement().getId().equals(watchedStmt.getId())) {
+            watchedStmtQueueEvtReceived = true;
+        }
+    }
+
+    @Override
+    public void queueStatusUpdated(XapiStatementsForwardingEvent event) {
         this.receivedUpdate = true;
     }
 }
