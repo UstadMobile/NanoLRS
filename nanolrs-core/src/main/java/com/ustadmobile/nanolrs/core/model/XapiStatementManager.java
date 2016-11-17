@@ -7,6 +7,8 @@ package com.ustadmobile.nanolrs.core.model;
 
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 
+import java.util.List;
+
 /**
  *
  * @author mike
@@ -14,6 +16,8 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 public interface XapiStatementManager {
     
     public void findByUuid(Object dbContext, int requestId, PersistenceReceiver receiver, String uuid);
+
+    List<? extends XapiStatementProxy> findByParams(Object dbContext, String statementid, String voidedStatemendid, XapiAgentProxy agent, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit);
 
     public XapiStatementProxy findByUuidSync(Object dbContext, String uuid);
 

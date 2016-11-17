@@ -7,6 +7,7 @@ import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiStateManager;
 import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiUserManager;
+import com.ustadmobile.nanolrs.core.model.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.model.XapiActivityManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.model.XapiAgentManagerOrmLite;
@@ -14,6 +15,7 @@ import com.ustadmobile.nanolrs.ormlite.model.XapiForwardingStatementManagerOrmLi
 import com.ustadmobile.nanolrs.ormlite.model.XapiStateManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.model.XapiStatementManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.model.XapiUserManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.model.XapiVerbManagerOrmLite;
 
 import java.sql.SQLException;
 
@@ -36,6 +38,9 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
 
     private XapiAgentManager xapiAgentManager;
 
+    private XapiVerbManager xapiVerbManager;
+
+
     public PersistenceManagerORMLite() {
         xapiStatementManager = new XapiStatementManagerOrmLite(this);
         xapiForwardingStatementManager = new XapiForwardingStatementManagerOrmLite(this);
@@ -43,7 +48,7 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
         xapiActivityManager = new XapiActivityManagerOrmLite(this);
         xapiStateManager = new XapiStateManagerOrmLite(this);
         xapiAgentManager = new XapiAgentManagerOrmLite(this);
-
+        xapiVerbManager = new XapiVerbManagerOrmLite(this);
     }
 
     @Override
@@ -75,4 +80,10 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
     public XapiAgentManager getAgentManager() {
         return xapiAgentManager;
     }
+
+    @Override
+    public XapiVerbManager getVerbManager() {
+        return xapiVerbManager;
+    }
+
 }

@@ -1,14 +1,20 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
+import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
+import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
+import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
+import com.ustadmobile.nanolrs.core.model.XapiVerbProxy;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 import com.ustadmobile.nanolrs.core.util.ParseUtil;
 
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -69,6 +75,7 @@ public class XapiStatementsEndpoint {
             stmt.put("id", stmtProxy.getId());
         }
 
+        //check timestamp
         if(stmt.has("timestamp")) {
             Calendar cal = ParseUtil.parse8601Timestamp(stmt.getString("timestamp"));
             stmtProxy.setTimestamp(cal.getTime().getTime());
@@ -77,12 +84,58 @@ public class XapiStatementsEndpoint {
             stmt.put("timestamp", ParseUtil.format8601Timestamp(Calendar.getInstance()));
         }
 
+        //check verb
+        XapiVerbProxy verb = XapiVerbEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("verb"));
+        stmtProxy.setVerb(verb);
+
+        //Check activity
+        XapiActivityProxy activity = XapiActivityEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("object"));
+        stmtProxy.setActivity(activity);
+
+        //check registration
+        if(stmt.has("context")) {
+            String registration = stmt.getJSONObject("context").optString("registration", null);
+            if(registration != null) {
+                stmtProxy.setContextRegistration(registration);
+            }
+        }
+
         stmtProxy.setFullStatement(stmt.toString());
 
         PersistenceManager.getInstance().getStatementManager().persistSync(dbContext, stmtProxy);
 
         return stmtProxy.getId();
 
+    }
+
+    /**
+     *
+     * @param statementid
+     * @param voidedStatemendid
+     * @param agentJSON
+     * @param verb
+     * @param activity
+     * @param registration
+     * @param relatedActivities
+     * @param relatedAgents
+     * @param since
+     * @param until
+     * @param limit
+     * @return
+     */
+    public static List<? extends XapiStatementProxy> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, String since, String until, int limit) {
+        XapiAgentProxy agent = agentJSON != null ? XapiAgentEndpoint.createOrUpdate(dbContext, new JSONObject(agentJSON)) : null;
+        XapiStatementManager manager = PersistenceManager.getInstance().getStatementManager();
+        long sinceLong = -1, untilLong = -1;
+        if(since != null) {
+            sinceLong = ParseUtil.parse8601Timestamp(since).getTimeInMillis();
+        }
+
+        if(until != null) {
+            untilLong = ParseUtil.parse8601Timestamp(until).getTimeInMillis();
+        }
+
+        return manager.findByParams(dbContext, statementid, voidedStatemendid, agent, verb, activity, registration, relatedActivities, relatedAgents, sinceLong, untilLong, limit);
     }
 
 

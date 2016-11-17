@@ -33,7 +33,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      */
     private static final String DATABASE_NAME="nanolrs2.db";
 
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     private Context context;
 
@@ -73,6 +73,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             if(oldVersion < 10) {
                 TableUtils.createTable(connectionSource, XapiDocumentEntity.class);
                 TableUtils.createTable(connectionSource, XapiStateEntity.class);
+            }
+
+            if(oldVersion < 12) {
+                //Execute raw SQL to put an index on the timestamp property of statements
+                getDao(XapiStatementEntity.class).executeRaw(
+                        "CREATE INDEX IF NOT EXISTS xapi_statements_timestamp_idx on xapi_statements ( timestamp )");
             }
         }catch(SQLException e) {
             Log.e(LOGTAG, "Exception onUpgrade", e);

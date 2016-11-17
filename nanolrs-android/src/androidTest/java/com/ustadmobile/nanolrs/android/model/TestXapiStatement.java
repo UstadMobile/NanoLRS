@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -86,6 +87,8 @@ public class TestXapiStatement {
 
         InputStream stmtIn = context.getAssets().open("xapi-statement-page-experienced.json");
 
+
+
         long timeStarted = new Date().getTime();
         StringWriter writer = new StringWriter();
         IOUtils.copy(stmtIn, writer, "UTF-8");
@@ -100,9 +103,21 @@ public class TestXapiStatement {
         //make sure it has a timestamp
         Assert.assertTrue(retrieved.getTimestamp() >= timeStarted);
 
+        //make sure that we can find it using a search by parameters
+        long since = 0;
+        List<? extends XapiStatementProxy> queryResults = XapiStatementsEndpoint.getStatements(context,
+                null, null, null, "http://activitystrea.ms/schema/1.0/host",
+                "http://www.ustadmobile.com/activities/attended-class/CLASSID", null, false, false,
+                null, null, -1);
 
+        boolean foundLastStmt = false;
+        for(int i = 0; i < queryResults.size(); i++) {
+            if(queryResults.get(i).getId().equals(generatedUUID)) {
+                foundLastStmt = true;
+                break;
+            }
+        }
 
-
-
+        Assert.assertTrue("Found statement made using query", foundLastStmt);
     }
 }

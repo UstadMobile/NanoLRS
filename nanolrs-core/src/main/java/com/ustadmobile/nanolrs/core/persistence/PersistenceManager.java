@@ -11,6 +11,7 @@ import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiStateManager;
 import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiUserManager;
+import com.ustadmobile.nanolrs.core.model.XapiVerbManager;
 
 /**
  *
@@ -47,6 +48,8 @@ public abstract class PersistenceManager {
     public abstract XapiActivityManager getActivityManager();
 
     public abstract XapiAgentManager getAgentManager();
+
+    public abstract XapiVerbManager getVerbManager();
 
     
 }

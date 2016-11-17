@@ -1,12 +1,16 @@
 package com.ustadmobile.nanolrs.ormlite.model;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
+import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
 import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +43,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
             result = dao.queryForId(uuid);
         }catch(SQLException e) {
-
+            e.printStackTrace();
         }
 
         return result;
@@ -77,5 +81,52 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
         }catch(SQLException e) {
 
         }
+    }
+
+    @Override
+    public List<? extends XapiStatementProxy> findByParams(Object dbContext, String statementid, String voidedStatemendid, XapiAgentProxy agent, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
+        try {
+            Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
+            QueryBuilder<XapiStatementEntity, String> queryBuilder = dao.queryBuilder();
+            Where<XapiStatementEntity, String> where = queryBuilder.where();
+
+            boolean whereHasClauses = false;
+            if(statementid != null){
+                where.eq(XapiStatementEntity.COLNAME_ID, statementid);
+                whereHasClauses = true;
+            }
+
+            if(agent != null) {
+                if(whereHasClauses)
+                    where.and();
+                where.eq(XapiStatementEntity.COLNAME_ACTIVITY, agent.getId());
+                whereHasClauses = true;
+            }
+
+            if(verb != null) {
+                if(whereHasClauses)
+                    where.and();
+                where.eq(XapiStatementEntity.COLNAME_VERB, verb);
+                whereHasClauses = true;
+            }
+
+            if(activity != null) {
+                if(whereHasClauses)
+                    where.and();
+                where.eq(XapiStatementEntity.COLNAME_ACTIVITY, activity);
+            }
+
+            if(registration != null) {
+                if(whereHasClauses)
+                    where.and();
+                where.eq(XapiStatementEntity.COLNAME_REGISTRATION, registration);
+            }
+
+            return dao.query(queryBuilder.prepare());
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

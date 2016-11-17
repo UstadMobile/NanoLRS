@@ -14,6 +14,14 @@ import com.ustadmobile.nanolrs.core.model.XapiVerbProxy;
 @DatabaseTable(tableName="xapi_statements")
 public class XapiStatementEntity implements XapiStatementProxy {
 
+    public static final String COLNAME_ID = "id";
+
+    public static final String COLNAME_ACTIVITY = "activity_id";
+
+    public static final String COLNAME_VERB = "verb_id";
+
+    public static final String COLNAME_REGISTRATION = "contextRegistration";
+
     @DatabaseField(id =  true)
     private String id;
 
@@ -74,7 +82,8 @@ public class XapiStatementEntity implements XapiStatementProxy {
     @DatabaseField(dataType = DataType.LONG_STRING)
     private String fullStatement;
 
-    @DatabaseField
+    //Index = true added for Database Version 12
+    @DatabaseField(index = true)
     private long timestamp;
 
 

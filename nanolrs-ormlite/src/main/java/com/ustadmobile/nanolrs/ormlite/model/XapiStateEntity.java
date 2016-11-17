@@ -30,6 +30,7 @@ public class XapiStateEntity implements XapiStateProxy {
     public static final String COLNAME_CONTENT_TYPE = "content_type";
 
 
+
     @DatabaseField(id = true)
     private String id;
 
