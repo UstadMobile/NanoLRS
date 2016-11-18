@@ -17,4 +17,13 @@ public interface XapiForwardingStatementManager {
 
     int getUnsentStatementCount(Object dbContext);
 
+    /**
+     * Get the queue status of the given statement
+     *
+     * @param dbContext
+     * @param statement
+     * @return
+     */
+    int findStatusByXapiStatement(Object dbContext, XapiStatementProxy statement);
+
 }

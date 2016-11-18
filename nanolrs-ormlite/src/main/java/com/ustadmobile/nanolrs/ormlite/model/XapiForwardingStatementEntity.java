@@ -13,6 +13,8 @@ public class XapiForwardingStatementEntity implements XapiForwardingStatementPro
 
     public static final String FIELD_NAME_STATUS = "status";
 
+    public static final String FIELD_NAME_STATEMENT = "statement_id";
+
     @DatabaseField(id = true)
     String uuid;
 

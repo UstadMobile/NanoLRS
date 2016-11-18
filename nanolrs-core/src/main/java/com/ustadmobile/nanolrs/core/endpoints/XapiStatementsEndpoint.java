@@ -123,9 +123,15 @@ public class XapiStatementsEndpoint {
      * @param limit
      * @return
      */
-    public static List<? extends XapiStatementProxy> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, String since, String until, int limit) {
+    public static List<? extends XapiStatementProxy> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
         XapiAgentProxy agent = agentJSON != null ? XapiAgentEndpoint.createOrUpdate(dbContext, new JSONObject(agentJSON)) : null;
         XapiStatementManager manager = PersistenceManager.getInstance().getStatementManager();
+
+
+        return manager.findByParams(dbContext, statementid, voidedStatemendid, agent, verb, activity, registration, relatedActivities, relatedAgents, since, until, limit);
+    }
+
+    public static List<? extends XapiStatementProxy> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, String since, String until, int limit) {
         long sinceLong = -1, untilLong = -1;
         if(since != null) {
             sinceLong = ParseUtil.parse8601Timestamp(since).getTimeInMillis();
@@ -135,7 +141,7 @@ public class XapiStatementsEndpoint {
             untilLong = ParseUtil.parse8601Timestamp(until).getTimeInMillis();
         }
 
-        return manager.findByParams(dbContext, statementid, voidedStatemendid, agent, verb, activity, registration, relatedActivities, relatedAgents, sinceLong, untilLong, limit);
+        return getStatements(dbContext, statementid, voidedStatemendid, agentJSON, verb,activity, registration, relatedActivities, relatedAgents, sinceLong, untilLong, limit);
     }
 
 

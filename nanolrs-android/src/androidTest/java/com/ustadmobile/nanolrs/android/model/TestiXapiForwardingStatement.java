@@ -64,6 +64,9 @@ public class TestiXapiForwardingStatement implements XapiStatementsForwardingLis
                 endpointURL, username, password);
         Assert.assertEquals("Unsent count increases by one after queueing stmt",
                 countUnsentBefore +1, manager.getUnsentStatementCount(context));
+        Assert.assertEquals("Queued but not sent status is queued",
+                XapiForwardingStatementProxy.STATUS_QUEUED,
+                manager.findStatusByXapiStatement(context, watchedStmt));
 
         Assert.assertTrue("Received event for adding statement to queue", this.receivedUpdate);
         Assert.assertTrue("Statement queued event received with statement", watchedStmtQueueEvtReceived);
@@ -78,6 +81,9 @@ public class TestiXapiForwardingStatement implements XapiStatementsForwardingLis
         XapiStatementsForwardingEndpoint.sendQueue(context);
         Assert.assertTrue("Received event for watched statement being sent", watchedStmtSentEvtReceived);
         Assert.assertTrue("Received event after queue sent", this.receivedUpdate);
+        Assert.assertEquals("Queued but not sent status is queued",
+                XapiForwardingStatementProxy.STATUS_SENT,
+                manager.findStatusByXapiStatement(context, watchedStmt));
 
 
         XapiStatementsForwardingEndpoint.removeQueueStatusListener(this);
