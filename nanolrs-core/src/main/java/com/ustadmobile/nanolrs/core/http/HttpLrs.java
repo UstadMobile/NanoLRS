@@ -17,6 +17,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import sun.misc.IOUtils;
+
 
 /**
  * Utility class to handle talking with a remote LRS
@@ -210,7 +212,8 @@ public class HttpLrs {
 
     public LrsResponse putStatement(JSONObject stmt, String httpUsername, String httpPassword) {
         HttpURLConnection connection = null;
-        OutputStream out;
+        OutputStream out = null;
+        InputStream errStream = null;
         String destURL = endpoint;
         LrsResponse response = new LrsResponse();
         try {
@@ -247,12 +250,12 @@ public class HttpLrs {
             int statusCode = connection.getResponseCode();
             response.setStatus(statusCode);
             if(statusCode >= 400) {
-                InputStream errorStream = connection.getErrorStream();
+                errStream= connection.getErrorStream();
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 byte[] buf = new byte[1024];
                 int bytesRead = 0;
 
-                while((bytesRead = errorStream.read(buf)) != -1) {
+                while((bytesRead = errStream.read(buf)) != -1) {
                     bout.write(buf, 0, bytesRead);
                 }
 
@@ -263,6 +266,22 @@ public class HttpLrs {
             e.printStackTrace();
             response.setException(e);
         }finally {
+            if(errStream != null) {
+                try { errStream.close(); }
+                catch(IOException e) {
+                    e.printStackTrace();
+                }
+                errStream = null;
+            }
+
+            if(out != null) {
+                try { out.close(); }
+                catch(IOException e) {
+                    e.printStackTrace();
+                }
+                out = null;
+            }
+
             if(connection != null) {
                 connection.disconnect();
             }

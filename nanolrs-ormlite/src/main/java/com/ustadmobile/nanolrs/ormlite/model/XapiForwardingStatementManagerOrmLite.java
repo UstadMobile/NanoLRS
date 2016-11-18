@@ -59,7 +59,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
 
     private QueryBuilder<XapiForwardingStatementEntity, String> getUnsentStatementsQueryBuilder(Object dbContext, Dao<XapiForwardingStatementEntity, String> dao) throws SQLException {
         QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = dao.queryBuilder();
-        queryBuilder.where().le(XapiForwardingStatementEntity.FIELD_NAME_STATUS, 2);
+        queryBuilder.where().lt(XapiForwardingStatementEntity.FIELD_NAME_STATUS, XapiForwardingStatementProxy.STATUS_SENT);
         return queryBuilder;
     }
 
