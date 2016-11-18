@@ -229,10 +229,11 @@ public class HttpLrs {
             URL url = new URL(destURL);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("PUT");
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
 
             byte[] payload = stmt.toString().getBytes();
             connection.setFixedLengthStreamingMode(payload.length);
-            connection.setDoOutput(true);
             setXapiHeaders(connection, httpUsername, httpPassword);
 
             //connection.setRequestProperty("X-Experience-API-Version", "1.0.1");
