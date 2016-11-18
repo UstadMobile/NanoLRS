@@ -68,7 +68,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
             obj.setId(UUID.randomUUID().toString());
             dao.create(obj);
         }catch(SQLException e) {
-
+            e.printStackTrace();
         }
         return obj;
     }
@@ -79,7 +79,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
             dao.createOrUpdate((XapiStatementEntity)stmt);
             Logger.getLogger(getClass().getName()).log(Level.INFO, "persisted stmt");
         }catch(SQLException e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -120,6 +120,18 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
                 if(whereHasClauses)
                     where.and();
                 where.eq(XapiStatementEntity.COLNAME_REGISTRATION, registration);
+            }
+
+            if(since >= 0) {
+                if(whereHasClauses)
+                    where.and();
+                where.gt(XapiStatementEntity.COLNAME_TIMESTAMP, since);
+            }
+
+            if(until >= 0) {
+                if(whereHasClauses)
+                    where.and();
+                where.le(XapiStatementEntity.COLNAME_TIMESTAMP, until);
             }
 
             return dao.query(queryBuilder.prepare());

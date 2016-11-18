@@ -22,6 +22,8 @@ public class XapiStatementEntity implements XapiStatementProxy {
 
     public static final String COLNAME_REGISTRATION = "contextRegistration";
 
+    public static final String COLNAME_TIMESTAMP = "timestamp";
+
     @DatabaseField(id =  true)
     private String id;
 
