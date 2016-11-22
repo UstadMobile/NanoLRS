@@ -114,25 +114,35 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
                 if(whereHasClauses)
                     where.and();
                 where.eq(XapiStatementEntity.COLNAME_ACTIVITY, activity);
+                whereHasClauses = true;
             }
 
             if(registration != null) {
                 if(whereHasClauses)
                     where.and();
                 where.eq(XapiStatementEntity.COLNAME_REGISTRATION, registration);
+                whereHasClauses = true;
             }
 
             if(since >= 0) {
                 if(whereHasClauses)
                     where.and();
                 where.gt(XapiStatementEntity.COLNAME_TIMESTAMP, since);
+                whereHasClauses = true;
             }
 
             if(until >= 0) {
                 if(whereHasClauses)
                     where.and();
                 where.le(XapiStatementEntity.COLNAME_TIMESTAMP, until);
+                whereHasClauses = true;
             }
+
+            if(limit > 0){
+                queryBuilder.limit(Long.valueOf(limit));
+            }
+
+            queryBuilder.orderBy(XapiStatementEntity.COLNAME_TIMESTAMP, false);
 
             return dao.query(queryBuilder.prepare());
         }catch(SQLException e) {
