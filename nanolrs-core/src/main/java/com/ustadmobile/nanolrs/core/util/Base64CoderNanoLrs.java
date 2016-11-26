@@ -28,7 +28,7 @@ package com.ustadmobile.nanolrs.core.util;
  * @author Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland,
  * www.source-code.biz
  */
-public class Base64Coder {
+public class Base64CoderNanoLrs {
 
     // The line separator string of the operating system.
     private static final String systemLineSeparator = System.getProperty("line.separator");
@@ -293,7 +293,7 @@ public class Base64Coder {
     }
 
     // Dummy constructor.
-    private Base64Coder() {
+    private Base64CoderNanoLrs() {
     }
 
 } // end class Base64Coder

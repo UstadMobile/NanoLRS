@@ -1,7 +1,6 @@
 package com.ustadmobile.nanolrs.core.http;
 
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementProxy;
-import com.ustadmobile.nanolrs.core.util.Base64Coder;
+import com.ustadmobile.nanolrs.core.util.Base64CoderNanoLrs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,8 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -204,7 +201,7 @@ public class HttpLrs {
 
     private void setXapiHeaders(HttpURLConnection connection, String httpUsername, String httpPassword) throws IOException {
         connection.setRequestProperty("X-Experience-API-Version", "1.0.1");
-        connection.setRequestProperty("Authorization", "Basic " + Base64Coder.encodeString(
+        connection.setRequestProperty("Authorization", "Basic " + Base64CoderNanoLrs.encodeString(
                 httpUsername + ":" + httpPassword));
     }
 
