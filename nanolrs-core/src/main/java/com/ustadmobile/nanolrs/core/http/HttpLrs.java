@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.core.http;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementProxy;
 import com.ustadmobile.nanolrs.core.util.Base64Coder;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -215,11 +216,11 @@ public class HttpLrs {
         String destURL = endpoint;
         LrsResponse response = new LrsResponse();
         try {
-            if(!destURL.endsWith("/")) {
+            if (!destURL.endsWith("/")) {
                 destURL += "/";
             }
 
-            if(!stmt.has("id")) {
+            if (!stmt.has("id")) {
                 stmt.put("id", UUID.randomUUID().toString());
             }
 
@@ -248,22 +249,24 @@ public class HttpLrs {
 
             int statusCode = connection.getResponseCode();
             response.setStatus(statusCode);
-            if(statusCode >= 400) {
-                errStream= connection.getErrorStream();
+            if (statusCode >= 400) {
+                errStream = connection.getErrorStream();
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 byte[] buf = new byte[1024];
                 int bytesRead = 0;
 
-                while((bytesRead = errStream.read(buf)) != -1) {
+                while ((bytesRead = errStream.read(buf)) != -1) {
                     bout.write(buf, 0, bytesRead);
                 }
 
                 response.setServerResponse(bout.toByteArray());
             }
 
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             response.setException(e);
+        }catch(JSONException e2) {
+            throw new IllegalArgumentException("Invalid JSON", e2);
         }finally {
             if(errStream != null) {
                 try { errStream.close(); }

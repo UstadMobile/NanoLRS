@@ -52,9 +52,15 @@ public class XapiActivityEndpoint {
     }
 
     public static XapiActivityProxy createOrUpdate(Object dbContext, String activityId) {
-        JSONObject activityObj = new JSONObject();
-        activityObj.put("id", activityId);
-        return createOrUpdate(dbContext, activityObj);
+        try {
+            JSONObject activityObj = new JSONObject();
+            activityObj.put("id", activityId);
+            return createOrUpdate(dbContext, activityObj);
+        }catch(JSONException e) {
+            //this should never happen- setting one string property
+            throw new IllegalArgumentException(e);
+        }
+
     }
 
 

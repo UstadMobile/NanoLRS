@@ -1,5 +1,6 @@
 package com.ustadmobile.nanolrs.core.util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
@@ -17,21 +18,26 @@ public class JsonUtil {
      * @param dest
      */
     public static void mergeJson(JSONObject source, JSONObject dest) {
-        Iterator<String> keys = source.keys();
-        Object destProp;
-        Object srcProp;
-        String key;
-        while(keys.hasNext()) {
-            key = keys.next();
-            srcProp = source.get(key);
-            destProp = dest.has(key) ? dest.get(key) : null;
+        try {
+            Iterator<String> keys = source.keys();
+            Object destProp;
+            Object srcProp;
+            String key;
+            while(keys.hasNext()) {
+                key = keys.next();
+                srcProp = source.get(key);
+                destProp = dest.has(key) ? dest.get(key) : null;
 
-            if(destProp instanceof JSONObject && srcProp instanceof JSONObject) {
-                mergeJson((JSONObject)srcProp, (JSONObject)destProp);
-            }else {
-                dest.put(key, source.get(key));
+                if(destProp instanceof JSONObject && srcProp instanceof JSONObject) {
+                    mergeJson((JSONObject)srcProp, (JSONObject)destProp);
+                }else {
+                    dest.put(key, source.get(key));
+                }
             }
+        }catch(JSONException e) {
+            throw new IllegalArgumentException(e);
         }
+
     }
 
 }

@@ -88,17 +88,21 @@ public class XapiStateEndpoint {
     }
 
     public static XapiStateProxy getState(Object dbContext, String activityId, String agentJson, String registration, String stateId) {
-        JSONObject agentObject = new JSONObject(agentJson);
-        JSONObject agentAccount = agentObject.optJSONObject("account");
+        try {
+            JSONObject agentObject = new JSONObject(agentJson);
+            JSONObject agentAccount = agentObject.optJSONObject("account");
 
-        XapiStateManager manager = PersistenceManager.getInstance().getStateManager();
-        XapiStateProxy stateProxy = manager.findByActivityAndAgent(dbContext, activityId,
-            agentObject.optString("mbox", null),
-                agentAccount != null ? agentAccount.optString("name", null) : null,
-                agentAccount != null? agentAccount.optString("homePage", null) : null,
-                registration, stateId);
+            XapiStateManager manager = PersistenceManager.getInstance().getStateManager();
+            XapiStateProxy stateProxy = manager.findByActivityAndAgent(dbContext, activityId,
+                    agentObject.optString("mbox", null),
+                    agentAccount != null ? agentAccount.optString("name", null) : null,
+                    agentAccount != null? agentAccount.optString("homePage", null) : null,
+                    registration, stateId);
 
-        return stateProxy;
+            return stateProxy;
+        }catch(JSONException e) {
+            throw new IllegalArgumentException("Invalid JSON to getState", e);
+        }
     }
 
 
