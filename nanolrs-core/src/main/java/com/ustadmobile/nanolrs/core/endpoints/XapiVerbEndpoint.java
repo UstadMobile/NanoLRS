@@ -5,6 +5,7 @@ import com.ustadmobile.nanolrs.core.model.XapiVerbProxy;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.JsonUtil;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -14,20 +15,25 @@ import org.json.JSONObject;
 public class XapiVerbEndpoint {
 
     public static XapiVerbProxy createOrUpdate(Object dbContext, JSONObject verbJSON) {
-        XapiVerbManager verbManager = PersistenceManager.getInstance().getVerbManager();
-        String verbID = verbJSON.getString("id");
-        XapiVerbProxy verb = verbManager.findById(dbContext, verbID);
-        if(verb== null) {
-            verb = verbManager.make(dbContext, verbID);
-            verb.setCanonicalData(verbJSON.toString());
-        }else {
-            JSONObject storedJSON = new JSONObject(verb.getCanonicalData());
-            JsonUtil.mergeJson(verbJSON, storedJSON);
-            verb.setCanonicalData(storedJSON.toString());
-        }
-        verbManager.persist(dbContext, verb);
+        try {
+            XapiVerbManager verbManager = PersistenceManager.getInstance().getVerbManager();
+            String verbID = verbJSON.getString("id");
+            XapiVerbProxy verb = verbManager.findById(dbContext, verbID);
+            if(verb== null) {
+                verb = verbManager.make(dbContext, verbID);
+                verb.setCanonicalData(verbJSON.toString());
+            }else {
+                JSONObject storedJSON = new JSONObject(verb.getCanonicalData());
+                JsonUtil.mergeJson(verbJSON, storedJSON);
+                verb.setCanonicalData(storedJSON.toString());
+            }
+            verbManager.persist(dbContext, verb);
 
-        return verb;
+            return verb;
+        }catch(JSONException e) {
+            throw new IllegalArgumentException("Invalid JSON", e);
+        }
+
     }
 
 }

@@ -5,6 +5,7 @@ import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.JsonUtil;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
@@ -24,26 +25,30 @@ public class XapiActivityEndpoint {
      */
     public static XapiActivityProxy createOrUpdate(Object dbContext, JSONObject object) {
         XapiActivityManager manager = PersistenceManager.getInstance().getActivityManager();
-        String activityId = object.getString("id");
-        XapiActivityProxy data = manager.findById(dbContext, activityId);
-        if(data == null) {
-            data = manager.makeNew(dbContext);
-            data.setActivityId(activityId);
+        try {
+            String activityId = object.getString("id");
+            XapiActivityProxy data = manager.findById(dbContext, activityId);
+            if(data == null) {
+                data = manager.makeNew(dbContext);
+                data.setActivityId(activityId);
+            }
+
+            String jsonDef = data.getCanonicalData();
+            JSONObject storedObject;
+            if(jsonDef == null) {
+                storedObject = new JSONObject();
+            }else {
+                storedObject = new JSONObject(jsonDef);
+            }
+
+            JsonUtil.mergeJson(object, storedObject);
+            data.setCanonicalData(storedObject.toString());
+            manager.createOrUpdate(dbContext, data);
+
+            return data;
+        }catch(JSONException e) {
+            throw new IllegalArgumentException("No id in activity JSON object", e);
         }
-
-        String jsonDef = data.getCanonicalData();
-        JSONObject storedObject;
-        if(jsonDef == null) {
-            storedObject = new JSONObject();
-        }else {
-            storedObject = new JSONObject(jsonDef);
-        }
-
-        JsonUtil.mergeJson(object, storedObject);
-        data.setCanonicalData(storedObject.toString());
-        manager.createOrUpdate(dbContext, data);
-
-        return data;
     }
 
     public static XapiActivityProxy createOrUpdate(Object dbContext, String activityId) {

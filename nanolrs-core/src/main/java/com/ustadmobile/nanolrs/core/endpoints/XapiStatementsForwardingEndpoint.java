@@ -6,6 +6,7 @@ import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementProxy;
 import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -89,22 +90,26 @@ public class XapiStatementsForwardingEndpoint {
         List<XapiForwardingStatementProxy> toForward = manager.getAllUnsentStatementsSync(dbContext);
         int statementsSent = 0;
         for(XapiForwardingStatementProxy stmt : toForward) {
-            HttpLrs.LrsResponse response = new HttpLrs(stmt.getDestinationURL()).putStatement(
-                new JSONObject(stmt.getStatement().getFullStatement()), stmt.getHttpAuthUser(),
-                    stmt.getHttpAuthPassword());
+            try {
+                HttpLrs.LrsResponse response = new HttpLrs(stmt.getDestinationURL()).putStatement(
+                        new JSONObject(stmt.getStatement().getFullStatement()), stmt.getHttpAuthUser(),
+                        stmt.getHttpAuthPassword());
+                if(response.getStatus() == 204) {
+                    stmt.setStatus(XapiForwardingStatementProxy.STATUS_SENT);
+                    statementsSent++;
+                    stmt.setHttpAuthUser(null);//no longer needed - can be removed from database
+                    stmt.setHttpAuthPassword(null);
+                    fireStatementSentEvent(stmt.getStatement());
+                }else{
+                    stmt.setStatus(XapiForwardingStatementProxy.STATUS_TRYAGAIN);
+                    stmt.setTryCount(stmt.getTryCount() + 1);
+                }
 
-            if(response.getStatus() == 204) {
-                stmt.setStatus(XapiForwardingStatementProxy.STATUS_SENT);
-                statementsSent++;
-                stmt.setHttpAuthUser(null);//no longer needed - can be removed from database
-                stmt.setHttpAuthPassword(null);
-                fireStatementSentEvent(stmt.getStatement());
-            }else{
-                stmt.setStatus(XapiForwardingStatementProxy.STATUS_TRYAGAIN);
-                stmt.setTryCount(stmt.getTryCount() + 1);
+                manager.persistSync(dbContext, stmt);
+            }catch(JSONException e) {
+                System.err.println("Invalid JSON in statement to forward");
+                e.printStackTrace(System.err);
             }
-
-            manager.persistSync(dbContext, stmt);
         }
 
         if(statementsSent > 0) {

@@ -17,8 +17,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import sun.misc.IOUtils;
-
 
 /**
  * Utility class to handle talking with a remote LRS
