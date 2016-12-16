@@ -232,9 +232,6 @@ public class HttpLrs {
             connection.setFixedLengthStreamingMode(payload.length);
             setXapiHeaders(connection, httpUsername, httpPassword);
 
-            //connection.setRequestProperty("X-Experience-API-Version", "1.0.1");
-            //connection.setRequestProperty("Authorization", "Basic " + Base64Coder.encodeString(
-            //        httpUsername + ":" + httpPassword));
             connection.setRequestProperty("Accept", "*/*");
             connection.setRequestProperty("Content-Type", "application/json");
 
