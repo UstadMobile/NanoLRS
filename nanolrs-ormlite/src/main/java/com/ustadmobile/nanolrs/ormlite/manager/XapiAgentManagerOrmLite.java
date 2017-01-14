@@ -1,10 +1,11 @@
-package com.ustadmobile.nanolrs.ormlite.model;
+package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
-import com.ustadmobile.nanolrs.core.model.XapiAgentManager;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.ormlite.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements Xapi
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<XapiAgentProxy> findAgentByParams(Object dbContext, String mbox, String accountName, String accountHomepage) {
+    public List<XapiAgent> findAgentByParams(Object dbContext, String mbox, String accountName, String accountHomepage) {
         if(mbox == null &&(accountName == null || accountHomepage == null)) {
             throw new IllegalArgumentException("findAgentByParams MUST have at least mbox or accountName and accountHomepage");
         }
@@ -32,7 +33,7 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements Xapi
             Dao<XapiAgentEntity, String> dao = persistenceManager.getDao(XapiAgentEntity.class, dbContext);
             QueryBuilder<XapiAgentEntity, String> queryBuilder = makeAgentQuery(dao, mbox, accountName, accountHomepage);
             List<XapiAgentEntity> results = dao.query(queryBuilder.prepare());
-            return (List<XapiAgentProxy>)(Object)results;
+            return (List<XapiAgent>)(Object)results;
         }catch(SQLException e) {
             System.err.println("Exception in findAgentByParams");
             e.printStackTrace();
@@ -63,12 +64,12 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements Xapi
     }
 
     @Override
-    public XapiAgentProxy makeNew(Object dbContext) {
+    public XapiAgent makeNew(Object dbContext) {
         return new XapiAgentEntity();
     }
 
     @Override
-    public void createOrUpdate(Object dbContext, XapiAgentProxy data) {
+    public void createOrUpdate(Object dbContext, XapiAgent data) {
         try {
             Dao<XapiAgentEntity, String> dao = persistenceManager.getDao(XapiAgentEntity.class, dbContext);
             dao.createOrUpdate((XapiAgentEntity) data);

@@ -1,21 +1,21 @@
 package com.ustadmobile.nanolrs.ormlite.persistence;
 
 import com.j256.ormlite.dao.Dao;
-import com.ustadmobile.nanolrs.core.model.XapiActivityManager;
-import com.ustadmobile.nanolrs.core.model.XapiAgentManager;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiStateManager;
-import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiUserManager;
-import com.ustadmobile.nanolrs.core.model.XapiVerbManager;
+import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
+import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
-import com.ustadmobile.nanolrs.ormlite.model.XapiActivityManagerOrmLite;
-import com.ustadmobile.nanolrs.ormlite.model.XapiAgentManagerOrmLite;
-import com.ustadmobile.nanolrs.ormlite.model.XapiForwardingStatementManagerOrmLite;
-import com.ustadmobile.nanolrs.ormlite.model.XapiStateManagerOrmLite;
-import com.ustadmobile.nanolrs.ormlite.model.XapiStatementManagerOrmLite;
-import com.ustadmobile.nanolrs.ormlite.model.XapiUserManagerOrmLite;
-import com.ustadmobile.nanolrs.ormlite.model.XapiVerbManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.XapiActivityManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.XapiAgentManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.XapiForwardingStatementManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.XapiStateManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.XapiStatementManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.XapiUserManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.XapiVerbManagerOrmLite;
 
 import java.sql.SQLException;
 

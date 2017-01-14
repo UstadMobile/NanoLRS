@@ -5,8 +5,8 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
-import com.ustadmobile.nanolrs.core.model.XapiUserManager;
-import com.ustadmobile.nanolrs.core.model.XapiUserProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import junit.framework.Assert;
@@ -33,10 +33,10 @@ public class TestXapiUser {
     public void testLifecycle() throws Exception {
         Context context = InstrumentationRegistry.getContext();
         XapiUserManager userManager = PersistenceManager.getInstance().getUserManager();
-        XapiUserProxy newUser = userManager.createSync(context, UUID.randomUUID().toString());
+        XapiUser newUser = userManager.createSync(context, UUID.randomUUID().toString());
         newUser.setUsername("testuser");
         userManager.persist(context, newUser);
-        List<XapiUserProxy> usernameList = userManager.findByUsername(context, "testuser");
+        List<XapiUser> usernameList = userManager.findByUsername(context, "testuser");
         Assert.assertEquals(usernameList.size(), 1);
         Assert.assertEquals(usernameList.get(0).getUsername(), "testuser");
         userManager.delete(context, newUser);

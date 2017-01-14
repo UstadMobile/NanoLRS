@@ -3,17 +3,17 @@ package com.ustadmobile.nanolrs.ormlite.model;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
-import com.ustadmobile.nanolrs.core.model.XapiDocumentProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStateProxy;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.model.XapiDocument;
+import com.ustadmobile.nanolrs.core.model.XapiState;
 
 /**
  * Created by mike on 10/2/16.
  */
 
 @DatabaseTable(tableName = "xapi_state")
-public class XapiStateEntity implements XapiStateProxy {
+public class XapiStateEntity implements XapiState {
 
     public static final String COLNAME_CONTENT = "content";
 
@@ -66,19 +66,19 @@ public class XapiStateEntity implements XapiStateProxy {
         this.id = id;
     }
 
-    public XapiActivityProxy getActivity() {
+    public XapiActivity getActivity() {
         return activity;
     }
 
-    public void setActivity(XapiActivityProxy activity) {
+    public void setActivity(XapiActivity activity) {
         this.activity = (XapiActivityEntity)activity;
     }
 
-    public XapiAgentProxy getAgent() {
+    public XapiAgent getAgent() {
         return agent;
     }
 
-    public void setAgent(XapiAgentProxy agent) {
+    public void setAgent(XapiAgent agent) {
         this.agent = (XapiAgentEntity)agent;
     }
 
@@ -107,12 +107,12 @@ public class XapiStateEntity implements XapiStateProxy {
     }
 
     @Override
-    public XapiDocumentProxy getDocument() {
+    public XapiDocument getDocument() {
         return document;
     }
 
     @Override
-    public void setDocument(XapiDocumentProxy document) {
+    public void setDocument(XapiDocument document) {
         this.document = (XapiDocumentEntity)document;
     }
 

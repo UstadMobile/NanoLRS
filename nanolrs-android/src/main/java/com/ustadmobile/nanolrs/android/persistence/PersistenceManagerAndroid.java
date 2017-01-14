@@ -3,8 +3,7 @@ package com.ustadmobile.nanolrs.android.persistence;
 import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
-import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
-import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;

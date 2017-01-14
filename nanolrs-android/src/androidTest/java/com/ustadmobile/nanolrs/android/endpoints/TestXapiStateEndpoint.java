@@ -5,7 +5,7 @@ import android.support.test.InstrumentationRegistry;
 
 import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStateEndpoint;
-import com.ustadmobile.nanolrs.core.model.XapiStateProxy;
+import com.ustadmobile.nanolrs.core.model.XapiState;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import org.json.JSONObject;
@@ -39,22 +39,22 @@ public class TestXapiStateEndpoint {
         String activityId = "http://www.ustadmobile.com/test-state-activity-id";
         String stateId = "unit_test_id";
 
-        XapiStateProxy state = XapiStateEndpoint.createOrUpdateState(context, "put", "application/json",
+        XapiState state = XapiStateEndpoint.createOrUpdateState(context, "put", "application/json",
                 activityId, actorObj.toString(), null, stateId, stateContent);
 
         Assert.assertNotNull(state);
 
 
         //dig it out again
-        XapiStateProxy retrieved = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
+        XapiState retrieved = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
                 context, activityId, mbox, null, null, null, stateId);
         Assert.assertNotNull(retrieved);
 
-        XapiStateProxy otherIdState = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
+        XapiState otherIdState = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
                 context, activityId, mbox, null, null, null, stateId+"_otherid");
         Assert.assertNull(otherIdState);
 
-        XapiStateProxy otherAgent = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
+        XapiState otherAgent = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
                 context, activityId, "mailto:someone@domain.com", null, null, null, stateId+"_otherid");
 
         Assert.assertNull(otherAgent);

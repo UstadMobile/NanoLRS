@@ -1,11 +1,9 @@
 package com.ustadmobile.nanolrs.http;
 
 import com.ustadmobile.nanolrs.core.endpoints.XapiStateEndpoint;
-import com.ustadmobile.nanolrs.core.model.XapiStateProxy;
+import com.ustadmobile.nanolrs.core.model.XapiState;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -33,7 +31,7 @@ public class StateUriResponder extends NanoLrsResponder implements RouterNanoHTT
         String stateId = getFirstParamVal(session, "stateId");
 
         Object dbContext = uriResource.initParameter(0, Object.class);
-        XapiStateProxy stateProxy = XapiStateEndpoint.getState(dbContext, activityId, agentJson, registration, stateId);
+        XapiState stateProxy = XapiStateEndpoint.getState(dbContext, activityId, agentJson, registration, stateId);
         if(stateProxy == null) {
             return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND,
                     "text/plain", "Not Found");

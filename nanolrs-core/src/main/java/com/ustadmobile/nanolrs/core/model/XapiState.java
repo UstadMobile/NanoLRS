@@ -4,20 +4,20 @@ package com.ustadmobile.nanolrs.core.model;
  * Created by mike on 10/2/16.
  */
 
-public interface XapiStateProxy {
+public interface XapiState {
 
     //Generic UUID
     String getId();
 
     void setId(String id);
 
-    XapiActivityProxy getActivity();
+    XapiActivity getActivity();
 
-    void setActivity(XapiActivityProxy activity);
+    void setActivity(XapiActivity activity);
 
-    XapiAgentProxy getAgent();
+    XapiAgent getAgent();
 
-    void setAgent(XapiAgentProxy agent);
+    void setAgent(XapiAgent agent);
 
     String getRegistration();
 
@@ -31,9 +31,9 @@ public interface XapiStateProxy {
 
     void setDateStored(long dateStored);
 
-    XapiDocumentProxy getDocument();
+    XapiDocument getDocument();
 
-    void setDocument(XapiDocumentProxy document);
+    void setDocument(XapiDocument document);
 
     byte[] getContent();
 

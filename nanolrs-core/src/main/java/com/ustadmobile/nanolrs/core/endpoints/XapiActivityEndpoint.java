@@ -1,14 +1,12 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
-import com.ustadmobile.nanolrs.core.model.XapiActivityManager;
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.JsonUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Iterator;
 
 /**
  * Created by mike on 10/2/16.
@@ -23,11 +21,11 @@ public class XapiActivityEndpoint {
      * @param dbContext
      * @return
      */
-    public static XapiActivityProxy createOrUpdate(Object dbContext, JSONObject object) {
+    public static XapiActivity createOrUpdate(Object dbContext, JSONObject object) {
         XapiActivityManager manager = PersistenceManager.getInstance().getActivityManager();
         try {
             String activityId = object.getString("id");
-            XapiActivityProxy data = manager.findById(dbContext, activityId);
+            XapiActivity data = manager.findById(dbContext, activityId);
             if(data == null) {
                 data = manager.makeNew(dbContext);
                 data.setActivityId(activityId);
@@ -51,7 +49,7 @@ public class XapiActivityEndpoint {
         }
     }
 
-    public static XapiActivityProxy createOrUpdate(Object dbContext, String activityId) {
+    public static XapiActivity createOrUpdate(Object dbContext, String activityId) {
         try {
             JSONObject activityObj = new JSONObject();
             activityObj.put("id", activityId);

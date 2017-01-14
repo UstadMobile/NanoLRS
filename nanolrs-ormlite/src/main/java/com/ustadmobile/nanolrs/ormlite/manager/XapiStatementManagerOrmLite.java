@@ -1,12 +1,13 @@
-package com.ustadmobile.nanolrs.ormlite.model;
+package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
+import com.ustadmobile.nanolrs.ormlite.model.XapiStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
@@ -27,7 +28,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
 
     @Override
     public void findByUuid(Object dbContext, int requestId, PersistenceReceiver receiver, String uuid) {
-        XapiStatementProxy stmt = findByUuidSync(dbContext, uuid);
+        XapiStatement stmt = findByUuidSync(dbContext, uuid);
         if(stmt != null) {
             receiver.onPersistenceSuccess(stmt, requestId);
         }else {
@@ -37,7 +38,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
     }
 
     @Override
-    public XapiStatementProxy findByUuidSync(Object dbContext, String uuid) {
+    public XapiStatement findByUuidSync(Object dbContext, String uuid) {
         XapiStatementEntity result = null;
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
@@ -51,7 +52,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
 
     @Override
     public void create(Object dbContext, int requestId, PersistenceReceiver receiver) {
-        XapiStatementProxy entity = createSync(dbContext);
+        XapiStatement entity = createSync(dbContext);
         if(entity != null) {
             receiver.onPersistenceSuccess(entity, requestId);
         }else {
@@ -60,7 +61,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
     }
 
     @Override
-    public XapiStatementProxy createSync(Object dbContext) {
+    public XapiStatement createSync(Object dbContext) {
         XapiStatementEntity obj = null;
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
@@ -73,7 +74,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
         return obj;
     }
 
-    public void persistSync(Object dbContext, XapiStatementProxy stmt) {
+    public void persistSync(Object dbContext, XapiStatement stmt) {
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
             dao.createOrUpdate((XapiStatementEntity)stmt);
@@ -84,7 +85,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
     }
 
     @Override
-    public List<? extends XapiStatementProxy> findByParams(Object dbContext, String statementid, String voidedStatemendid, XapiAgentProxy agent, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
+    public List<? extends XapiStatement> findByParams(Object dbContext, String statementid, String voidedStatemendid, XapiAgent agent, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
             QueryBuilder<XapiStatementEntity, String> queryBuilder = dao.queryBuilder();

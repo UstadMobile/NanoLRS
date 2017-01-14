@@ -9,9 +9,9 @@ import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEvent;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingListener;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEndpoint;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
+import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import org.apache.commons.io.IOUtils;
@@ -31,7 +31,7 @@ public class TestiXapiForwardingStatement implements XapiStatementsForwardingLis
 
     private boolean receivedUpdate = false;
 
-    private XapiStatementProxy watchedStmt;
+    private XapiStatement watchedStmt;
 
     private boolean watchedStmtQueueEvtReceived = false;
 
@@ -65,24 +65,24 @@ public class TestiXapiForwardingStatement implements XapiStatementsForwardingLis
         Assert.assertEquals("Unsent count increases by one after queueing stmt",
                 countUnsentBefore +1, manager.getUnsentStatementCount(context));
         Assert.assertEquals("Queued but not sent status is queued",
-                XapiForwardingStatementProxy.STATUS_QUEUED,
+                XapiForwardingStatement.STATUS_QUEUED,
                 manager.findStatusByXapiStatement(context, watchedStmt));
 
         Assert.assertTrue("Received event for adding statement to queue", this.receivedUpdate);
         Assert.assertTrue("Statement queued event received with statement", watchedStmtQueueEvtReceived);
         this.receivedUpdate = false;
 
-        XapiForwardingStatementProxy forwardingStmt = manager.findByUuidSync(context, generatedUUID);
+        XapiForwardingStatement forwardingStmt = manager.findByUuidSync(context, generatedUUID);
         Assert.assertNotNull(forwardingStmt);
 
-        List<XapiForwardingStatementProxy> sendQueue = manager.getAllUnsentStatementsSync(context);
+        List<XapiForwardingStatement> sendQueue = manager.getAllUnsentStatementsSync(context);
         Assert.assertTrue(sendQueue.size() > 0);
 
         XapiStatementsForwardingEndpoint.sendQueue(context);
         Assert.assertTrue("Received event for watched statement being sent", watchedStmtSentEvtReceived);
         Assert.assertTrue("Received event after queue sent", this.receivedUpdate);
         Assert.assertEquals("Queued but not sent status is queued",
-                XapiForwardingStatementProxy.STATUS_SENT,
+                XapiForwardingStatement.STATUS_SENT,
                 manager.findStatusByXapiStatement(context, watchedStmt));
 
 

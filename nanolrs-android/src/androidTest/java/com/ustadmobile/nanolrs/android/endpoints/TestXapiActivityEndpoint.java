@@ -5,8 +5,8 @@ import android.support.test.InstrumentationRegistry;
 
 import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
 import com.ustadmobile.nanolrs.core.endpoints.XapiActivityEndpoint;
-import com.ustadmobile.nanolrs.core.model.XapiActivityManager;
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import junit.framework.Assert;
@@ -39,12 +39,12 @@ public class TestXapiActivityEndpoint {
 
         String activityStr = writer.toString();
         JSONObject activityObj = new JSONObject(activityStr);
-        XapiActivityProxy activity = XapiActivityEndpoint.createOrUpdate(context, activityObj);
+        XapiActivity activity = XapiActivityEndpoint.createOrUpdate(context, activityObj);
         Assert.assertNotNull(activity);
 
         //now we should be able to find it by ID
         XapiActivityManager manager =PersistenceManager.getInstance().getActivityManager();
-        XapiActivityProxy found = manager.findById(context,
+        XapiActivity found = manager.findById(context,
                 activityObj.getString("id"));
         Assert.assertNotNull(found);
 

@@ -1,7 +1,7 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
-import com.ustadmobile.nanolrs.core.model.XapiVerbManager;
-import com.ustadmobile.nanolrs.core.model.XapiVerbProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
+import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.JsonUtil;
 
@@ -14,11 +14,11 @@ import org.json.JSONObject;
 
 public class XapiVerbEndpoint {
 
-    public static XapiVerbProxy createOrUpdate(Object dbContext, JSONObject verbJSON) {
+    public static XapiVerb createOrUpdate(Object dbContext, JSONObject verbJSON) {
         try {
             XapiVerbManager verbManager = PersistenceManager.getInstance().getVerbManager();
             String verbID = verbJSON.getString("id");
-            XapiVerbProxy verb = verbManager.findById(dbContext, verbID);
+            XapiVerb verb = verbManager.findById(dbContext, verbID);
             if(verb== null) {
                 verb = verbManager.make(dbContext, verbID);
                 verb.setCanonicalData(verbJSON.toString());

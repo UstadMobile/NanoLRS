@@ -3,16 +3,16 @@ package com.ustadmobile.nanolrs.ormlite.model;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
-import com.ustadmobile.nanolrs.core.model.XapiVerbProxy;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
+import com.ustadmobile.nanolrs.core.model.XapiVerb;
 
 /**
  * Created by mike on 9/6/16.
  */
 @DatabaseTable(tableName="xapi_statements")
-public class XapiStatementEntity implements XapiStatementProxy {
+public class XapiStatementEntity implements XapiStatement {
 
     public static final String COLNAME_ID = "id";
 
@@ -107,32 +107,32 @@ public class XapiStatementEntity implements XapiStatementProxy {
     }
 
     @Override
-    public XapiAgentProxy getAgent() {
+    public XapiAgent getAgent() {
         return agent;
     }
 
     @Override
-    public void setAgent(XapiAgentProxy agent) {
+    public void setAgent(XapiAgent agent) {
         this.agent = (XapiAgentEntity) agent;
     }
 
     @Override
-    public XapiAgentProxy getActor() {
+    public XapiAgent getActor() {
         return actor;
     }
 
     @Override
-    public void setActor(XapiAgentProxy actor) {
+    public void setActor(XapiAgent actor) {
         this.actor = (XapiAgentEntity)actor;
     }
 
     @Override
-    public XapiVerbProxy getVerb() {
+    public XapiVerb getVerb() {
         return verb;
     }
 
     @Override
-    public void setVerb(XapiVerbProxy verb) {
+    public void setVerb(XapiVerb verb) {
         this.verb = (XapiVerbEntity)verb;
     }
 
@@ -141,12 +141,12 @@ public class XapiStatementEntity implements XapiStatementProxy {
     }
 
     @Override
-    public XapiActivityProxy getActivity() {
+    public XapiActivity getActivity() {
         return activity;
     }
 
     @Override
-    public void setActivity(XapiActivityProxy activity) {
+    public void setActivity(XapiActivity activity) {
         this.activity = (XapiActivityEntity)activity;
     }
 
@@ -278,12 +278,12 @@ public class XapiStatementEntity implements XapiStatementProxy {
     }
 
     @Override
-    public XapiAgentProxy getAuthority() {
+    public XapiAgent getAuthority() {
         return authority;
     }
 
     @Override
-    public void setAuthority(XapiAgentProxy authority) {
+    public void setAuthority(XapiAgent authority) {
         this.authority = (XapiAgentEntity)authority;
     }
 

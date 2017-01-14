@@ -1,4 +1,4 @@
-package com.ustadmobile.nanolrs.ormlite.model;
+package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 

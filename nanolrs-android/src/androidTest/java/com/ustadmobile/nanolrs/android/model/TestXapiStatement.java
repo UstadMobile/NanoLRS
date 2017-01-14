@@ -6,7 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
-import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 import com.ustadmobile.nanolrs.ormlite.model.XapiStatementEntity;
@@ -97,7 +97,7 @@ public class TestXapiStatement {
         Assert.assertNotNull(generatedUUID);
 
         //now look it up
-        XapiStatementProxy retrieved = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
+        XapiStatement retrieved = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
         Assert.assertNotNull(generatedUUID);
 
         //make sure it has a timestamp
@@ -105,7 +105,7 @@ public class TestXapiStatement {
 
         //make sure that we can find it using a search by parameters
         long since = 0;
-        List<? extends XapiStatementProxy> queryResults = XapiStatementsEndpoint.getStatements(context,
+        List<? extends XapiStatement> queryResults = XapiStatementsEndpoint.getStatements(context,
                 null, null, null, "http://activitystrea.ms/schema/1.0/host",
                 "http://www.ustadmobile.com/activities/attended-class/CLASSID", null, false, false,
                 null, null, -1);

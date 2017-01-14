@@ -2,14 +2,14 @@ package com.ustadmobile.nanolrs.ormlite.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
-import com.ustadmobile.nanolrs.core.model.XapiUserProxy;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
 
 /**
  * Created by mike on 9/12/16.
  */
 @DatabaseTable(tableName="xapi_agents")
-public class XapiAgentEntity implements XapiAgentProxy {
+public class XapiAgentEntity implements XapiAgent {
 
     public static final String COLNAME_MBOX = "mbox";
 
@@ -125,12 +125,12 @@ public class XapiAgentEntity implements XapiAgentProxy {
     }
 
     @Override
-    public XapiUserProxy getUser() {
+    public XapiUser getUser() {
         return user;
     }
 
     @Override
-    public void setUser(XapiUserProxy user) {
+    public void setUser(XapiUser user) {
         this.user = (XapiUserEntity)user;
     }
 }

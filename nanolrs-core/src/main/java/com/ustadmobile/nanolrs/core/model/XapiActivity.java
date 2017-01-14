@@ -3,15 +3,15 @@ package com.ustadmobile.nanolrs.core.model;
 /**
  * Created by mike on 9/12/16.
  */
-public interface XapiActivityProxy {
+public interface XapiActivity {
 
     String getActivityId();
 
     void setActivityId(String id);
 
-    XapiAgentProxy getAuthority();
+    XapiAgent getAuthority();
 
-    void setAuthority(XapiAgentProxy authority);
+    void setAuthority(XapiAgent authority);
 
     String getCanonicalData();
 

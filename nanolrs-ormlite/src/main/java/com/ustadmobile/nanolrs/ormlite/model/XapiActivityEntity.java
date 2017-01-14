@@ -3,14 +3,14 @@ package com.ustadmobile.nanolrs.ormlite.model;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
 
 /**
  * Created by mike on 9/12/16.
  */
 @DatabaseTable(tableName="xapi_activity")
-public class XapiActivityEntity implements XapiActivityProxy{
+public class XapiActivityEntity implements XapiActivity {
 
     @DatabaseField(id = true)
     String activityId;
@@ -32,12 +32,12 @@ public class XapiActivityEntity implements XapiActivityProxy{
     }
 
     @Override
-    public XapiAgentProxy getAuthority() {
+    public XapiAgent getAuthority() {
         return authority;
     }
 
     @Override
-    public void setAuthority(XapiAgentProxy authority) {
+    public void setAuthority(XapiAgent authority) {
         this.authority = (XapiAgentEntity)authority;
     }
 

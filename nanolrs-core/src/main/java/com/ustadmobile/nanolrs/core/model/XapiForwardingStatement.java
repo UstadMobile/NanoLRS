@@ -3,7 +3,7 @@ package com.ustadmobile.nanolrs.core.model;
 /**
  * Created by mike on 9/13/16.
  */
-public interface XapiForwardingStatementProxy {
+public interface XapiForwardingStatement {
 
 
     public static final int STATUS_QUEUED = 1;
@@ -19,9 +19,9 @@ public interface XapiForwardingStatementProxy {
 
     void setUuid(String uuid);
 
-    XapiStatementProxy getStatement();
+    XapiStatement getStatement();
 
-    void setStatement(XapiStatementProxy statement);
+    void setStatement(XapiStatement statement);
 
     String getDestinationURL();
 

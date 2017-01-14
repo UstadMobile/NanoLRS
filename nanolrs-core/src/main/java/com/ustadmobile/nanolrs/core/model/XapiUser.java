@@ -4,7 +4,7 @@ package com.ustadmobile.nanolrs.core.model;
  * Created by mike on 9/27/16.
  */
 
-public interface XapiUserProxy {
+public interface XapiUser {
 
     public String getId();
 

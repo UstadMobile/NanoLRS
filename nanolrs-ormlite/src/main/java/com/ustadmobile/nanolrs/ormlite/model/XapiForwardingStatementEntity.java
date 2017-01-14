@@ -2,14 +2,14 @@ package com.ustadmobile.nanolrs.ormlite.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
+import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
 
 /**
  * Created by mike on 9/13/16.
  */
 @DatabaseTable(tableName = "xapi_forwarding_statements")
-public class XapiForwardingStatementEntity implements XapiForwardingStatementProxy{
+public class XapiForwardingStatementEntity implements XapiForwardingStatement {
 
     public static final String FIELD_NAME_STATUS = "status";
 
@@ -50,12 +50,12 @@ public class XapiForwardingStatementEntity implements XapiForwardingStatementPro
     }
 
     @Override
-    public void setStatement(XapiStatementProxy statement) {
+    public void setStatement(XapiStatement statement) {
         this.statement = (XapiStatementEntity)statement;
     }
 
     @Override
-    public XapiStatementProxy getStatement() {
+    public XapiStatement getStatement() {
         return statement;
     }
 

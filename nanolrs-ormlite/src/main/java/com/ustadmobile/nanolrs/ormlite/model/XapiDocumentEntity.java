@@ -3,14 +3,14 @@ package com.ustadmobile.nanolrs.ormlite.model;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.ustadmobile.nanolrs.core.model.XapiDocumentProxy;
+import com.ustadmobile.nanolrs.core.model.XapiDocument;
 
 /**
  * Created by mike on 10/2/16.
  */
 
 @DatabaseTable(tableName = "xapi_document")
-public class XapiDocumentEntity implements XapiDocumentProxy{
+public class XapiDocumentEntity implements XapiDocument {
 
     @DatabaseField(id  = true)
     private String id;

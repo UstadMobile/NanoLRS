@@ -5,8 +5,8 @@ import android.support.test.InstrumentationRegistry;
 
 import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
 import com.ustadmobile.nanolrs.core.endpoints.XapiAgentEndpoint;
-import com.ustadmobile.nanolrs.core.model.XapiAgentManager;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import org.json.JSONObject;
@@ -35,10 +35,10 @@ public class TestXapiAgentEndpoint {
         JSONObject mboxAgent = new JSONObject();
         mboxAgent.put("mbox", "mailto:mike@ustadmobile.com");
         XapiAgentManager manager = PersistenceManager.getInstance().getAgentManager();
-        XapiAgentProxy mboxAgentProxy= XapiAgentEndpoint.createOrUpdate(context, mboxAgent);
+        XapiAgent mboxAgentProxy= XapiAgentEndpoint.createOrUpdate(context, mboxAgent);
         Assert.assertNotNull(mboxAgentProxy);
 
-        List<XapiAgentProxy> agents = manager.findAgentByParams(context, "mailto:mike@ustadmobile.com", null, null);
+        List<XapiAgent> agents = manager.findAgentByParams(context, "mailto:mike@ustadmobile.com", null, null);
         Assert.assertTrue(agents.size() > 0);
 
         JSONObject accountAgent = new JSONObject();
@@ -46,7 +46,7 @@ public class TestXapiAgentEndpoint {
         accountObj.put("homePage", "http://ustadmobile.com");
         accountObj.put("name", "bob");
         accountAgent.put("account", accountObj);
-        XapiAgentProxy accountAgentProxy = XapiAgentEndpoint.createOrUpdate(context, accountAgent);
+        XapiAgent accountAgentProxy = XapiAgentEndpoint.createOrUpdate(context, accountAgent);
         agents = manager.findAgentByParams(context, null, "bob", "http://ustadmobile.com");
         Assert.assertTrue(agents.size() > 0);
 

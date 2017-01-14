@@ -8,7 +8,6 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
 import com.ustadmobile.nanolrs.ormlite.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.model.XapiDocumentEntity;

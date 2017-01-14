@@ -12,6 +12,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +42,13 @@ public class TestXapiHttpdStatements {
         httpd.start();
         httpd.mapXapiEndpoints("/xapi");
         xapiUrl = "http://localhost:" + TESTPORT + "/xapi/";
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        httpd.stop();
+        try { Thread.sleep(500); }
+        catch(InterruptedException e){}
     }
 
     @Test

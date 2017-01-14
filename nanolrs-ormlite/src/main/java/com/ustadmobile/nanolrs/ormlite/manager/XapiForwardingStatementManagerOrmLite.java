@@ -1,10 +1,11 @@
-package com.ustadmobile.nanolrs.ormlite.model;
+package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
+import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
+import com.ustadmobile.nanolrs.ormlite.model.XapiForwardingStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
     }
 
     @Override
-    public XapiForwardingStatementProxy createSync(Object dbContext, String uuid) {
+    public XapiForwardingStatement createSync(Object dbContext, String uuid) {
         XapiForwardingStatementEntity entity = null;
         try {
             Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
@@ -36,7 +37,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
     }
 
     @Override
-    public void persistSync(Object dbContext, XapiForwardingStatementProxy forwardingStatement) {
+    public void persistSync(Object dbContext, XapiForwardingStatement forwardingStatement) {
         try {
             Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
             dao.createOrUpdate((XapiForwardingStatementEntity) forwardingStatement);
@@ -46,7 +47,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
     }
 
     @Override
-    public XapiForwardingStatementProxy findByUuidSync(Object dbContext, String uuid) {
+    public XapiForwardingStatement findByUuidSync(Object dbContext, String uuid) {
         try {
             Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
             return dao.queryForId(uuid);
@@ -59,17 +60,17 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
 
     private QueryBuilder<XapiForwardingStatementEntity, String> getUnsentStatementsQueryBuilder(Object dbContext, Dao<XapiForwardingStatementEntity, String> dao) throws SQLException {
         QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = dao.queryBuilder();
-        queryBuilder.where().lt(XapiForwardingStatementEntity.FIELD_NAME_STATUS, XapiForwardingStatementProxy.STATUS_SENT);
+        queryBuilder.where().lt(XapiForwardingStatementEntity.FIELD_NAME_STATUS, XapiForwardingStatement.STATUS_SENT);
         return queryBuilder;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<XapiForwardingStatementProxy> getAllUnsentStatementsSync(Object dbContext) {
+    public List<XapiForwardingStatement> getAllUnsentStatementsSync(Object dbContext) {
         try {
             Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
             QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = getUnsentStatementsQueryBuilder(dbContext, dao);
-            return (List<XapiForwardingStatementProxy>)(Object)dao.query(queryBuilder.prepare());
+            return (List<XapiForwardingStatement>)(Object)dao.query(queryBuilder.prepare());
         }catch(SQLException e) {
 
         }
@@ -92,7 +93,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
     }
 
     @Override
-    public int findStatusByXapiStatement(Object dbContext, XapiStatementProxy statement) {
+    public int findStatusByXapiStatement(Object dbContext, XapiStatement statement) {
         try {
             Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
             QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = dao.queryBuilder();

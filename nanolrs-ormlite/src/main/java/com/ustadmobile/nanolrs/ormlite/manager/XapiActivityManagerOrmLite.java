@@ -1,8 +1,9 @@
-package com.ustadmobile.nanolrs.ormlite.model;
+package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
-import com.ustadmobile.nanolrs.core.model.XapiActivityManager;
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
+import com.ustadmobile.nanolrs.ormlite.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
@@ -18,8 +19,8 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
     }
 
     @Override
-    public XapiActivityProxy findById(Object dbContext, String id) {
-        XapiActivityProxy result = null;
+    public XapiActivity findById(Object dbContext, String id) {
+        XapiActivity result = null;
         try {
             Dao<XapiActivityEntity, String> dao = persistenceManager.getDao(XapiActivityEntity.class, dbContext);
             result = dao.queryForId(id);
@@ -32,12 +33,12 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
     }
 
     @Override
-    public XapiActivityProxy makeNew(Object dbContext) {
+    public XapiActivity makeNew(Object dbContext) {
         return new XapiActivityEntity();
     }
 
     @Override
-    public void createOrUpdate(Object dbContext, XapiActivityProxy data) {
+    public void createOrUpdate(Object dbContext, XapiActivity data) {
         try {
             Dao<XapiActivityEntity, String> dao = persistenceManager.getDao(XapiActivityEntity.class, dbContext);
             dao.createOrUpdate((XapiActivityEntity)data);

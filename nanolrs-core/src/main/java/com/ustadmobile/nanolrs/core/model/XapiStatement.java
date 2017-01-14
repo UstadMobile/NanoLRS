@@ -9,7 +9,7 @@ package com.ustadmobile.nanolrs.core.model;
  *
  * @author mike
  */
-public interface XapiStatementProxy {
+public interface XapiStatement {
     
     /**
      * Interesting info re. performance of UUID fields and SQLite here:
@@ -22,21 +22,21 @@ public interface XapiStatementProxy {
     
     void setId(String id);
 
-    XapiAgentProxy getAgent();
+    XapiAgent getAgent();
 
-    void setAgent(XapiAgentProxy agent);
+    void setAgent(XapiAgent agent);
 
-    XapiActivityProxy getActivity();
+    XapiActivity getActivity();
 
-    void setActivity(XapiActivityProxy activity);
+    void setActivity(XapiActivity activity);
 
-    XapiAgentProxy getActor();
+    XapiAgent getActor();
 
-    void setActor(XapiAgentProxy actor);
+    void setActor(XapiAgent actor);
 
-    XapiVerbProxy getVerb();
+    XapiVerb getVerb();
 
-    void setVerb(XapiVerbProxy verb);
+    void setVerb(XapiVerb verb);
 
     //TODO: Check usage of sub statement
 
@@ -88,9 +88,9 @@ public interface XapiStatementProxy {
 
     void setTimestamp(long timestamp);
 
-    XapiAgentProxy getAuthority();
+    XapiAgent getAuthority();
 
-    void setAuthority(XapiAgentProxy authority);
+    void setAuthority(XapiAgent authority);
 
     public String getContextRegistration();
 

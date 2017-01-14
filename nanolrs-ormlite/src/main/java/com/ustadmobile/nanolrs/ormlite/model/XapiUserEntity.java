@@ -2,13 +2,13 @@ package com.ustadmobile.nanolrs.ormlite.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.ustadmobile.nanolrs.core.model.XapiUserProxy;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
 
 /**
  * Created by mike on 9/27/16.
  */
 @DatabaseTable(tableName="xapi_users")
-public class XapiUserEntity implements XapiUserProxy {
+public class XapiUserEntity implements XapiUser {
 
     public static final String COLNAME_USERNAME = "username";
 

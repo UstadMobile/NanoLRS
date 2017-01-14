@@ -1,7 +1,7 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
-import com.ustadmobile.nanolrs.core.model.XapiAgentManager;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import org.json.JSONException;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class XapiAgentEndpoint {
 
-    public static XapiAgentProxy createOrUpdate(Object dbContext, JSONObject agentJSON) {
+    public static XapiAgent createOrUpdate(Object dbContext, JSONObject agentJSON) {
         try {
             String mbox = agentJSON.optString("mbox", null);
             String accountHomepage = null;
@@ -28,7 +28,7 @@ public class XapiAgentEndpoint {
             }
 
             XapiAgentManager manager = PersistenceManager.getInstance().getAgentManager();
-            List<XapiAgentProxy> matchingAgents = manager.findAgentByParams(
+            List<XapiAgent> matchingAgents = manager.findAgentByParams(
                     dbContext, mbox, accountName, accountHomepage);
 
             if(matchingAgents != null && matchingAgents.size() > 0) {
@@ -36,7 +36,7 @@ public class XapiAgentEndpoint {
             }
 
             //does not exist - needs to be created
-            XapiAgentProxy agent = manager.makeNew(dbContext);
+            XapiAgent agent = manager.makeNew(dbContext);
             agent.setId(UUID.randomUUID().toString());
             agent.setMbox(mbox);
             agent.setAccountHomepage(accountHomepage);
@@ -50,7 +50,7 @@ public class XapiAgentEndpoint {
 
     }
 
-    public static XapiAgentProxy makeFromJson(Object dbContext, JSONObject agentJson) {
+    public static XapiAgent makeFromJson(Object dbContext, JSONObject agentJson) {
         return null;
     }
 

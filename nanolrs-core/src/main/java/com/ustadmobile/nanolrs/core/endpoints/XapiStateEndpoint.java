@@ -1,9 +1,9 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStateManager;
-import com.ustadmobile.nanolrs.core.model.XapiStateProxy;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
+import com.ustadmobile.nanolrs.core.model.XapiState;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.JsonUtil;
 
@@ -30,10 +30,10 @@ public class XapiStateEndpoint {
      * @param stateContent
      * @return
      */
-    public static XapiStateProxy createOrUpdateState(Object dbContext, String method, String contentType, String activityId, String agentJson, String registration, String stateId, byte[] stateContent) {
+    public static XapiState createOrUpdateState(Object dbContext, String method, String contentType, String activityId, String agentJson, String registration, String stateId, byte[] stateContent) {
         try {
             JSONObject agentJsonObj = new JSONObject(agentJson);
-            XapiAgentProxy agent = XapiAgentEndpoint.createOrUpdate(dbContext, agentJsonObj);
+            XapiAgent agent = XapiAgentEndpoint.createOrUpdate(dbContext, agentJsonObj);
             JSONObject activityObj = new JSONObject();
             activityObj.put("id", activityId);
             XapiStateManager manager = PersistenceManager.getInstance().getStateManager();
@@ -46,13 +46,13 @@ public class XapiStateEndpoint {
                 agentAccountHopmepage = agentJsonObj.getJSONObject("account").getString("homePage");
             }
 
-            XapiStateProxy state = manager.findByActivityAndAgent(dbContext, activityId,
+            XapiState state = manager.findByActivityAndAgent(dbContext, activityId,
                     agentMbox, agentAccountName, agentAccountHopmepage, registration, stateId);
 
             if(state == null) {
                 state = manager.makeNew(dbContext);
                 state.setId(UUID.randomUUID().toString());
-                XapiActivityProxy activity = XapiActivityEndpoint.createOrUpdate(dbContext, activityId);
+                XapiActivity activity = XapiActivityEndpoint.createOrUpdate(dbContext, activityId);
                 state.setActivity(activity);
                 state.setAgent(agent);
                 state.setStateId(stateId);
@@ -87,13 +87,13 @@ public class XapiStateEndpoint {
         }
     }
 
-    public static XapiStateProxy getState(Object dbContext, String activityId, String agentJson, String registration, String stateId) {
+    public static XapiState getState(Object dbContext, String activityId, String agentJson, String registration, String stateId) {
         try {
             JSONObject agentObject = new JSONObject(agentJson);
             JSONObject agentAccount = agentObject.optJSONObject("account");
 
             XapiStateManager manager = PersistenceManager.getInstance().getStateManager();
-            XapiStateProxy stateProxy = manager.findByActivityAndAgent(dbContext, activityId,
+            XapiState stateProxy = manager.findByActivityAndAgent(dbContext, activityId,
                     agentObject.optString("mbox", null),
                     agentAccount != null ? agentAccount.optString("name", null) : null,
                     agentAccount != null? agentAccount.optString("homePage", null) : null,

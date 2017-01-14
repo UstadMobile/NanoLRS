@@ -1,6 +1,6 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
-import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
 
 /**
  * Event describing a change in the status of the Xapi Statements Queue
@@ -13,7 +13,7 @@ public class XapiStatementsForwardingEvent {
 
     private int statementsRemaining;
 
-    private XapiStatementProxy statement;
+    private XapiStatement statement;
 
     /**
      * Constructor: include the number of statements currently remaining
@@ -24,11 +24,11 @@ public class XapiStatementsForwardingEvent {
         this.statementsRemaining = statementsRemaining;
     }
 
-    public XapiStatementsForwardingEvent(XapiStatementProxy statement) {
+    public XapiStatementsForwardingEvent(XapiStatement statement) {
         this.statement = statement;
     }
 
-    public XapiStatementProxy getStatement() {
+    public XapiStatement getStatement() {
         return statement;
     }
 

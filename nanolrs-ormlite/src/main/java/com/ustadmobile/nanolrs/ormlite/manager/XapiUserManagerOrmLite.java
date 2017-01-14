@@ -1,10 +1,10 @@
-package com.ustadmobile.nanolrs.ormlite.model;
+package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.ustadmobile.nanolrs.core.model.XapiUserManager;
-import com.ustadmobile.nanolrs.core.model.XapiUserProxy;
-import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.ormlite.model.XapiUserEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
@@ -23,14 +23,14 @@ public class XapiUserManagerOrmLite implements XapiUserManager {
     }
 
     @Override
-    public XapiUserProxy createSync(Object dbContext, String id) {
+    public XapiUser createSync(Object dbContext, String id) {
         XapiUserEntity created = new XapiUserEntity();
         created.setId(id);
         return created;
     }
 
     @Override
-    public void persist(Object dbContext, XapiUserProxy user) {
+    public void persist(Object dbContext, XapiUser user) {
         try {
             Dao<XapiUserEntity, String> dao = persistenceManager.getDao(XapiUserEntity.class, dbContext);
             dao.createOrUpdate((XapiUserEntity)user);
@@ -43,7 +43,7 @@ public class XapiUserManagerOrmLite implements XapiUserManager {
 
 
     @Override
-    public XapiUserProxy findById(Object dbContext, String id) {
+    public XapiUser findById(Object dbContext, String id) {
         try {
             Dao<XapiUserEntity, String> dao = persistenceManager.getDao(XapiUserEntity.class, dbContext);
             return dao.queryForId(id);
@@ -57,12 +57,12 @@ public class XapiUserManagerOrmLite implements XapiUserManager {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<XapiUserProxy> findByUsername(Object dbContext, String username) {
+    public List<XapiUser> findByUsername(Object dbContext, String username) {
         try {
             Dao<XapiUserEntity, String> dao = persistenceManager.getDao(XapiUserEntity.class, dbContext);
             QueryBuilder<XapiUserEntity, String> queryBuilder = dao.queryBuilder();
             queryBuilder.where().eq(XapiUserEntity.COLNAME_USERNAME, username);
-            return (List<XapiUserProxy>)(Object)dao.query(queryBuilder.prepare());
+            return (List<XapiUser>)(Object)dao.query(queryBuilder.prepare());
         }catch(Exception e) {
             System.err.println("Exception findByUsername");
             e.printStackTrace();
@@ -72,7 +72,7 @@ public class XapiUserManagerOrmLite implements XapiUserManager {
     }
 
     @Override
-    public void delete(Object dbContext, XapiUserProxy data) {
+    public void delete(Object dbContext, XapiUser data) {
         try {
             Dao<XapiUserEntity, String> dao = persistenceManager.getDao(XapiUserEntity.class, dbContext);
             dao.delete((XapiUserEntity)data);

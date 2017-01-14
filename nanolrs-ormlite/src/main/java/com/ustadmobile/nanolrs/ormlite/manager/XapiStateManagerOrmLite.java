@@ -1,16 +1,14 @@
-package com.ustadmobile.nanolrs.ormlite.model;
+package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
-import com.ustadmobile.nanolrs.core.endpoints.XapiActivityEndpoint;
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStateManager;
-import com.ustadmobile.nanolrs.core.model.XapiStateProxy;
+import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
+import com.ustadmobile.nanolrs.core.model.XapiState;
+import com.ustadmobile.nanolrs.ormlite.model.XapiActivityEntity;
+import com.ustadmobile.nanolrs.ormlite.model.XapiAgentEntity;
+import com.ustadmobile.nanolrs.ormlite.model.XapiStateEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
-
-import org.json.JSONObject;
 
 import java.sql.SQLException;
 
@@ -25,12 +23,12 @@ public class XapiStateManagerOrmLite extends BaseManagerOrmLite implements XapiS
     }
 
     @Override
-    public XapiStateProxy makeNew(Object dbContext) {
+    public XapiState makeNew(Object dbContext) {
         return new XapiStateEntity();
     }
 
     @Override
-    public void persist(Object dbContext, XapiStateProxy data) {
+    public void persist(Object dbContext, XapiState data) {
         try {
             persistenceManager.getDao(XapiStateEntity.class, dbContext).createOrUpdate((XapiStateEntity)data);
         }catch(SQLException e) {
@@ -67,7 +65,7 @@ public class XapiStateManagerOrmLite extends BaseManagerOrmLite implements XapiS
     */
 
     @Override
-    public XapiStateProxy findByActivityAndAgent(Object dbContext, String activityId, String agentMbox, String agentAccountName, String agentAccountHomepage, String registrationUuid, String stateId) {
+    public XapiState findByActivityAndAgent(Object dbContext, String activityId, String agentMbox, String agentAccountName, String agentAccountHomepage, String registrationUuid, String stateId) {
         try {
             Dao<XapiStateEntity, String> dao = persistenceManager.getDao(XapiStateEntity.class, dbContext);
             QueryBuilder<XapiStateEntity, String> query = dao.queryBuilder();

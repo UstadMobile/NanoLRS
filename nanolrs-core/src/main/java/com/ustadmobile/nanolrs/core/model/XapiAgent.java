@@ -3,15 +3,15 @@ package com.ustadmobile.nanolrs.core.model;
 /**
  * Created by mike on 9/8/16.
  */
-public interface XapiAgentProxy {
+public interface XapiAgent {
 
     String getId();
 
     void setId(String id);
 
-    XapiUserProxy getUser();
+    XapiUser getUser();
 
-    void setUser(XapiUserProxy user);
+    void setUser(XapiUser user);
 
     String getName();
 

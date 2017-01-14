@@ -1,18 +1,16 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
-import com.ustadmobile.nanolrs.core.model.XapiActivityProxy;
-import com.ustadmobile.nanolrs.core.model.XapiAgentProxy;
-import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiStatementProxy;
-import com.ustadmobile.nanolrs.core.model.XapiVerbProxy;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
+import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
-import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 import com.ustadmobile.nanolrs.core.util.ParseUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -69,7 +67,7 @@ public class XapiStatementsEndpoint {
 
     public static String putStatement(JSONObject stmt, Object dbContext) {
         try {
-            XapiStatementProxy stmtProxy =PersistenceManager.getInstance().getStatementManager().createSync(dbContext);
+            XapiStatement stmtProxy =PersistenceManager.getInstance().getStatementManager().createSync(dbContext);
             if(stmt.has("id")) {
                 stmtProxy.setId(stmt.getString("id"));
             }else {
@@ -87,11 +85,11 @@ public class XapiStatementsEndpoint {
             }
 
             //check verb
-            XapiVerbProxy verb = XapiVerbEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("verb"));
+            XapiVerb verb = XapiVerbEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("verb"));
             stmtProxy.setVerb(verb);
 
             //Check activity
-            XapiActivityProxy activity = XapiActivityEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("object"));
+            XapiActivity activity = XapiActivityEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("object"));
             stmtProxy.setActivity(activity);
 
             //check registration
@@ -127,9 +125,9 @@ public class XapiStatementsEndpoint {
      * @param limit
      * @return
      */
-    public static List<? extends XapiStatementProxy> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
+    public static List<? extends XapiStatement> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
         try {
-            XapiAgentProxy agent = agentJSON != null ? XapiAgentEndpoint.createOrUpdate(dbContext, new JSONObject(agentJSON)) : null;
+            XapiAgent agent = agentJSON != null ? XapiAgentEndpoint.createOrUpdate(dbContext, new JSONObject(agentJSON)) : null;
             XapiStatementManager manager = PersistenceManager.getInstance().getStatementManager();
 
             return manager.findByParams(dbContext, statementid, voidedStatemendid, agent, verb, activity, registration, relatedActivities, relatedAgents, since, until, limit);
@@ -139,7 +137,7 @@ public class XapiStatementsEndpoint {
 
     }
 
-    public static List<? extends XapiStatementProxy> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, String since, String until, int limit) {
+    public static List<? extends XapiStatement> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, String since, String until, int limit) {
         long sinceLong = -1, untilLong = -1;
         if(since != null) {
             sinceLong = ParseUtil.parse8601Timestamp(since).getTimeInMillis();

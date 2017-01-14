@@ -5,13 +5,13 @@
  */
 package com.ustadmobile.nanolrs.core.persistence;
 
-import com.ustadmobile.nanolrs.core.model.XapiActivityManager;
-import com.ustadmobile.nanolrs.core.model.XapiAgentManager;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiStateManager;
-import com.ustadmobile.nanolrs.core.model.XapiStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiUserManager;
-import com.ustadmobile.nanolrs.core.model.XapiVerbManager;
+import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
+import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 
 /**
  *
