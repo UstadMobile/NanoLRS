@@ -29,9 +29,9 @@ public interface XapiAgent {
 
     void setOpenId(String openId);
 
-    String getoAuthIdentifier();
+    String getOauthIdentifier();
 
-    void setoAuthIdentifier(String oAuthIdentifier);
+    void setOauthIdentifier(String oAuthIdentifier);
 
     String getAccountHomepage();
 

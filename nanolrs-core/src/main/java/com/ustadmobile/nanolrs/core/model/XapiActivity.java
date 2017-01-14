@@ -13,6 +13,11 @@ public interface XapiActivity {
 
     void setAuthority(XapiAgent authority);
 
+    /**
+     * @nanolrs.datatype LONG_STRING
+     *
+     * @return
+     */
     String getCanonicalData();
 
     void setCanonicalData(String canonicalData);

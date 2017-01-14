@@ -8,14 +8,14 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.ustadmobile.nanolrs.ormlite.model.XapiActivityEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiAgentEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiDocumentEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiForwardingStatementEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiStateEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiStatementEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiUserEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiVerbEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiDocumentEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiForwardingStatementEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStateEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiUserEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
 
 import java.sql.SQLException;
 
@@ -30,7 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * Database Name to be used: nanolrs.db was used by previous versions.  From DATABASE_VERSION 11
      */
-    private static final String DATABASE_NAME="nanolrs2.db";
+    private static final String DATABASE_NAME="nanolrs3.db";
 
     private static final int DATABASE_VERSION = 12;
 

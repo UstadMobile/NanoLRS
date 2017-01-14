@@ -3,6 +3,7 @@ apply plugin: 'java'
 apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.7
+compileJava.dependsOn(":nanolrs-entitygen:runOrmLiteGeneration")
 
 dependencies {
     compile "com.j256.ormlite:ormlite-core:5.0"
@@ -14,7 +15,6 @@ task sourceJar(type: Jar) {
     classifier = "sources"
     from sourceSets.main.allJava
 }
-
 
 publishing {
     publications {

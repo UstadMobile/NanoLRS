@@ -5,9 +5,9 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
 import com.ustadmobile.nanolrs.core.model.XapiState;
-import com.ustadmobile.nanolrs.ormlite.model.XapiActivityEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiAgentEntity;
-import com.ustadmobile.nanolrs.ormlite.model.XapiStateEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStateEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
@@ -80,7 +80,7 @@ public class XapiStateManagerOrmLite extends BaseManagerOrmLite implements XapiS
             activity.setActivityId(activityId);
 
             where.eq(XapiStateEntity.COLNAME_ACTIVITY, activity);
-            where.eq(XapiStateEntity.COLNAME_STATEID, stateId);
+            where.eq(XapiStateEntity.COLNAME_STATE_ID, stateId);
             if(registrationUuid != null) {
                 where.eq(XapiStateEntity.COLNAME_REGISTRATION, registrationUuid);
             }else {

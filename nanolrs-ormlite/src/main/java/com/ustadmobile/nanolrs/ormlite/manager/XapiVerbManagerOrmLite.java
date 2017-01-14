@@ -3,7 +3,7 @@ package com.ustadmobile.nanolrs.ormlite.manager;
 import com.j256.ormlite.dao.Dao;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.XapiVerb;
-import com.ustadmobile.nanolrs.ormlite.model.XapiVerbEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;

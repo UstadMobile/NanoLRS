@@ -5,7 +5,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
-import com.ustadmobile.nanolrs.ormlite.model.XapiForwardingStatementEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiForwardingStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
@@ -60,7 +60,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
 
     private QueryBuilder<XapiForwardingStatementEntity, String> getUnsentStatementsQueryBuilder(Object dbContext, Dao<XapiForwardingStatementEntity, String> dao) throws SQLException {
         QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = dao.queryBuilder();
-        queryBuilder.where().lt(XapiForwardingStatementEntity.FIELD_NAME_STATUS, XapiForwardingStatement.STATUS_SENT);
+        queryBuilder.where().lt(XapiForwardingStatementEntity.COLNAME_STATUS, XapiForwardingStatement.STATUS_SENT);
         return queryBuilder;
     }
 
@@ -97,7 +97,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
         try {
             Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
             QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = dao.queryBuilder();
-            queryBuilder.where().eq(XapiForwardingStatementEntity.FIELD_NAME_STATEMENT, statement.getId());
+            queryBuilder.where().eq(XapiForwardingStatementEntity.COLNAME_STATEMENT, statement.getId());
             XapiForwardingStatementEntity entity = dao.queryForFirst(queryBuilder.prepare());
             if(entity != null) {
                 return entity.getStatus();

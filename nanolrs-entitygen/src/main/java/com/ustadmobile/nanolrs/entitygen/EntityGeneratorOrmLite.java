@@ -1,13 +1,12 @@
 package com.ustadmobile.nanolrs.entitygen;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaType;
-import org.jboss.forge.roaster.model.Property;
-import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.JavaDocTag;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -20,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,7 +30,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
 
     public static String[] PRIMARY_KEY_PROPERTY_NAMES = new String[]{"id", "uuid", "activityId"};
 
-    public void generate(File proxyInterfaceFile, File outDir) throws IOException{
+    public void generate(File proxyInterfaceFile, File outDir, String outPackage) throws IOException{
         String proxyInterfaceName = proxyInterfaceFile.getName().substring(0,
                 proxyInterfaceFile.getName().length()-".java".length());
         String baseName = proxyInterfaceName;
@@ -41,7 +41,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         JavaInterfaceSource proxyInterface = Roaster.parse(JavaInterfaceSource.class, proxyStr);
         Iterator<MethodSource<JavaInterfaceSource>> iterator = proxyInterface.getMethods().iterator();
         JavaClassSource ormLiteObj = Roaster.create(JavaClassSource.class);
-        ormLiteObj.setPackage("com.something").setName(ormLiteClassName);
+        ormLiteObj.setPackage(outPackage).setName(ormLiteClassName);
 
         String tableName = convertCamelCaseNameToUnderscored(
             Character.toLowerCase(baseName.charAt(0)) + baseName.substring(1));
@@ -52,12 +52,19 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         Map<String, Object> propertiesFound = new HashMap<>();
         while(iterator.hasNext()) {
             MethodSource<JavaInterfaceSource> method = iterator.next();
-            if(!method.getName().startsWith("get"))
+            String methodPrefix = null;
+            if(method.getName().startsWith("get"))
+                methodPrefix = "get";
+            else if(method.getName().startsWith("is"))
+                methodPrefix = "is";
+
+            if(methodPrefix == null)
                 continue;
+            int methodPrefixLength = methodPrefix.length();
 
 
-            String propertyName = Character.toLowerCase(method.getName().charAt(3)) +
-                method.getName().substring(4);
+            String propertyName = Character.toLowerCase(method.getName().charAt(methodPrefixLength)) +
+                method.getName().substring(methodPrefixLength+1);
 
 
             String dbFieldName = convertCamelCaseNameToUnderscored(propertyName);
@@ -72,7 +79,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             colNameField.setLiteralInitializer('\"' + dbFieldName + '\"');
 
             String propertyTypeName = method.getReturnType().getName();
-            PropertySource<JavaClassSource> property = ormLiteObj.addProperty(propertyTypeName, propertyName);
+            PropertySource<JavaClassSource> property = ormLiteObj.addProperty(propertyTypeName, propertyName).setMutable(false);
             FieldSource propertyField = property.getField();
             AnnotationSource databaseFieldAnnotation = propertyField.addAnnotation(DatabaseField.class);
             databaseFieldAnnotation.setLiteralValue("columnName", "COLNAME_"
@@ -82,11 +89,35 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
              * In case of handling a relationship field: The field must be the entity
              */
             if(!method.getReturnType().isPrimitive() && !propertyTypeName.equals("String")) {
-                String propertyEntityClassName = baseName + "Entity";
+                String propertyEntityClassName = propertyTypeName + "Entity";
                 propertyField.setType(propertyEntityClassName);
-                MethodSource mutatorMethod = property.getMutator() != null ? property.getMutator() : property.createMutator();
+                property.getField().setFinal(false);
+
+                MethodSource mutatorMethod;
+                if(property.getMutator() == null) {
+                    mutatorMethod = property.createMutator();
+                }else {
+                    mutatorMethod = property.getMutator();
+                }
+
                 mutatorMethod.setBody("this." + propertyName + " = (" + propertyEntityClassName +")" + propertyName + ";");
                 databaseFieldAnnotation.setLiteralValue("foreign", "true");
+                databaseFieldAnnotation.setLiteralValue("foreignAutoRefresh", "true");
+                ormLiteObj.addImport(method.getReturnType().getQualifiedName());
+            }else {
+                property.setMutable(true);
+            }
+
+            List<JavaDocTag> dataTypeJavaDocTags = method.getJavaDoc().getTags("@nanolrs.datatype");
+            if(dataTypeJavaDocTags != null && dataTypeJavaDocTags.size() > 0) {
+                String tagValue = dataTypeJavaDocTags.get(0).getValue();
+                ormLiteObj.addImport(DataType.class);
+
+                if(tagValue != null && tagValue.equals(DATA_TYPE_LONG_STRING)) {
+                    databaseFieldAnnotation.setLiteralValue("dataType", "DataType.LONG_STRING");
+                }else if(tagValue != null && tagValue.equals(DATA_TYPE_BYTE_ARRAY)) {
+                    databaseFieldAnnotation.setLiteralValue("dataType", "DataType.BYTE_ARRAY");
+                }
             }
 
             /**
@@ -105,8 +136,14 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
     public static void main(String[] args) throws Exception{
         File proxyInterfaceInDir = new File(args[0]);
         File outDir = new File(args[1]);
+
+        //TODO: Delete existing directory.
+        if(!outDir.exists()) {
+            outDir.mkdirs();
+        }
+
         EntityGeneratorOrmLite generator = new EntityGeneratorOrmLite();
-        generator.generateDir(proxyInterfaceInDir, outDir, ".java", "OrmLite.java");
+        generator.generateDir(proxyInterfaceInDir, outDir, "com.ustadmobile.nanolrs.ormlite.generated.model");
 
     }
 }

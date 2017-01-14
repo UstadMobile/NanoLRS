@@ -16,6 +16,11 @@ public interface XapiDocument {
 
     void setContentType(String contentType);
 
+    /**
+     * @nanolrs.datatype LONG_STRING
+     *
+     * @return
+     */
     String getContent();
 
     void setContent(String content);

@@ -102,6 +102,11 @@ public interface XapiStatement {
 
     void setVersion(String version);
 
+    /**
+     * @nanolrs.datatype LONG_STRING
+     *
+     * @return
+     */
     String getFullStatement();
 
     void setFullStatement(String fullStatement);

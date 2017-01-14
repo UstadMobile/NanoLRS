@@ -10,6 +10,13 @@ import java.io.IOException;
 
 public abstract class EntityGenerator {
 
+    /**
+     * Represents a TEXT field (as opposed to varchar) in the database
+     */
+    public static final String DATA_TYPE_LONG_STRING = "LONG_STRING";
+
+    public static final String DATA_TYPE_BYTE_ARRAY = "BYTE_ARRAY";
+
     public EntityGenerator() {
 
     }
@@ -18,15 +25,14 @@ public abstract class EntityGenerator {
      *
      * @param proxyInterfaceDir The directory containing proxy interface files
      * @param outDir
-     * @param proxyInterfaceSuffix
-     * @param file
+     * @param outPackage
      * @throws IOException
      */
-    public void generateDir(File proxyInterfaceDir, File outDir, final String proxyInterfaceSuffix, String outSuffix) throws IOException{
+    public void generateDir(File proxyInterfaceDir, File outDir, String outPackage) throws IOException{
         File[] proxyInterfaceFiles = proxyInterfaceDir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
-                return s.endsWith(proxyInterfaceSuffix);
+                return s.endsWith(".java");
             }
         });
 
@@ -34,9 +40,7 @@ public abstract class EntityGenerator {
         File outFile;
         for(File proxyInterfaceFile: proxyInterfaceFiles) {
             proxyFileName = proxyInterfaceFile.getName();
-            outFile = new File(outDir, proxyFileName.substring(0,
-                    proxyFileName.length()-proxyInterfaceSuffix.length()));
-            generate(proxyInterfaceFile, outDir);
+            generate(proxyInterfaceFile, outDir, outPackage);
         }
     }
 
@@ -52,6 +56,6 @@ public abstract class EntityGenerator {
         return undererScoredName;
     }
 
-    public abstract void generate(File proxyInterface, File outDir) throws IOException;
+    public abstract void generate(File proxyInterface, File outDir, String outPackage) throws IOException;
 
 }

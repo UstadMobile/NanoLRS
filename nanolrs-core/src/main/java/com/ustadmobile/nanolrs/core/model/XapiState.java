@@ -35,6 +35,10 @@ public interface XapiState {
 
     void setDocument(XapiDocument document);
 
+    /**
+     * @nanolrs.datatype BYTE_ARRAY
+     * @return
+     */
     byte[] getContent();
 
     void setContent(byte[] stateContent);

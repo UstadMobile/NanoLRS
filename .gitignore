@@ -45,3 +45,6 @@ captures/
 localsettings.gradle
 
 .nb-gradle/
+
+#Generated ORMLite Entities
+nanolrs-ormlite/src/main/java/com/ustadmobile/nanolrs/ormlite/generated

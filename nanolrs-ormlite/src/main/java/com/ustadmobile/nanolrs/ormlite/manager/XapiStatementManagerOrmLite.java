@@ -7,7 +7,7 @@ import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
-import com.ustadmobile.nanolrs.ormlite.model.XapiStatementEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
@@ -121,7 +121,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
             if(registration != null) {
                 if(whereHasClauses)
                     where.and();
-                where.eq(XapiStatementEntity.COLNAME_REGISTRATION, registration);
+                where.eq(XapiStatementEntity.COLNAME_CONTEXT_REGISTRATION, registration);
                 whereHasClauses = true;
             }
 
