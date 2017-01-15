@@ -5,16 +5,21 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 /**
- * Created by mike on 1/12/17.
+ *
  */
 
 public abstract class EntityGenerator {
+
+    public static String[] PRIMARY_KEY_PROPERTY_NAMES = new String[]{"id", "uuid", "activityId"};
 
     /**
      * Represents a TEXT field (as opposed to varchar) in the database
      */
     public static final String DATA_TYPE_LONG_STRING = "LONG_STRING";
 
+    /**
+     * Represents a byte array data field
+     */
     public static final String DATA_TYPE_BYTE_ARRAY = "BYTE_ARRAY";
 
     public EntityGenerator() {
@@ -22,6 +27,7 @@ public abstract class EntityGenerator {
     }
 
     /**
+     * Calls the generate method for all .java files in the given input directory
      *
      * @param proxyInterfaceDir The directory containing proxy interface files
      * @param outDir
@@ -36,14 +42,18 @@ public abstract class EntityGenerator {
             }
         });
 
-        String proxyFileName;
-        File outFile;
         for(File proxyInterfaceFile: proxyInterfaceFiles) {
-            proxyFileName = proxyInterfaceFile.getName();
             generate(proxyInterfaceFile, outDir, outPackage);
         }
     }
 
+    /**
+     * Converts a property name from e.g. from fullName to full_name
+     *
+     * @param propertyName Property Name e.g. propertyName
+     *
+     * @return Property named in lower case separated by underscores e.g. property_name
+     */
     public String convertCamelCaseNameToUnderscored(String propertyName) {
         String undererScoredName = "";
         for(int i = 0; i < propertyName.length(); i++) {

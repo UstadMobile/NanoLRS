@@ -15,6 +15,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,12 +24,33 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by mike on 1/12/17.
+ * Entity Generator to create Entity Classes for OrmLite.  For each entity it will:
+ *
+ * 1. Create a class with the \@DatabaseTable annotation with the table name set to the entity name
+ *   separated by _ (e.g. XapiStatement will be stored in a table called xapi_statement) in a class
+ *   with the entity name and the suffix "Entity" (e.g. XapiStatementEntity); which will be defined
+ *   as implementing the interface it is being generated from (e.g.
+ *   XapiStatementEntity implements XapiStatement ).
+ *
+ * 2. Create a final public static String constant for each property called COLNAME_PROPERTY_NAME
+ *    initialized to property_name
+ *
+ * 3. Create a field with the \@DatabaseField annotation for each property with columnName set to the
+ *    previously generated constant (useful for coding queries)
+ *
+ * 4. If the property is named one of values recognized as a primary key as per
+ *    EntityGenerator.PRIMARY_KEY_PROPERTY_NAMES then id=true will be added to the DatabaseField
+ *    annotation
+ *
+ * 5. If the property is a relationship to another entity : The field type will be the related
+ *    entity class (e.g. XapiStatementEntity) and the setter function will cast the parameter
+ *    e.g. setStatement(XapiStatement statement) { this.statement = (XapiStatementEntity)statement;}
+ *
  */
 
 public class EntityGeneratorOrmLite extends EntityGenerator {
 
-    public static String[] PRIMARY_KEY_PROPERTY_NAMES = new String[]{"id", "uuid", "activityId"};
+
 
     public void generate(File proxyInterfaceFile, File outDir, String outPackage) throws IOException{
         String proxyInterfaceName = proxyInterfaceFile.getName().substring(0,
@@ -36,6 +58,10 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         String baseName = proxyInterfaceName;
 
         String ormLiteClassName = baseName + "Entity";
+        File outFile = new File(outDir, ormLiteClassName + ".java");
+
+        if(outFile.lastModified() > proxyInterfaceFile.lastModified())
+            return;
 
         String proxyStr = FileUtils.readFileToString(proxyInterfaceFile, "UTF-8");
         JavaInterfaceSource proxyInterface = Roaster.parse(JavaInterfaceSource.class, proxyStr);
@@ -129,21 +155,54 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         }
 
 
-        File outFile = new File(outDir, ormLiteClassName + ".java");
+
         FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
     }
 
+    @Override
+    public void generateDir(File proxyInterfaceDir, File outDir, String outPackage) throws IOException {
+        super.generateDir(proxyInterfaceDir, outDir, outPackage);
+
+        File[] allEntities = outDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.endsWith("Entity.java");
+            }
+        });
+
+        //remove any entities that might have been deleted
+        for(File entityFile: allEntities) {
+            File proxyInterfaceFile = new File(proxyInterfaceDir, entityFile.getName().substring(0,
+                    entityFile.getName().length() - "Entity.java".length()) + ".java");
+            if(!proxyInterfaceFile.exists()) {
+                System.out.println("Deleting removed entity : Interface for " + entityFile.getName() + " does not exist at " + proxyInterfaceFile.getAbsolutePath());
+                entityFile.delete();
+            }
+        }
+
+    }
+
+    /**
+     * Usage: EntityGeneratorOrmLite &lt;input directory&gt; &lt;output directory&gt; &lt;output package name&gt;
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception{
         File proxyInterfaceInDir = new File(args[0]);
         File outDir = new File(args[1]);
 
-        //TODO: Delete existing directory.
-        if(!outDir.exists()) {
+        if(args.length < 3) {
+            System.err.println("Usage: EntityGeneratorOrmLite <input directory> <output directory> <output package name>");
+            System.exit(1);
+        }
+
+        if(!proxyInterfaceInDir.isDirectory()){
             outDir.mkdirs();
         }
 
         EntityGeneratorOrmLite generator = new EntityGeneratorOrmLite();
-        generator.generateDir(proxyInterfaceInDir, outDir, "com.ustadmobile.nanolrs.ormlite.generated.model");
+        generator.generateDir(proxyInterfaceInDir, outDir, args[2]);
 
     }
 }

@@ -14,5 +14,5 @@ targetCompatibility = "1.7"
 task runOrmLiteGeneration(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     main = "com.ustadmobile.nanolrs.entitygen.EntityGeneratorOrmLite"
-    args "../nanolrs-core/src/main/java/com/ustadmobile/nanolrs/core/model/", "../nanolrs-ormlite/src/main/java/com/ustadmobile/nanolrs/ormlite/generated/model"
+    args "../nanolrs-core/src/main/java/com/ustadmobile/nanolrs/core/model/", "../nanolrs-ormlite/src/main/java/com/ustadmobile/nanolrs/ormlite/generated/model", "com.ustadmobile.nanolrs.ormlite.generated.model"
 }

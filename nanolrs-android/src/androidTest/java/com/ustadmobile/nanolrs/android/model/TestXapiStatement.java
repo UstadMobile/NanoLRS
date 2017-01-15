@@ -9,7 +9,7 @@ import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
-import com.ustadmobile.nanolrs.ormlite.model.XapiStatementEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
 
 import junit.framework.Assert;
 
