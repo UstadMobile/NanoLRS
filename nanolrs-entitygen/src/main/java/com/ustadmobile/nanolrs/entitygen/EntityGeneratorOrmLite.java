@@ -52,11 +52,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
 
 
 
-    public void generate(File proxyInterfaceFile, File outDir, String outPackage) throws IOException{
-        String proxyInterfaceName = proxyInterfaceFile.getName().substring(0,
-                proxyInterfaceFile.getName().length()-".java".length());
-        String baseName = proxyInterfaceName;
-
+    public void generate(String baseName, File proxyInterfaceFile, File outDir, String outPackage) throws IOException{
         String ormLiteClassName = baseName + "Entity";
         File outFile = new File(outDir, ormLiteClassName + ".java");
 

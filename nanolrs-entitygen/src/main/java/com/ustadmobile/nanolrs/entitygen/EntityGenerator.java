@@ -7,7 +7,6 @@ import java.io.IOException;
 /**
  *
  */
-
 public abstract class EntityGenerator {
 
     public static String[] PRIMARY_KEY_PROPERTY_NAMES = new String[]{"id", "uuid", "activityId"};
@@ -43,7 +42,9 @@ public abstract class EntityGenerator {
         });
 
         for(File proxyInterfaceFile: proxyInterfaceFiles) {
-            generate(proxyInterfaceFile, outDir, outPackage);
+            String entityName = proxyInterfaceFile.getName().substring(0,
+                    proxyInterfaceFile.getName().length()-".java".length());
+            generate(entityName, proxyInterfaceFile, outDir, outPackage);
         }
     }
 
@@ -66,6 +67,16 @@ public abstract class EntityGenerator {
         return undererScoredName;
     }
 
-    public abstract void generate(File proxyInterface, File outDir, String outPackage) throws IOException;
+    /**
+     * Generate an implementation of this entity for the given interface
+     *
+     * @param entityName The name of the Entity e.g. XapiStatement
+     * @param proxyInterface Java source file containing the interface with getters/setters
+     * @param outDir output directory to save generated interface to
+     * @param outPackage package declaration to use for generated interface
+     *
+     * @throws IOException
+     */
+    public abstract void generate(String entityName, File proxyInterface, File outDir, String outPackage) throws IOException;
 
 }
