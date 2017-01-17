@@ -25,7 +25,7 @@ public class XapiUserManagerOrmLite implements XapiUserManager {
     @Override
     public XapiUser createSync(Object dbContext, String id) {
         XapiUserEntity created = new XapiUserEntity();
-        created.setId(id);
+        created.setUuid(id);
         return created;
     }
 

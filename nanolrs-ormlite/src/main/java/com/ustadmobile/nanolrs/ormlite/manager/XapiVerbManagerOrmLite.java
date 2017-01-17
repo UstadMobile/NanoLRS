@@ -19,9 +19,9 @@ public class XapiVerbManagerOrmLite extends BaseManagerOrmLite implements XapiVe
     }
 
     @Override
-    public XapiVerb make(Object dbContext, String id) {
+    public XapiVerb make(Object dbContext, String verbId) {
         XapiVerb verb = new XapiVerbEntity();
-        verb.setId(id);
+        verb.setVerbId(verbId);
         return verb;
     }
 

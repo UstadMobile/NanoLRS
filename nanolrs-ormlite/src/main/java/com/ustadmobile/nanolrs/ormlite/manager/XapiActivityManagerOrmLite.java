@@ -19,11 +19,11 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
     }
 
     @Override
-    public XapiActivity findById(Object dbContext, String id) {
+    public XapiActivity findByActivityId(Object dbContext, String activityId) {
         XapiActivity result = null;
         try {
             Dao<XapiActivityEntity, String> dao = persistenceManager.getDao(XapiActivityEntity.class, dbContext);
-            result = dao.queryForId(id);
+            result = dao.queryForId(activityId);
         }catch(SQLException e) {
             System.err.println("Exception findorcreatebyid");
             e.printStackTrace();
@@ -34,7 +34,8 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
 
     @Override
     public XapiActivity makeNew(Object dbContext) {
-        return new XapiActivityEntity();
+        XapiActivityEntity entity = new XapiActivityEntity();
+        return entity;
     }
 
     @Override
@@ -49,10 +50,10 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
     }
 
     @Override
-    public void deleteById(Object dbContext, String id) {
+    public void deleteByActivityId(Object dbContext, String activityId) {
         try {
             Dao<XapiActivityEntity, String> dao = persistenceManager.getDao(XapiActivityEntity.class, dbContext);
-            dao.deleteById(id);
+            dao.deleteById(activityId);
         }catch(SQLException e) {
             System.err.println("Exception deleteById");
             e.printStackTrace();

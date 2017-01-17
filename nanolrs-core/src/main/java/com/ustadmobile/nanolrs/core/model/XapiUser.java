@@ -6,9 +6,16 @@ package com.ustadmobile.nanolrs.core.model;
 
 public interface XapiUser {
 
-    public String getId();
 
-    public void setId(String id);
+
+    /**
+     * @nanolrs.primarykey
+     *
+     * @return
+     */
+    String getUuid();
+
+    void setUuid(String id);
 
     public String getUsername();
 

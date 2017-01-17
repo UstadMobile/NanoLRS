@@ -8,9 +8,14 @@ package com.ustadmobile.nanolrs.core.model;
 
 public interface XapiDocument {
 
-    String getId();
+    /**
+     * @nanolrs.primarykey
+     *
+     * @return
+     */
+    String getUuid();
 
-    void setId(String id);
+    void setUuid(String id);
 
     String getContentType();
 

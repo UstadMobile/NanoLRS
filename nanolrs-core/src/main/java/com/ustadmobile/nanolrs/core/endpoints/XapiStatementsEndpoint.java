@@ -69,10 +69,10 @@ public class XapiStatementsEndpoint {
         try {
             XapiStatement stmtProxy =PersistenceManager.getInstance().getStatementManager().createSync(dbContext);
             if(stmt.has("id")) {
-                stmtProxy.setId(stmt.getString("id"));
+                stmtProxy.setUuid(stmt.getString("id"));
             }else {
-                stmtProxy.setId(UUID.randomUUID().toString());
-                stmt.put("id", stmtProxy.getId());
+                stmtProxy.setUuid(UUID.randomUUID().toString());
+                stmt.put("id", stmtProxy.getUuid());
             }
 
             //check timestamp
@@ -104,7 +104,7 @@ public class XapiStatementsEndpoint {
 
             PersistenceManager.getInstance().getStatementManager().persistSync(dbContext, stmtProxy);
 
-            return stmtProxy.getId();
+            return stmtProxy.getUuid();
         }catch(JSONException e) {
             throw new IllegalArgumentException("Invalid json for putstatement", e);
         }

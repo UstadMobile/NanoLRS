@@ -95,14 +95,14 @@ public class TestiXapiForwardingStatement implements XapiStatementsForwardingLis
 
     @Override
     public void queueStatementSent(XapiStatementsForwardingEvent event) {
-        if(event.getStatement() != null && event.getStatement().getId().equals(watchedStmt.getId())) {
+        if(event.getStatement() != null && event.getStatement().getUuid().equals(watchedStmt.getUuid())) {
             watchedStmtSentEvtReceived = true;
         }
     }
 
     @Override
     public void statementQueued(XapiStatementsForwardingEvent event) {
-        if(event.getStatement() != null && event.getStatement().getId().equals(watchedStmt.getId())) {
+        if(event.getStatement() != null && event.getStatement().getUuid().equals(watchedStmt.getUuid())) {
             watchedStmtQueueEvtReceived = true;
         }
     }

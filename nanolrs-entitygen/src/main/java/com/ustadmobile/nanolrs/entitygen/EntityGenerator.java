@@ -8,9 +8,7 @@ import java.io.IOException;
  *
  */
 public abstract class EntityGenerator {
-
-    public static String[] PRIMARY_KEY_PROPERTY_NAMES = new String[]{"id", "uuid", "activityId"};
-
+    
     /**
      * Represents a TEXT field (as opposed to varchar) in the database
      */

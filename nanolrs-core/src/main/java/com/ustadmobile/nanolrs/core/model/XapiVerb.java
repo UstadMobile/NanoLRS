@@ -5,9 +5,14 @@ package com.ustadmobile.nanolrs.core.model;
  */
 public interface XapiVerb {
 
-    String getId();
+    /**
+     * @nanolrs.primarykey
+     *
+     * @return
+     */
+    String getVerbId();
 
-    void setId(String id);
+    void setVerbId(String verbId);
 
     String getCanonicalData();
 

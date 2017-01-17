@@ -14,7 +14,11 @@ public interface XapiForwardingStatement {
 
     public static final int STATUS_FAILED = 4;
 
-    //Should be the same as the statement we are referring to
+    /**
+     * @nanolrs.primarykey
+     *
+     * @return
+     */
     String getUuid();
 
     void setUuid(String uuid);

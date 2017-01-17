@@ -15,12 +15,13 @@ public interface XapiStatement {
      * Interesting info re. performance of UUID fields and SQLite here:
      * 
      * http://stackoverflow.com/questions/11337324/how-to-efficient-insert-and-fetch-uuid-in-core-data/11337522#11337522
-     * 
+     * @nanolrs.primarykey
+     *
      * @return 
      */
-    String getId();
+    String getUuid();
     
-    void setId(String id);
+    void setUuid(String uuid);
 
     XapiAgent getAgent();
 

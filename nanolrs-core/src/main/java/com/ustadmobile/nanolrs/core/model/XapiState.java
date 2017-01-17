@@ -6,10 +6,14 @@ package com.ustadmobile.nanolrs.core.model;
 
 public interface XapiState {
 
-    //Generic UUID
-    String getId();
+    /**
+     * @nanolrs.primarykey
+     *
+     * @return
+     */
+    String getUuid();
 
-    void setId(String id);
+    void setUuid(String uuid);
 
     XapiActivity getActivity();
 

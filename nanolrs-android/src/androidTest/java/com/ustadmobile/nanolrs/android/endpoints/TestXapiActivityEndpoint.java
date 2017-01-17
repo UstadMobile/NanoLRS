@@ -44,13 +44,13 @@ public class TestXapiActivityEndpoint {
 
         //now we should be able to find it by ID
         XapiActivityManager manager =PersistenceManager.getInstance().getActivityManager();
-        XapiActivity found = manager.findById(context,
+        XapiActivity found = manager.findByActivityId(context,
                 activityObj.getString("id"));
         Assert.assertNotNull(found);
 
         //now delete it
-        manager.deleteById(context, activityObj.getString("id"));
-        Assert.assertNull(manager.findById(context, activityObj.getString("id")));
+        manager.deleteByActivityId(context, activityObj.getString("id"));
+        Assert.assertNull(manager.findByActivityId(context, activityObj.getString("id")));
     }
 
 

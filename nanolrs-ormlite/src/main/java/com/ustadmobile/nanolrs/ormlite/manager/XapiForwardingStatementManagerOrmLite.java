@@ -97,7 +97,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
         try {
             Dao<XapiForwardingStatementEntity, String> dao = persistenceManager.getDao(XapiForwardingStatementEntity.class, dbContext);
             QueryBuilder<XapiForwardingStatementEntity, String> queryBuilder = dao.queryBuilder();
-            queryBuilder.where().eq(XapiForwardingStatementEntity.COLNAME_STATEMENT, statement.getId());
+            queryBuilder.where().eq(XapiForwardingStatementEntity.COLNAME_STATEMENT, statement.getUuid());
             XapiForwardingStatementEntity entity = dao.queryForFirst(queryBuilder.prepare());
             if(entity != null) {
                 return entity.getStatus();

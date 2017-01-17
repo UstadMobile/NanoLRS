@@ -107,6 +107,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             databaseFieldAnnotation.setLiteralValue("columnName", "COLNAME_"
                     + dbFieldName.toUpperCase());
 
+
             /**
              * In case of handling a relationship field: The field must be the entity
              */
@@ -145,7 +146,8 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             /**
              * Check if this is the primary key
              */
-            if(Arrays.asList(PRIMARY_KEY_PROPERTY_NAMES).contains(propertyName)) {
+            List<JavaDocTag> primaryKeyJavaDocTags = method.getJavaDoc().getTags("@nanolrs.primarykey");
+            if(primaryKeyJavaDocTags != null && primaryKeyJavaDocTags.size() >0) {
                 databaseFieldAnnotation.setLiteralValue("id", "true");
             }
         }

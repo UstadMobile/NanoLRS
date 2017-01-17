@@ -62,7 +62,7 @@ public class TestXapiStatement {
         lock.await(2000, TimeUnit.MILLISECONDS);
 
         Assert.assertNotNull(entity);
-        String createdUuid = entity.getId();
+        String createdUuid = entity.getUuid();
         entity = null;
         lock = new CountDownLatch(1);
 
@@ -112,7 +112,7 @@ public class TestXapiStatement {
 
         boolean foundLastStmt = false;
         for(int i = 0; i < queryResults.size(); i++) {
-            if(queryResults.get(i).getId().equals(generatedUUID)) {
+            if(queryResults.get(i).getUuid().equals(generatedUUID)) {
                 foundLastStmt = true;
                 break;
             }

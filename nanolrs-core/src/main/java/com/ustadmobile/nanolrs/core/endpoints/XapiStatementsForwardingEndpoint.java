@@ -65,7 +65,7 @@ public class XapiStatementsForwardingEndpoint {
     public static void queueStatements(Object dbContext, XapiStatement[] statements, String destinationURL, String httpUser, String httpPassword) {
         XapiForwardingStatementManager manager =PersistenceManager.getInstance().getForwardingStatementManager();
         for(int i = 0; i < statements.length; i++) {
-            XapiForwardingStatement fwdStmt = manager.createSync(dbContext, statements[i].getId());
+            XapiForwardingStatement fwdStmt = manager.createSync(dbContext, statements[i].getUuid());
             fwdStmt.setDestinationURL(destinationURL);
             fwdStmt.setHttpAuthUser(httpUser);
             fwdStmt.setHttpAuthPassword(httpPassword);

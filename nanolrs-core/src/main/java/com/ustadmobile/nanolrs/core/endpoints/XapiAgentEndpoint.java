@@ -37,7 +37,7 @@ public class XapiAgentEndpoint {
 
             //does not exist - needs to be created
             XapiAgent agent = manager.makeNew(dbContext);
-            agent.setId(UUID.randomUUID().toString());
+            agent.setUuid(UUID.randomUUID().toString());
             agent.setMbox(mbox);
             agent.setAccountHomepage(accountHomepage);
             agent.setAccountName(accountName);

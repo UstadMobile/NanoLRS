@@ -8,12 +8,12 @@ import com.ustadmobile.nanolrs.core.model.XapiActivity;
 
 public interface XapiActivityManager {
 
-    XapiActivity findById(Object dbContext, String id);
+    XapiActivity findByActivityId(Object dbContext, String id);
 
     XapiActivity makeNew(Object dbContext);
 
     void createOrUpdate(Object dbContext, XapiActivity data);
 
-    void deleteById(Object dbContext, String id);
+    void deleteByActivityId(Object dbContext, String id);
 
 }

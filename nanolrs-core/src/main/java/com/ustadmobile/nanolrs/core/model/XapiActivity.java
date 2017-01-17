@@ -5,6 +5,11 @@ package com.ustadmobile.nanolrs.core.model;
  */
 public interface XapiActivity {
 
+    /**
+     * @nanolrs.primarykey
+     *
+     * @return
+     */
     String getActivityId();
 
     void setActivityId(String id);

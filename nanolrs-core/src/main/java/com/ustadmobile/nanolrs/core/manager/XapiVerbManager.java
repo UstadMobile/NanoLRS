@@ -8,7 +8,7 @@ import com.ustadmobile.nanolrs.core.model.XapiVerb;
 
 public interface XapiVerbManager {
 
-    XapiVerb make(Object dbContext, String id);
+    XapiVerb make(Object dbContext, String verbId);
 
     void persist(Object dbContext, XapiVerb data);
 

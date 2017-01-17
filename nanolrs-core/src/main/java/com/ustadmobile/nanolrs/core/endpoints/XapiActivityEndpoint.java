@@ -25,7 +25,7 @@ public class XapiActivityEndpoint {
         XapiActivityManager manager = PersistenceManager.getInstance().getActivityManager();
         try {
             String activityId = object.getString("id");
-            XapiActivity data = manager.findById(dbContext, activityId);
+            XapiActivity data = manager.findByActivityId(dbContext, activityId);
             if(data == null) {
                 data = manager.makeNew(dbContext);
                 data.setActivityId(activityId);

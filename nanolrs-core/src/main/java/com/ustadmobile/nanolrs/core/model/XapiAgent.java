@@ -5,9 +5,14 @@ package com.ustadmobile.nanolrs.core.model;
  */
 public interface XapiAgent {
 
-    String getId();
+    /**
+     * @nanolrs.primarykey
+     *
+     * @return
+     */
+    String getUuid();
 
-    void setId(String id);
+    void setUuid(String uuid);
 
     XapiUser getUser();
 

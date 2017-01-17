@@ -66,7 +66,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
             obj = new XapiStatementEntity();
-            obj.setId(UUID.randomUUID().toString());
+            obj.setUuid(UUID.randomUUID().toString());
             dao.create(obj);
         }catch(SQLException e) {
             e.printStackTrace();
@@ -93,14 +93,14 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
 
             boolean whereHasClauses = false;
             if(statementid != null){
-                where.eq(XapiStatementEntity.COLNAME_ID, statementid);
+                where.eq(XapiStatementEntity.COLNAME_UUID, statementid);
                 whereHasClauses = true;
             }
 
             if(agent != null) {
                 if(whereHasClauses)
                     where.and();
-                where.eq(XapiStatementEntity.COLNAME_ACTIVITY, agent.getId());
+                where.eq(XapiStatementEntity.COLNAME_AGENT, agent.getUuid());
                 whereHasClauses = true;
             }
 

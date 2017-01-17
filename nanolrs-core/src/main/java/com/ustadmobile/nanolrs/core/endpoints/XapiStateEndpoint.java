@@ -51,7 +51,7 @@ public class XapiStateEndpoint {
 
             if(state == null) {
                 state = manager.makeNew(dbContext);
-                state.setId(UUID.randomUUID().toString());
+                state.setUuid(UUID.randomUUID().toString());
                 XapiActivity activity = XapiActivityEndpoint.createOrUpdate(dbContext, activityId);
                 state.setActivity(activity);
                 state.setAgent(agent);
