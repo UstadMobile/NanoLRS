@@ -68,6 +68,25 @@ public abstract class EntityGenerator {
     }
 
     /**
+     * Return a given string with the first letter upper case. Useful when you have propertyName
+     * and want to generate something like setPropertyName
+     *
+     * @param str Input String
+     *
+     * @return String with first letter converted to upper case
+     */
+    public String upperCaseFirstLetter(String str){
+        String result = "";
+        if(str.length() > 0)
+            result += Character.toUpperCase(str.charAt(0));
+        if(str.length() > 1)
+            result += str.substring(1);
+
+        return  result;
+    }
+
+
+    /**
      * Generate an implementation of this entity for the given interface
      *
      * @param entityName The name of the Entity e.g. XapiStatement
