@@ -40,6 +40,8 @@ public class EntityGeneratorSharkOrm extends EntityGenerator{
 
         moduleIncludeSb.append(srkImportLine).append('\n');
         moduleIncludeSb.append("#import <Foundation/Foundation.h>\n");
+        moduleIncludeSb.append("#import \"").append(proxyInterface.getName()).append(".h\"\n");
+        moduleIncludeSb.append("#include \"J2ObjC_source.h\"\n");
 
         Iterator<MethodSource<JavaInterfaceSource>> iterator = proxyInterface.getMethods().iterator();
         while(iterator.hasNext()) {
@@ -60,43 +62,70 @@ public class EntityGeneratorSharkOrm extends EntityGenerator{
             //Some properties are called id - this is not valid in objective c as it's a keyword
             String methodParamName = !propertyName.equals("id") ? propertyName : propertyName + "_";
 
-            String objcFieldName = "_" + propertyName;
-            moduleDynamicFieldList.add(objcFieldName);
-
             String returnTypeName = method.getReturnType().getName();
             String objcPropertyType = null;
             String methodPropertyType = null;
+            String setterWithSuffix = null;//j2objc generates methods called setPropertyNameWithTypeName
+
+            String objcFieldName = "_" + propertyName;
+            moduleDynamicFieldList.add(objcFieldName);
+
             if(returnTypeName.equals("String")) {
                 objcPropertyType = methodPropertyType = "NSString*";
+                setterWithSuffix = "NSString";
             }else if(returnTypeName.equals("boolean")) {
-                objcPropertyType = methodPropertyType = "BOOL";
+                objcPropertyType =  "BOOL";
+                methodPropertyType = "jboolean";
+                setterWithSuffix = "Boolean";
+            }else if(returnTypeName.equals("byte[]")) {
+                objcPropertyType = "NSData*";
+                methodPropertyType = "IOSByteArray *";
+                setterWithSuffix = "ByteArray";
             }else if(method.getReturnType().isPrimitive()){
                 objcPropertyType = methodPropertyType = returnTypeName;
+                setterWithSuffix = upperCaseFirstLetter(returnTypeName);
             }else {
                 //should be another entity
                 objcPropertyType = returnTypeName + "SrkObj*";
                 methodPropertyType = "id<" + convertJavaNameToObjc(entityPackage, returnTypeName) + ">";
-                moduleIncludeSb.append("#import ").append(returnTypeName).append("SrkObj.h;\n");
+                moduleIncludeSb.append("#import \"").append(returnTypeName).append("SrkObj.h\"\n");
+                setterWithSuffix = convertJavaNameToObjc(entityPackage, returnTypeName);
             }
             headerProperties.append("@property ").append(objcPropertyType).append(' ').append(objcFieldName).append(";\n");
 
             String propNameMethodPostfix = Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
-            StringBuilder getterSignature = new StringBuilder().append("- (").append(methodPropertyType).append(") get")
-                    .append(propNameMethodPostfix);
-            StringBuilder setterSignature = new StringBuilder().append("- (void)set").append(propNameMethodPostfix).append(":(")
-                    .append(methodPropertyType).append(")").append(methodParamName);
+            StringBuilder getterSignature = new StringBuilder().append("- (").append(methodPropertyType).append(") ")
+                .append(methodPrefix).append(propNameMethodPostfix);
+            StringBuilder setterSignature = new StringBuilder().append("- (void)set")
+                    .append(upperCaseFirstLetter(propertyName)).append("With").append(setterWithSuffix)
+                    .append(":(").append(methodPropertyType).append(")").append(methodParamName);
 
             headerMethodSignatures.append(getterSignature).append(";\n");
             headerMethodSignatures.append(setterSignature).append(";\n");
 
             moduleMethods.append(getterSignature).append("{\n");
-            moduleMethods.append("    return self.").append(objcFieldName).append(";\n}\n");
+            if(!returnTypeName.equals("byte[]")) {
+                moduleMethods.append("    return self.").append(objcFieldName);
+            }else {
+                moduleMethods.append("    return [IOSByteArray arrayWithNSData:self.")
+                        .append(objcFieldName).append("]");
+            }
+            moduleMethods.append(";\n}\n");
+
             moduleMethods.append(setterSignature).append("{\n");
             moduleMethods.append("    self.").append(objcFieldName).append(" = ");
-            if(!objcPropertyType.equals(methodPropertyType)) {
+
+            if(!objcPropertyType.equals(methodPropertyType) && !returnTypeName.equals("byte[]")) {
                 moduleMethods.append("(").append(objcPropertyType).append(")");//cast it
             }
-            moduleMethods.append(methodParamName).append(";\n}\n");
+
+            if(!returnTypeName.equals("byte[]")) {
+                moduleMethods.append(methodParamName);
+            }else {
+                moduleMethods.append("[").append(methodParamName).append(" toNSData]");
+            }
+
+            moduleMethods.append(";\n}\n");
         }
 
         StringBuilder headerFileSb = new StringBuilder();
@@ -109,7 +138,7 @@ public class EntityGeneratorSharkOrm extends EntityGenerator{
         headerFileSb.append("@end\n");
 
         StringBuilder moduleFileSb = new StringBuilder();
-        moduleFileSb.append("#import ").append(srkOrmClassName).append(".h;\n");
+        moduleFileSb.append("#import \"").append(srkOrmClassName).append(".h\"\n");
         moduleFileSb.append("@implementation ").append(srkOrmClassName).append('\n');
         moduleFileSb.append("@dynamic ");
         for(int i = 0; i < moduleDynamicFieldList.size(); i++) {
@@ -160,13 +189,13 @@ public class EntityGeneratorSharkOrm extends EntityGenerator{
      * @throws Exception
      */
     public static void main(String[] args) throws Exception{
-        File proxyInterfaceInDir = new File(args[0]);
-        File outDir = new File(args[1]);
-
         if(args.length < 2) {
             System.err.println("Usage: EntityGeneratorSharkOrm <input directory> <output directory> <output package name>");
             System.exit(1);
         }
+
+        File proxyInterfaceInDir = new File(args[0]);
+        File outDir = new File(args[1]);
 
         if(!outDir.isDirectory()){
             outDir.mkdirs();
