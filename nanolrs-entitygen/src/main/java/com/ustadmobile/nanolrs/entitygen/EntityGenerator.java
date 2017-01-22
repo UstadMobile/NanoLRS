@@ -1,8 +1,12 @@
 package com.ustadmobile.nanolrs.entitygen;
 
+import org.jboss.forge.roaster.model.JavaDocTag;
+import org.jboss.forge.roaster.model.source.MethodSource;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -45,6 +49,19 @@ public abstract class EntityGenerator {
             generate(entityName, proxyInterfaceFile, outDir, outPackage);
         }
     }
+
+    /**
+     * Return true if this getter method represents a primary key - look for the @nanolrs.primarykey
+     * javadoc tag
+     *
+     * @param method Getter method to check
+     * @return true if method javadoc contains the nanolrs.primarykey tag, false otherwise
+     */
+    protected boolean isPrimaryKey(MethodSource method) {
+        List<JavaDocTag> primaryKeyJavaDocTags = method.getJavaDoc().getTags("@nanolrs.primarykey");
+        return primaryKeyJavaDocTags != null && primaryKeyJavaDocTags.size() > 0;
+    }
+
 
     /**
      * Converts a property name from e.g. from fullName to full_name

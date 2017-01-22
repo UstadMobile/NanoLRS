@@ -143,11 +143,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 }
             }
 
-            /**
-             * Check if this is the primary key
-             */
-            List<JavaDocTag> primaryKeyJavaDocTags = method.getJavaDoc().getTags("@nanolrs.primarykey");
-            if(primaryKeyJavaDocTags != null && primaryKeyJavaDocTags.size() >0) {
+            if(isPrimaryKey(method)) {
                 databaseFieldAnnotation.setLiteralValue("id", "true");
             }
         }

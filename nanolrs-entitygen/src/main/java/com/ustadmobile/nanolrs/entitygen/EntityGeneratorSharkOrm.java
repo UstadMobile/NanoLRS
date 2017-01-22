@@ -67,7 +67,8 @@ public class EntityGeneratorSharkOrm extends EntityGenerator{
             String methodPropertyType = null;
             String setterWithSuffix = null;//j2objc generates methods called setPropertyNameWithTypeName
 
-            String objcFieldName = "_" + propertyName;
+            boolean isPrimaryKey = isPrimaryKey(method);
+            String objcFieldName = isPrimaryKey ? "Id" : "_" + propertyName;
             moduleDynamicFieldList.add(objcFieldName);
 
             if(returnTypeName.equals("String")) {
@@ -91,7 +92,8 @@ public class EntityGeneratorSharkOrm extends EntityGenerator{
                 moduleIncludeSb.append("#import \"").append(returnTypeName).append("SrkObj.h\"\n");
                 setterWithSuffix = convertJavaNameToObjc(entityPackage, returnTypeName);
             }
-            headerProperties.append("@property ").append(objcPropertyType).append(' ').append(objcFieldName).append(";\n");
+            headerProperties.append("@property ").append(objcPropertyType).append(' ')
+                    .append(objcFieldName).append(";\n");
 
             String propNameMethodPostfix = Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
             StringBuilder getterSignature = new StringBuilder().append("- (").append(methodPropertyType).append(") ")
