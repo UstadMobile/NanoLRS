@@ -8,7 +8,7 @@ import java.io.IOException;
  *
  */
 public abstract class EntityGenerator {
-    
+
     /**
      * Represents a TEXT field (as opposed to varchar) in the database
      */

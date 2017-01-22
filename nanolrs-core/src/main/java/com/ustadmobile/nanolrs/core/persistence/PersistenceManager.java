@@ -13,6 +13,8 @@ import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 
+import java.io.InputStream;
+
 /**
  *
  * @author mike
@@ -35,6 +37,13 @@ public abstract class PersistenceManager {
         
         return instance;
     }
+
+    /**
+     * Open an input stream to an asset included with the
+     * @param path
+     * @return
+     */
+    public abstract InputStream openAsset(String path);
     
     
     public abstract XapiStatementManager getStatementManager();

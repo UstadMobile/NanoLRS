@@ -6,10 +6,25 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.json:json:20160212";
     testCompile 'junit:junit:4.12'
+    testCompile "commons-io:commons-io:+"
 }
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
+}
+
+//Expose test classes via a configuration and jar
+task testJar(type: Jar, dependsOn: testClasses) {
+    baseName = "test-${project.archivesBaseName}"
+    from sourceSets.test.output
+}
+
+configurations {
+    tests
+}
+
+artifacts {
+    tests testJar
 }
 
 apply plugin: 'maven-publish'
