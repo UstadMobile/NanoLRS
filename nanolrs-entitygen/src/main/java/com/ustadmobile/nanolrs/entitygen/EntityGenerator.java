@@ -12,7 +12,7 @@ import java.util.List;
  *
  */
 public abstract class EntityGenerator {
-    
+
     /**
      * Represents a TEXT field (as opposed to varchar) in the database
      */
