@@ -15,7 +15,7 @@ public abstract class NanoLRSCoreTest {
      * Apache IO Commons here but that makes use of j2objc that little bit more complex hence
      * including it here for now using vanilla java
      *
-     * @param in 
+     * @param in
      *
      * @return
      * @throws IOException
