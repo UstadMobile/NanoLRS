@@ -74,4 +74,7 @@ $J2OBJC_HOME/j2objc -d Generated/NanoLrs-Test \
    -sourcepath $NANOHTTPD_CORE_SRCDIR_MAIN:$NANOHTTPD_NANOLETS_SRCDIR_MAIN:$NANOLRS_CORE_SRCDIR_MAIN:$NANOLRS_CORE_SRCDIR_TEST \
    --no-package-directories $NANOLRS_CORE_SRCFILES_TEST
 
+# Generate the SharkORM entities
+cd ..
+./gradlew :nanolrs-entitygen:runSharkOrmGeneration
 
