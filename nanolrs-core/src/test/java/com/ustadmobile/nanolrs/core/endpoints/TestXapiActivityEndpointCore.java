@@ -11,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.io.StringWriter;
 
 /**
  * Created by mike on 1/21/17.
@@ -23,6 +22,7 @@ public abstract class TestXapiActivityEndpointCore extends NanoLRSCoreTest{
     public void testActivityEndpoint() throws Exception {
         InputStream activityIn = getClass().getResourceAsStream("/com/ustadmobile/nanolrs/core/test-activity.json");
         String activityStr = LrsIoUtils.inputStreamToString(activityIn);
+        activityIn.close();
 
         JSONObject activityObj = new JSONObject(activityStr);
         XapiActivity activity = XapiActivityEndpoint.createOrUpdate(getContext(), activityObj);

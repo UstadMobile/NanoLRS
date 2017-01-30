@@ -38,13 +38,7 @@ public abstract class PersistenceManager {
         return instance;
     }
 
-    /**
-     * Open an input stream to an asset included with the
-     * @param path
-     * @return
-     */
-    public abstract InputStream openAsset(String path);
-    
+
     
     public abstract XapiStatementManager getStatementManager();
 
