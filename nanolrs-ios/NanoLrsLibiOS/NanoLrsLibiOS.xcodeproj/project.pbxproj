@@ -9,11 +9,21 @@
 /* Begin PBXBuildFile section */
 		AD7622801E3F219900DCE64F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AD76227F1E3F219900DCE64F /* main.m */; };
 		AD7622831E3F219900DCE64F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622821E3F219900DCE64F /* AppDelegate.m */; };
-		AD7622861E3F219900DCE64F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622851E3F219900DCE64F /* ViewController.m */; };
+		AD7622861E3F219900DCE64F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622851E3F219900DCE64F /* ViewController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		AD7622891E3F219900DCE64F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD7622871E3F219900DCE64F /* Main.storyboard */; };
 		AD76228B1E3F219900DCE64F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD76228A1E3F219900DCE64F /* Assets.xcassets */; };
 		AD76228E1E3F219900DCE64F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD76228C1E3F219900DCE64F /* LaunchScreen.storyboard */; };
 		AD7622991E3F219900DCE64F /* NanoLrsLibiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622981E3F219900DCE64F /* NanoLrsLibiOSTests.m */; };
+		AD7622A41E3F29B000DCE64F /* local.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = AD7622A31E3F29B000DCE64F /* local.xcconfig */; };
+		AD7622A51E3F29B000DCE64F /* local.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = AD7622A31E3F29B000DCE64F /* local.xcconfig */; };
+		AD7622AD1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622A81E3F2F1800DCE64F /* NanoHTTPD.m */; };
+		AD7622AE1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622A81E3F2F1800DCE64F /* NanoHTTPD.m */; };
+		AD7622AF1E3F2F1800DCE64F /* RouterNanoHTTPD.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622AA1E3F2F1800DCE64F /* RouterNanoHTTPD.m */; };
+		AD7622B01E3F2F1800DCE64F /* RouterNanoHTTPD.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622AA1E3F2F1800DCE64F /* RouterNanoHTTPD.m */; };
+		AD7622B11E3F2F1800DCE64F /* ServerRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622AC1E3F2F1800DCE64F /* ServerRunner.m */; };
+		AD7622B21E3F2F1900DCE64F /* ServerRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622AC1E3F2F1800DCE64F /* ServerRunner.m */; };
+		AD7622B51E3F2FDF00DCE64F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD7622B41E3F2FDF00DCE64F /* Security.framework */; };
+		AD7622B71E3F305800DCE64F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = AD7622B61E3F305800DCE64F /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +50,15 @@
 		AD7622941E3F219900DCE64F /* NanoLrsLibiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NanoLrsLibiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD7622981E3F219900DCE64F /* NanoLrsLibiOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NanoLrsLibiOSTests.m; sourceTree = "<group>"; };
 		AD76229A1E3F219900DCE64F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AD7622A31E3F29B000DCE64F /* local.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = local.xcconfig; sourceTree = "<group>"; };
+		AD7622A71E3F2F1800DCE64F /* NanoHTTPD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NanoHTTPD.h; sourceTree = "<group>"; };
+		AD7622A81E3F2F1800DCE64F /* NanoHTTPD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NanoHTTPD.m; sourceTree = "<group>"; };
+		AD7622A91E3F2F1800DCE64F /* RouterNanoHTTPD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouterNanoHTTPD.h; sourceTree = "<group>"; };
+		AD7622AA1E3F2F1800DCE64F /* RouterNanoHTTPD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouterNanoHTTPD.m; sourceTree = "<group>"; };
+		AD7622AB1E3F2F1800DCE64F /* ServerRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerRunner.h; sourceTree = "<group>"; };
+		AD7622AC1E3F2F1800DCE64F /* ServerRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRunner.m; sourceTree = "<group>"; };
+		AD7622B41E3F2FDF00DCE64F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		AD7622B61E3F305800DCE64F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +66,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD7622B71E3F305800DCE64F /* libz.tbd in Frameworks */,
+				AD7622B51E3F2FDF00DCE64F /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,9 +84,12 @@
 		AD7622721E3F219800DCE64F = {
 			isa = PBXGroup;
 			children = (
+				AD7622A61E3F2F1800DCE64F /* NanoHttpd */,
+				AD7622A31E3F29B000DCE64F /* local.xcconfig */,
 				AD76227D1E3F219900DCE64F /* NanoLrsLibiOS */,
 				AD7622971E3F219900DCE64F /* NanoLrsLibiOSTests */,
 				AD76227C1E3F219900DCE64F /* Products */,
+				AD7622B31E3F2FDF00DCE64F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,6 +133,29 @@
 				AD76229A1E3F219900DCE64F /* Info.plist */,
 			);
 			path = NanoLrsLibiOSTests;
+			sourceTree = "<group>";
+		};
+		AD7622A61E3F2F1800DCE64F /* NanoHttpd */ = {
+			isa = PBXGroup;
+			children = (
+				AD7622A71E3F2F1800DCE64F /* NanoHTTPD.h */,
+				AD7622A81E3F2F1800DCE64F /* NanoHTTPD.m */,
+				AD7622A91E3F2F1800DCE64F /* RouterNanoHTTPD.h */,
+				AD7622AA1E3F2F1800DCE64F /* RouterNanoHTTPD.m */,
+				AD7622AB1E3F2F1800DCE64F /* ServerRunner.h */,
+				AD7622AC1E3F2F1800DCE64F /* ServerRunner.m */,
+			);
+			name = NanoHttpd;
+			path = ../Generated/NanoHttpd;
+			sourceTree = "<group>";
+		};
+		AD7622B31E3F2FDF00DCE64F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AD7622B61E3F305800DCE64F /* libz.tbd */,
+				AD7622B41E3F2FDF00DCE64F /* Security.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,6 +240,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD7622A41E3F29B000DCE64F /* local.xcconfig in Resources */,
 				AD76228E1E3F219900DCE64F /* LaunchScreen.storyboard in Resources */,
 				AD76228B1E3F219900DCE64F /* Assets.xcassets in Resources */,
 				AD7622891E3F219900DCE64F /* Main.storyboard in Resources */,
@@ -203,6 +251,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD7622A51E3F29B000DCE64F /* local.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,7 +264,10 @@
 			files = (
 				AD7622861E3F219900DCE64F /* ViewController.m in Sources */,
 				AD7622831E3F219900DCE64F /* AppDelegate.m in Sources */,
+				AD7622B11E3F2F1800DCE64F /* ServerRunner.m in Sources */,
+				AD7622AD1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */,
 				AD7622801E3F219900DCE64F /* main.m in Sources */,
+				AD7622AF1E3F2F1800DCE64F /* RouterNanoHTTPD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,7 +275,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD7622AE1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */,
 				AD7622991E3F219900DCE64F /* NanoLrsLibiOSTests.m in Sources */,
+				AD7622B21E3F2F1900DCE64F /* ServerRunner.m in Sources */,
+				AD7622B01E3F2F1800DCE64F /* RouterNanoHTTPD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,7 +320,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -283,6 +338,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -298,10 +354,12 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LIBRARY_SEARCH_PATHS = "";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -313,7 +371,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -331,6 +389,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -340,41 +399,60 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LIBRARY_SEARCH_PATHS = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		AD76229E1E3F219900DCE64F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD7622A31E3F29B000DCE64F /* local.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = "$(J2OBJC_HOME)/frameworks";
 				INFOPLIST_FILE = NanoLrsLibiOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(J2OBJC_HOME)/lib";
+				OTHER_LDFLAGS = (
+					"-ljre_zip",
+					"-ljre_emul",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ustadmobile.NanoLrsLibiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include";
 			};
 			name = Debug;
 		};
 		AD76229F1E3F219900DCE64F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD7622A31E3F29B000DCE64F /* local.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = "$(J2OBJC_HOME)/frameworks";
 				INFOPLIST_FILE = NanoLrsLibiOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(J2OBJC_HOME)/lib";
+				OTHER_LDFLAGS = (
+					"-ljre_zip",
+					"-ljre_emul",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ustadmobile.NanoLrsLibiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include";
 			};
 			name = Release;
 		};
 		AD7622A11E3F219900DCE64F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD7622A31E3F29B000DCE64F /* local.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = NanoLrsLibiOSTests/Info.plist;
@@ -387,6 +465,7 @@
 		};
 		AD7622A21E3F219900DCE64F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD7622A31E3F29B000DCE64F /* local.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = NanoLrsLibiOSTests/Info.plist;
