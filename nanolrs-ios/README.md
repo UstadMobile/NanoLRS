@@ -16,8 +16,17 @@ This is only needed if you want to develop NanoLrs for iOS itself: if not you ca
 
 Project setup is done largely as per http://j2objc.org/docs/Xcode-Build-Rules.html .  
 
-* Create a new XCode project using the Single View Application template
-* Create a new config file in the project, saved to the projects root directory, called local.xcconfig .
-* J2OBJC_HOME=/path/to/objc is put into local.xcconfig. The configuration is then applied by selecting the project from the left, selecting the project itself (not individual targets), and then choosing the configuration file itself . This should result in something like: ![XCode project config](doc/xcode-project-config-screenshot.png)
+To open:
 
+* Set J2OBJC_HOME : It seems the best way to do this is to set this in Xcode preferences. Click Xcode, Preferences, Locations, Custom Paths, and then add J2OBJC_HOME and point it to the j2objc installation.
+
+* Open NanoLrsLibiOS.xcworkspace
+
+How it was created:
+
+* Create a new XCode project using the Single View Application template
+
+* Cocoapods were setup using pod init and the SharkORM pod was added
+
+* Framework and libraries added as per http://j2objc.org/docs/Xcode-Build-Rules.html
 
