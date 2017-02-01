@@ -1,0 +1,841 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01654A2ABE75458C7B632BF8ACFB1A8C /* SRKRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F998E7849D7B285046721AD0814956DB /* SRKRegistryEntry.m */; };
+		017048BD8407F178533EF317D6487A56 /* SRKLazyLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = DB478E0972335CCBB4014634C75DDE9A /* SRKLazyLoader.m */; };
+		0571362EA9BE86B6FC1546894851EBE5 /* SRKUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 54EDCA5271A0D7BFB9E707D46E5790B9 /* SRKUtilities.m */; };
+		08CA1DDC953F60CC11517B339A00A749 /* SharkORM.h in Headers */ = {isa = PBXBuildFile; fileRef = 343E3559EF30BF0B9C2C6783E569C962 /* SharkORM.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0B9424DA73BF058388ACD595D0678B46 /* Pods-NanoLrsLibiOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 01FD5F3A8EADFAF3553C05833D83C98F /* Pods-NanoLrsLibiOS-dummy.m */; };
+		0ED78C24149D3C5DF666C258DF8DE606 /* SRKGlobals.h in Headers */ = {isa = PBXBuildFile; fileRef = B98F271F56AFEC191C352FA9F1079D5F /* SRKGlobals.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		112E5013FFAE3F219FB33945DC9BB287 /* SRKTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 95117201C625B607723A89DD784BEFCE /* SRKTransaction.m */; };
+		14A081D08830D9AA2F339794E5FD9409 /* Pods-NanoLrsLibiOSTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D37192B29DF8FD24CD40557C4F783AC4 /* Pods-NanoLrsLibiOSTests-dummy.m */; };
+		1717B456654F464E92884E64E0EEE417 /* SRKLazyLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 81C757EF63A477578E9DAC8A1ACCCF84 /* SRKLazyLoader.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		19D46C38D9C4F75C92783699FCCBE1FE /* SRKFuzzyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 66B02E6DE208927643086E777C60DCA1 /* SRKFuzzyStore.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		237B22596E3EBDD6E161B48E83983624 /* SRKError.m in Sources */ = {isa = PBXBuildFile; fileRef = 77AD801584FD38EDE0E04034A2214087 /* SRKError.m */; };
+		2689E5B9A76987BF54A1A4AC4D35017C /* SRKEventHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 28635EC5C5D1374631DE0DD2F119EF83 /* SRKEventHandler+Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		2741DE9B63D702FEC9DE5F239A9DE7F7 /* SRKEventRegistryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A54ACEC3C3C43C83B56858EA700DDF8 /* SRKEventRegistryObject.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		292D9A9D436D402ADBCB9E36D9040F64 /* SRKTransactionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = A6457C663E61A5E1ABE46EA70F73F5C9 /* SRKTransactionGroup.m */; };
+		2942F31242897663C02F517D31584F08 /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 86940564B7E95483EACF33EEBBCEF45E /* SRKStringObject.m */; };
+		2C30776CEFC3350167096E0AAA7BCD36 /* SRKJoinObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A3CA99089EB4D83E7A11FAAF588679 /* SRKJoinObject.m */; };
+		2F72F03DF7D7B73E6FAF1DA0CAFCF790 /* SRKUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DF5AA023E892B1DA0E79D54639C2C92 /* SRKUtilities.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		311194824D80641834E4EA6FB7762C38 /* SRKEventBlockHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = F66370F078179935AB07EA006BF9AE18 /* SRKEventBlockHolder.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		34F0DCAD786EB337935502D660F54D45 /* SRKQuery+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AA089F32E107D0AD2821E32BBDD03E6 /* SRKQuery+Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		367318819A29FC3327BA3C8DA44FB487 /* SRKRelationship.h in Headers */ = {isa = PBXBuildFile; fileRef = EF3EABCCA2C1B6EEB7DF5D2A4EF9A2B6 /* SRKRelationship.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		3A64BED9D4C25795AD0866BCEED6ACCE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		3BBC44E1014B5A46BEFBA45C142A75D9 /* SRKFuzzyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 90642C1AD41F9E93A1483D5FB87D7142 /* SRKFuzzyStore.m */; };
+		4239A971082585C1131C774D3259D2C3 /* SRKQueryAsyncHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FFF0BAE5CF30509BC45521B7E74E604 /* SRKQueryAsyncHandler.m */; };
+		48802C5349056D02174BAAD9F8171DB5 /* SRKEventBlockHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 99F946EE88142B39476311D8157B8577 /* SRKEventBlockHolder.m */; };
+		4A499E5A0AA0E6CCF14A9B9212F992D2 /* SRKRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = AEFFABF1217B1F1AEDFDE1B1B69B5FD6 /* SRKRegistry.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		52CEFE2755E9713012ECF773DFE49050 /* SRKSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 786FCAB637C1C721EE92E9C25B0E4892 /* SRKSettings.m */; };
+		5B06EE745C85FAB2794BE43E5ED42D48 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = AFDC796E4DF033178DE002AA6E53FDD8 /* sqlite3.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5BB21E3228766419C76535F77D52585C /* SRKAES256Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = A054D21F4794D7A0DCAA3A2DF1D97FFE /* SRKAES256Extension.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5F289A5DF24E3DDA03E9EFAFF2E5042F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		61FA3C87874082BE517999BDED16E484 /* SRKObject+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F4573433B46FF4ADF9BA3263E7A3B3D5 /* SRKObject+Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		63FEB97549BB7434CACA79BB8EF1B769 /* SharkORM-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 51145488CC06C21E44DC2A94BE9A7C86 /* SharkORM-dummy.m */; };
+		644A5D8854FDB7B3584BDD8DCD7CD64B /* SRKObject.m in Sources */ = {isa = PBXBuildFile; fileRef = CC955861E8ACE56CDA6232F7BC543A77 /* SRKObject.m */; };
+		6F8CC8BD0C965153BC5F7256E50D2773 /* SharkORM+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 31F253662C76A2E8B0169EE0265A594A /* SharkORM+Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		717D62D8D12F3BD181EE657FE963292B /* SRKEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C27EC8981D9F65633108A16F347A1B7 /* SRKEvent.m */; };
+		775D81C16CCF5B7992045672FCADC292 /* SRKEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 17469BE1464CCCA031E5E0EE4E4430FA /* SRKEventHandler.m */; };
+		809D01203F1C701831576C592081AC1B /* SRKFTSQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 775C5DF215225EA40190AF8EAF487FC6 /* SRKFTSQuery.m */; };
+		81F570721931EE30E3F4F27DF143BEEF /* SRKEventRegistryObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C1FB9CFA3DE7E76C327474898CCBEC3 /* SRKEventRegistryObject.m */; };
+		8575A19D3D9FCAC1CD3316D8296F2113 /* SRKObjectChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 61E71E35A86BF5998FD04D175FA8721D /* SRKObjectChain.m */; };
+		874EBF4696D97E693C8AF8ABDE393B6C /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A69763DC6CF73CE03B7983FC5FA3AD3 /* SRKAES256Extension.m */; };
+		8C422B29C45794A422988FB6B3DB0438 /* FTSRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 536FF920AD7ECCEDBB988314797C0E4F /* FTSRegistry.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8E7B99AD8E7B16B5A01EAD16F29383C2 /* SRKContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE0EEBBC0C107089341785DFF134A99 /* SRKContext.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		907172668BD4778541D6049DAEB8748B /* SRKQueryAsyncHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = FD26DF0633C625F77A30EF094D316ED3 /* SRKQueryAsyncHandler+Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		92A43BC5217927EF3B1299E760C0A10C /* SRKDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 412AFC90F4666E1754CCF9387290734B /* SRKDefinitions.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		96E5D52C305C46D0F41D5DD4A5A5EF3C /* SRKIndexDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = C51FDC387FD6817537B6C7E9C59E57D0 /* SRKIndexDefinition.m */; };
+		9C389C301348570ABA3E62C19730B413 /* SRKUnsupportedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F321D02736DCA72093F08560178E08A /* SRKUnsupportedObject.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		9C4CA94AD9B1FCA4DA21CAA0E6467E88 /* SRKTransactionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1020A9E35A29A7A92DC69850CA647161 /* SRKTransactionElement.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		9F520A6A115922292CD272008B5731CA /* SRKQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 3315AF6811F8AA7BBEC62C5184F10532 /* SRKQuery.m */; };
+		A16DD609A7B6C0C6485B7104395EA013 /* SRKContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 295403A5E8561D510E3B15CFB34B5C5D /* SRKContext.m */; };
+		AAC3E02113955826C85471AEE1E3032E /* SRKRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E3FA6C83FD8D55BDC17301B6B6E0C77 /* SRKRelationship.m */; };
+		B235AC75F907D66EB4C788EE05523202 /* SRKRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 2202CD3EC7E91244F65BC8788470BA65 /* SRKRegistry.m */; };
+		B3391BD4AEAF6B6228FB02236C7EF9E7 /* SRKEncryptedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A612183F554FD07723AA91FD84B0681 /* SRKEncryptedObject.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		B6B0781F966DDAFE3CA83675AB78A0B6 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = ED2CE6EF206C708D6FBF0793A3855FE1 /* sqlite3.c */; };
+		B73F89A0242255AB0D9FE7D142DEA95A /* SRKEncryptedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 286A8E63681D8278CA9292238135F9C6 /* SRKEncryptedObject.m */; };
+		BC5ABA43425FE8C53CCD253BA38F3165 /* SRKIndexDefinition+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = B0B8C69706879F08CF3E00F0117E4A76 /* SRKIndexDefinition+Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C02AF168C3DBFD8632866DDCD9C0562F /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 40B79FA524F272590CCA691FC19D9954 /* sqlite3ext.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C1308441238EAD686A04DAEEA1B8020B /* SRKJoinObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D2C0BEDBCCB4AFA4F977061652D883B /* SRKJoinObject.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C3EFEE6F5A8133A0610C58C370A4DA3F /* SRKObjectChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE80043ED2B17520F6EB897F1917A77 /* SRKObjectChain.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C521F58E6116CF9BFF8027633596E406 /* SharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ECE2343C9D280F518E7642BCA0B9BE5 /* SharkORM.m */; };
+		C58142EF9D2397E40D84593521E1476C /* SRKSQLiteHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = DE75BBAD183300715445F0C8849659CE /* SRKSQLiteHandle.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		CDD302A567E2E731472BE52549AEBC71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		D224866BDB96EABBF247EB471B03AAFC /* SRKTransactionElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F51D92D873AD3538D871C54526A9724A /* SRKTransactionElement.m */; };
+		D6C29BCF60290AE9816702C745EE5BB6 /* SRKSQLiteHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F3D287BB32A551CD44EB4C21B22C8C9 /* SRKSQLiteHandle.m */; };
+		E4500465BDB4FB99452EAF8ACCE3D7E8 /* SRKResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = BA750BD0D8873BD399701D9CE3AD591A /* SRKResultSet.m */; };
+		E92CA131645DF9A1A82D7C4AE85BC150 /* FTSRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = FE23E5A2166595AD0307EE3E12A4C6F3 /* FTSRegistry.m */; };
+		F1C2D43A14510B495F1D9CDB427602BF /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = 51F8800C36A431EC38104C9E92A24858 /* SRKGlobals.m */; };
+		F5B22DDAAA1389BA2518AE09B5F90FAC /* SRKUnsupportedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 96CE97AF00989883C39887B74C826064 /* SRKUnsupportedObject.m */; };
+		F5BCA1036EE8C5518A790C3AD9D4C121 /* SRKTransactionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = B8E3BE6CCA741140C8F0FE2402E10082 /* SRKTransactionGroup.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		F64D3109B851F50D32245A88B4496870 /* SRKResultSet+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B95683F72E09864A6388FB161F3EB2F /* SRKResultSet+Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		F780428E3362E5F4BD2BFCFB1A267389 /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = C04B71FAB20EBB377AEA1B1B954B8F67 /* SRKRawResults.m */; };
+		F8B3F63D564840FFEEA56B286E5AA242 /* SRKRegistryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = F729B93940CFD1B1F6A1608F76712DE7 /* SRKRegistryEntry.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		F9EDC58BE23CE4B676FE03A33F04F4D3 /* SRKQueryProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 6845B7487DAECAF7F0D33225E70F55BC /* SRKQueryProfile.m */; };
+		FA30731AB6D72DEB3F86008399DB991A /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E0E940E8D5A6DB98BAC4D43772E0BAE /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		62FD6D0CDDF2E4ABD42DC51B81B7C22A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3EA7F88E2C0F28B4975335BE30631DD0;
+			remoteInfo = SharkORM;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		01FD5F3A8EADFAF3553C05833D83C98F /* Pods-NanoLrsLibiOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-NanoLrsLibiOS-dummy.m"; sourceTree = "<group>"; };
+		0D2C0BEDBCCB4AFA4F977061652D883B /* SRKJoinObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKJoinObject.h; path = SharkORM/Core/Queries/SRKJoinObject.h; sourceTree = "<group>"; };
+		0DF5AA023E892B1DA0E79D54639C2C92 /* SRKUtilities.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKUtilities.h; path = SharkORM/Core/SRKUtilities.h; sourceTree = "<group>"; };
+		0FE0EEBBC0C107089341785DFF134A99 /* SRKContext.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKContext.h; path = SharkORM/Core/Transactions/SRKContext.h; sourceTree = "<group>"; };
+		0FE80043ED2B17520F6EB897F1917A77 /* SRKObjectChain.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKObjectChain.h; path = "SharkORM/Core/Persistable Objects/SRKObjectChain.h"; sourceTree = "<group>"; };
+		0FFF0BAE5CF30509BC45521B7E74E604 /* SRKQueryAsyncHandler.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKQueryAsyncHandler.m; path = SharkORM/Core/Queries/SRKQueryAsyncHandler.m; sourceTree = "<group>"; };
+		1020A9E35A29A7A92DC69850CA647161 /* SRKTransactionElement.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKTransactionElement.h; path = SharkORM/Core/Transactions/SRKTransactionElement.h; sourceTree = "<group>"; };
+		1553F53B39482102BA19E65E06D3E634 /* Pods-NanoLrsLibiOS-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-NanoLrsLibiOS-acknowledgements.plist"; sourceTree = "<group>"; };
+		16C69C2C4021100497F076BF09C1E14F /* Pods-NanoLrsLibiOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NanoLrsLibiOS.debug.xcconfig"; sourceTree = "<group>"; };
+		17469BE1464CCCA031E5E0EE4E4430FA /* SRKEventHandler.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKEventHandler.m; path = SharkORM/Core/Events/SRKEventHandler.m; sourceTree = "<group>"; };
+		2202CD3EC7E91244F65BC8788470BA65 /* SRKRegistry.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKRegistry.m; path = SharkORM/Core/Registry/SRKRegistry.m; sourceTree = "<group>"; };
+		28635EC5C5D1374631DE0DD2F119EF83 /* SRKEventHandler+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SRKEventHandler+Private.h"; path = "SharkORM/Core/Events/SRKEventHandler+Private.h"; sourceTree = "<group>"; };
+		286A8E63681D8278CA9292238135F9C6 /* SRKEncryptedObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKEncryptedObject.m; path = "SharkORM/Core/Persistable Objects/SRKEncryptedObject.m"; sourceTree = "<group>"; };
+		295403A5E8561D510E3B15CFB34B5C5D /* SRKContext.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKContext.m; path = SharkORM/Core/Transactions/SRKContext.m; sourceTree = "<group>"; };
+		2E3FA6C83FD8D55BDC17301B6B6E0C77 /* SRKRelationship.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKRelationship.m; path = SharkORM/Core/SRKRelationship.m; sourceTree = "<group>"; };
+		31F253662C76A2E8B0169EE0265A594A /* SharkORM+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SharkORM+Private.h"; path = "SharkORM/Core/SharkORM+Private.h"; sourceTree = "<group>"; };
+		3315AF6811F8AA7BBEC62C5184F10532 /* SRKQuery.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKQuery.m; path = SharkORM/Core/Queries/SRKQuery.m; sourceTree = "<group>"; };
+		343E3559EF30BF0B9C2C6783E569C962 /* SharkORM.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SharkORM.h; path = SharkORM/Core/SharkORM.h; sourceTree = "<group>"; };
+		3F321D02736DCA72093F08560178E08A /* SRKUnsupportedObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKUnsupportedObject.h; path = "SharkORM/Core/Persistable Objects/SRKUnsupportedObject.h"; sourceTree = "<group>"; };
+		3F3D287BB32A551CD44EB4C21B22C8C9 /* SRKSQLiteHandle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKSQLiteHandle.m; path = SharkORM/Core/SRKSQLiteHandle.m; sourceTree = "<group>"; };
+		40B79FA524F272590CCA691FC19D9954 /* sqlite3ext.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sqlite3ext.h; path = SharkORM/SQLite/sqlite3ext.h; sourceTree = "<group>"; };
+		412AFC90F4666E1754CCF9387290734B /* SRKDefinitions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKDefinitions.h; path = SharkORM/Core/SRKDefinitions.h; sourceTree = "<group>"; };
+		43A070F76337E6CB77571BF9DEE7BE87 /* Pods-NanoLrsLibiOS-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-NanoLrsLibiOS-resources.sh"; sourceTree = "<group>"; };
+		4A612183F554FD07723AA91FD84B0681 /* SRKEncryptedObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKEncryptedObject.h; path = "SharkORM/Core/Persistable Objects/SRKEncryptedObject.h"; sourceTree = "<group>"; };
+		4AA089F32E107D0AD2821E32BBDD03E6 /* SRKQuery+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SRKQuery+Private.h"; path = "SharkORM/Core/Queries/SRKQuery+Private.h"; sourceTree = "<group>"; };
+		4EE7470DDEA6FD18965BBDCB695ACEFC /* SharkORM.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SharkORM.xcconfig; sourceTree = "<group>"; };
+		51145488CC06C21E44DC2A94BE9A7C86 /* SharkORM-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SharkORM-dummy.m"; sourceTree = "<group>"; };
+		51F8800C36A431EC38104C9E92A24858 /* SRKGlobals.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKGlobals.m; path = SharkORM/Core/SRKGlobals.m; sourceTree = "<group>"; };
+		536FF920AD7ECCEDBB988314797C0E4F /* FTSRegistry.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FTSRegistry.h; path = SharkORM/Core/FTS/FTSRegistry.h; sourceTree = "<group>"; };
+		54EDCA5271A0D7BFB9E707D46E5790B9 /* SRKUtilities.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKUtilities.m; path = SharkORM/Core/SRKUtilities.m; sourceTree = "<group>"; };
+		61E71E35A86BF5998FD04D175FA8721D /* SRKObjectChain.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKObjectChain.m; path = "SharkORM/Core/Persistable Objects/SRKObjectChain.m"; sourceTree = "<group>"; };
+		63A3CA99089EB4D83E7A11FAAF588679 /* SRKJoinObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKJoinObject.m; path = SharkORM/Core/Queries/SRKJoinObject.m; sourceTree = "<group>"; };
+		66B02E6DE208927643086E777C60DCA1 /* SRKFuzzyStore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKFuzzyStore.h; path = SharkORM/Core/FuzzyStore/SRKFuzzyStore.h; sourceTree = "<group>"; };
+		6845B7487DAECAF7F0D33225E70F55BC /* SRKQueryProfile.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKQueryProfile.m; path = SharkORM/Core/Queries/SRKQueryProfile.m; sourceTree = "<group>"; };
+		6F681A87B3B295B44F5A5778123AFD2C /* Pods-NanoLrsLibiOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NanoLrsLibiOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		748298BAB6F319A3817FE50E65DC8CB7 /* Pods-NanoLrsLibiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NanoLrsLibiOS.release.xcconfig"; sourceTree = "<group>"; };
+		775C5DF215225EA40190AF8EAF487FC6 /* SRKFTSQuery.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKFTSQuery.m; path = SharkORM/Core/Queries/SRKFTSQuery.m; sourceTree = "<group>"; };
+		77AD801584FD38EDE0E04034A2214087 /* SRKError.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKError.m; path = SharkORM/Core/SRKError.m; sourceTree = "<group>"; };
+		786FCAB637C1C721EE92E9C25B0E4892 /* SRKSettings.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKSettings.m; path = SharkORM/Core/SRKSettings.m; sourceTree = "<group>"; };
+		7E7F7C276695DEAAD119640F39243EA2 /* Pods-NanoLrsLibiOS-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-NanoLrsLibiOS-acknowledgements.markdown"; sourceTree = "<group>"; };
+		81C757EF63A477578E9DAC8A1ACCCF84 /* SRKLazyLoader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKLazyLoader.h; path = SharkORM/Core/SRKLazyLoader.h; sourceTree = "<group>"; };
+		86940564B7E95483EACF33EEBBCEF45E /* SRKStringObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKStringObject.m; path = "SharkORM/Core/Persistable Objects/SRKStringObject.m"; sourceTree = "<group>"; };
+		8A54ACEC3C3C43C83B56858EA700DDF8 /* SRKEventRegistryObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKEventRegistryObject.h; path = SharkORM/Core/Events/SRKEventRegistryObject.h; sourceTree = "<group>"; };
+		8B145695C52A7EB0B6577F0E1B5897B0 /* libPods-NanoLrsLibiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-NanoLrsLibiOS.a"; path = "libPods-NanoLrsLibiOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C1FB9CFA3DE7E76C327474898CCBEC3 /* SRKEventRegistryObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKEventRegistryObject.m; path = SharkORM/Core/Events/SRKEventRegistryObject.m; sourceTree = "<group>"; };
+		8E0E940E8D5A6DB98BAC4D43772E0BAE /* DBAccess.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DBAccess.h; path = SharkORM/Core/DBAccess.h; sourceTree = "<group>"; };
+		8ECE2343C9D280F518E7642BCA0B9BE5 /* SharkORM.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SharkORM.m; path = SharkORM/Core/SharkORM.m; sourceTree = "<group>"; };
+		902412555436CD47BF6A44ABF55B4911 /* SharkORM-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SharkORM-prefix.pch"; sourceTree = "<group>"; };
+		90642C1AD41F9E93A1483D5FB87D7142 /* SRKFuzzyStore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKFuzzyStore.m; path = SharkORM/Core/FuzzyStore/SRKFuzzyStore.m; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		95117201C625B607723A89DD784BEFCE /* SRKTransaction.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKTransaction.m; path = SharkORM/Core/Transactions/SRKTransaction.m; sourceTree = "<group>"; };
+		96CE97AF00989883C39887B74C826064 /* SRKUnsupportedObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKUnsupportedObject.m; path = "SharkORM/Core/Persistable Objects/SRKUnsupportedObject.m"; sourceTree = "<group>"; };
+		99F946EE88142B39476311D8157B8577 /* SRKEventBlockHolder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKEventBlockHolder.m; path = SharkORM/Core/Events/SRKEventBlockHolder.m; sourceTree = "<group>"; };
+		9A69763DC6CF73CE03B7983FC5FA3AD3 /* SRKAES256Extension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKAES256Extension.m; path = "SharkORM/Core/Persistable Objects/SRKAES256Extension.m"; sourceTree = "<group>"; };
+		9B95683F72E09864A6388FB161F3EB2F /* SRKResultSet+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SRKResultSet+Private.h"; path = "SharkORM/Core/Persistable Objects/SRKResultSet+Private.h"; sourceTree = "<group>"; };
+		9C27EC8981D9F65633108A16F347A1B7 /* SRKEvent.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKEvent.m; path = SharkORM/Core/Events/SRKEvent.m; sourceTree = "<group>"; };
+		A054D21F4794D7A0DCAA3A2DF1D97FFE /* SRKAES256Extension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKAES256Extension.h; path = "SharkORM/Core/Persistable Objects/SRKAES256Extension.h"; sourceTree = "<group>"; };
+		A6457C663E61A5E1ABE46EA70F73F5C9 /* SRKTransactionGroup.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKTransactionGroup.m; path = SharkORM/Core/Transactions/SRKTransactionGroup.m; sourceTree = "<group>"; };
+		A827D4A4E7D93436169BCC0B12F5D507 /* libPods-NanoLrsLibiOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-NanoLrsLibiOSTests.a"; path = "libPods-NanoLrsLibiOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEFFABF1217B1F1AEDFDE1B1B69B5FD6 /* SRKRegistry.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKRegistry.h; path = SharkORM/Core/Registry/SRKRegistry.h; sourceTree = "<group>"; };
+		AFDC796E4DF033178DE002AA6E53FDD8 /* sqlite3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = SharkORM/SQLite/sqlite3.h; sourceTree = "<group>"; };
+		B0B8C69706879F08CF3E00F0117E4A76 /* SRKIndexDefinition+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SRKIndexDefinition+Private.h"; path = "SharkORM/Core/Indexing/SRKIndexDefinition+Private.h"; sourceTree = "<group>"; };
+		B23479B46EA1FC945CD2846B72C810C5 /* Pods-NanoLrsLibiOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NanoLrsLibiOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B8E3BE6CCA741140C8F0FE2402E10082 /* SRKTransactionGroup.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKTransactionGroup.h; path = SharkORM/Core/Transactions/SRKTransactionGroup.h; sourceTree = "<group>"; };
+		B98F271F56AFEC191C352FA9F1079D5F /* SRKGlobals.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKGlobals.h; path = SharkORM/Core/SRKGlobals.h; sourceTree = "<group>"; };
+		BA750BD0D8873BD399701D9CE3AD591A /* SRKResultSet.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKResultSet.m; path = "SharkORM/Core/Persistable Objects/SRKResultSet.m"; sourceTree = "<group>"; };
+		BF8173F78730397E61371B4BCCB69E04 /* libSharkORM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libSharkORM.a; path = libSharkORM.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C04B71FAB20EBB377AEA1B1B954B8F67 /* SRKRawResults.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKRawResults.m; path = "SharkORM/Core/Persistable Objects/SRKRawResults.m"; sourceTree = "<group>"; };
+		C51FDC387FD6817537B6C7E9C59E57D0 /* SRKIndexDefinition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKIndexDefinition.m; path = SharkORM/Core/Indexing/SRKIndexDefinition.m; sourceTree = "<group>"; };
+		C6B8523FA2AF5BFFDF988CC4EFF51C1B /* Pods-NanoLrsLibiOSTests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-NanoLrsLibiOSTests-resources.sh"; sourceTree = "<group>"; };
+		CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		CC955861E8ACE56CDA6232F7BC543A77 /* SRKObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKObject.m; path = "SharkORM/Core/Persistable Objects/SRKObject.m"; sourceTree = "<group>"; };
+		D08121BC4D5D042AA1CF68C095A8795D /* Pods-NanoLrsLibiOSTests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-NanoLrsLibiOSTests-frameworks.sh"; sourceTree = "<group>"; };
+		D37192B29DF8FD24CD40557C4F783AC4 /* Pods-NanoLrsLibiOSTests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-NanoLrsLibiOSTests-dummy.m"; sourceTree = "<group>"; };
+		D5236CEE4FCCBDA5726431D5E01C2F82 /* Pods-NanoLrsLibiOSTests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-NanoLrsLibiOSTests-acknowledgements.plist"; sourceTree = "<group>"; };
+		DB478E0972335CCBB4014634C75DDE9A /* SRKLazyLoader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKLazyLoader.m; path = SharkORM/Core/SRKLazyLoader.m; sourceTree = "<group>"; };
+		DDBE1AA2B6EAADA900DC7410936617E0 /* Pods-NanoLrsLibiOSTests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-NanoLrsLibiOSTests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		DE75BBAD183300715445F0C8849659CE /* SRKSQLiteHandle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKSQLiteHandle.h; path = SharkORM/Core/SRKSQLiteHandle.h; sourceTree = "<group>"; };
+		ED2CE6EF206C708D6FBF0793A3855FE1 /* sqlite3.c */ = {isa = PBXFileReference; includeInIndex = 1; name = sqlite3.c; path = SharkORM/SQLite/sqlite3.c; sourceTree = "<group>"; };
+		EF3EABCCA2C1B6EEB7DF5D2A4EF9A2B6 /* SRKRelationship.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKRelationship.h; path = SharkORM/Core/SRKRelationship.h; sourceTree = "<group>"; };
+		F4573433B46FF4ADF9BA3263E7A3B3D5 /* SRKObject+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SRKObject+Private.h"; path = "SharkORM/Core/Persistable Objects/SRKObject+Private.h"; sourceTree = "<group>"; };
+		F51D92D873AD3538D871C54526A9724A /* SRKTransactionElement.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKTransactionElement.m; path = SharkORM/Core/Transactions/SRKTransactionElement.m; sourceTree = "<group>"; };
+		F66370F078179935AB07EA006BF9AE18 /* SRKEventBlockHolder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKEventBlockHolder.h; path = SharkORM/Core/Events/SRKEventBlockHolder.h; sourceTree = "<group>"; };
+		F729B93940CFD1B1F6A1608F76712DE7 /* SRKRegistryEntry.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SRKRegistryEntry.h; path = SharkORM/Core/Registry/SRKRegistryEntry.h; sourceTree = "<group>"; };
+		F998E7849D7B285046721AD0814956DB /* SRKRegistryEntry.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SRKRegistryEntry.m; path = SharkORM/Core/Registry/SRKRegistryEntry.m; sourceTree = "<group>"; };
+		FD26DF0633C625F77A30EF094D316ED3 /* SRKQueryAsyncHandler+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SRKQueryAsyncHandler+Private.h"; path = "SharkORM/Core/Queries/SRKQueryAsyncHandler+Private.h"; sourceTree = "<group>"; };
+		FE23E5A2166595AD0307EE3E12A4C6F3 /* FTSRegistry.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FTSRegistry.m; path = SharkORM/Core/FTS/FTSRegistry.m; sourceTree = "<group>"; };
+		FE71468B838B2AF2E0BB7D4AFA3D4551 /* Pods-NanoLrsLibiOS-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-NanoLrsLibiOS-frameworks.sh"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C77A85966BA4C063D1D13DE416AE15D8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F289A5DF24E3DDA03E9EFAFF2E5042F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2967EBB9F1AE9ACDB063E4780722454 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDD302A567E2E731472BE52549AEBC71 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FB4DD03E262E622135B89BF3D47D5114 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A64BED9D4C25795AD0866BCEED6ACCE /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3BDDD81C90DFBBD29E4928E819284B79 /* Pods-NanoLrsLibiOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				DDBE1AA2B6EAADA900DC7410936617E0 /* Pods-NanoLrsLibiOSTests-acknowledgements.markdown */,
+				D5236CEE4FCCBDA5726431D5E01C2F82 /* Pods-NanoLrsLibiOSTests-acknowledgements.plist */,
+				D37192B29DF8FD24CD40557C4F783AC4 /* Pods-NanoLrsLibiOSTests-dummy.m */,
+				D08121BC4D5D042AA1CF68C095A8795D /* Pods-NanoLrsLibiOSTests-frameworks.sh */,
+				C6B8523FA2AF5BFFDF988CC4EFF51C1B /* Pods-NanoLrsLibiOSTests-resources.sh */,
+				B23479B46EA1FC945CD2846B72C810C5 /* Pods-NanoLrsLibiOSTests.debug.xcconfig */,
+				6F681A87B3B295B44F5A5778123AFD2C /* Pods-NanoLrsLibiOSTests.release.xcconfig */,
+			);
+			name = "Pods-NanoLrsLibiOSTests";
+			path = "Target Support Files/Pods-NanoLrsLibiOSTests";
+			sourceTree = "<group>";
+		};
+		7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		763329806DBC9B053EC8325325D8F692 /* Pods-NanoLrsLibiOS */ = {
+			isa = PBXGroup;
+			children = (
+				7E7F7C276695DEAAD119640F39243EA2 /* Pods-NanoLrsLibiOS-acknowledgements.markdown */,
+				1553F53B39482102BA19E65E06D3E634 /* Pods-NanoLrsLibiOS-acknowledgements.plist */,
+				01FD5F3A8EADFAF3553C05833D83C98F /* Pods-NanoLrsLibiOS-dummy.m */,
+				FE71468B838B2AF2E0BB7D4AFA3D4551 /* Pods-NanoLrsLibiOS-frameworks.sh */,
+				43A070F76337E6CB77571BF9DEE7BE87 /* Pods-NanoLrsLibiOS-resources.sh */,
+				16C69C2C4021100497F076BF09C1E14F /* Pods-NanoLrsLibiOS.debug.xcconfig */,
+				748298BAB6F319A3817FE50E65DC8CB7 /* Pods-NanoLrsLibiOS.release.xcconfig */,
+			);
+			name = "Pods-NanoLrsLibiOS";
+			path = "Target Support Files/Pods-NanoLrsLibiOS";
+			sourceTree = "<group>";
+		};
+		7748D177283EC225217A1739366BEDE7 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				763329806DBC9B053EC8325325D8F692 /* Pods-NanoLrsLibiOS */,
+				3BDDD81C90DFBBD29E4928E819284B79 /* Pods-NanoLrsLibiOSTests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				F920072067116272549DEBFEE5E69A71 /* Pods */,
+				FCFEC93BE7D4C27A666356214BECB23F /* Products */,
+				7748D177283EC225217A1739366BEDE7 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		812F0EA2C149206E110928759E5CCF97 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				4EE7470DDEA6FD18965BBDCB695ACEFC /* SharkORM.xcconfig */,
+				51145488CC06C21E44DC2A94BE9A7C86 /* SharkORM-dummy.m */,
+				902412555436CD47BF6A44ABF55B4911 /* SharkORM-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/SharkORM";
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F0CE9A5875D25EB61DBA5AFE792B7464 /* SharkORM */ = {
+			isa = PBXGroup;
+			children = (
+				8E0E940E8D5A6DB98BAC4D43772E0BAE /* DBAccess.h */,
+				536FF920AD7ECCEDBB988314797C0E4F /* FTSRegistry.h */,
+				FE23E5A2166595AD0307EE3E12A4C6F3 /* FTSRegistry.m */,
+				343E3559EF30BF0B9C2C6783E569C962 /* SharkORM.h */,
+				8ECE2343C9D280F518E7642BCA0B9BE5 /* SharkORM.m */,
+				31F253662C76A2E8B0169EE0265A594A /* SharkORM+Private.h */,
+				ED2CE6EF206C708D6FBF0793A3855FE1 /* sqlite3.c */,
+				AFDC796E4DF033178DE002AA6E53FDD8 /* sqlite3.h */,
+				40B79FA524F272590CCA691FC19D9954 /* sqlite3ext.h */,
+				A054D21F4794D7A0DCAA3A2DF1D97FFE /* SRKAES256Extension.h */,
+				9A69763DC6CF73CE03B7983FC5FA3AD3 /* SRKAES256Extension.m */,
+				0FE0EEBBC0C107089341785DFF134A99 /* SRKContext.h */,
+				295403A5E8561D510E3B15CFB34B5C5D /* SRKContext.m */,
+				412AFC90F4666E1754CCF9387290734B /* SRKDefinitions.h */,
+				4A612183F554FD07723AA91FD84B0681 /* SRKEncryptedObject.h */,
+				286A8E63681D8278CA9292238135F9C6 /* SRKEncryptedObject.m */,
+				77AD801584FD38EDE0E04034A2214087 /* SRKError.m */,
+				9C27EC8981D9F65633108A16F347A1B7 /* SRKEvent.m */,
+				F66370F078179935AB07EA006BF9AE18 /* SRKEventBlockHolder.h */,
+				99F946EE88142B39476311D8157B8577 /* SRKEventBlockHolder.m */,
+				17469BE1464CCCA031E5E0EE4E4430FA /* SRKEventHandler.m */,
+				28635EC5C5D1374631DE0DD2F119EF83 /* SRKEventHandler+Private.h */,
+				8A54ACEC3C3C43C83B56858EA700DDF8 /* SRKEventRegistryObject.h */,
+				8C1FB9CFA3DE7E76C327474898CCBEC3 /* SRKEventRegistryObject.m */,
+				775C5DF215225EA40190AF8EAF487FC6 /* SRKFTSQuery.m */,
+				66B02E6DE208927643086E777C60DCA1 /* SRKFuzzyStore.h */,
+				90642C1AD41F9E93A1483D5FB87D7142 /* SRKFuzzyStore.m */,
+				B98F271F56AFEC191C352FA9F1079D5F /* SRKGlobals.h */,
+				51F8800C36A431EC38104C9E92A24858 /* SRKGlobals.m */,
+				C51FDC387FD6817537B6C7E9C59E57D0 /* SRKIndexDefinition.m */,
+				B0B8C69706879F08CF3E00F0117E4A76 /* SRKIndexDefinition+Private.h */,
+				0D2C0BEDBCCB4AFA4F977061652D883B /* SRKJoinObject.h */,
+				63A3CA99089EB4D83E7A11FAAF588679 /* SRKJoinObject.m */,
+				81C757EF63A477578E9DAC8A1ACCCF84 /* SRKLazyLoader.h */,
+				DB478E0972335CCBB4014634C75DDE9A /* SRKLazyLoader.m */,
+				CC955861E8ACE56CDA6232F7BC543A77 /* SRKObject.m */,
+				F4573433B46FF4ADF9BA3263E7A3B3D5 /* SRKObject+Private.h */,
+				0FE80043ED2B17520F6EB897F1917A77 /* SRKObjectChain.h */,
+				61E71E35A86BF5998FD04D175FA8721D /* SRKObjectChain.m */,
+				3315AF6811F8AA7BBEC62C5184F10532 /* SRKQuery.m */,
+				4AA089F32E107D0AD2821E32BBDD03E6 /* SRKQuery+Private.h */,
+				0FFF0BAE5CF30509BC45521B7E74E604 /* SRKQueryAsyncHandler.m */,
+				FD26DF0633C625F77A30EF094D316ED3 /* SRKQueryAsyncHandler+Private.h */,
+				6845B7487DAECAF7F0D33225E70F55BC /* SRKQueryProfile.m */,
+				C04B71FAB20EBB377AEA1B1B954B8F67 /* SRKRawResults.m */,
+				AEFFABF1217B1F1AEDFDE1B1B69B5FD6 /* SRKRegistry.h */,
+				2202CD3EC7E91244F65BC8788470BA65 /* SRKRegistry.m */,
+				F729B93940CFD1B1F6A1608F76712DE7 /* SRKRegistryEntry.h */,
+				F998E7849D7B285046721AD0814956DB /* SRKRegistryEntry.m */,
+				EF3EABCCA2C1B6EEB7DF5D2A4EF9A2B6 /* SRKRelationship.h */,
+				2E3FA6C83FD8D55BDC17301B6B6E0C77 /* SRKRelationship.m */,
+				BA750BD0D8873BD399701D9CE3AD591A /* SRKResultSet.m */,
+				9B95683F72E09864A6388FB161F3EB2F /* SRKResultSet+Private.h */,
+				786FCAB637C1C721EE92E9C25B0E4892 /* SRKSettings.m */,
+				DE75BBAD183300715445F0C8849659CE /* SRKSQLiteHandle.h */,
+				3F3D287BB32A551CD44EB4C21B22C8C9 /* SRKSQLiteHandle.m */,
+				86940564B7E95483EACF33EEBBCEF45E /* SRKStringObject.m */,
+				95117201C625B607723A89DD784BEFCE /* SRKTransaction.m */,
+				1020A9E35A29A7A92DC69850CA647161 /* SRKTransactionElement.h */,
+				F51D92D873AD3538D871C54526A9724A /* SRKTransactionElement.m */,
+				B8E3BE6CCA741140C8F0FE2402E10082 /* SRKTransactionGroup.h */,
+				A6457C663E61A5E1ABE46EA70F73F5C9 /* SRKTransactionGroup.m */,
+				3F321D02736DCA72093F08560178E08A /* SRKUnsupportedObject.h */,
+				96CE97AF00989883C39887B74C826064 /* SRKUnsupportedObject.m */,
+				0DF5AA023E892B1DA0E79D54639C2C92 /* SRKUtilities.h */,
+				54EDCA5271A0D7BFB9E707D46E5790B9 /* SRKUtilities.m */,
+				812F0EA2C149206E110928759E5CCF97 /* Support Files */,
+			);
+			name = SharkORM;
+			path = SharkORM;
+			sourceTree = "<group>";
+		};
+		F920072067116272549DEBFEE5E69A71 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F0CE9A5875D25EB61DBA5AFE792B7464 /* SharkORM */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		FCFEC93BE7D4C27A666356214BECB23F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8B145695C52A7EB0B6577F0E1B5897B0 /* libPods-NanoLrsLibiOS.a */,
+				A827D4A4E7D93436169BCC0B12F5D507 /* libPods-NanoLrsLibiOSTests.a */,
+				BF8173F78730397E61371B4BCCB69E04 /* libSharkORM.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		5B2FDA5E889A47A3D278CA8EF2213032 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA30731AB6D72DEB3F86008399DB991A /* DBAccess.h in Headers */,
+				8C422B29C45794A422988FB6B3DB0438 /* FTSRegistry.h in Headers */,
+				6F8CC8BD0C965153BC5F7256E50D2773 /* SharkORM+Private.h in Headers */,
+				08CA1DDC953F60CC11517B339A00A749 /* SharkORM.h in Headers */,
+				5B06EE745C85FAB2794BE43E5ED42D48 /* sqlite3.h in Headers */,
+				C02AF168C3DBFD8632866DDCD9C0562F /* sqlite3ext.h in Headers */,
+				5BB21E3228766419C76535F77D52585C /* SRKAES256Extension.h in Headers */,
+				8E7B99AD8E7B16B5A01EAD16F29383C2 /* SRKContext.h in Headers */,
+				92A43BC5217927EF3B1299E760C0A10C /* SRKDefinitions.h in Headers */,
+				B3391BD4AEAF6B6228FB02236C7EF9E7 /* SRKEncryptedObject.h in Headers */,
+				311194824D80641834E4EA6FB7762C38 /* SRKEventBlockHolder.h in Headers */,
+				2689E5B9A76987BF54A1A4AC4D35017C /* SRKEventHandler+Private.h in Headers */,
+				2741DE9B63D702FEC9DE5F239A9DE7F7 /* SRKEventRegistryObject.h in Headers */,
+				19D46C38D9C4F75C92783699FCCBE1FE /* SRKFuzzyStore.h in Headers */,
+				0ED78C24149D3C5DF666C258DF8DE606 /* SRKGlobals.h in Headers */,
+				BC5ABA43425FE8C53CCD253BA38F3165 /* SRKIndexDefinition+Private.h in Headers */,
+				C1308441238EAD686A04DAEEA1B8020B /* SRKJoinObject.h in Headers */,
+				1717B456654F464E92884E64E0EEE417 /* SRKLazyLoader.h in Headers */,
+				61FA3C87874082BE517999BDED16E484 /* SRKObject+Private.h in Headers */,
+				C3EFEE6F5A8133A0610C58C370A4DA3F /* SRKObjectChain.h in Headers */,
+				34F0DCAD786EB337935502D660F54D45 /* SRKQuery+Private.h in Headers */,
+				907172668BD4778541D6049DAEB8748B /* SRKQueryAsyncHandler+Private.h in Headers */,
+				4A499E5A0AA0E6CCF14A9B9212F992D2 /* SRKRegistry.h in Headers */,
+				F8B3F63D564840FFEEA56B286E5AA242 /* SRKRegistryEntry.h in Headers */,
+				367318819A29FC3327BA3C8DA44FB487 /* SRKRelationship.h in Headers */,
+				F64D3109B851F50D32245A88B4496870 /* SRKResultSet+Private.h in Headers */,
+				C58142EF9D2397E40D84593521E1476C /* SRKSQLiteHandle.h in Headers */,
+				9C4CA94AD9B1FCA4DA21CAA0E6467E88 /* SRKTransactionElement.h in Headers */,
+				F5BCA1036EE8C5518A790C3AD9D4C121 /* SRKTransactionGroup.h in Headers */,
+				9C389C301348570ABA3E62C19730B413 /* SRKUnsupportedObject.h in Headers */,
+				2F72F03DF7D7B73E6FAF1DA0CAFCF790 /* SRKUtilities.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		3EA7F88E2C0F28B4975335BE30631DD0 /* SharkORM */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65DE6319C6CD7AABFFE24BF17B805D6E /* Build configuration list for PBXNativeTarget "SharkORM" */;
+			buildPhases = (
+				9CDD028E4A5E3E01B918FB6DBEEF35CC /* Sources */,
+				D2967EBB9F1AE9ACDB063E4780722454 /* Frameworks */,
+				5B2FDA5E889A47A3D278CA8EF2213032 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SharkORM;
+			productName = SharkORM;
+			productReference = BF8173F78730397E61371B4BCCB69E04 /* libSharkORM.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		BCEA88F6CCCD7AEDD93CE19349CED61F /* Pods-NanoLrsLibiOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2C862783D27B2F9802E6F3E921B0DF3D /* Build configuration list for PBXNativeTarget "Pods-NanoLrsLibiOSTests" */;
+			buildPhases = (
+				CBDD3D4AFC140573C3BBCB48B96F0F84 /* Sources */,
+				FB4DD03E262E622135B89BF3D47D5114 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-NanoLrsLibiOSTests";
+			productName = "Pods-NanoLrsLibiOSTests";
+			productReference = A827D4A4E7D93436169BCC0B12F5D507 /* libPods-NanoLrsLibiOSTests.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		F24E18150A8C46CFB8A9A55884911642 /* Pods-NanoLrsLibiOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E672EDA54D21E4050722693C8FD9EACE /* Build configuration list for PBXNativeTarget "Pods-NanoLrsLibiOS" */;
+			buildPhases = (
+				4C1A3F7A4B032BDCD078CC523BB8695A /* Sources */,
+				C77A85966BA4C063D1D13DE416AE15D8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				01702F5E99F08632D78666D46D959EA9 /* PBXTargetDependency */,
+			);
+			name = "Pods-NanoLrsLibiOS";
+			productName = "Pods-NanoLrsLibiOS";
+			productReference = 8B145695C52A7EB0B6577F0E1B5897B0 /* libPods-NanoLrsLibiOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = FCFEC93BE7D4C27A666356214BECB23F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F24E18150A8C46CFB8A9A55884911642 /* Pods-NanoLrsLibiOS */,
+				BCEA88F6CCCD7AEDD93CE19349CED61F /* Pods-NanoLrsLibiOSTests */,
+				3EA7F88E2C0F28B4975335BE30631DD0 /* SharkORM */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C1A3F7A4B032BDCD078CC523BB8695A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B9424DA73BF058388ACD595D0678B46 /* Pods-NanoLrsLibiOS-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9CDD028E4A5E3E01B918FB6DBEEF35CC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E92CA131645DF9A1A82D7C4AE85BC150 /* FTSRegistry.m in Sources */,
+				63FEB97549BB7434CACA79BB8EF1B769 /* SharkORM-dummy.m in Sources */,
+				C521F58E6116CF9BFF8027633596E406 /* SharkORM.m in Sources */,
+				B6B0781F966DDAFE3CA83675AB78A0B6 /* sqlite3.c in Sources */,
+				874EBF4696D97E693C8AF8ABDE393B6C /* SRKAES256Extension.m in Sources */,
+				A16DD609A7B6C0C6485B7104395EA013 /* SRKContext.m in Sources */,
+				B73F89A0242255AB0D9FE7D142DEA95A /* SRKEncryptedObject.m in Sources */,
+				237B22596E3EBDD6E161B48E83983624 /* SRKError.m in Sources */,
+				717D62D8D12F3BD181EE657FE963292B /* SRKEvent.m in Sources */,
+				48802C5349056D02174BAAD9F8171DB5 /* SRKEventBlockHolder.m in Sources */,
+				775D81C16CCF5B7992045672FCADC292 /* SRKEventHandler.m in Sources */,
+				81F570721931EE30E3F4F27DF143BEEF /* SRKEventRegistryObject.m in Sources */,
+				809D01203F1C701831576C592081AC1B /* SRKFTSQuery.m in Sources */,
+				3BBC44E1014B5A46BEFBA45C142A75D9 /* SRKFuzzyStore.m in Sources */,
+				F1C2D43A14510B495F1D9CDB427602BF /* SRKGlobals.m in Sources */,
+				96E5D52C305C46D0F41D5DD4A5A5EF3C /* SRKIndexDefinition.m in Sources */,
+				2C30776CEFC3350167096E0AAA7BCD36 /* SRKJoinObject.m in Sources */,
+				017048BD8407F178533EF317D6487A56 /* SRKLazyLoader.m in Sources */,
+				644A5D8854FDB7B3584BDD8DCD7CD64B /* SRKObject.m in Sources */,
+				8575A19D3D9FCAC1CD3316D8296F2113 /* SRKObjectChain.m in Sources */,
+				9F520A6A115922292CD272008B5731CA /* SRKQuery.m in Sources */,
+				4239A971082585C1131C774D3259D2C3 /* SRKQueryAsyncHandler.m in Sources */,
+				F9EDC58BE23CE4B676FE03A33F04F4D3 /* SRKQueryProfile.m in Sources */,
+				F780428E3362E5F4BD2BFCFB1A267389 /* SRKRawResults.m in Sources */,
+				B235AC75F907D66EB4C788EE05523202 /* SRKRegistry.m in Sources */,
+				01654A2ABE75458C7B632BF8ACFB1A8C /* SRKRegistryEntry.m in Sources */,
+				AAC3E02113955826C85471AEE1E3032E /* SRKRelationship.m in Sources */,
+				E4500465BDB4FB99452EAF8ACCE3D7E8 /* SRKResultSet.m in Sources */,
+				52CEFE2755E9713012ECF773DFE49050 /* SRKSettings.m in Sources */,
+				D6C29BCF60290AE9816702C745EE5BB6 /* SRKSQLiteHandle.m in Sources */,
+				2942F31242897663C02F517D31584F08 /* SRKStringObject.m in Sources */,
+				112E5013FFAE3F219FB33945DC9BB287 /* SRKTransaction.m in Sources */,
+				D224866BDB96EABBF247EB471B03AAFC /* SRKTransactionElement.m in Sources */,
+				292D9A9D436D402ADBCB9E36D9040F64 /* SRKTransactionGroup.m in Sources */,
+				F5B22DDAAA1389BA2518AE09B5F90FAC /* SRKUnsupportedObject.m in Sources */,
+				0571362EA9BE86B6FC1546894851EBE5 /* SRKUtilities.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBDD3D4AFC140573C3BBCB48B96F0F84 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14A081D08830D9AA2F339794E5FD9409 /* Pods-NanoLrsLibiOSTests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		01702F5E99F08632D78666D46D959EA9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SharkORM;
+			target = 3EA7F88E2C0F28B4975335BE30631DD0 /* SharkORM */;
+			targetProxy = 62FD6D0CDDF2E4ABD42DC51B81B7C22A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		130FB3854562E4030039595814951AA6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16C69C2C4021100497F076BF09C1E14F /* Pods-NanoLrsLibiOS.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		189CBAD80568B4A6B824C9671598CCD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4EE7470DDEA6FD18965BBDCB695ACEFC /* SharkORM.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/SharkORM/SharkORM-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		551C986F3607567BDF6827D2B7BA2240 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4EE7470DDEA6FD18965BBDCB695ACEFC /* SharkORM.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/SharkORM/SharkORM-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		673254EEAF0B5BF4596080C749645884 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		69A2CE2F5C19C634162DA2F5BA851142 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 748298BAB6F319A3817FE50E65DC8CB7 /* Pods-NanoLrsLibiOS.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		E13F120120C4A72A53B8FBE56C5F268B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B23479B46EA1FC945CD2846B72C810C5 /* Pods-NanoLrsLibiOSTests.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		E4F26E6EB105713A6A7E7E2E283AC2DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		FC94358C6526A1B65BA38F48469A2F0E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F681A87B3B295B44F5A5778123AFD2C /* Pods-NanoLrsLibiOSTests.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2C862783D27B2F9802E6F3E921B0DF3D /* Build configuration list for PBXNativeTarget "Pods-NanoLrsLibiOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E13F120120C4A72A53B8FBE56C5F268B /* Debug */,
+				FC94358C6526A1B65BA38F48469A2F0E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E4F26E6EB105713A6A7E7E2E283AC2DF /* Debug */,
+				673254EEAF0B5BF4596080C749645884 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		65DE6319C6CD7AABFFE24BF17B805D6E /* Build configuration list for PBXNativeTarget "SharkORM" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				551C986F3607567BDF6827D2B7BA2240 /* Debug */,
+				189CBAD80568B4A6B824C9671598CCD6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E672EDA54D21E4050722693C8FD9EACE /* Build configuration list for PBXNativeTarget "Pods-NanoLrsLibiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				130FB3854562E4030039595814951AA6 /* Debug */,
+				69A2CE2F5C19C634162DA2F5BA851142 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04F79DD7C617385685D27E50 /* libPods-NanoLrsLibiOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 603479DBBCB60927275B69C3 /* libPods-NanoLrsLibiOSTests.a */; };
+		244D2D6C89AB3FF1546F871C /* libPods-NanoLrsLibiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1CD5FC946E0E7BEA7AB7D92 /* libPods-NanoLrsLibiOS.a */; };
 		AD7622801E3F219900DCE64F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AD76227F1E3F219900DCE64F /* main.m */; };
 		AD7622831E3F219900DCE64F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622821E3F219900DCE64F /* AppDelegate.m */; };
 		AD7622861E3F219900DCE64F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622851E3F219900DCE64F /* ViewController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -89,6 +91,14 @@
 		AD7623391E3F395900DCE64F /* XapiVerbEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FB1E3F395800DCE64F /* XapiVerbEndpoint.m */; };
 		AD76233A1E3F395900DCE64F /* XapiVerbManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FD1E3F395800DCE64F /* XapiVerbManager.m */; };
 		AD76233B1E3F395900DCE64F /* XapiVerbManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FD1E3F395800DCE64F /* XapiVerbManager.m */; };
+		ADD877591E41C94800CDD012 /* XapiActivitySrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD8774A1E41C94800CDD012 /* XapiActivitySrkObj.m */; };
+		ADD8775A1E41C94800CDD012 /* XapiAgentSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD8774C1E41C94800CDD012 /* XapiAgentSrkObj.m */; };
+		ADD8775B1E41C94800CDD012 /* XapiDocumentSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD8774E1E41C94800CDD012 /* XapiDocumentSrkObj.m */; };
+		ADD8775C1E41C94800CDD012 /* XapiForwardingStatementSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD877501E41C94800CDD012 /* XapiForwardingStatementSrkObj.m */; };
+		ADD8775D1E41C94800CDD012 /* XapiStatementSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD877521E41C94800CDD012 /* XapiStatementSrkObj.m */; };
+		ADD8775E1E41C94800CDD012 /* XapiStateSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD877541E41C94800CDD012 /* XapiStateSrkObj.m */; };
+		ADD8775F1E41C94800CDD012 /* XapiUserSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD877561E41C94800CDD012 /* XapiUserSrkObj.m */; };
+		ADD877601E41C94800CDD012 /* XapiVerbSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD877581E41C94800CDD012 /* XapiVerbSrkObj.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +112,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		603479DBBCB60927275B69C3 /* libPods-NanoLrsLibiOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NanoLrsLibiOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		87B99F47A691BDF8D394288B /* Pods-NanoLrsLibiOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NanoLrsLibiOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NanoLrsLibiOS/Pods-NanoLrsLibiOS.debug.xcconfig"; sourceTree = "<group>"; };
+		A8204CA6DABF4A62373BF166 /* Pods-NanoLrsLibiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NanoLrsLibiOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-NanoLrsLibiOS/Pods-NanoLrsLibiOS.release.xcconfig"; sourceTree = "<group>"; };
 		AD76227B1E3F219900DCE64F /* NanoLrsLibiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NanoLrsLibiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD76227F1E3F219900DCE64F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AD7622811E3F219900DCE64F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -188,6 +201,25 @@
 		AD7622FB1E3F395800DCE64F /* XapiVerbEndpoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiVerbEndpoint.m; sourceTree = "<group>"; };
 		AD7622FC1E3F395800DCE64F /* XapiVerbManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiVerbManager.h; sourceTree = "<group>"; };
 		AD7622FD1E3F395800DCE64F /* XapiVerbManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiVerbManager.m; sourceTree = "<group>"; };
+		ADD877491E41C94800CDD012 /* XapiActivitySrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiActivitySrkObj.h; sourceTree = "<group>"; };
+		ADD8774A1E41C94800CDD012 /* XapiActivitySrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiActivitySrkObj.m; sourceTree = "<group>"; };
+		ADD8774B1E41C94800CDD012 /* XapiAgentSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiAgentSrkObj.h; sourceTree = "<group>"; };
+		ADD8774C1E41C94800CDD012 /* XapiAgentSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiAgentSrkObj.m; sourceTree = "<group>"; };
+		ADD8774D1E41C94800CDD012 /* XapiDocumentSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiDocumentSrkObj.h; sourceTree = "<group>"; };
+		ADD8774E1E41C94800CDD012 /* XapiDocumentSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiDocumentSrkObj.m; sourceTree = "<group>"; };
+		ADD8774F1E41C94800CDD012 /* XapiForwardingStatementSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiForwardingStatementSrkObj.h; sourceTree = "<group>"; };
+		ADD877501E41C94800CDD012 /* XapiForwardingStatementSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiForwardingStatementSrkObj.m; sourceTree = "<group>"; };
+		ADD877511E41C94800CDD012 /* XapiStatementSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiStatementSrkObj.h; sourceTree = "<group>"; };
+		ADD877521E41C94800CDD012 /* XapiStatementSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiStatementSrkObj.m; sourceTree = "<group>"; };
+		ADD877531E41C94800CDD012 /* XapiStateSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiStateSrkObj.h; sourceTree = "<group>"; };
+		ADD877541E41C94800CDD012 /* XapiStateSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiStateSrkObj.m; sourceTree = "<group>"; };
+		ADD877551E41C94800CDD012 /* XapiUserSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiUserSrkObj.h; sourceTree = "<group>"; };
+		ADD877561E41C94800CDD012 /* XapiUserSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiUserSrkObj.m; sourceTree = "<group>"; };
+		ADD877571E41C94800CDD012 /* XapiVerbSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiVerbSrkObj.h; sourceTree = "<group>"; };
+		ADD877581E41C94800CDD012 /* XapiVerbSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiVerbSrkObj.m; sourceTree = "<group>"; };
+		B1965922F354019FD64FAC4B /* Pods-NanoLrsLibiOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NanoLrsLibiOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NanoLrsLibiOSTests/Pods-NanoLrsLibiOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		C46CEB4942527533DC0CA566 /* Pods-NanoLrsLibiOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NanoLrsLibiOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NanoLrsLibiOSTests/Pods-NanoLrsLibiOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F1CD5FC946E0E7BEA7AB7D92 /* libPods-NanoLrsLibiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NanoLrsLibiOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +229,7 @@
 			files = (
 				AD7622B71E3F305800DCE64F /* libz.tbd in Frameworks */,
 				AD7622B51E3F2FDF00DCE64F /* Security.framework in Frameworks */,
+				244D2D6C89AB3FF1546F871C /* libPods-NanoLrsLibiOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,15 +239,28 @@
 			files = (
 				AD7622BE1E3F391E00DCE64F /* libz.tbd in Frameworks */,
 				AD7622BD1E3F391400DCE64F /* Security.framework in Frameworks */,
+				04F79DD7C617385685D27E50 /* libPods-NanoLrsLibiOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		919DA2EBD1CB2963D66DC503 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				87B99F47A691BDF8D394288B /* Pods-NanoLrsLibiOS.debug.xcconfig */,
+				A8204CA6DABF4A62373BF166 /* Pods-NanoLrsLibiOS.release.xcconfig */,
+				C46CEB4942527533DC0CA566 /* Pods-NanoLrsLibiOSTests.debug.xcconfig */,
+				B1965922F354019FD64FAC4B /* Pods-NanoLrsLibiOSTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		AD7622721E3F219800DCE64F = {
 			isa = PBXGroup;
 			children = (
+				ADD877481E41C94800CDD012 /* NanoLrs-Entities */,
 				AD7622BF1E3F395800DCE64F /* NanoLrs-Main */,
 				AD7622B81E3F384C00DCE64F /* TestingTest */,
 				AD7622A61E3F2F1800DCE64F /* NanoHttpd */,
@@ -223,6 +269,7 @@
 				AD7622971E3F219900DCE64F /* NanoLrsLibiOSTests */,
 				AD76227C1E3F219900DCE64F /* Products */,
 				AD7622B31E3F2FDF00DCE64F /* Frameworks */,
+				919DA2EBD1CB2963D66DC503 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -287,6 +334,8 @@
 			children = (
 				AD7622B61E3F305800DCE64F /* libz.tbd */,
 				AD7622B41E3F2FDF00DCE64F /* Security.framework */,
+				F1CD5FC946E0E7BEA7AB7D92 /* libPods-NanoLrsLibiOS.a */,
+				603479DBBCB60927275B69C3 /* libPods-NanoLrsLibiOSTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -370,6 +419,30 @@
 			path = "../Generated/NanoLrs-Main";
 			sourceTree = "<group>";
 		};
+		ADD877481E41C94800CDD012 /* NanoLrs-Entities */ = {
+			isa = PBXGroup;
+			children = (
+				ADD877491E41C94800CDD012 /* XapiActivitySrkObj.h */,
+				ADD8774A1E41C94800CDD012 /* XapiActivitySrkObj.m */,
+				ADD8774B1E41C94800CDD012 /* XapiAgentSrkObj.h */,
+				ADD8774C1E41C94800CDD012 /* XapiAgentSrkObj.m */,
+				ADD8774D1E41C94800CDD012 /* XapiDocumentSrkObj.h */,
+				ADD8774E1E41C94800CDD012 /* XapiDocumentSrkObj.m */,
+				ADD8774F1E41C94800CDD012 /* XapiForwardingStatementSrkObj.h */,
+				ADD877501E41C94800CDD012 /* XapiForwardingStatementSrkObj.m */,
+				ADD877511E41C94800CDD012 /* XapiStatementSrkObj.h */,
+				ADD877521E41C94800CDD012 /* XapiStatementSrkObj.m */,
+				ADD877531E41C94800CDD012 /* XapiStateSrkObj.h */,
+				ADD877541E41C94800CDD012 /* XapiStateSrkObj.m */,
+				ADD877551E41C94800CDD012 /* XapiUserSrkObj.h */,
+				ADD877561E41C94800CDD012 /* XapiUserSrkObj.m */,
+				ADD877571E41C94800CDD012 /* XapiVerbSrkObj.h */,
+				ADD877581E41C94800CDD012 /* XapiVerbSrkObj.m */,
+			);
+			name = "NanoLrs-Entities";
+			path = "../Generated/NanoLrs-Entities";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -377,9 +450,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AD76229D1E3F219900DCE64F /* Build configuration list for PBXNativeTarget "NanoLrsLibiOS" */;
 			buildPhases = (
+				3F753CE92EF61610A5DDC330 /* [CP] Check Pods Manifest.lock */,
 				AD7622771E3F219900DCE64F /* Sources */,
 				AD7622781E3F219900DCE64F /* Frameworks */,
 				AD7622791E3F219900DCE64F /* Resources */,
+				633499725E364E2E55271F97 /* [CP] Embed Pods Frameworks */,
+				FD240196F3B0731AE26A445B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -394,9 +470,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AD7622A01E3F219900DCE64F /* Build configuration list for PBXNativeTarget "NanoLrsLibiOSTests" */;
 			buildPhases = (
+				47617B3B247E0CC9AB29B3A8 /* [CP] Check Pods Manifest.lock */,
 				AD7622901E3F219900DCE64F /* Sources */,
 				AD7622911E3F219900DCE64F /* Frameworks */,
 				AD7622921E3F219900DCE64F /* Resources */,
+				E8EADA19B21C61BC5C9897C2 /* [CP] Embed Pods Frameworks */,
+				EA09B230B05D34F2D23EED1E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -469,6 +548,99 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		3F753CE92EF61610A5DDC330 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		47617B3B247E0CC9AB29B3A8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		633499725E364E2E55271F97 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NanoLrsLibiOS/Pods-NanoLrsLibiOS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E8EADA19B21C61BC5C9897C2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NanoLrsLibiOSTests/Pods-NanoLrsLibiOSTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EA09B230B05D34F2D23EED1E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NanoLrsLibiOSTests/Pods-NanoLrsLibiOSTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FD240196F3B0731AE26A445B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NanoLrsLibiOS/Pods-NanoLrsLibiOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		AD7622771E3F219900DCE64F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -478,10 +650,14 @@
 				AD76232C1E3F395900DCE64F /* XapiStatementsForwardingEndpoint.m in Sources */,
 				AD7622861E3F219900DCE64F /* ViewController.m in Sources */,
 				AD7623141E3F395900DCE64F /* XapiAgent.m in Sources */,
+				ADD8775D1E41C94800CDD012 /* XapiStatementSrkObj.m in Sources */,
 				AD7623321E3F395900DCE64F /* XapiUser.m in Sources */,
+				ADD8775A1E41C94800CDD012 /* XapiAgentSrkObj.m in Sources */,
+				ADD8775C1E41C94800CDD012 /* XapiForwardingStatementSrkObj.m in Sources */,
 				AD76231C1E3F395900DCE64F /* XapiForwardingStatement.m in Sources */,
 				AD7623101E3F395900DCE64F /* XapiActivityEndpoint.m in Sources */,
 				AD7623021E3F395800DCE64F /* JsonUtil.m in Sources */,
+				ADD8775E1E41C94800CDD012 /* XapiStateSrkObj.m in Sources */,
 				AD7622831E3F219900DCE64F /* AppDelegate.m in Sources */,
 				AD7623221E3F395900DCE64F /* XapiStateEndpoint.m in Sources */,
 				AD76232E1E3F395900DCE64F /* XapiStatementsForwardingEvent.m in Sources */,
@@ -489,12 +665,16 @@
 				AD7623201E3F395900DCE64F /* XapiState.m in Sources */,
 				AD7623121E3F395900DCE64F /* XapiActivityManager.m in Sources */,
 				AD7623161E3F395900DCE64F /* XapiAgentEndpoint.m in Sources */,
+				ADD877601E41C94800CDD012 /* XapiVerbSrkObj.m in Sources */,
 				AD76233A1E3F395900DCE64F /* XapiVerbManager.m in Sources */,
 				AD7622AD1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */,
+				ADD877591E41C94800CDD012 /* XapiActivitySrkObj.m in Sources */,
+				ADD8775B1E41C94800CDD012 /* XapiDocumentSrkObj.m in Sources */,
 				AD7623301E3F395900DCE64F /* XapiStatementsForwardingListener.m in Sources */,
 				AD76231A1E3F395900DCE64F /* XapiDocument.m in Sources */,
 				AD7623281E3F395900DCE64F /* XapiStatementManager.m in Sources */,
 				AD76230A1E3F395800DCE64F /* PersistenceManagerFactory.m in Sources */,
+				ADD8775F1E41C94800CDD012 /* XapiUserSrkObj.m in Sources */,
 				AD7623381E3F395900DCE64F /* XapiVerbEndpoint.m in Sources */,
 				AD7622801E3F219900DCE64F /* main.m in Sources */,
 				AD7623261E3F395900DCE64F /* XapiStatement.m in Sources */,
@@ -685,83 +865,109 @@
 		};
 		AD76229E1E3F219900DCE64F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AD7622A31E3F29B000DCE64F /* local.xcconfig */;
+			baseConfigurationReference = 87B99F47A691BDF8D394288B /* Pods-NanoLrsLibiOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
-				FRAMEWORK_SEARCH_PATHS = "$(J2OBJC_HOME)/frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(J2OBJC_HOME)/frameworks",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = NanoLrsLibiOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(J2OBJC_HOME)/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(J2OBJC_HOME)/lib",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = (
-					"-ljre_zip",
+					"$(inherited)",
 					"-ljre_emul",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ustadmobile.NanoLrsLibiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include";
+				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include $(inherited)";
 			};
 			name = Debug;
 		};
 		AD76229F1E3F219900DCE64F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AD7622A31E3F29B000DCE64F /* local.xcconfig */;
+			baseConfigurationReference = A8204CA6DABF4A62373BF166 /* Pods-NanoLrsLibiOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
-				FRAMEWORK_SEARCH_PATHS = "$(J2OBJC_HOME)/frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(J2OBJC_HOME)/frameworks",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = NanoLrsLibiOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(J2OBJC_HOME)/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(J2OBJC_HOME)/lib",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = (
-					"-ljre_zip",
+					"$(inherited)",
 					"-ljre_emul",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ustadmobile.NanoLrsLibiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include";
+				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include $(inherited)";
 			};
 			name = Release;
 		};
 		AD7622A11E3F219900DCE64F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AD7622A31E3F29B000DCE64F /* local.xcconfig */;
+			baseConfigurationReference = C46CEB4942527533DC0CA566 /* Pods-NanoLrsLibiOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = "$(J2OBJC_HOME)/frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(J2OBJC_HOME)/frameworks",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = NanoLrsLibiOSTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(J2OBJC_HOME)/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(J2OBJC_HOME)/lib",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = (
-					"-ljre_emul",
+					"$(inherited)",
 					"-ljunit",
+					"-ljre_emul",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ustadmobile.NanoLrsLibiOSTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NanoLrsLibiOS.app/NanoLrsLibiOS";
-				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include";
+				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include $(inherited)";
 			};
 			name = Debug;
 		};
 		AD7622A21E3F219900DCE64F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AD7622A31E3F29B000DCE64F /* local.xcconfig */;
+			baseConfigurationReference = B1965922F354019FD64FAC4B /* Pods-NanoLrsLibiOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = "$(J2OBJC_HOME)/frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(J2OBJC_HOME)/frameworks",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = NanoLrsLibiOSTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(J2OBJC_HOME)/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(J2OBJC_HOME)/lib",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = (
-					"-ljre_emul",
+					"$(inherited)",
 					"-ljunit",
+					"-ljre_emul",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ustadmobile.NanoLrsLibiOSTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NanoLrsLibiOS.app/NanoLrsLibiOS";
-				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include";
+				USER_HEADER_SEARCH_PATHS = "$(J2OBJC_HOME)/include $(inherited)";
 			};
 			name = Release;
 		};
@@ -784,6 +990,7 @@
 				AD76229F1E3F219900DCE64F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AD7622A01E3F219900DCE64F /* Build configuration list for PBXNativeTarget "NanoLrsLibiOSTests" */ = {
 			isa = XCConfigurationList;
@@ -792,6 +999,7 @@
 				AD7622A21E3F219900DCE64F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
