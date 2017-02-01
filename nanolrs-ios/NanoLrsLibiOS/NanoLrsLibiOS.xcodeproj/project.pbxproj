@@ -16,81 +16,46 @@
 		AD76228B1E3F219900DCE64F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD76228A1E3F219900DCE64F /* Assets.xcassets */; };
 		AD76228E1E3F219900DCE64F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD76228C1E3F219900DCE64F /* LaunchScreen.storyboard */; };
 		AD7622991E3F219900DCE64F /* NanoLrsLibiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622981E3F219900DCE64F /* NanoLrsLibiOSTests.m */; };
-		AD7622A41E3F29B000DCE64F /* local.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = AD7622A31E3F29B000DCE64F /* local.xcconfig */; };
-		AD7622A51E3F29B000DCE64F /* local.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = AD7622A31E3F29B000DCE64F /* local.xcconfig */; };
 		AD7622AD1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622A81E3F2F1800DCE64F /* NanoHTTPD.m */; };
-		AD7622AE1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622A81E3F2F1800DCE64F /* NanoHTTPD.m */; };
 		AD7622AF1E3F2F1800DCE64F /* RouterNanoHTTPD.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622AA1E3F2F1800DCE64F /* RouterNanoHTTPD.m */; };
-		AD7622B01E3F2F1800DCE64F /* RouterNanoHTTPD.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622AA1E3F2F1800DCE64F /* RouterNanoHTTPD.m */; };
 		AD7622B11E3F2F1800DCE64F /* ServerRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622AC1E3F2F1800DCE64F /* ServerRunner.m */; };
-		AD7622B21E3F2F1900DCE64F /* ServerRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622AC1E3F2F1800DCE64F /* ServerRunner.m */; };
 		AD7622B51E3F2FDF00DCE64F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD7622B41E3F2FDF00DCE64F /* Security.framework */; };
 		AD7622B71E3F305800DCE64F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = AD7622B61E3F305800DCE64F /* libz.tbd */; };
 		AD7622BC1E3F387200DCE64F /* TestParseUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622BA1E3F387200DCE64F /* TestParseUtils.m */; };
 		AD7622BD1E3F391400DCE64F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD7622B41E3F2FDF00DCE64F /* Security.framework */; };
 		AD7622BE1E3F391E00DCE64F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = AD7622B61E3F305800DCE64F /* libz.tbd */; };
 		AD7622FE1E3F395800DCE64F /* Base64CoderNanoLrs.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C11E3F395800DCE64F /* Base64CoderNanoLrs.m */; };
-		AD7622FF1E3F395800DCE64F /* Base64CoderNanoLrs.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C11E3F395800DCE64F /* Base64CoderNanoLrs.m */; };
 		AD7623001E3F395800DCE64F /* HttpLrs.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C31E3F395800DCE64F /* HttpLrs.m */; };
-		AD7623011E3F395800DCE64F /* HttpLrs.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C31E3F395800DCE64F /* HttpLrs.m */; };
 		AD7623021E3F395800DCE64F /* JsonUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C51E3F395800DCE64F /* JsonUtil.m */; };
-		AD7623031E3F395800DCE64F /* JsonUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C51E3F395800DCE64F /* JsonUtil.m */; };
 		AD7623041E3F395800DCE64F /* LrsIoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C71E3F395800DCE64F /* LrsIoUtils.m */; };
-		AD7623051E3F395800DCE64F /* LrsIoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C71E3F395800DCE64F /* LrsIoUtils.m */; };
 		AD7623061E3F395800DCE64F /* ParseUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C91E3F395800DCE64F /* ParseUtil.m */; };
-		AD7623071E3F395800DCE64F /* ParseUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622C91E3F395800DCE64F /* ParseUtil.m */; };
 		AD7623081E3F395800DCE64F /* PersistenceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622CB1E3F395800DCE64F /* PersistenceManager.m */; };
-		AD7623091E3F395800DCE64F /* PersistenceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622CB1E3F395800DCE64F /* PersistenceManager.m */; };
 		AD76230A1E3F395800DCE64F /* PersistenceManagerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622CD1E3F395800DCE64F /* PersistenceManagerFactory.m */; };
-		AD76230B1E3F395800DCE64F /* PersistenceManagerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622CD1E3F395800DCE64F /* PersistenceManagerFactory.m */; };
 		AD76230C1E3F395800DCE64F /* PersistenceReceiver.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622CF1E3F395800DCE64F /* PersistenceReceiver.m */; };
-		AD76230D1E3F395800DCE64F /* PersistenceReceiver.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622CF1E3F395800DCE64F /* PersistenceReceiver.m */; };
 		AD76230E1E3F395800DCE64F /* XapiActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D11E3F395800DCE64F /* XapiActivity.m */; };
-		AD76230F1E3F395800DCE64F /* XapiActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D11E3F395800DCE64F /* XapiActivity.m */; };
 		AD7623101E3F395900DCE64F /* XapiActivityEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D31E3F395800DCE64F /* XapiActivityEndpoint.m */; };
-		AD7623111E3F395900DCE64F /* XapiActivityEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D31E3F395800DCE64F /* XapiActivityEndpoint.m */; };
 		AD7623121E3F395900DCE64F /* XapiActivityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D51E3F395800DCE64F /* XapiActivityManager.m */; };
-		AD7623131E3F395900DCE64F /* XapiActivityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D51E3F395800DCE64F /* XapiActivityManager.m */; };
 		AD7623141E3F395900DCE64F /* XapiAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D71E3F395800DCE64F /* XapiAgent.m */; };
-		AD7623151E3F395900DCE64F /* XapiAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D71E3F395800DCE64F /* XapiAgent.m */; };
 		AD7623161E3F395900DCE64F /* XapiAgentEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D91E3F395800DCE64F /* XapiAgentEndpoint.m */; };
-		AD7623171E3F395900DCE64F /* XapiAgentEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622D91E3F395800DCE64F /* XapiAgentEndpoint.m */; };
 		AD7623181E3F395900DCE64F /* XapiAgentManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622DB1E3F395800DCE64F /* XapiAgentManager.m */; };
-		AD7623191E3F395900DCE64F /* XapiAgentManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622DB1E3F395800DCE64F /* XapiAgentManager.m */; };
 		AD76231A1E3F395900DCE64F /* XapiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622DD1E3F395800DCE64F /* XapiDocument.m */; };
-		AD76231B1E3F395900DCE64F /* XapiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622DD1E3F395800DCE64F /* XapiDocument.m */; };
 		AD76231C1E3F395900DCE64F /* XapiForwardingStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622DF1E3F395800DCE64F /* XapiForwardingStatement.m */; };
-		AD76231D1E3F395900DCE64F /* XapiForwardingStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622DF1E3F395800DCE64F /* XapiForwardingStatement.m */; };
 		AD76231E1E3F395900DCE64F /* XapiForwardingStatementManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E11E3F395800DCE64F /* XapiForwardingStatementManager.m */; };
-		AD76231F1E3F395900DCE64F /* XapiForwardingStatementManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E11E3F395800DCE64F /* XapiForwardingStatementManager.m */; };
 		AD7623201E3F395900DCE64F /* XapiState.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E31E3F395800DCE64F /* XapiState.m */; };
-		AD7623211E3F395900DCE64F /* XapiState.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E31E3F395800DCE64F /* XapiState.m */; };
 		AD7623221E3F395900DCE64F /* XapiStateEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E51E3F395800DCE64F /* XapiStateEndpoint.m */; };
-		AD7623231E3F395900DCE64F /* XapiStateEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E51E3F395800DCE64F /* XapiStateEndpoint.m */; };
 		AD7623241E3F395900DCE64F /* XapiStateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E71E3F395800DCE64F /* XapiStateManager.m */; };
-		AD7623251E3F395900DCE64F /* XapiStateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E71E3F395800DCE64F /* XapiStateManager.m */; };
 		AD7623261E3F395900DCE64F /* XapiStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E91E3F395800DCE64F /* XapiStatement.m */; };
-		AD7623271E3F395900DCE64F /* XapiStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622E91E3F395800DCE64F /* XapiStatement.m */; };
 		AD7623281E3F395900DCE64F /* XapiStatementManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622EB1E3F395800DCE64F /* XapiStatementManager.m */; };
-		AD7623291E3F395900DCE64F /* XapiStatementManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622EB1E3F395800DCE64F /* XapiStatementManager.m */; };
 		AD76232A1E3F395900DCE64F /* XapiStatementsEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622ED1E3F395800DCE64F /* XapiStatementsEndpoint.m */; };
-		AD76232B1E3F395900DCE64F /* XapiStatementsEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622ED1E3F395800DCE64F /* XapiStatementsEndpoint.m */; };
 		AD76232C1E3F395900DCE64F /* XapiStatementsForwardingEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622EF1E3F395800DCE64F /* XapiStatementsForwardingEndpoint.m */; };
-		AD76232D1E3F395900DCE64F /* XapiStatementsForwardingEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622EF1E3F395800DCE64F /* XapiStatementsForwardingEndpoint.m */; };
 		AD76232E1E3F395900DCE64F /* XapiStatementsForwardingEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F11E3F395800DCE64F /* XapiStatementsForwardingEvent.m */; };
-		AD76232F1E3F395900DCE64F /* XapiStatementsForwardingEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F11E3F395800DCE64F /* XapiStatementsForwardingEvent.m */; };
 		AD7623301E3F395900DCE64F /* XapiStatementsForwardingListener.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F31E3F395800DCE64F /* XapiStatementsForwardingListener.m */; };
-		AD7623311E3F395900DCE64F /* XapiStatementsForwardingListener.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F31E3F395800DCE64F /* XapiStatementsForwardingListener.m */; };
 		AD7623321E3F395900DCE64F /* XapiUser.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F51E3F395800DCE64F /* XapiUser.m */; };
-		AD7623331E3F395900DCE64F /* XapiUser.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F51E3F395800DCE64F /* XapiUser.m */; };
 		AD7623341E3F395900DCE64F /* XapiUserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F71E3F395800DCE64F /* XapiUserManager.m */; };
-		AD7623351E3F395900DCE64F /* XapiUserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F71E3F395800DCE64F /* XapiUserManager.m */; };
 		AD7623361E3F395900DCE64F /* XapiVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F91E3F395800DCE64F /* XapiVerb.m */; };
-		AD7623371E3F395900DCE64F /* XapiVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622F91E3F395800DCE64F /* XapiVerb.m */; };
 		AD7623381E3F395900DCE64F /* XapiVerbEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FB1E3F395800DCE64F /* XapiVerbEndpoint.m */; };
-		AD7623391E3F395900DCE64F /* XapiVerbEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FB1E3F395800DCE64F /* XapiVerbEndpoint.m */; };
 		AD76233A1E3F395900DCE64F /* XapiVerbManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FD1E3F395800DCE64F /* XapiVerbManager.m */; };
-		AD76233B1E3F395900DCE64F /* XapiVerbManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FD1E3F395800DCE64F /* XapiVerbManager.m */; };
+		AD9B5C951E41ED8E00CFAF26 /* TestJsonUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = AD9B5C931E41ED8900CFAF26 /* TestJsonUtil.m */; };
 		ADD877591E41C94800CDD012 /* XapiActivitySrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD8774A1E41C94800CDD012 /* XapiActivitySrkObj.m */; };
 		ADD8775A1E41C94800CDD012 /* XapiAgentSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD8774C1E41C94800CDD012 /* XapiAgentSrkObj.m */; };
 		ADD8775B1E41C94800CDD012 /* XapiDocumentSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD8774E1E41C94800CDD012 /* XapiDocumentSrkObj.m */; };
@@ -128,7 +93,6 @@
 		AD7622941E3F219900DCE64F /* NanoLrsLibiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NanoLrsLibiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD7622981E3F219900DCE64F /* NanoLrsLibiOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NanoLrsLibiOSTests.m; sourceTree = "<group>"; };
 		AD76229A1E3F219900DCE64F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AD7622A31E3F29B000DCE64F /* local.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = local.xcconfig; sourceTree = "<group>"; };
 		AD7622A71E3F2F1800DCE64F /* NanoHTTPD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NanoHTTPD.h; sourceTree = "<group>"; };
 		AD7622A81E3F2F1800DCE64F /* NanoHTTPD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NanoHTTPD.m; sourceTree = "<group>"; };
 		AD7622A91E3F2F1800DCE64F /* RouterNanoHTTPD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouterNanoHTTPD.h; sourceTree = "<group>"; };
@@ -201,6 +165,8 @@
 		AD7622FB1E3F395800DCE64F /* XapiVerbEndpoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiVerbEndpoint.m; sourceTree = "<group>"; };
 		AD7622FC1E3F395800DCE64F /* XapiVerbManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiVerbManager.h; sourceTree = "<group>"; };
 		AD7622FD1E3F395800DCE64F /* XapiVerbManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiVerbManager.m; sourceTree = "<group>"; };
+		AD9B5C921E41ED8900CFAF26 /* TestJsonUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestJsonUtil.h; path = "../Generated/NanoLrs-Test/TestJsonUtil.h"; sourceTree = "<group>"; };
+		AD9B5C931E41ED8900CFAF26 /* TestJsonUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestJsonUtil.m; path = "../Generated/NanoLrs-Test/TestJsonUtil.m"; sourceTree = "<group>"; };
 		ADD877491E41C94800CDD012 /* XapiActivitySrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiActivitySrkObj.h; sourceTree = "<group>"; };
 		ADD8774A1E41C94800CDD012 /* XapiActivitySrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiActivitySrkObj.m; sourceTree = "<group>"; };
 		ADD8774B1E41C94800CDD012 /* XapiAgentSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiAgentSrkObj.h; sourceTree = "<group>"; };
@@ -264,7 +230,6 @@
 				AD7622BF1E3F395800DCE64F /* NanoLrs-Main */,
 				AD7622B81E3F384C00DCE64F /* TestingTest */,
 				AD7622A61E3F2F1800DCE64F /* NanoHttpd */,
-				AD7622A31E3F29B000DCE64F /* local.xcconfig */,
 				AD76227D1E3F219900DCE64F /* NanoLrsLibiOS */,
 				AD7622971E3F219900DCE64F /* NanoLrsLibiOSTests */,
 				AD76227C1E3F219900DCE64F /* Products */,
@@ -343,6 +308,8 @@
 		AD7622B81E3F384C00DCE64F /* TestingTest */ = {
 			isa = PBXGroup;
 			children = (
+				AD9B5C921E41ED8900CFAF26 /* TestJsonUtil.h */,
+				AD9B5C931E41ED8900CFAF26 /* TestJsonUtil.m */,
 				AD7622B91E3F387200DCE64F /* TestParseUtils.h */,
 				AD7622BA1E3F387200DCE64F /* TestParseUtils.m */,
 			);
@@ -531,7 +498,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD7622A41E3F29B000DCE64F /* local.xcconfig in Resources */,
 				AD76228E1E3F219900DCE64F /* LaunchScreen.storyboard in Resources */,
 				AD76228B1E3F219900DCE64F /* Assets.xcassets in Resources */,
 				AD7622891E3F219900DCE64F /* Main.storyboard in Resources */,
@@ -542,7 +508,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD7622A51E3F29B000DCE64F /* local.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,42 +663,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD7623211E3F395900DCE64F /* XapiState.m in Sources */,
-				AD76231D1E3F395900DCE64F /* XapiForwardingStatement.m in Sources */,
-				AD7623231E3F395900DCE64F /* XapiStateEndpoint.m in Sources */,
-				AD7622AE1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */,
-				AD7623071E3F395800DCE64F /* ParseUtil.m in Sources */,
-				AD7623191E3F395900DCE64F /* XapiAgentManager.m in Sources */,
-				AD76230B1E3F395800DCE64F /* PersistenceManagerFactory.m in Sources */,
 				AD7622991E3F219900DCE64F /* NanoLrsLibiOSTests.m in Sources */,
-				AD7623011E3F395800DCE64F /* HttpLrs.m in Sources */,
-				AD7622B21E3F2F1900DCE64F /* ServerRunner.m in Sources */,
-				AD7623351E3F395900DCE64F /* XapiUserManager.m in Sources */,
-				AD7623051E3F395800DCE64F /* LrsIoUtils.m in Sources */,
-				AD7623251E3F395900DCE64F /* XapiStateManager.m in Sources */,
-				AD76230D1E3F395800DCE64F /* PersistenceReceiver.m in Sources */,
-				AD7623291E3F395900DCE64F /* XapiStatementManager.m in Sources */,
-				AD7623111E3F395900DCE64F /* XapiActivityEndpoint.m in Sources */,
-				AD7622B01E3F2F1800DCE64F /* RouterNanoHTTPD.m in Sources */,
-				AD7623171E3F395900DCE64F /* XapiAgentEndpoint.m in Sources */,
-				AD7623131E3F395900DCE64F /* XapiActivityManager.m in Sources */,
-				AD7623031E3F395800DCE64F /* JsonUtil.m in Sources */,
-				AD76231B1E3F395900DCE64F /* XapiDocument.m in Sources */,
-				AD76231F1E3F395900DCE64F /* XapiForwardingStatementManager.m in Sources */,
-				AD7623151E3F395900DCE64F /* XapiAgent.m in Sources */,
-				AD7623331E3F395900DCE64F /* XapiUser.m in Sources */,
-				AD7623391E3F395900DCE64F /* XapiVerbEndpoint.m in Sources */,
-				AD7623311E3F395900DCE64F /* XapiStatementsForwardingListener.m in Sources */,
-				AD76232B1E3F395900DCE64F /* XapiStatementsEndpoint.m in Sources */,
-				AD7623371E3F395900DCE64F /* XapiVerb.m in Sources */,
-				AD7623091E3F395800DCE64F /* PersistenceManager.m in Sources */,
-				AD7622FF1E3F395800DCE64F /* Base64CoderNanoLrs.m in Sources */,
-				AD76230F1E3F395800DCE64F /* XapiActivity.m in Sources */,
+				AD9B5C951E41ED8E00CFAF26 /* TestJsonUtil.m in Sources */,
 				AD7622BC1E3F387200DCE64F /* TestParseUtils.m in Sources */,
-				AD76233B1E3F395900DCE64F /* XapiVerbManager.m in Sources */,
-				AD7623271E3F395900DCE64F /* XapiStatement.m in Sources */,
-				AD76232D1E3F395900DCE64F /* XapiStatementsForwardingEndpoint.m in Sources */,
-				AD76232F1E3F395900DCE64F /* XapiStatementsForwardingEvent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -935,7 +867,6 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ljunit",
-					"-ljre_emul",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ustadmobile.NanoLrsLibiOSTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -962,7 +893,6 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ljunit",
-					"-ljre_emul",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ustadmobile.NanoLrsLibiOSTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
