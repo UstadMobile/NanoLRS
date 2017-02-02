@@ -48,3 +48,8 @@ localsettings.gradle
 
 #Generated ORMLite Entities
 nanolrs-ormlite/src/main/java/com/ustadmobile/nanolrs/ormlite/generated
+
+#DS_Store files that turn up on MacOS
+.DS_Store
+
+

@@ -20,5 +20,5 @@ task runOrmLiteGeneration(type: JavaExec) {
 task runSharkOrmGeneration(type: JavaExec){
     classpath sourceSets.main.runtimeClasspath
     main = "com.ustadmobile.nanolrs.entitygen.EntityGeneratorSharkOrm"
-    args "../nanolrs-core/src/main/java/com/ustadmobile/nanolrs/core/model/", "../tmp"
+    args "../nanolrs-core/src/main/java/com/ustadmobile/nanolrs/core/model/", "../nanolrs-ios/Generated/NanoLrs-Entities"
 }

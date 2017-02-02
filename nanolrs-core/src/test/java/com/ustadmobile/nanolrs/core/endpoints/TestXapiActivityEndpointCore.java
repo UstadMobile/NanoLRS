@@ -4,6 +4,7 @@ import com.ustadmobile.nanolrs.core.NanoLRSCoreTest;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.model.XapiActivity;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
 
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -20,8 +21,7 @@ public abstract class TestXapiActivityEndpointCore extends NanoLRSCoreTest{
     @Test
     public void testActivityEndpoint() throws Exception {
         InputStream activityIn = getClass().getResourceAsStream("/com/ustadmobile/nanolrs/core/test-activity.json");
-        String activityStr = readInputStream(activityIn);
-
+        String activityStr = LrsIoUtils.inputStreamToString(activityIn);
         activityIn.close();
 
         JSONObject activityObj = new JSONObject(activityStr);
