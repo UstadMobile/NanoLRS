@@ -32,6 +32,14 @@ public abstract class NanoLRSCoreTest {
         return new String(bout.toByteArray(), "UTF-8");
     }
 
-    public abstract Object getContext();
+    /**
+     * If the underlying platform requires a context object (e.g. Android) then this method can be
+     * overriden
+     *
+     * @return
+     */
+    public Object getContext() {
+        return this;
+    }
 
 }
