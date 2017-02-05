@@ -17,6 +17,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [SharkORM setDelegate:self];
+    [SharkORM openDatabaseNamed:@"nanolrs1.db"];
     return YES;
 }
 
