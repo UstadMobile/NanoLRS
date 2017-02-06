@@ -7,6 +7,7 @@ import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndr
 import com.ustadmobile.nanolrs.core.http.HttpLrs;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.http.NanoLrsHttpd;
+import com.ustadmobile.nanolrs.httpd.TestXapiHttpdStateHttp;
 
 import junit.framework.Assert;
 
@@ -21,54 +22,21 @@ import java.util.Arrays;
  * Created by mike on 10/9/16.
  */
 
-public class TestXapiHttpdState {
+public class TestXapiHttpdState extends TestXapiHttpdStateHttp {
 
-    private NanoLrsHttpd httpd;
-
-    public static final int TESTPORT = 8071;
-
-    private String xapiUrl;
-
-    @Before
-    public void setUp() throws Exception {
+    @Override
+    protected void setPersistenceManager() {
         PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
-        httpd = new NanoLrsHttpd(TESTPORT, InstrumentationRegistry.getContext());
-        httpd.start();
-        httpd.mapXapiEndpoints("/xapi");
-        xapiUrl = "http://localhost:" + TESTPORT + "/xapi/";
     }
 
-    @After
-    public void tearDown() throws Exception {
-        httpd.stop();
-        try { Thread.sleep(500); }
-        catch(InterruptedException e){}
+    @Override
+    public Object getContext() {
+        return InstrumentationRegistry.getContext();
     }
 
     @Test
-    public void testPutState() throws Exception {
-        JSONObject stateObj = new JSONObject();
-        stateObj.put("savekey", "saveval");
-
-        //put it
-        Context context = InstrumentationRegistry.getContext();
-        HttpLrs lrs = new HttpLrs(xapiUrl);
-        JSONObject agentObj = new JSONObject();
-        agentObj.put("mbox", "mailto:mike@ustadmobile.com");
-        byte[] jsonData = stateObj.toString().getBytes("UTF-8");
-        HttpLrs.LrsResponse response = lrs.saveState("put", "username", "password", "http://www.ustadmobile.com/test/activity-state-id",
-            agentObj.toString(), null, "test_state_id", "application/json", jsonData);
-        Assert.assertEquals(204, response.getStatus());
-
-
-        //now try and get that state back
-        HttpLrs.LrsResponse getResponse = lrs.loadState("username", "password",
-                "http://www.ustadmobile.com/test/activity-state-id", agentObj.toString(), null,
-                "test_state_id");
-        String responseStr = new String(getResponse.getServerResponse(), "UTF-8");
-        Assert.assertTrue(Arrays.equals(jsonData, getResponse.getServerResponse()));
+    public void testSomething() {
+        Assert.assertTrue(true);
     }
-
-
 
 }

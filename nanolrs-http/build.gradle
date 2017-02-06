@@ -7,6 +7,8 @@ dependencies {
     compile 'org.nanohttpd:nanohttpd:2.3.1'
     compile 'org.nanohttpd:nanohttpd-nanolets:2.3.1'
     compile 'commons-io:commons-io:2.5'
+    testCompile project(path: ":nanolrs-core", configuration: "tests")
+    testCompile 'junit:junit:4.12'
 }
 
 sourceCompatibility = "1.7"
@@ -15,6 +17,21 @@ targetCompatibility = "1.7"
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
+
+//Expose test classes via a configuration and jar
+task testJar(type: Jar, dependsOn: testClasses) {
+    baseName = "test-${project.archivesBaseName}"
+    from sourceSets.test.output
+}
+
+configurations {
+    tests
+}
+
+artifacts {
+    tests testJar
+}
+
 
 apply plugin: 'maven-publish'
 
