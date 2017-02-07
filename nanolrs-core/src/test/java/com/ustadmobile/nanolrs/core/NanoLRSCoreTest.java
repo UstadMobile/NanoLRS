@@ -1,45 +1,21 @@
 package com.ustadmobile.nanolrs.core;
 
+import org.junit.Before;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * Base class for tests that allows for a core test to access implementation dependent context. Our
+ * logic uses a system dependent context object : e.g. Context on Android, at least sometimes
+ * AppDelegate on iOS. A test also tests the core functionality that is implementation independent.
+ * Java does not support multiple inheritence.
+ *
+ *
  * Created by mike on 1/21/17.
  */
 
 public abstract class NanoLRSCoreTest {
-
-    /**
-     * Reads a given input stream (e.g. test resource json file etc) as a String.  We could use
-     * Apache IO Commons here but that makes use of j2objc that little bit more complex hence
-     * including it here for now using vanilla java
-     *
-     * @param in
-     *
-     * @return
-     * @throws IOException
-     */
-    public String readInputStream(InputStream in) throws IOException {
-        byte[] buf = new byte[1024];
-        int bytesRead;
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
-        while((bytesRead = in.read(buf)) != -1) {
-            bout.write(buf, 0, bytesRead);
-        }
-        in.close();
-        return new String(bout.toByteArray(), "UTF-8");
-    }
-
-    /**
-     * If the underlying platform requires a context object (e.g. Android) then this method can be
-     * overriden
-     *
-     * @return
-     */
-    public Object getContext() {
-        return this;
-    }
 
 }

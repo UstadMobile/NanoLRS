@@ -24,10 +24,6 @@ import java.util.UUID;
 @RunWith(AndroidJUnit4.class)
 public class TestXapiUser {
 
-    @Before
-    public void setUp() throws Exception {
-        PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
-    }
 
     @Test
     public void testLifecycle() throws Exception {

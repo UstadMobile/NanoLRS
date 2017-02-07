@@ -2,6 +2,7 @@ package com.ustadmobile.nanolrs.httpd;
 
 import com.ustadmobile.nanolrs.core.NanoLRSCoreTest;
 import com.ustadmobile.nanolrs.core.http.HttpLrs;
+import com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil;
 import com.ustadmobile.nanolrs.http.NanoLrsHttpd;
 
 import org.json.JSONObject;
@@ -16,7 +17,7 @@ import java.util.Arrays;
  * Created by mike on 2/6/17.
  */
 
-public abstract class TestXapiHttpdStateHttp extends NanoLRSCoreTest {
+public abstract class TestXapiHttpdState extends NanoLRSCoreTest {
 
     protected NanoLrsHttpd httpd;
 
@@ -26,16 +27,10 @@ public abstract class TestXapiHttpdStateHttp extends NanoLRSCoreTest {
 
     @Before
     public void setUp() throws Exception {
-        setPersistenceManager();
-        httpd = new NanoLrsHttpd(TESTPORT, getContext());
+        httpd = new NanoLrsHttpd(TESTPORT, NanoLrsPlatformTestUtil.getContext());
         httpd.start();
         httpd.mapXapiEndpoints("/xapi");
         xapiUrl = "http://localhost:" + TESTPORT + "/xapi/";
-    }
-
-    //if required in the subclass : override this - e.g. for Android
-    protected void setPersistenceManager() {
-
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.core.endpoints;
 import com.ustadmobile.nanolrs.core.NanoLRSCoreTest;
 import com.ustadmobile.nanolrs.core.model.XapiState;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil;
 
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -18,7 +19,7 @@ public abstract class TestXapiStateEndpointCore extends NanoLRSCoreTest {
     public void testStateEndpoint() throws Exception {
         JSONObject stateDoc = new JSONObject();
         stateDoc.put("key1", "value1");
-        Object context = getContext();
+        Object context = NanoLrsPlatformTestUtil.getContext();
         byte[] stateContent = stateDoc.toString().getBytes("UTF-8");
 
         JSONObject actorObj = new JSONObject();

@@ -23,23 +23,14 @@ public abstract class PersistenceManager {
     
     private static PersistenceManager instance;
     
-    private static PersistenceManagerFactory sFactory;
-    
-    public static void setPersistenceManagerFactory(PersistenceManagerFactory factory) {
-        sFactory = factory;
-    }
-    
-    
     public static PersistenceManager getInstance() {
         if(instance == null) {
-            instance = sFactory.getPersistenceManager();
+            instance = new PersistenceManagerFactoryImpl().getPersistenceManager();
         }
         
         return instance;
     }
 
-
-    
     public abstract XapiStatementManager getStatementManager();
 
     public abstract XapiForwardingStatementManager getForwardingStatementManager();

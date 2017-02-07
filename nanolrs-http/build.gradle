@@ -22,6 +22,7 @@ task sourceJar(type: Jar) {
 task testJar(type: Jar, dependsOn: testClasses) {
     baseName = "test-${project.archivesBaseName}"
     from sourceSets.test.output
+    exclude("com/ustadmobile/nanolrs/core/util/NanoLrsPlatformTestUtil.class")
 }
 
 configurations {

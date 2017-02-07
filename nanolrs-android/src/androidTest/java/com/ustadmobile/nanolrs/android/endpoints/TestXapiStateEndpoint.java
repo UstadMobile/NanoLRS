@@ -20,14 +20,6 @@ import org.junit.Test;
 
 public class TestXapiStateEndpoint extends TestXapiStateEndpointCore {
 
-    @Before
-    public void setUp() throws Exception {
-        PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
-    }
 
-    @Override
-    public Object getContext() {
-        return InstrumentationRegistry.getContext();
-    }
 
 }
