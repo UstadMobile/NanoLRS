@@ -14,8 +14,8 @@
 #import "TestParseUtils.h"
 #import "TestJsonUtil.h"
 #import "TestXapiActivityEndpointCore.h"
+#import "TestXapiAgentEndpointCore.h"
 #import "PersistenceManager.h"
-#import "PersistenceManagerFactoryIOS.h"
 
 
 @interface NanoLrsLibiOSTests : XCTestCase
@@ -26,7 +26,6 @@
 
 - (void)setUp {
     [super setUp];
-    [ComUstadmobileNanolrsCorePersistencePersistenceManager setPersistenceManagerFactoryWithComUstadmobileNanolrsCorePersistencePersistenceManagerFactory:[[PersistenceManagerFactoryIOS alloc]init]];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
@@ -60,10 +59,15 @@
 }
 
 -(void)testActivityEndpoint {
-    ComUstadmobileNanolrsCoreEndpointsTestXapiActivityEndpointCore *coreTest = [[ComUstadmobileNanolrsCoreEndpointsTestXapiActivityEndpointCore alloc]init];
-    NSString *inPath = [[NSBundle mainBundle]pathForResource:@"test-activity.json" ofType:nil inDirectory:@"/com/ustadmobile/nanolrs/core"];
     OrgJunitRunnerJUnitCore *junitCore = [[OrgJunitRunnerJUnitCore alloc]init];
     OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[ComUstadmobileNanolrsCoreEndpointsTestXapiActivityEndpointCore_class_()] type:IOSClass_class_()]];
+    [self listFailuresWithResult:result];
+    XCTAssert([result getFailureCount] == 0);
+}
+
+-(void)testAgentEndpoint {
+    OrgJunitRunnerJUnitCore *junitCore = [[OrgJunitRunnerJUnitCore alloc]init];
+    OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[ComUstadmobileNanolrsCoreEndpointsTestXapiAgentEndpointCore_class_()] type:IOSClass_class_()]];
     [self listFailuresWithResult:result];
     XCTAssert([result getFailureCount] == 0);
 }

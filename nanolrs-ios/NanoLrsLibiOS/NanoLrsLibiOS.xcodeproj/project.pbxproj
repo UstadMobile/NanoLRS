@@ -56,7 +56,6 @@
 		AD7623381E3F395900DCE64F /* XapiVerbEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FB1E3F395800DCE64F /* XapiVerbEndpoint.m */; };
 		AD76233A1E3F395900DCE64F /* XapiVerbManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622FD1E3F395800DCE64F /* XapiVerbManager.m */; };
 		AD8040431E4749F800647996 /* PersistenceManagerIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = AD8040421E4749F800647996 /* PersistenceManagerIOS.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
-		AD8040491E474BC300647996 /* PersistenceManagerFactoryIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = AD8040481E474BC300647996 /* PersistenceManagerFactoryIOS.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		AD80404C1E475B5E00647996 /* XapiActivityManagerSharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = AD80404B1E475B5E00647996 /* XapiActivityManagerSharkORM.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		AD8040531E4765E600647996 /* TestXapiActivityEndpointCore.m in Sources */ = {isa = PBXBuildFile; fileRef = AD8040501E47652800647996 /* TestXapiActivityEndpointCore.m */; };
 		AD8040541E4765ED00647996 /* NanoLRSCoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = AD80404E1E47652800647996 /* NanoLRSCoreTest.m */; };
@@ -71,6 +70,11 @@
 		ADD8775E1E41C94800CDD012 /* XapiStateSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD877541E41C94800CDD012 /* XapiStateSrkObj.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		ADD8775F1E41C94800CDD012 /* XapiUserSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD877561E41C94800CDD012 /* XapiUserSrkObj.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		ADD877601E41C94800CDD012 /* XapiVerbSrkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD877581E41C94800CDD012 /* XapiVerbSrkObj.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		ADF4B0371E4A671900891CBD /* PersistenceManagerFactoryImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = ADF4B0361E4A671900891CBD /* PersistenceManagerFactoryImpl.m */; };
+		ADF4B0401E4A68BA00891CBD /* XapiAgentManagerSharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = ADF4B03F1E4A68BA00891CBD /* XapiAgentManagerSharkORM.m */; };
+		ADF4B0451E4A70D200891CBD /* TestXapiAgentEndpointCore.m in Sources */ = {isa = PBXBuildFile; fileRef = ADF4B0421E4A702300891CBD /* TestXapiAgentEndpointCore.m */; };
+		ADF4B0461E4A70DA00891CBD /* NanoLrsPlatformTestUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = ADF4B0391E4A686100891CBD /* NanoLrsPlatformTestUtil.m */; };
+		ADF4B0471E4A70E100891CBD /* TestConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = ADF4B03B1E4A686100891CBD /* TestConstants.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -174,8 +178,6 @@
 		AD7622FD1E3F395800DCE64F /* XapiVerbManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiVerbManager.m; sourceTree = "<group>"; };
 		AD8040411E4749F800647996 /* PersistenceManagerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PersistenceManagerIOS.h; path = "../NanoLrsLibiOS-Port/PersistenceManagerIOS.h"; sourceTree = "<group>"; };
 		AD8040421E4749F800647996 /* PersistenceManagerIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PersistenceManagerIOS.m; path = "../NanoLrsLibiOS-Port/PersistenceManagerIOS.m"; sourceTree = "<group>"; };
-		AD8040471E474BC300647996 /* PersistenceManagerFactoryIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PersistenceManagerFactoryIOS.h; path = "../NanoLrsLibiOS-Port/PersistenceManagerFactoryIOS.h"; sourceTree = "<group>"; };
-		AD8040481E474BC300647996 /* PersistenceManagerFactoryIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PersistenceManagerFactoryIOS.m; path = "../NanoLrsLibiOS-Port/PersistenceManagerFactoryIOS.m"; sourceTree = "<group>"; };
 		AD80404A1E475B5E00647996 /* XapiActivityManagerSharkORM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XapiActivityManagerSharkORM.h; path = "../NanoLrsLibiOS-Port/XapiActivityManagerSharkORM.h"; sourceTree = "<group>"; };
 		AD80404B1E475B5E00647996 /* XapiActivityManagerSharkORM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XapiActivityManagerSharkORM.m; path = "../NanoLrsLibiOS-Port/XapiActivityManagerSharkORM.m"; sourceTree = "<group>"; };
 		AD80404D1E47652800647996 /* NanoLRSCoreTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NanoLRSCoreTest.h; path = "../Generated/NanoLrs-Test/NanoLRSCoreTest.h"; sourceTree = "<group>"; };
@@ -201,6 +203,16 @@
 		ADD877561E41C94800CDD012 /* XapiUserSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiUserSrkObj.m; sourceTree = "<group>"; };
 		ADD877571E41C94800CDD012 /* XapiVerbSrkObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiVerbSrkObj.h; sourceTree = "<group>"; };
 		ADD877581E41C94800CDD012 /* XapiVerbSrkObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiVerbSrkObj.m; sourceTree = "<group>"; };
+		ADF4B0351E4A671900891CBD /* PersistenceManagerFactoryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistenceManagerFactoryImpl.h; sourceTree = "<group>"; };
+		ADF4B0361E4A671900891CBD /* PersistenceManagerFactoryImpl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistenceManagerFactoryImpl.m; sourceTree = "<group>"; };
+		ADF4B0381E4A686100891CBD /* NanoLrsPlatformTestUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NanoLrsPlatformTestUtil.h; path = "../Generated/NanoLrs-Test/NanoLrsPlatformTestUtil.h"; sourceTree = "<group>"; };
+		ADF4B0391E4A686100891CBD /* NanoLrsPlatformTestUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NanoLrsPlatformTestUtil.m; path = "../Generated/NanoLrs-Test/NanoLrsPlatformTestUtil.m"; sourceTree = "<group>"; };
+		ADF4B03A1E4A686100891CBD /* TestConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestConstants.h; path = "../Generated/NanoLrs-Test/TestConstants.h"; sourceTree = "<group>"; };
+		ADF4B03B1E4A686100891CBD /* TestConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestConstants.m; path = "../Generated/NanoLrs-Test/TestConstants.m"; sourceTree = "<group>"; };
+		ADF4B03E1E4A68BA00891CBD /* XapiAgentManagerSharkORM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XapiAgentManagerSharkORM.h; path = "../NanoLrsLibiOS-Port/XapiAgentManagerSharkORM.h"; sourceTree = "<group>"; };
+		ADF4B03F1E4A68BA00891CBD /* XapiAgentManagerSharkORM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XapiAgentManagerSharkORM.m; path = "../NanoLrsLibiOS-Port/XapiAgentManagerSharkORM.m"; sourceTree = "<group>"; };
+		ADF4B0411E4A702300891CBD /* TestXapiAgentEndpointCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestXapiAgentEndpointCore.h; path = "../Generated/NanoLrs-Test/TestXapiAgentEndpointCore.h"; sourceTree = "<group>"; };
+		ADF4B0421E4A702300891CBD /* TestXapiAgentEndpointCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestXapiAgentEndpointCore.m; path = "../Generated/NanoLrs-Test/TestXapiAgentEndpointCore.m"; sourceTree = "<group>"; };
 		B1965922F354019FD64FAC4B /* Pods-NanoLrsLibiOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NanoLrsLibiOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NanoLrsLibiOSTests/Pods-NanoLrsLibiOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		C46CEB4942527533DC0CA566 /* Pods-NanoLrsLibiOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NanoLrsLibiOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NanoLrsLibiOSTests/Pods-NanoLrsLibiOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F1CD5FC946E0E7BEA7AB7D92 /* libPods-NanoLrsLibiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NanoLrsLibiOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -328,6 +340,12 @@
 		AD7622B81E3F384C00DCE64F /* NanoLrs-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				ADF4B0411E4A702300891CBD /* TestXapiAgentEndpointCore.h */,
+				ADF4B0421E4A702300891CBD /* TestXapiAgentEndpointCore.m */,
+				ADF4B0381E4A686100891CBD /* NanoLrsPlatformTestUtil.h */,
+				ADF4B0391E4A686100891CBD /* NanoLrsPlatformTestUtil.m */,
+				ADF4B03A1E4A686100891CBD /* TestConstants.h */,
+				ADF4B03B1E4A686100891CBD /* TestConstants.m */,
 				AD80404D1E47652800647996 /* NanoLRSCoreTest.h */,
 				AD80404E1E47652800647996 /* NanoLRSCoreTest.m */,
 				AD80404F1E47652800647996 /* TestXapiActivityEndpointCore.h */,
@@ -343,6 +361,8 @@
 		AD7622BF1E3F395800DCE64F /* NanoLrs-Main */ = {
 			isa = PBXGroup;
 			children = (
+				ADF4B0351E4A671900891CBD /* PersistenceManagerFactoryImpl.h */,
+				ADF4B0361E4A671900891CBD /* PersistenceManagerFactoryImpl.m */,
 				AD7622C01E3F395800DCE64F /* Base64CoderNanoLrs.h */,
 				AD7622C11E3F395800DCE64F /* Base64CoderNanoLrs.m */,
 				AD7622C21E3F395800DCE64F /* HttpLrs.h */,
@@ -415,10 +435,10 @@
 			children = (
 				AD8040411E4749F800647996 /* PersistenceManagerIOS.h */,
 				AD8040421E4749F800647996 /* PersistenceManagerIOS.m */,
-				AD8040471E474BC300647996 /* PersistenceManagerFactoryIOS.h */,
-				AD8040481E474BC300647996 /* PersistenceManagerFactoryIOS.m */,
 				AD80404A1E475B5E00647996 /* XapiActivityManagerSharkORM.h */,
 				AD80404B1E475B5E00647996 /* XapiActivityManagerSharkORM.m */,
+				ADF4B03E1E4A68BA00891CBD /* XapiAgentManagerSharkORM.h */,
+				ADF4B03F1E4A68BA00891CBD /* XapiAgentManagerSharkORM.m */,
 			);
 			name = "NanoLrsLibiOS-Port";
 			sourceTree = "<group>";
@@ -660,6 +680,7 @@
 				AD7623321E3F395900DCE64F /* XapiUser.m in Sources */,
 				ADD8775A1E41C94800CDD012 /* XapiAgentSrkObj.m in Sources */,
 				ADD8775C1E41C94800CDD012 /* XapiForwardingStatementSrkObj.m in Sources */,
+				ADF4B0371E4A671900891CBD /* PersistenceManagerFactoryImpl.m in Sources */,
 				AD76231C1E3F395900DCE64F /* XapiForwardingStatement.m in Sources */,
 				AD7623101E3F395900DCE64F /* XapiActivityEndpoint.m in Sources */,
 				AD7623021E3F395800DCE64F /* JsonUtil.m in Sources */,
@@ -672,10 +693,10 @@
 				AD7623121E3F395900DCE64F /* XapiActivityManager.m in Sources */,
 				AD7623161E3F395900DCE64F /* XapiAgentEndpoint.m in Sources */,
 				ADD877601E41C94800CDD012 /* XapiVerbSrkObj.m in Sources */,
+				ADF4B0401E4A68BA00891CBD /* XapiAgentManagerSharkORM.m in Sources */,
 				AD76233A1E3F395900DCE64F /* XapiVerbManager.m in Sources */,
 				AD7622AD1E3F2F1800DCE64F /* NanoHTTPD.m in Sources */,
 				ADD877591E41C94800CDD012 /* XapiActivitySrkObj.m in Sources */,
-				AD8040491E474BC300647996 /* PersistenceManagerFactoryIOS.m in Sources */,
 				ADD8775B1E41C94800CDD012 /* XapiDocumentSrkObj.m in Sources */,
 				AD7623301E3F395900DCE64F /* XapiStatementsForwardingListener.m in Sources */,
 				AD76231A1E3F395900DCE64F /* XapiDocument.m in Sources */,
@@ -706,10 +727,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD8040541E4765ED00647996 /* NanoLRSCoreTest.m in Sources */,
+				ADF4B0451E4A70D200891CBD /* TestXapiAgentEndpointCore.m in Sources */,
 				AD7622991E3F219900DCE64F /* NanoLrsLibiOSTests.m in Sources */,
 				AD9B5C951E41ED8E00CFAF26 /* TestJsonUtil.m in Sources */,
 				AD8040531E4765E600647996 /* TestXapiActivityEndpointCore.m in Sources */,
 				AD7622BC1E3F387200DCE64F /* TestParseUtils.m in Sources */,
+				ADF4B0461E4A70DA00891CBD /* NanoLrsPlatformTestUtil.m in Sources */,
+				ADF4B0471E4A70E100891CBD /* TestConstants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

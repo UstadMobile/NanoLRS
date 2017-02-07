@@ -8,9 +8,11 @@ CHECKOUT_DIR=lib/checkout
 # Input Java source
 NANOLRS_CORE_SRCDIR_MAIN=../nanolrs-core/src/main/java
 NANOLRS_CORE_SRCDIR_TEST=../nanolrs-core/src/test/java
+NANOLRS_IOS_JAVA_SRCDIR_MAIN=./src-java/main/java
 
-NANOLRS_CORE_SRCFILES_MAIN=$(find $NANOLRS_CORE_SRCDIR_MAIN -name "*.java")
+NANOLRS_CORE_SRCFILES_MAIN=$(find $NANOLRS_CORE_SRCDIR_MAIN -name "*.java" ! -name 'PersistenceManagerFactoryImpl.java' -prune -print)
 NANOLRS_CORE_SRCFILES_TEST=$(find $NANOLRS_CORE_SRCDIR_TEST -name "*.java")
+NANOLRS_IOS_JAVA_SRCFILES_MAIN=$(find $NANOLRS_IOS_JAVA_SRCDIR_MAIN -name "*.java")
 
 # NanoHTTPD library to use
 NANOHTTPD_GIT_URL="https://github.com/NanoHttpd/nanohttpd.git"
@@ -61,8 +63,8 @@ if [ -e Generated/NanoLrs-Main ]; then
 fi
 
 $J2OBJC_HOME/j2objc -d Generated/NanoLrs-Main/ \
-   -sourcepath $NANOHTTPD_CORE_SRCDIR_MAIN:$NANOHTTPD_NANOLETS_SRCDIR_MAIN:$NANOLRS_CORE_SRCDIR_MAIN \
-   --no-package-directories $NANOLRS_CORE_SRCFILES_MAIN
+   -sourcepath $NANOHTTPD_CORE_SRCDIR_MAIN:$NANOLRS_IOS_JAVA_SRCDIR_MAIN:$NANOHTTPD_NANOLETS_SRCDIR_MAIN:$NANOLRS_CORE_SRCDIR_MAIN \
+   --no-package-directories $NANOLRS_CORE_SRCFILES_MAIN $NANOLRS_IOS_JAVA_SRCFILES_MAIN
 
 # Translate the NanoLrs tests
 if [ -e Generated/NanoLrs-Test ]; then
@@ -71,7 +73,7 @@ fi
 
 $J2OBJC_HOME/j2objc -d Generated/NanoLrs-Test \
    -classpath $J2OBJC_HOME/lib/j2objc_junit.jar \
-   -sourcepath $NANOHTTPD_CORE_SRCDIR_MAIN:$NANOHTTPD_NANOLETS_SRCDIR_MAIN:$NANOLRS_CORE_SRCDIR_MAIN:$NANOLRS_CORE_SRCDIR_TEST \
+   -sourcepath $NANOHTTPD_CORE_SRCDIR_MAIN:$NANOLRS_IOS_JAVA_SRCDIR_MAIN:$NANOHTTPD_NANOLETS_SRCDIR_MAIN:$NANOLRS_CORE_SRCDIR_MAIN:$NANOLRS_CORE_SRCDIR_TEST \
    --no-package-directories $NANOLRS_CORE_SRCFILES_TEST
 
 # Generate the SharkORM entities

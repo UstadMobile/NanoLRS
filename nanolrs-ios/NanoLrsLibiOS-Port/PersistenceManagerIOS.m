@@ -8,9 +8,11 @@
 
 #import "PersistenceManagerIOS.h"
 #import "XapiActivityManagerSharkORM.h"
+#import "XapiAgentManagerSharkORM.h"
 
 @interface PersistenceManagerIOS()
 @property XapiActivityManagerSharkORM *activityManager;
+@property XapiAgentManagerSharkORM *agentManager;
 @end
 
 @implementation PersistenceManagerIOS
@@ -18,6 +20,7 @@
 -(instancetype)init {
     self = [super init];
     self.activityManager = [[XapiActivityManagerSharkORM alloc]init];
+    self.agentManager = [[XapiAgentManagerSharkORM alloc]init];
     return self;
 }
 
@@ -27,7 +30,7 @@
 }
 
 - (id<ComUstadmobileNanolrsCoreManagerXapiAgentManager>)getAgentManager {
-    return nil;
+    return self.agentManager;
 }
 
 - (id<ComUstadmobileNanolrsCoreManagerXapiForwardingStatementManager>)getForwardingStatementManager {
