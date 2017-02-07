@@ -1,23 +1,15 @@
-package com.ustadmobile.nanolrs.android.model;
+package com.ustadmobile.nanolrs.core.model;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
-import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
-import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
+import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
+import com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -27,30 +19,25 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by mike on 9/6/16.
+ * Created by mike on 2/7/17.
  */
-@RunWith(AndroidJUnit4.class)
-public class TestXapiStatement {
 
-    private XapiStatementEntity entity;
+public abstract class TestXapiStatement {
 
-    private CountDownLatch lock;
+    protected XapiStatement entity;
 
-    @Before
-    public void setUp() throws Exception {
-        PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
-    }
+    protected CountDownLatch lock;
 
     @Test
     public void testCreation() throws Exception {
-        Context context = InstrumentationRegistry.getContext();
-        Assert.assertNotNull(context);
+        Object context = NanoLrsPlatformTestUtil.getContext();
+
 
         lock = new CountDownLatch(1);
         PersistenceManager.getInstance().getStatementManager().create(context, 1, new PersistenceReceiver() {
             @Override
             public void onPersistenceSuccess(Object result, int requestId) {
-                entity = (XapiStatementEntity)result;
+                entity = (XapiStatement)result;
                 lock.countDown();
             }
 
@@ -69,7 +56,7 @@ public class TestXapiStatement {
         PersistenceManager.getInstance().getStatementManager().findByUuid(context, 2, new PersistenceReceiver() {
             @Override
             public void onPersistenceSuccess(Object result, int requestId) {
-                entity = (XapiStatementEntity)result;
+                entity = (XapiStatement)result;
                 lock.countDown();
             }
 
@@ -85,14 +72,10 @@ public class TestXapiStatement {
 
 
 
-        InputStream stmtIn = context.getAssets().open("xapi-statement-page-experienced.json");
-
-
+        InputStream stmtIn = getClass().getResourceAsStream("/com/ustadmobile/nanolrs/core/xapi-statement-page-experienced.json");
 
         long timeStarted = new Date().getTime();
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(stmtIn, writer, "UTF-8");
-        JSONObject stmtObj = new JSONObject(writer.toString());
+        JSONObject stmtObj = new JSONObject(LrsIoUtils.inputStreamToString(stmtIn));
         String generatedUUID = XapiStatementsEndpoint.putStatement(stmtObj, context);
         Assert.assertNotNull(generatedUUID);
 

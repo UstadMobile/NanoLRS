@@ -1,37 +1,24 @@
-package com.ustadmobile.nanolrs.android.model;
+package com.ustadmobile.nanolrs.core.model;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by mike on 9/27/16.
+ * Created by mike on 2/7/17.
  */
-@RunWith(AndroidJUnit4.class)
-public class TestXapiUser {
 
-    @Before
-    public void setUp() throws Exception {
-        PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
-    }
-
+public abstract class TestXapiUser {
     @Test
     public void testLifecycle() throws Exception {
-        Context context = InstrumentationRegistry.getContext();
+        Object context = NanoLrsPlatformTestUtil.getContext();
         XapiUserManager userManager = PersistenceManager.getInstance().getUserManager();
         XapiUser newUser = userManager.createSync(context, UUID.randomUUID().toString());
         newUser.setUsername("testuser");
@@ -43,6 +30,4 @@ public class TestXapiUser {
         usernameList = userManager.findByUsername(context, "testuser");
         Assert.assertEquals(usernameList.size(), 0);
     }
-
-
 }

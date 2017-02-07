@@ -1,3 +1,16 @@
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.7'
+    }
+}
+
+
 apply plugin: 'java'
 
 sourceCompatibility = 1.7
@@ -8,14 +21,21 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+jar  {
+    exclude("com/ustadmobile/nanolrs/core/persistence/PersistenceManagerFactoryImpl.class")
+}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
+
 }
 
 //Expose test classes via a configuration and jar
 task testJar(type: Jar, dependsOn: testClasses) {
     baseName = "test-${project.archivesBaseName}"
     from sourceSets.test.output
+    exclude("com/ustadmobile/nanolrs/core/util/NanoLrsPlatformTestUtil.class")
+
 }
 
 configurations {
@@ -50,3 +70,14 @@ publishing {
         }
     }
 }
+
+task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfig.GenerateBuildConfigTask) {
+    outputDir = new File("${projectDir}/src/test/java")
+    clsName = "TestConstants"
+    packageName = "com.ustadmobile.nanolrs.buildconfig"
+    buildConfigField "String", "TESTUSER", rootProject.ext.testUser
+    buildConfigField "String", "TESTPASSWORD", rootProject.ext.testPassword
+    buildConfigField "String", "TESTLRSENDPOINT", rootProject.ext.testLrsEndpoint
+}
+
+compileTestJava.dependsOn(generateCoreTestConstantsBuildConfig)

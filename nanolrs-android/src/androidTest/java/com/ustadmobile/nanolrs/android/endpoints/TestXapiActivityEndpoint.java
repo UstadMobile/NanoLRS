@@ -15,15 +15,6 @@ import org.junit.Before;
  */
 public class TestXapiActivityEndpoint extends TestXapiActivityEndpointCore {
 
-    @Before
-    public void setUp() throws Exception {
-        PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
-    }
-
-    @Override
-    public Object getContext() {
-        return InstrumentationRegistry.getContext();
-    }
 
 
 }

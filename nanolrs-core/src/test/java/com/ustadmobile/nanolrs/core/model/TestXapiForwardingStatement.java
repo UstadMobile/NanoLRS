@@ -1,23 +1,17 @@
-package com.ustadmobile.nanolrs.android.model;
+package com.ustadmobile.nanolrs.core.model;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-
-import com.ustadmobile.nanolrs.android.BuildConfig;
-import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
-import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEvent;
-import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingListener;
+import com.ustadmobile.nanolrs.buildconfig.TestConstants;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEndpoint;
+import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEvent;
+import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingListener;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
-import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
+import com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil;
 
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -25,39 +19,33 @@ import java.io.StringWriter;
 import java.util.List;
 
 /**
- * Created by mike on 9/13/16.
+ * Created by mike on 2/7/17.
  */
-public class TestiXapiForwardingStatement implements XapiStatementsForwardingListener {
 
-    private boolean receivedUpdate = false;
+public class TestXapiForwardingStatement implements XapiStatementsForwardingListener {
 
-    private XapiStatement watchedStmt;
+    protected boolean receivedUpdate = false;
 
-    private boolean watchedStmtQueueEvtReceived = false;
+    protected XapiStatement watchedStmt;
 
-    private boolean watchedStmtSentEvtReceived = false;
+    protected boolean watchedStmtQueueEvtReceived = false;
 
-    @Before
-    public void setUp() throws Exception {
-        PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
-    }
+    protected boolean watchedStmtSentEvtReceived = false;
 
     @Test
     public void testForwarding() throws Exception {
-        Context context = InstrumentationRegistry.getContext();
-        InputStream stmtIn = context.getAssets().open("xapi-statement-page-experienced.json");
+        Object context = NanoLrsPlatformTestUtil.getContext();
+        InputStream stmtIn = getClass().getResourceAsStream("/com/ustadmobile/nanolrs/core/xapi-statement-page-experienced.json");
 
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(stmtIn, writer, "UTF-8");
-        JSONObject stmtObj = new JSONObject(writer.toString());
+        JSONObject stmtObj = new JSONObject(LrsIoUtils.inputStreamToString(stmtIn));
         XapiStatementsForwardingEndpoint.addQueueStatusListener(this);
         String generatedUUID = XapiStatementsEndpoint.putStatement(stmtObj, context);
         XapiForwardingStatementManager manager = PersistenceManager.getInstance().getForwardingStatementManager();
         this.watchedStmt = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
 
-        String username = BuildConfig.TESTUSER;
-        String password = BuildConfig.TESTPASSWORD;
-        String endpointURL = BuildConfig.TESTLRSENDPOINT;
+        String username = TestConstants.TESTUSER;
+        String password = TestConstants.TESTPASSWORD;
+        String endpointURL = TestConstants.TESTLRSENDPOINT;
 
         int countUnsentBefore = manager.getUnsentStatementCount(context);
         XapiStatementsForwardingEndpoint.queueStatement(context, this.watchedStmt,
@@ -111,4 +99,5 @@ public class TestiXapiForwardingStatement implements XapiStatementsForwardingLis
     public void queueStatusUpdated(XapiStatementsForwardingEvent event) {
         this.receivedUpdate = true;
     }
+
 }

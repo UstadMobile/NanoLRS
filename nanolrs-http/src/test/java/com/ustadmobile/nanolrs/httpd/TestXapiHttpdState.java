@@ -1,48 +1,36 @@
-package com.ustadmobile.nanolrs.android.http;
+package com.ustadmobile.nanolrs.httpd;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-
-import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerFactoryAndroid;
+import com.ustadmobile.nanolrs.core.NanoLRSCoreTest;
 import com.ustadmobile.nanolrs.core.http.HttpLrs;
-import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil;
 import com.ustadmobile.nanolrs.http.NanoLrsHttpd;
-
-import junit.framework.Assert;
 
 import org.json.JSONObject;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 /**
- * Created by mike on 10/9/16.
+ * Created by mike on 2/6/17.
  */
 
-public class TestXapiHttpdState {
+public abstract class TestXapiHttpdState extends NanoLRSCoreTest {
 
-    private NanoLrsHttpd httpd;
+    protected NanoLrsHttpd httpd;
 
     public static final int TESTPORT = 8071;
 
-    private String xapiUrl;
+    protected String xapiUrl;
 
     @Before
     public void setUp() throws Exception {
-        PersistenceManager.setPersistenceManagerFactory(new PersistenceManagerFactoryAndroid());
-        httpd = new NanoLrsHttpd(TESTPORT, InstrumentationRegistry.getContext());
+        httpd = new NanoLrsHttpd(TESTPORT, NanoLrsPlatformTestUtil.getContext());
         httpd.start();
         httpd.mapXapiEndpoints("/xapi");
         xapiUrl = "http://localhost:" + TESTPORT + "/xapi/";
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        httpd.stop();
-        try { Thread.sleep(500); }
-        catch(InterruptedException e){}
     }
 
     @Test
@@ -51,13 +39,12 @@ public class TestXapiHttpdState {
         stateObj.put("savekey", "saveval");
 
         //put it
-        Context context = InstrumentationRegistry.getContext();
         HttpLrs lrs = new HttpLrs(xapiUrl);
         JSONObject agentObj = new JSONObject();
         agentObj.put("mbox", "mailto:mike@ustadmobile.com");
         byte[] jsonData = stateObj.toString().getBytes("UTF-8");
         HttpLrs.LrsResponse response = lrs.saveState("put", "username", "password", "http://www.ustadmobile.com/test/activity-state-id",
-            agentObj.toString(), null, "test_state_id", "application/json", jsonData);
+                agentObj.toString(), null, "test_state_id", "application/json", jsonData);
         Assert.assertEquals(204, response.getStatus());
 
 
@@ -69,6 +56,12 @@ public class TestXapiHttpdState {
         Assert.assertTrue(Arrays.equals(jsonData, getResponse.getServerResponse()));
     }
 
+    @After
+    public void tearDown() throws Exception {
+        httpd.stop();
+        try { Thread.sleep(500); }
+        catch(InterruptedException e){}
+    }
 
 
 }
