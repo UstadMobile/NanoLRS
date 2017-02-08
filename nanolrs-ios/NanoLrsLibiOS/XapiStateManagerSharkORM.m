@@ -23,20 +23,26 @@
                                                                withNSString:(NSString *)registrationUuid
                                                                withNSString:(NSString *)stateId {
     NSMutableString *whereStr = [[NSMutableString alloc]init];
+    SRKQuery *query = [XapiStateSrkObj query];
     [whereStr appendFormat:@"_activity = \"%@\" AND _stateId = \"%@\" ", activityId, stateId];
-    if(stateId != nil) {
+    
+    if(registrationUuid != nil) {
         [whereStr appendFormat:@" AND _registration = \"%@\" ", registrationUuid];
     }
     
+    [query joinTo:[XapiAgentSrkObj class] leftParameter:@"_agent" targetParameter:@"Id"];
     if(agentMbox != nil) {
-        [whereStr appendFormat:@" AND _agent._mbox = \"%@\" ", agentMbox];
+        [whereStr appendFormat:@" AND XapiAgentSrkObj._mbox = \"%@\" ", agentMbox];
     }
+    
+    [query where:whereStr];
     
     if(agentAccountName != nil && agentAccountHomepage != nil) {
-        [whereStr appendFormat:@" AND _agent._accountName = \"%@\" AND _agent._accountHomepage = \"%@\" ", agentAccountName, agentAccountHomepage];
+        [whereStr appendFormat:@" AND XapiAgentSrkObj._accountName = \"%@\" AND XapiAgentSrkObj._accountHomepage = \"%@\" ", agentAccountName, agentAccountHomepage];
     }
     
-    SRKResultSet *result = [[[XapiStateSrkObj query]where:whereStr]fetch];
+    SRKResultSet *result = [[query where:whereStr]fetch];
+    
     if([result count] > 0) {
         return [result objectAtIndex:0];
     }else {
