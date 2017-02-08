@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		04F79DD7C617385685D27E50 /* libPods-NanoLrsLibiOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 603479DBBCB60927275B69C3 /* libPods-NanoLrsLibiOSTests.a */; };
 		244D2D6C89AB3FF1546F871C /* libPods-NanoLrsLibiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1CD5FC946E0E7BEA7AB7D92 /* libPods-NanoLrsLibiOS.a */; };
+		AD5C4F921E4B007700B60FC3 /* XapiStatementManagerSharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = AD5C4F911E4B007700B60FC3 /* XapiStatementManagerSharkORM.m */; };
+		AD5C4F951E4B009F00B60FC3 /* XapiStateManagerSharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = AD5C4F941E4B009F00B60FC3 /* XapiStateManagerSharkORM.m */; };
+		AD5C4F981E4B0D9500B60FC3 /* TestXapiStateEndpointCore.m in Sources */ = {isa = PBXBuildFile; fileRef = AD5C4F971E4B0D9500B60FC3 /* TestXapiStateEndpointCore.m */; };
 		AD7622801E3F219900DCE64F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AD76227F1E3F219900DCE64F /* main.m */; };
 		AD7622831E3F219900DCE64F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622821E3F219900DCE64F /* AppDelegate.m */; };
 		AD7622861E3F219900DCE64F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD7622851E3F219900DCE64F /* ViewController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -91,6 +94,12 @@
 		603479DBBCB60927275B69C3 /* libPods-NanoLrsLibiOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NanoLrsLibiOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		87B99F47A691BDF8D394288B /* Pods-NanoLrsLibiOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NanoLrsLibiOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NanoLrsLibiOS/Pods-NanoLrsLibiOS.debug.xcconfig"; sourceTree = "<group>"; };
 		A8204CA6DABF4A62373BF166 /* Pods-NanoLrsLibiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NanoLrsLibiOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-NanoLrsLibiOS/Pods-NanoLrsLibiOS.release.xcconfig"; sourceTree = "<group>"; };
+		AD5C4F901E4B007700B60FC3 /* XapiStatementManagerSharkORM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XapiStatementManagerSharkORM.h; path = "../NanoLrsLibiOS-Port/XapiStatementManagerSharkORM.h"; sourceTree = "<group>"; };
+		AD5C4F911E4B007700B60FC3 /* XapiStatementManagerSharkORM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XapiStatementManagerSharkORM.m; path = "../NanoLrsLibiOS-Port/XapiStatementManagerSharkORM.m"; sourceTree = "<group>"; };
+		AD5C4F931E4B009F00B60FC3 /* XapiStateManagerSharkORM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XapiStateManagerSharkORM.h; sourceTree = "<group>"; };
+		AD5C4F941E4B009F00B60FC3 /* XapiStateManagerSharkORM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XapiStateManagerSharkORM.m; sourceTree = "<group>"; };
+		AD5C4F961E4B0D9500B60FC3 /* TestXapiStateEndpointCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestXapiStateEndpointCore.h; path = "../Generated/NanoLrs-Test/TestXapiStateEndpointCore.h"; sourceTree = "<group>"; };
+		AD5C4F971E4B0D9500B60FC3 /* TestXapiStateEndpointCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestXapiStateEndpointCore.m; path = "../Generated/NanoLrs-Test/TestXapiStateEndpointCore.m"; sourceTree = "<group>"; };
 		AD76227B1E3F219900DCE64F /* NanoLrsLibiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NanoLrsLibiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD76227F1E3F219900DCE64F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AD7622811E3F219900DCE64F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -340,6 +349,8 @@
 		AD7622B81E3F384C00DCE64F /* NanoLrs-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				AD5C4F961E4B0D9500B60FC3 /* TestXapiStateEndpointCore.h */,
+				AD5C4F971E4B0D9500B60FC3 /* TestXapiStateEndpointCore.m */,
 				ADF4B0411E4A702300891CBD /* TestXapiAgentEndpointCore.h */,
 				ADF4B0421E4A702300891CBD /* TestXapiAgentEndpointCore.m */,
 				ADF4B0381E4A686100891CBD /* NanoLrsPlatformTestUtil.h */,
@@ -439,6 +450,10 @@
 				AD80404B1E475B5E00647996 /* XapiActivityManagerSharkORM.m */,
 				ADF4B03E1E4A68BA00891CBD /* XapiAgentManagerSharkORM.h */,
 				ADF4B03F1E4A68BA00891CBD /* XapiAgentManagerSharkORM.m */,
+				AD5C4F901E4B007700B60FC3 /* XapiStatementManagerSharkORM.h */,
+				AD5C4F911E4B007700B60FC3 /* XapiStatementManagerSharkORM.m */,
+				AD5C4F931E4B009F00B60FC3 /* XapiStateManagerSharkORM.h */,
+				AD5C4F941E4B009F00B60FC3 /* XapiStateManagerSharkORM.m */,
 			);
 			name = "NanoLrsLibiOS-Port";
 			sourceTree = "<group>";
@@ -702,10 +717,12 @@
 				AD76231A1E3F395900DCE64F /* XapiDocument.m in Sources */,
 				AD7623281E3F395900DCE64F /* XapiStatementManager.m in Sources */,
 				AD76230A1E3F395800DCE64F /* PersistenceManagerFactory.m in Sources */,
+				AD5C4F951E4B009F00B60FC3 /* XapiStateManagerSharkORM.m in Sources */,
 				ADD8775F1E41C94800CDD012 /* XapiUserSrkObj.m in Sources */,
 				AD7623381E3F395900DCE64F /* XapiVerbEndpoint.m in Sources */,
 				AD7622801E3F219900DCE64F /* main.m in Sources */,
 				AD7623261E3F395900DCE64F /* XapiStatement.m in Sources */,
+				AD5C4F921E4B007700B60FC3 /* XapiStatementManagerSharkORM.m in Sources */,
 				AD76230E1E3F395800DCE64F /* XapiActivity.m in Sources */,
 				AD76232A1E3F395900DCE64F /* XapiStatementsEndpoint.m in Sources */,
 				AD7623061E3F395800DCE64F /* ParseUtil.m in Sources */,
@@ -729,6 +746,7 @@
 				AD8040541E4765ED00647996 /* NanoLRSCoreTest.m in Sources */,
 				ADF4B0451E4A70D200891CBD /* TestXapiAgentEndpointCore.m in Sources */,
 				AD7622991E3F219900DCE64F /* NanoLrsLibiOSTests.m in Sources */,
+				AD5C4F981E4B0D9500B60FC3 /* TestXapiStateEndpointCore.m in Sources */,
 				AD9B5C951E41ED8E00CFAF26 /* TestJsonUtil.m in Sources */,
 				AD8040531E4765E600647996 /* TestXapiActivityEndpointCore.m in Sources */,
 				AD7622BC1E3F387200DCE64F /* TestParseUtils.m in Sources */,

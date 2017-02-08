@@ -15,6 +15,7 @@
 #import "TestJsonUtil.h"
 #import "TestXapiActivityEndpointCore.h"
 #import "TestXapiAgentEndpointCore.h"
+#import "TestXapiStateEndpointCore.h"
 #import "PersistenceManager.h"
 
 
@@ -68,6 +69,13 @@
 -(void)testAgentEndpoint {
     OrgJunitRunnerJUnitCore *junitCore = [[OrgJunitRunnerJUnitCore alloc]init];
     OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[ComUstadmobileNanolrsCoreEndpointsTestXapiAgentEndpointCore_class_()] type:IOSClass_class_()]];
+    [self listFailuresWithResult:result];
+    XCTAssert([result getFailureCount] == 0);
+}
+
+-(void)testStateEndpoint {
+    OrgJunitRunnerJUnitCore *junitCore = [[OrgJunitRunnerJUnitCore alloc]init];
+    OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[ComUstadmobileNanolrsCoreEndpointsTestXapiStateEndpointCore_class_()] type:IOSClass_class_()]];
     [self listFailuresWithResult:result];
     XCTAssert([result getFailureCount] == 0);
 }
