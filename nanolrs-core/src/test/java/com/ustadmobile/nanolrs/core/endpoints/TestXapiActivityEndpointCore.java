@@ -28,17 +28,17 @@ public abstract class TestXapiActivityEndpointCore extends NanoLRSCoreTest{
 
         JSONObject activityObj = new JSONObject(activityStr);
         XapiActivity activity = XapiActivityEndpoint.createOrUpdate(context, activityObj);
-        Assert.assertNotNull(activity);
+        Assert.assertNotNull("Can create a new activity", activity);
 
         //now we should be able to find it by ID
         XapiActivityManager manager = PersistenceManager.getInstance().getActivityManager();
         XapiActivity found = manager.findByActivityId(context,
                 activityObj.getString("id"));
-        Assert.assertNotNull(found);
+        Assert.assertNotNull("Can find new activity just created", found);
 
         //now delete it
         manager.deleteByActivityId(context, activityObj.getString("id"));
-        Assert.assertNull(manager.findByActivityId(context, activityObj.getString("id")));
+        Assert.assertNull("Activity not found after being deleted", manager.findByActivityId(context, activityObj.getString("id")));
     }
 
 }
