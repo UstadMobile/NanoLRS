@@ -1,9 +1,11 @@
 package com.ustadmobile.nanolrs.http;
 
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
+import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import java.io.ByteArrayOutputStream;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -47,8 +49,11 @@ public class StatementsUriResponder extends NanoLrsResponder implements RouterNa
         }catch(IOException e) {
             r = NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.INTERNAL_ERROR, "text/plain",
                     e.getMessage());
-        }finally {
-            IOUtils.closeQuietly(fin);
+        }catch(JSONException j) {
+            r = NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.INTERNAL_ERROR, "text/plain",
+                    "JSON Parse exception: " + j.getMessage());
+        }finally{
+            LrsIoUtils.closeQuietly(fin);
         }
 
         return r;
