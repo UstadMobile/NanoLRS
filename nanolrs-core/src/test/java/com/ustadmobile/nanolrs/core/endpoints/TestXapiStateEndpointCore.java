@@ -33,22 +33,22 @@ public abstract class TestXapiStateEndpointCore extends NanoLRSCoreTest {
         XapiState state = XapiStateEndpoint.createOrUpdateState(context, "put", "application/json",
                 activityId, actorObj.toString(), null, stateId, stateContent);
 
-        Assert.assertNotNull(state);
+        Assert.assertNotNull("State object created by createOrUpdateState endpoint", state);
 
 
         //dig it out again
         XapiState retrieved = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
                 context, activityId, mbox, null, null, null, stateId);
-        Assert.assertNotNull(retrieved);
+        Assert.assertNotNull("State object created can be retrieved by parameters", retrieved);
 
         XapiState otherIdState = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
                 context, activityId, mbox, null, null, null, stateId+"_otherid");
-        Assert.assertNull(otherIdState);
+        Assert.assertNull("State object not matched when stateId is different", otherIdState);
 
         XapiState otherAgent = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
                 context, activityId, "mailto:someone@domain.com", null, null, null, stateId+"_otherid");
 
-        Assert.assertNull(otherAgent);
+        Assert.assertNull("State not matched when searching by another agent", otherAgent);
 
     }
 }
