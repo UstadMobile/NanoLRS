@@ -48,7 +48,7 @@ public abstract class TestXapiStatement {
         });
         lock.await(2000, TimeUnit.MILLISECONDS);
 
-        Assert.assertNotNull(entity);
+        Assert.assertNotNull("Entity Created", entity);
         String createdUuid = entity.getUuid();
         entity = null;
         lock = new CountDownLatch(1);
@@ -68,7 +68,7 @@ public abstract class TestXapiStatement {
 
         lock.await(2000, TimeUnit.MILLISECONDS);
 
-        Assert.assertNotNull(entity);
+        Assert.assertNotNull("Entity created found", entity);
 
 
 
@@ -77,14 +77,14 @@ public abstract class TestXapiStatement {
         long timeStarted = new Date().getTime();
         JSONObject stmtObj = new JSONObject(LrsIoUtils.inputStreamToString(stmtIn));
         String generatedUUID = XapiStatementsEndpoint.putStatement(stmtObj, context);
-        Assert.assertNotNull(generatedUUID);
+        Assert.assertNotNull("Statement put and UUID generated", generatedUUID);
 
         //now look it up
         XapiStatement retrieved = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
-        Assert.assertNotNull(generatedUUID);
+        Assert.assertNotNull("Statement retrieved by UUID", retrieved);
 
         //make sure it has a timestamp
-        Assert.assertTrue(retrieved.getTimestamp() >= timeStarted);
+        Assert.assertTrue("Statement has timestamp added", retrieved.getTimestamp() >= timeStarted);
 
         //make sure that we can find it using a search by parameters
         long since = 0;

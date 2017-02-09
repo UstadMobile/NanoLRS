@@ -7,7 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XapiStatementManager.h"
+#import "XapiStatement.h"
+#import "XapiStatementSrkObj.h"
+#import "NanoLrsBaseManagerSharkORM.h"
 
-@interface XapiStatementManagerSharkORM : NSObject
+@interface XapiStatementManagerSharkORM : NanoLrsBaseManagerSharkORM<ComUstadmobileNanolrsCoreManagerXapiStatementManager>
 
 @end

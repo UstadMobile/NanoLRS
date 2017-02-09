@@ -18,6 +18,7 @@
 #import "TestXapiStateEndpointCore.h"
 #import "TestXapiHttpdState.h"
 #import "PersistenceManager.h"
+#import "TestXapiStatement.h"
 
 
 @interface NanoLrsLibiOSTests : XCTestCase
@@ -86,6 +87,14 @@
     OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[ComUstadmobileNanolrsHttpdTestXapiHttpdState_class_()] type:IOSClass_class_()]];
     [self listFailuresWithResult:result];
     XCTAssert([result getFailureCount] == 0);
+}
+
+-(void)testStatement {
+    OrgJunitRunnerJUnitCore *junitCore = [[OrgJunitRunnerJUnitCore alloc]init];
+    OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[ComUstadmobileNanolrsCoreModelTestXapiStatement_class_()] type:IOSClass_class_()]];
+    [self listFailuresWithResult:result];
+    XCTAssert([result getFailureCount] == 0);
+
 }
 
 - (void)testPerformanceExample {

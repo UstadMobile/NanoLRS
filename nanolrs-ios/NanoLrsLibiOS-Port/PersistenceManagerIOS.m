@@ -9,12 +9,16 @@
 #import "PersistenceManagerIOS.h"
 #import "XapiActivityManagerSharkORM.h"
 #import "XapiAgentManagerSharkORM.h"
-#import "XapiStateMAnagerSharkORM.h"
+#import "XapiStateManagerSharkORM.h"
+#import "XapiStatementManagerSharkORM.h"
+#import "XapiVerbManagerSharkORM.h"
 
 @interface PersistenceManagerIOS()
 @property XapiActivityManagerSharkORM *activityManager;
 @property XapiAgentManagerSharkORM *agentManager;
 @property XapiStateManagerSharkORM *stateManager;
+@property XapiStatementManagerSharkORM *statementManager;
+@property XapiVerbManagerSharkORM *verbManager;
 @end
 
 @implementation PersistenceManagerIOS
@@ -24,6 +28,8 @@
     self.activityManager = [[XapiActivityManagerSharkORM alloc]init];
     self.agentManager = [[XapiAgentManagerSharkORM alloc]init];
     self.stateManager = [[XapiStateManagerSharkORM alloc]init];
+    self.statementManager = [[XapiStatementManagerSharkORM alloc]init];
+    self.verbManager = [[XapiVerbManagerSharkORM alloc]init];
     return self;
 }
 
@@ -45,7 +51,7 @@
 }
 
 - (id<ComUstadmobileNanolrsCoreManagerXapiStatementManager>)getStatementManager {
-    return nil;
+    return self.statementManager;
 }
 
 - (id<ComUstadmobileNanolrsCoreManagerXapiUserManager>)getUserManager {
@@ -53,7 +59,7 @@
 }
 
 - (id<ComUstadmobileNanolrsCoreManagerXapiVerbManager>)getVerbManager {
-    return nil;
+    return self.verbManager;
 }
 
 
