@@ -12,6 +12,7 @@
 #import "XapiStateManagerSharkORM.h"
 #import "XapiStatementManagerSharkORM.h"
 #import "XapiVerbManagerSharkORM.h"
+#import "XapiForwardingStatementManagerSharkORM.h"
 
 @interface PersistenceManagerIOS()
 @property XapiActivityManagerSharkORM *activityManager;
@@ -19,6 +20,7 @@
 @property XapiStateManagerSharkORM *stateManager;
 @property XapiStatementManagerSharkORM *statementManager;
 @property XapiVerbManagerSharkORM *verbManager;
+@property XapiForwardingStatementManagerSharkORM *forwardingStatementManager;
 @end
 
 @implementation PersistenceManagerIOS
@@ -30,6 +32,7 @@
     self.stateManager = [[XapiStateManagerSharkORM alloc]init];
     self.statementManager = [[XapiStatementManagerSharkORM alloc]init];
     self.verbManager = [[XapiVerbManagerSharkORM alloc]init];
+    self.forwardingStatementManager = [[XapiForwardingStatementManagerSharkORM alloc]init];
     return self;
 }
 
@@ -43,7 +46,7 @@
 }
 
 - (id<ComUstadmobileNanolrsCoreManagerXapiForwardingStatementManager>)getForwardingStatementManager {
-    return nil;
+    return self.forwardingStatementManager;
 }
 
 - (id<ComUstadmobileNanolrsCoreManagerXapiStateManager>)getStateManager {

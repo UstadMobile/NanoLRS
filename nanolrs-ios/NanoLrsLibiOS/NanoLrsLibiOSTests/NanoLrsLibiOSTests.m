@@ -19,7 +19,8 @@
 #import "TestXapiHttpdState.h"
 #import "PersistenceManager.h"
 #import "TestXapiStatement.h"
-
+#import "TestXapiHttpdStatements.h"
+#import "TestXapiForwardingStatement.h"
 
 @interface NanoLrsLibiOSTests : XCTestCase
 
@@ -46,6 +47,13 @@
     }
 }
 
+-(OrgJunitRunnerResult *)runJunitWithIOSClass:(IOSClass *)cls {
+    OrgJunitRunnerJUnitCore *junitCore = [[OrgJunitRunnerJUnitCore alloc]init];
+    OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[cls] type:IOSClass_class_()]];
+    [self listFailuresWithResult:result];
+    return result;
+}
+
 - (void)testExample {
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
@@ -56,8 +64,6 @@
     OrgJunitRunnerJUnitCore *junitCore = [[OrgJunitRunnerJUnitCore alloc]init];
     IOSClass *cls = [IOSClass forName:@"com.ustadmobile.nanolrs.core.util.TestJsonUtil"];
     OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[cls] type:[cls getClass]]];
-    
-    
     XCTAssert([result getFailureCount] == 0);
 }
 
@@ -94,7 +100,16 @@
     OrgJunitRunnerResult *result = [junitCore runWithIOSClassArray:[IOSObjectArray arrayWithNSArray:@[ComUstadmobileNanolrsCoreModelTestXapiStatement_class_()] type:IOSClass_class_()]];
     [self listFailuresWithResult:result];
     XCTAssert([result getFailureCount] == 0);
+}
 
+-(void)testHttpdStatement {
+    OrgJunitRunnerResult *result = [self runJunitWithIOSClass:ComUstadmobileNanolrsHttpdTestXapiHttpdStatements_class_()];
+    XCTAssert([result getFailureCount] == 0);
+}
+
+-(void)testForwardingStatement {
+    OrgJunitRunnerResult *result = [self runJunitWithIOSClass:ComUstadmobileNanolrsCoreModelTestXapiForwardingStatement_class_()];
+    XCTAssert([result getFailureCount] == 0);
 }
 
 - (void)testPerformanceExample {

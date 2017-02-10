@@ -11,6 +11,9 @@
 		244D2D6C89AB3FF1546F871C /* libPods-NanoLrsLibiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1CD5FC946E0E7BEA7AB7D92 /* libPods-NanoLrsLibiOS.a */; };
 		AD401E0C1E4CF426006830C1 /* XapiVerbManagerSharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = AD401E0B1E4CF426006830C1 /* XapiVerbManagerSharkORM.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		AD401E0F1E4CF892006830C1 /* TestXapiStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = AD401E0E1E4CF892006830C1 /* TestXapiStatement.m */; };
+		AD401E121E4D91DC006830C1 /* TestXapiHttpdStatements.m in Sources */ = {isa = PBXBuildFile; fileRef = AD401E111E4D91DC006830C1 /* TestXapiHttpdStatements.m */; };
+		AD401E151E4E0C70006830C1 /* XapiForwardingStatementManagerSharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = AD401E141E4E0C70006830C1 /* XapiForwardingStatementManagerSharkORM.m */; };
+		AD401E191E4E1B55006830C1 /* TestXapiForwardingStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = AD401E171E4E1B4B006830C1 /* TestXapiForwardingStatement.m */; };
 		AD5C4F921E4B007700B60FC3 /* XapiStatementManagerSharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = AD5C4F911E4B007700B60FC3 /* XapiStatementManagerSharkORM.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		AD5C4F981E4B0D9500B60FC3 /* TestXapiStateEndpointCore.m in Sources */ = {isa = PBXBuildFile; fileRef = AD5C4F971E4B0D9500B60FC3 /* TestXapiStateEndpointCore.m */; };
 		AD5C4F9E1E4B4AA500B60FC3 /* TestXapiHttpdState.m in Sources */ = {isa = PBXBuildFile; fileRef = AD5C4F9D1E4B4AA500B60FC3 /* TestXapiHttpdState.m */; };
@@ -106,6 +109,12 @@
 		AD401E0B1E4CF426006830C1 /* XapiVerbManagerSharkORM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XapiVerbManagerSharkORM.m; path = "../NanoLrsLibiOS-Port/XapiVerbManagerSharkORM.m"; sourceTree = "<group>"; };
 		AD401E0D1E4CF892006830C1 /* TestXapiStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestXapiStatement.h; path = "../Generated/NanoLrs-Test/TestXapiStatement.h"; sourceTree = "<group>"; };
 		AD401E0E1E4CF892006830C1 /* TestXapiStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestXapiStatement.m; path = "../Generated/NanoLrs-Test/TestXapiStatement.m"; sourceTree = "<group>"; };
+		AD401E101E4D91DC006830C1 /* TestXapiHttpdStatements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestXapiHttpdStatements.h; path = "../Generated/NanoLrs-Test/TestXapiHttpdStatements.h"; sourceTree = "<group>"; };
+		AD401E111E4D91DC006830C1 /* TestXapiHttpdStatements.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestXapiHttpdStatements.m; path = "../Generated/NanoLrs-Test/TestXapiHttpdStatements.m"; sourceTree = "<group>"; };
+		AD401E131E4E0C70006830C1 /* XapiForwardingStatementManagerSharkORM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XapiForwardingStatementManagerSharkORM.h; path = "../NanoLrsLibiOS-Port/XapiForwardingStatementManagerSharkORM.h"; sourceTree = "<group>"; };
+		AD401E141E4E0C70006830C1 /* XapiForwardingStatementManagerSharkORM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XapiForwardingStatementManagerSharkORM.m; path = "../NanoLrsLibiOS-Port/XapiForwardingStatementManagerSharkORM.m"; sourceTree = "<group>"; };
+		AD401E161E4E1B4B006830C1 /* TestXapiForwardingStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestXapiForwardingStatement.h; path = "../Generated/NanoLrs-Test/TestXapiForwardingStatement.h"; sourceTree = "<group>"; };
+		AD401E171E4E1B4B006830C1 /* TestXapiForwardingStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestXapiForwardingStatement.m; path = "../Generated/NanoLrs-Test/TestXapiForwardingStatement.m"; sourceTree = "<group>"; };
 		AD5C4F901E4B007700B60FC3 /* XapiStatementManagerSharkORM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XapiStatementManagerSharkORM.h; path = "../NanoLrsLibiOS-Port/XapiStatementManagerSharkORM.h"; sourceTree = "<group>"; };
 		AD5C4F911E4B007700B60FC3 /* XapiStatementManagerSharkORM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XapiStatementManagerSharkORM.m; path = "../NanoLrsLibiOS-Port/XapiStatementManagerSharkORM.m"; sourceTree = "<group>"; };
 		AD5C4F961E4B0D9500B60FC3 /* TestXapiStateEndpointCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestXapiStateEndpointCore.h; path = "../Generated/NanoLrs-Test/TestXapiStateEndpointCore.h"; sourceTree = "<group>"; };
@@ -373,6 +382,10 @@
 		AD7622B81E3F384C00DCE64F /* NanoLrs-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				AD401E161E4E1B4B006830C1 /* TestXapiForwardingStatement.h */,
+				AD401E171E4E1B4B006830C1 /* TestXapiForwardingStatement.m */,
+				AD401E101E4D91DC006830C1 /* TestXapiHttpdStatements.h */,
+				AD401E111E4D91DC006830C1 /* TestXapiHttpdStatements.m */,
 				AD401E0D1E4CF892006830C1 /* TestXapiStatement.h */,
 				AD401E0E1E4CF892006830C1 /* TestXapiStatement.m */,
 				AD5C4F9C1E4B4AA500B60FC3 /* TestXapiHttpdState.h */,
@@ -494,6 +507,8 @@
 				AD5C4FAC1E4CAE5600B60FC3 /* NanoLrsBaseManagerSharkORM.m */,
 				AD401E0A1E4CF426006830C1 /* XapiVerbManagerSharkORM.h */,
 				AD401E0B1E4CF426006830C1 /* XapiVerbManagerSharkORM.m */,
+				AD401E131E4E0C70006830C1 /* XapiForwardingStatementManagerSharkORM.h */,
+				AD401E141E4E0C70006830C1 /* XapiForwardingStatementManagerSharkORM.m */,
 			);
 			name = "NanoLrsLibiOS-Port";
 			sourceTree = "<group>";
@@ -769,6 +784,7 @@
 				AD7623261E3F395900DCE64F /* XapiStatement.m in Sources */,
 				AD5C4F921E4B007700B60FC3 /* XapiStatementManagerSharkORM.m in Sources */,
 				AD76230E1E3F395800DCE64F /* XapiActivity.m in Sources */,
+				AD401E151E4E0C70006830C1 /* XapiForwardingStatementManagerSharkORM.m in Sources */,
 				AD76232A1E3F395900DCE64F /* XapiStatementsEndpoint.m in Sources */,
 				AD7623061E3F395800DCE64F /* ParseUtil.m in Sources */,
 				AD7623361E3F395900DCE64F /* XapiVerb.m in Sources */,
@@ -790,11 +806,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD8040541E4765ED00647996 /* NanoLRSCoreTest.m in Sources */,
+				AD401E191E4E1B55006830C1 /* TestXapiForwardingStatement.m in Sources */,
 				ADF4B0451E4A70D200891CBD /* TestXapiAgentEndpointCore.m in Sources */,
 				AD5C4F9E1E4B4AA500B60FC3 /* TestXapiHttpdState.m in Sources */,
 				AD7622991E3F219900DCE64F /* NanoLrsLibiOSTests.m in Sources */,
 				AD5C4F981E4B0D9500B60FC3 /* TestXapiStateEndpointCore.m in Sources */,
 				AD401E0F1E4CF892006830C1 /* TestXapiStatement.m in Sources */,
+				AD401E121E4D91DC006830C1 /* TestXapiHttpdStatements.m in Sources */,
 				AD9B5C951E41ED8E00CFAF26 /* TestJsonUtil.m in Sources */,
 				AD8040531E4765E600647996 /* TestXapiActivityEndpointCore.m in Sources */,
 				AD7622BC1E3F387200DCE64F /* TestParseUtils.m in Sources */,
