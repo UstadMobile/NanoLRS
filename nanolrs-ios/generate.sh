@@ -85,3 +85,16 @@ $J2OBJC_HOME/j2objc -d Generated/NanoLrs-Test \
 cd ..
 ./gradlew :nanolrs-entitygen:runSharkOrmGeneration
 
+cd nanolrs-ios
+if [ -e lib/include ]; then
+    rm -rf lib/include
+fi
+
+mkdir -p lib/include/Generated
+mkdir -p lib/include/NanoLrs-Objc
+cp Generated/NanoLrs-Main/* lib/include/Generated
+cp Generated/NanoLrs-Entities/* lib/include/Generated
+cp NanoLrsLibiOS-Port/* lib/include/NanoLrs-Objc
+
+echo "NanoLrs library for use in other projects is in $(pwd)lib/include"
+
