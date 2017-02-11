@@ -57,6 +57,9 @@ if [ -e Generated/NanoHttpd ]; then
     rm Generated/NanoHttpd/*.h Generated/NanoHttpd/*.m
 fi
 
+./gradlew :nanolrs-entitygen:runSharkOrmGeneration :nanolrs-core:generateCoreTestConstantsBuildConfig
+
+
 $J2OBJC_HOME/j2objc -d Generated/NanoHttpd/ \
    -sourcepath $NANOHTTPD_CORE_SRCDIR_MAIN:$NANOHTTPD_NANOLETS_SRCDIR_MAIN \
    --no-package-directories \
@@ -83,7 +86,6 @@ $J2OBJC_HOME/j2objc -d Generated/NanoLrs-Test \
 
 # Generate the SharkORM entities
 cd ..
-./gradlew :nanolrs-entitygen:runSharkOrmGeneration
 
 cd nanolrs-ios
 if [ -e lib/include ]; then
