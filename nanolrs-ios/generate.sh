@@ -57,8 +57,9 @@ if [ -e Generated/NanoHttpd ]; then
     rm Generated/NanoHttpd/*.h Generated/NanoHttpd/*.m
 fi
 
+cd ..
 ./gradlew :nanolrs-entitygen:runSharkOrmGeneration :nanolrs-core:generateCoreTestConstantsBuildConfig
-
+cd nanolrs-ios
 
 $J2OBJC_HOME/j2objc -d Generated/NanoHttpd/ \
    -sourcepath $NANOHTTPD_CORE_SRCDIR_MAIN:$NANOHTTPD_NANOLETS_SRCDIR_MAIN \
