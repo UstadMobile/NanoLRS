@@ -4,7 +4,7 @@
 apply from: file("buildconfig.local.gradle").exists() ? "buildconfig.local.gradle" : "buildconfig.default.gradle"
 
 ext {
-    nanolrsversion = "0.1.39"
+    nanolrsversion = "0.1.40"
 }
 
 buildscript {
