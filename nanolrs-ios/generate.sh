@@ -93,10 +93,10 @@ if [ -e lib/include ]; then
     rm -rf lib/include
 fi
 
-mkdir -p lib/include/Generated
+mkdir -p lib/include/NanoLrs-Generated
 mkdir -p lib/include/NanoLrs-Objc
-cp Generated/NanoLrs-Main/* lib/include/Generated
-cp Generated/NanoLrs-Entities/* lib/include/Generated
+cp Generated/NanoLrs-Main/* lib/include/NanoLrs-Generated
+cp Generated/NanoLrs-Entities/* lib/include/NanoLrs-Generated
 cp NanoLrsLibiOS-Port/* lib/include/NanoLrs-Objc
 
 echo "NanoLrs library for use in other projects is in $(pwd)lib/include"
