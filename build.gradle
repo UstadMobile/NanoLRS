@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 //Local settings
-apply from: "localsettings.gradle"
+apply from: file("buildconfig.local.gradle").exists() ? "buildconfig.local.gradle" : "buildconfig.default.gradle"
 
 ext {
     nanolrsversion = "0.1.39"
