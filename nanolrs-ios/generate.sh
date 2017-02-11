@@ -2,7 +2,16 @@
 
 BASEDIR=$(pwd)
 
-J2OBJC_HOME=~/local/j2objc/
+if [ ! -d $J2OBJC_HOME ]; then
+    J2OBJC_HOME=~/local/j2objc/
+fi
+
+if [ ! -e $J2OBJC_HOME/j2objc ]; then
+    echo "J2OBJC not found: please install and set the J2OBJC_HOME variable to point to it"
+    exit 1
+fi
+
+
 CHECKOUT_DIR=lib/checkout
 
 # Input Java source
@@ -89,15 +98,15 @@ $J2OBJC_HOME/j2objc -d Generated/NanoLrs-Test \
 cd ..
 
 cd nanolrs-ios
-if [ -e lib/include ]; then
-    rm -rf lib/include
+if [ -e dist/include ]; then
+    rm -rf dist/include
 fi
 
-mkdir -p lib/include/NanoLrs-Generated
-mkdir -p lib/include/NanoLrs-Objc
-cp Generated/NanoLrs-Main/* lib/include/NanoLrs-Generated
-cp Generated/NanoLrs-Entities/* lib/include/NanoLrs-Generated
-cp NanoLrsLibiOS-Port/* lib/include/NanoLrs-Objc
+mkdir -p dist/include/NanoLrs-Generated
+mkdir -p dist/include/NanoLrs-Objc
+cp Generated/NanoLrs-Main/* dist/include/NanoLrs-Generated
+cp Generated/NanoLrs-Entities/* dist/include/NanoLrs-Generated
+cp NanoLrsLibiOS-Port/* dist/include/NanoLrs-Objc
 
-echo "NanoLrs library for use in other projects is in $(pwd)lib/include"
+echo "NanoLrs library for use in other projects is in $(pwd)/dist/include"
 
