@@ -63,22 +63,23 @@ public class XapiStateEndpoint {
             if(contentType != null)
                 state.setContentType(contentType);
 
+
             if(contentType != null && contentType.equals("application/json") && method.equalsIgnoreCase("post") && existingContent != null) {
-                //merge the JSON content
+                //merge the JSON content if possible
                 try {
                     JSONObject existingJson = new JSONObject(new String(existingContent, "UTF-8"));
                     JSONObject updatedJson = new JSONObject(new String(stateContent, "UTF-8"));
 
                     //TODO: This merge as per the XAPI spec should not be recursive
                     JsonUtil.mergeJson(updatedJson, existingJson);
-                }catch(IOException e) {
+                    stateContent = existingJson.toString().getBytes("UTF-8");
+                }catch(JSONException|IOException e) {
                     System.err.println("Exception in createOrUpdateState JSON Merge");
                     e.printStackTrace();
                 }
-            }else {
-                state.setContent(stateContent);
             }
 
+            state.setContent(stateContent);
             manager.persist(dbContext, state);
 
             return state;
