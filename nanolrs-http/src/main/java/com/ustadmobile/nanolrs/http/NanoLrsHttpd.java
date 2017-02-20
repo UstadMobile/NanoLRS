@@ -1,7 +1,8 @@
 package com.ustadmobile.nanolrs.http;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
+
+import java.io.ByteArrayOutputStream;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -64,7 +65,8 @@ public class NanoLrsHttpd extends RouterNanoHTTPD {
                 tmpFileName =  map.get("content");
                 fin = new FileInputStream(tmpFileName);
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                IOUtils.copy(fin, bout);
+
+                LrsIoUtils.copy(fin, bout);
                 bout.flush();
                 content = bout.toByteArray();
             }else if(map.containsKey("postData")) {
@@ -74,7 +76,7 @@ public class NanoLrsHttpd extends RouterNanoHTTPD {
             System.err.println("Exception getRequestContent");
             e.printStackTrace();
         }finally {
-            IOUtils.closeQuietly(fin);
+            LrsIoUtils.closeQuietly(fin);
         }
 
         return content;

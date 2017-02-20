@@ -1,8 +1,10 @@
 package com.ustadmobile.nanolrs.core.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Created by mikedawson on 29/01/2017.
@@ -18,15 +20,27 @@ public class LrsIoUtils {
      * @throws IOException
      */
     public static final String inputStreamToString(InputStream in) throws IOException {
-        byte[] buf = new byte[1024];
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        copy(in, bout);
+        in.close();
+        return new String(bout.toByteArray(), "UTF-8");
+    }
+
+    public static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] buf = new byte[1024];
         int bytesRead;
 
         while((bytesRead = in.read(buf)) != -1) {
-            bout.write(buf, 0, bytesRead);
+            out.write(buf, 0, bytesRead);
         }
+    }
 
-        return new String(bout.toByteArray(), "UTF-8");
+    public static void closeQuietly(Closeable closeable)  {
+        if(closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {}
+        }
     }
 
 }
