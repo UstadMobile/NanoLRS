@@ -22,7 +22,7 @@ import java.util.List;
  * Created by mike on 2/7/17.
  */
 
-public class TestXapiForwardingStatement implements XapiStatementsForwardingListener {
+public abstract class TestXapiForwardingStatement implements XapiStatementsForwardingListener {
 
     protected boolean receivedUpdate = false;
 
