@@ -96,4 +96,18 @@ public class XapiStateManagerOrmLite extends BaseManagerOrmLite implements XapiS
 
         return null;
     }
+
+    @Override
+    public boolean delete(Object dbContext, XapiState data) {
+        try {
+            Dao<XapiStateEntity, String> dao = persistenceManager.getDao(XapiStateEntity.class, dbContext);
+            dao.delete((XapiStateEntity)data);
+            return true;
+        }catch(SQLException e) {
+            System.err.println("Exception in XapiStateManagerOrmLite delete");
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

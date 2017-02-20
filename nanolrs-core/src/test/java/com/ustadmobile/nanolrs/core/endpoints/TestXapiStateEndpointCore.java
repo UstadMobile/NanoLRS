@@ -50,5 +50,12 @@ public abstract class TestXapiStateEndpointCore extends NanoLRSCoreTest {
 
         Assert.assertNull("State not matched when searching by another agent", otherAgent);
 
+        //delete it
+        boolean deleted = XapiStateEndpoint.delete(context, activityId, actorObj.toString(), null, stateId);
+        Assert.assertTrue("XapiStateEndpoint returns true to confirm deleting state", deleted);
+        XapiState retrievedAfterDelete = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
+                context, activityId, mbox, null, null, null, stateId);
+        Assert.assertNull("State not found after being deleted", retrievedAfterDelete);
+
     }
 }

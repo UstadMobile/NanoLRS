@@ -16,4 +16,6 @@ public interface XapiStateManager {
 
     void persist(Object dbContext, XapiState data);
 
+    boolean delete(Object dbContext, XapiState data);
+
 }

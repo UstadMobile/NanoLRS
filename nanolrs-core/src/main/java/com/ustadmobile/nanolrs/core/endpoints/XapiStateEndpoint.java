@@ -106,5 +106,14 @@ public class XapiStateEndpoint {
         }
     }
 
+    public static boolean delete(Object dbContext, String activityId, String agentJson, String registration, String stateId) {
+        XapiStateManager manager = PersistenceManager.getInstance().getStateManager();
+        XapiState state = getState(dbContext, activityId, agentJson, registration, stateId);
+        if(state != null) {
+            return manager.delete(dbContext, state);
+        }
+        return false;
+    }
+
 
 }
