@@ -13,7 +13,7 @@ public class ParseUtil {
 
     public static final int MS_PER_MIN = 60000;//60seconds * 1000 milliseconds
 
-    public static final char[] TZ_START_CHARS = new char[]{'+', '-', '−'};
+    public static final char[] TZ_START_CHARS = new char[]{'+', '-', '\u2212'};
 
     public static final int TZ_START_CHARS_PLUS = 0;
 
