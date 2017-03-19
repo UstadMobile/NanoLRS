@@ -56,5 +56,10 @@ withComUstadmobileNanolrsCoreModelXapiState:(id<ComUstadmobileNanolrsCoreModelXa
     [obj commit];
 }
 
+- (jboolean)delete__WithId:(id)dbContext withComUstadmobileNanolrsCoreModelXapiState:(id<ComUstadmobileNanolrsCoreModelXapiState>)data {
+    XapiStateSrkObj *obj = (XapiStateSrkObj *)data;
+    return [obj remove];
+}
+
 
 @end
