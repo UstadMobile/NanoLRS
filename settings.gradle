@@ -1,3 +1,3 @@
-include ':nanolrs-ormlite', ':nanolrs-android', ':nanolrs-http', ':nanolrs-entitygen', ':nanolrs-jdbc'
+include ':nanolrs-ormlite', ':nanolrs-android', ':nanolrs-http', ':nanolrs-entitygen', ':nanolrs-core-tests', ':nanolrs-nanohttpd-tests'
 include ":nanolrs-core"
 

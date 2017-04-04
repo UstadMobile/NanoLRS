@@ -71,13 +71,3 @@ publishing {
     }
 }
 
-task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfig.GenerateBuildConfigTask) {
-    outputDir = new File("${projectDir}/src/test/java")
-    clsName = "TestConstants"
-    packageName = "com.ustadmobile.nanolrs.buildconfig"
-    buildConfigField "String", "TESTUSER", rootProject.ext.testUser
-    buildConfigField "String", "TESTPASSWORD", rootProject.ext.testPassword
-    buildConfigField "String", "TESTLRSENDPOINT", rootProject.ext.testLrsEndpoint
-}
-
-compileTestJava.dependsOn(generateCoreTestConstantsBuildConfig)
