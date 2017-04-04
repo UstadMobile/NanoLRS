@@ -50,7 +50,8 @@ localsettings.gradle
 nanolrs-ormlite/src/main/java/com/ustadmobile/nanolrs/ormlite/generated
 
 #Generated buildconfig test constants
-nanolrs-core/src/test/java/com/ustadmobile/nanolrs/buildconfig/*.java
+nanolrs-core-tests/src/main/java/com/ustadmobile/nanolrs/buildconfig/*.java
+
 
 #DS_Store files that turn up on MacOS
 .DS_Store

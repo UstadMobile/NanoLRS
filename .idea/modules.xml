@@ -5,8 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/NanoLRS.iml" filepath="$PROJECT_DIR$/NanoLRS.iml" />
       <module fileurl="file://$PROJECT_DIR$/nanolrs-android/nanolrs-android.iml" filepath="$PROJECT_DIR$/nanolrs-android/nanolrs-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/nanolrs-core/nanolrs-core.iml" filepath="$PROJECT_DIR$/nanolrs-core/nanolrs-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nanolrs-core-tests/nanolrs-core-tests.iml" filepath="$PROJECT_DIR$/nanolrs-core-tests/nanolrs-core-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/nanolrs-entitygen/nanolrs-entitygen.iml" filepath="$PROJECT_DIR$/nanolrs-entitygen/nanolrs-entitygen.iml" />
       <module fileurl="file://$PROJECT_DIR$/nanolrs-http/nanolrs-http.iml" filepath="$PROJECT_DIR$/nanolrs-http/nanolrs-http.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nanolrs-nanohttpd-tests/nanolrs-nanohttpd-tests.iml" filepath="$PROJECT_DIR$/nanolrs-nanohttpd-tests/nanolrs-nanohttpd-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/nanolrs-ormlite/nanolrs-ormlite.iml" filepath="$PROJECT_DIR$/nanolrs-ormlite/nanolrs-ormlite.iml" />
     </modules>
   </component>
