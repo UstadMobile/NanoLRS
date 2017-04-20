@@ -73,7 +73,7 @@ public abstract class TestXapiStatement {
 
 
         InputStream stmtIn = getClass().getResourceAsStream("/com/ustadmobile/nanolrs/core/xapi-statement-page-experienced.json");
-
+        Assert.assertNotNull("Can get statement resource input stream", stmtIn);
         long timeStarted = new Date().getTime();
         JSONObject stmtObj = new JSONObject(LrsIoUtils.inputStreamToString(stmtIn));
         String generatedUUID = XapiStatementsEndpoint.putStatement(stmtObj, context);

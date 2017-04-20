@@ -34,7 +34,6 @@ task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfi
     buildConfigField "String", "TESTUSER", rootProject.ext.testUser
     buildConfigField "String", "TESTPASSWORD", rootProject.ext.testPassword
     buildConfigField "String", "TESTLRSENDPOINT", rootProject.ext.testLrsEndpoint
-    buildConfigField "String", "TESTJDBCURL", rootProject.ext.testJdbcUrl
 }
 
 compileJava.dependsOn(generateCoreTestConstantsBuildConfig)
