@@ -14,7 +14,9 @@
             <option value="$PROJECT_DIR$/nanolrs-entitygen" />
             <option value="$PROJECT_DIR$/nanolrs-http" />
             <option value="$PROJECT_DIR$/nanolrs-jdbc" />
+            <option value="$PROJECT_DIR$/nanolrs-nanohttpd-tests" />
             <option value="$PROJECT_DIR$/nanolrs-ormlite" />
+            <option value="$PROJECT_DIR$/nanolrs-servlet" />
           </set>
         </option>
         <option name="myModules">
@@ -22,11 +24,13 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/nanolrs-android" />
             <option value="$PROJECT_DIR$/nanolrs-core" />
+            <option value="$PROJECT_DIR$/nanolrs-core-tests" />
             <option value="$PROJECT_DIR$/nanolrs-entitygen" />
             <option value="$PROJECT_DIR$/nanolrs-http" />
             <option value="$PROJECT_DIR$/nanolrs-jdbc" />
             <option value="$PROJECT_DIR$/nanolrs-nanohttpd-tests" />
             <option value="$PROJECT_DIR$/nanolrs-ormlite" />
+            <option value="$PROJECT_DIR$/nanolrs-servlet" />
           </set>
         </option>
       </GradleProjectSettings>

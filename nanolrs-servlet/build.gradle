@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'maven-publish'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(":nanolrs-ormlite")
+    compile project(":nanolrs-jdbc")
+    compile "javax.servlet:javax.servlet-api:3.0.1"
+    compile 'org.mockito:mockito-core:2.7.22'
+    compile 'junit:junit:4.12'
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+
+}
+
+publishing {
+    publications {
+        nanolrscore(MavenPublication) {
+            groupId 'com.ustadmobile.nanolrs'
+            artifactId 'nanolrs-servlet'
+            version rootProject.ext.nanolrsversion
+
+            from components.java
+
+            artifact sourceJar {
+                classifier = 'sources'
+            }
+        }
+    }
+
+    repositories {
+        //Set this in projectdir/extrasettings.gradle
+        maven {
+            url rootProject.ext.repoDir
+        }
+    }
+}

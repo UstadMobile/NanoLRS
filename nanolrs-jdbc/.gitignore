@@ -1,0 +1,4 @@
+/build
+buildconfig.local.properties
+
+src/test/java/com/ustadmobile/nanolrs/buildconfig/*.java

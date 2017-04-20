@@ -59,3 +59,5 @@ nanolrs-core-tests/src/main/java/com/ustadmobile/nanolrs/buildconfig/*.java
 .idea/markdown-navigator
 buildconfig.local.gradle
 
+
+nanolrs-core/src/test/java/com/ustadmobile/nanolrs/buildconfig/*.java
