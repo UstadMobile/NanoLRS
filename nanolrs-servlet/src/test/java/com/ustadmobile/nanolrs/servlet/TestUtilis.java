@@ -6,17 +6,21 @@ import com.j256.ormlite.support.ConnectionSource;
 
 import org.mockito.Mockito;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.ustadmobile.nanolrs.buildconfig.TestConstantsJDBC;
+import com.ustadmobile.nanolrs.buildconfig.TestConstantsServlet;
 
 /**
  * Created by Varuna on 4/18/2017.
@@ -55,6 +59,7 @@ public class TestUtilis {
     }
 
     public static String getJDBCUrl(){
-        return TestConstantsJDBC.TEST_JDBC_URL;
+        return TestConstantsServlet.TEST_JDBC_URL;
+
     }
 }

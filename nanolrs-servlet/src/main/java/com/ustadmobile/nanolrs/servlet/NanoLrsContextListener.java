@@ -35,7 +35,7 @@ public class NanoLrsContextListener implements ServletContextListener {
             ConnectionSource connectionSource = new JdbcPooledConnectionSource(jdbcUrl);
             context.setAttribute(ATTR_CONNECTION_SOURCE, connectionSource);
         }catch(Exception e) {
-            System.err.println("oh shit");
+            System.err.println("Exception!");
             e.printStackTrace();
         }
     }

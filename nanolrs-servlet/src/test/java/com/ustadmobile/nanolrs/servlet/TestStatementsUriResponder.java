@@ -67,8 +67,10 @@ public class TestStatementsUriResponder extends Mockito {
             when(request.getParameter("registration")).thenReturn(registration);//UUID does not URL escaped
         }
 
-        ConnectionSource connectionSource = new JdbcPooledConnectionSource(TestUtilis.getJDBCUrl());
         final ServletContext servletContext = Mockito.mock(ServletContext.class);
+
+        when(request.getServletContext()).thenReturn(servletContext);
+        ConnectionSource connectionSource = new JdbcPooledConnectionSource(TestUtilis.getJDBCUrl());
         servletContext.setAttribute(NanoLrsContextListener.ATTR_CONNECTION_SOURCE, connectionSource);
         when(request.getServletContext()).thenReturn(servletContext);
         when(request.getServletContext().getAttribute(
