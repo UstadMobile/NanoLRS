@@ -4,5 +4,5 @@ ext {
     testUser = "testremoteuser"
     testPassword = "testremotepassword"
     testLrsEndpoint = "https://server.com/remote-xapi"
-
+    testJdbcUrl = "jdbc:hsqldb:mem:public"
 }

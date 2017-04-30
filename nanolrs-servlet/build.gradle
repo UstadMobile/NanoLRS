@@ -1,0 +1,71 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'maven-publish'
+
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.7'
+    }
+}
+
+ext.buildConfigProperties = new Properties()
+ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.default.properties")))
+if(project.file("buildconfig.local.properties").exists()) {
+    ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.local.properties")))
+}
+
+task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfig.GenerateBuildConfigTask) {
+    inputs.file("buildconfig.default.properties")
+    inputs.file("buildconfig.local.properties")
+    outputDir = new File("${projectDir}/src/test/java")
+    clsName = "TestConstantsServlet"
+    packageName = "com.ustadmobile.nanolrs.buildconfig"
+
+    buildConfigField "String", "TEST_JDBC_URL", project.ext.buildConfigProperties["test.jdbc.url"]
+}
+compileTestJava.dependsOn(generateCoreTestConstantsBuildConfig)
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(":nanolrs-ormlite")
+    compile project(":nanolrs-jdbc")
+    compile "javax.servlet:javax.servlet-api:3.0.1"
+    compile 'org.mockito:mockito-core:2.7.22'
+    compile 'junit:junit:4.12'
+    ext.testDbDependency = project.ext.buildConfigProperties['test.jdbc.dbDriverDependency']
+    testCompile "$testDbDependency"
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+
+}
+
+publishing {
+    publications {
+        nanolrscore(MavenPublication) {
+            groupId 'com.ustadmobile.nanolrs'
+            artifactId 'nanolrs-servlet'
+            version rootProject.ext.nanolrsversion
+
+            from components.java
+
+            artifact sourceJar {
+                classifier = 'sources'
+            }
+        }
+    }
+
+    repositories {
+        //Set this in projectdir/extrasettings.gradle
+        maven {
+            url rootProject.ext.repoDir
+        }
+    }
+}
