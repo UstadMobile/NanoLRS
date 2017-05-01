@@ -14,12 +14,14 @@ import java.util.List;
  * Created by mike on 9/27/16.
  */
 
-public class XapiUserManagerOrmLite implements XapiUserManager {
+public class XapiUserManagerOrmLite extends BaseManagerOrmLite implements XapiUserManager {
 
-    private PersistenceManagerORMLite persistenceManager;
+    public XapiUserManagerOrmLite() {
+    }
 
-    public XapiUserManagerOrmLite(PersistenceManagerORMLite persistenceManager) {
-        this.persistenceManager = persistenceManager;
+    @Override
+    public Class getEntityImplementationClasss() {
+        return XapiUserEntity.class;
     }
 
     @Override

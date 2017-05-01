@@ -27,7 +27,7 @@ public class XapiAgentEndpoint {
                 accountName = accountObj.getString("name");
             }
 
-            XapiAgentManager manager = PersistenceManager.getInstance().getAgentManager();
+            XapiAgentManager manager = PersistenceManager.getInstance().getManager(XapiAgentManager.class);
             List<XapiAgent> matchingAgents = manager.findAgentByParams(
                     dbContext, mbox, accountName, accountHomepage);
 

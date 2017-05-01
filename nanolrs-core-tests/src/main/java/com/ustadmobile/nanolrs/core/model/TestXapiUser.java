@@ -19,7 +19,7 @@ public abstract class TestXapiUser {
     @Test
     public void testLifecycle() throws Exception {
         Object context = NanoLrsPlatformTestUtil.getContext();
-        XapiUserManager userManager = PersistenceManager.getInstance().getUserManager();
+        XapiUserManager userManager = PersistenceManager.getInstance().getManager(XapiUserManager.class);
         XapiUser newUser = userManager.createSync(context, UUID.randomUUID().toString());
         newUser.setUsername("testuser");
         userManager.persist(context, newUser);

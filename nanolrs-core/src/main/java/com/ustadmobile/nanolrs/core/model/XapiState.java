@@ -4,7 +4,7 @@ package com.ustadmobile.nanolrs.core.model;
  * Created by mike on 10/2/16.
  */
 
-public interface XapiState {
+public interface XapiState extends NanoLrsModel{
 
     /**
      * @nanolrs.primarykey

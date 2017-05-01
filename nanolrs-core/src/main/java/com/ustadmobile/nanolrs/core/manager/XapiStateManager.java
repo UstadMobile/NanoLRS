@@ -6,7 +6,7 @@ import com.ustadmobile.nanolrs.core.model.XapiState;
  * Created by mike on 10/2/16.
  */
 
-public interface XapiStateManager {
+public interface XapiStateManager extends NanoLrsManager {
 
     //XapiStateProxy findByActivityAndAgent(Object dbContext, XapiActivityProxy activity, XapiAgentProxy agent, String registrationUuid, String stateId);
 

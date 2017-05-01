@@ -16,7 +16,7 @@ public class XapiVerbEndpoint {
 
     public static XapiVerb createOrUpdate(Object dbContext, JSONObject verbJSON) {
         try {
-            XapiVerbManager verbManager = PersistenceManager.getInstance().getVerbManager();
+            XapiVerbManager verbManager = PersistenceManager.getInstance().getManager(XapiVerbManager.class);
             String verbID = verbJSON.getString("id");
             XapiVerb verb = verbManager.findById(dbContext, verbID);
             if(verb== null) {

@@ -14,8 +14,13 @@ import java.sql.SQLException;
 
 public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements XapiActivityManager {
 
-    public XapiActivityManagerOrmLite(PersistenceManagerORMLite persistenceManagerORMLite) {
-        super(persistenceManagerORMLite);
+    public XapiActivityManagerOrmLite() {
+
+    }
+
+    @Override
+    public Class getEntityImplementationClasss() {
+        return XapiActivityEntity.class;
     }
 
     @Override

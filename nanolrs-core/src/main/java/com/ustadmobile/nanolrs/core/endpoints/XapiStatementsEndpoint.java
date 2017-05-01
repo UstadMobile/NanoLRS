@@ -21,53 +21,9 @@ import java.util.UUID;
  */
 public class XapiStatementsEndpoint {
 
-    /*
-    public class StatementSaver implements PersistenceReceiver {
-
-        JSONObject stmtObj;
-
-        XapiStatementProxy stmt;
-
-        Object dbContext;
-
-        static final int STEP_INIT = 0;
-
-        public StatementSaver(Object dbContext, JSONObject stmtObj, PersistenceReceiver endReceiver) {
-            this.dbContext = dbContext;
-            this.stmtObj = stmtObj;
-            PersistenceManager.getInstance().getStatementManager().create(dbContext, STEP_INIT, this);
-        }
-
-
-
-
-        @Override
-        public void onPersistenceSuccess(Object result, int requestId) {
-            switch(requestId) {
-                case STEP_INIT:
-                    stmt = (XapiStatementProxy)result;
-                    if(stmtObj.has("uuid")) {
-                        stmt.setUuid(stmtObj.getString("uuid"));
-                    }else {
-                        //stmt.setUuid()
-                    }
-
-                    //find the agent
-
-            }
-        }
-
-        @Override
-        public void onPersistenceFailure(Object result, int requestId) {
-
-        }
-
-    }*/
-
-
     public static String putStatement(JSONObject stmt, Object dbContext) {
         try {
-            XapiStatement stmtProxy =PersistenceManager.getInstance().getStatementManager().createSync(dbContext);
+            XapiStatement stmtProxy =PersistenceManager.getInstance().getManager(XapiStatementManager.class).createSync(dbContext);
             if(stmt.has("id")) {
                 stmtProxy.setUuid(stmt.getString("id"));
             }else {
@@ -102,7 +58,7 @@ public class XapiStatementsEndpoint {
 
             stmtProxy.setFullStatement(stmt.toString());
 
-            PersistenceManager.getInstance().getStatementManager().persistSync(dbContext, stmtProxy);
+            PersistenceManager.getInstance().getManager(XapiStatementManager.class).persistSync(dbContext, stmtProxy);
 
             return stmtProxy.getUuid();
         }catch(JSONException e) {
@@ -128,7 +84,7 @@ public class XapiStatementsEndpoint {
     public static List<? extends XapiStatement> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
         try {
             XapiAgent agent = agentJSON != null ? XapiAgentEndpoint.createOrUpdate(dbContext, new JSONObject(agentJSON)) : null;
-            XapiStatementManager manager = PersistenceManager.getInstance().getStatementManager();
+            XapiStatementManager manager = PersistenceManager.getInstance().getManager(XapiStatementManager.class);
 
             return manager.findByParams(dbContext, statementid, voidedStatemendid, agent, verb, activity, registration, relatedActivities, relatedAgents, since, until, limit);
         }catch(JSONException e) {

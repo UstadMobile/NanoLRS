@@ -9,7 +9,7 @@ package com.ustadmobile.nanolrs.core.model;
  *
  * @author mike
  */
-public interface XapiStatement {
+public interface XapiStatement extends NanoLrsModel{
     
     /**
      * Interesting info re. performance of UUID fields and SQLite here:

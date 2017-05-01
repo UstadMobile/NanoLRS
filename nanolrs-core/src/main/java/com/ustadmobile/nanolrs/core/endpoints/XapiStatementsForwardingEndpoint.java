@@ -2,6 +2,7 @@ package com.ustadmobile.nanolrs.core.endpoints;
 
 import com.ustadmobile.nanolrs.core.http.HttpLrs;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
@@ -35,7 +36,7 @@ public class XapiStatementsForwardingEndpoint {
 
     public static void putAndQueueStatement(Object dbContext, JSONObject statement, String destinationURL, String httpUser, String httpPassword) {
         String uuid = XapiStatementsEndpoint.putStatement(statement, dbContext);
-        XapiStatement statementProxy = PersistenceManager.getInstance().getStatementManager().findByUuidSync(dbContext, uuid);
+        XapiStatement statementProxy = PersistenceManager.getInstance().getManager(XapiStatementManager.class).findByUuidSync(dbContext, uuid);
         queueStatement(dbContext, statementProxy, destinationURL, httpUser, httpPassword);
     }
 
@@ -63,7 +64,7 @@ public class XapiStatementsForwardingEndpoint {
      * @param httpPassword HTTP Auth Password (will be removed from database after statement is sent)
      */
     public static void queueStatements(Object dbContext, XapiStatement[] statements, String destinationURL, String httpUser, String httpPassword) {
-        XapiForwardingStatementManager manager =PersistenceManager.getInstance().getForwardingStatementManager();
+        XapiForwardingStatementManager manager =PersistenceManager.getInstance().getManager(XapiForwardingStatementManager.class);
         for(int i = 0; i < statements.length; i++) {
             XapiForwardingStatement fwdStmt = manager.createSync(dbContext, statements[i].getUuid());
             fwdStmt.setDestinationURL(destinationURL);
@@ -85,7 +86,7 @@ public class XapiStatementsForwardingEndpoint {
      * @return The number of statements sent (successfully) on this run.
      */
     public static int sendQueue(Object dbContext) {
-        XapiForwardingStatementManager manager = PersistenceManager.getInstance().getForwardingStatementManager();
+        XapiForwardingStatementManager manager = PersistenceManager.getInstance().getManager(XapiForwardingStatementManager.class);
         List<XapiForwardingStatement> toForward = manager.getAllUnsentStatementsSync(dbContext);
         int statementsSent = 0;
         for(XapiForwardingStatement stmt : toForward) {

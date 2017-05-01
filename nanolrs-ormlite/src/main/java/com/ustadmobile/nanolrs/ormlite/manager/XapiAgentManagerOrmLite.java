@@ -17,10 +17,13 @@ import java.util.List;
 
 public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements XapiAgentManager{
 
-    public XapiAgentManagerOrmLite(PersistenceManagerORMLite persistenceManager) {
-        super(persistenceManager);
+    public XapiAgentManagerOrmLite() {
     }
 
+    @Override
+    public Class getEntityImplementationClasss() {
+        return XapiAgentEntity.class;
+    }
 
     @Override
     @SuppressWarnings("unchecked")

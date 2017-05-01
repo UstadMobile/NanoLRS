@@ -3,7 +3,7 @@ package com.ustadmobile.nanolrs.core.model;
 /**
  * Created by mike on 9/8/16.
  */
-public interface XapiAgent {
+public interface XapiAgent extends NanoLrsModel {
 
     /**
      * @nanolrs.primarykey

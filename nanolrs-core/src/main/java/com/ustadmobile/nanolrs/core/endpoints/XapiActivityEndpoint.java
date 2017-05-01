@@ -22,7 +22,7 @@ public class XapiActivityEndpoint {
      * @return
      */
     public static XapiActivity createOrUpdate(Object dbContext, JSONObject object) {
-        XapiActivityManager manager = PersistenceManager.getInstance().getActivityManager();
+        XapiActivityManager manager = PersistenceManager.getInstance().getManager(XapiActivityManager.class);
         try {
             String activityId = object.getString("id");
             XapiActivity data = manager.findByActivityId(dbContext, activityId);

@@ -17,8 +17,12 @@ import java.util.logging.Level;
  */
 public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite implements XapiForwardingStatementManager {
 
-    public XapiForwardingStatementManagerOrmLite(PersistenceManagerORMLite persistenceManager) {
-        super(persistenceManager);
+    public XapiForwardingStatementManagerOrmLite() {
+    }
+
+    @Override
+    public Class getEntityImplementationClasss() {
+        return XapiForwardingStatementEntity.class;
     }
 
     @Override

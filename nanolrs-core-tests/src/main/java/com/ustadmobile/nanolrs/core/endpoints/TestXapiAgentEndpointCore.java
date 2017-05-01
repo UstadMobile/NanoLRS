@@ -22,7 +22,7 @@ public abstract class TestXapiAgentEndpointCore extends NanoLRSCoreTest {
     public void testXapiAgentEndpoint() throws Exception {
         JSONObject mboxAgent = new JSONObject();
         mboxAgent.put("mbox", "mailto:mike@ustadmobile.com");
-        XapiAgentManager manager = PersistenceManager.getInstance().getAgentManager();
+        XapiAgentManager manager = PersistenceManager.getInstance().getManager(XapiAgentManager.class);
         XapiAgent mboxAgentProxy= XapiAgentEndpoint.createOrUpdate(NanoLrsPlatformTestUtil.getContext(), mboxAgent);
         Assert.assertNotNull(mboxAgentProxy);
 

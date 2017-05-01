@@ -14,8 +14,12 @@ import java.sql.SQLException;
 
 public class XapiVerbManagerOrmLite extends BaseManagerOrmLite implements XapiVerbManager {
 
-    public XapiVerbManagerOrmLite(PersistenceManagerORMLite persistenceManagerORMLite) {
-        super(persistenceManagerORMLite);
+    public XapiVerbManagerOrmLite() {
+    }
+
+    @Override
+    public Class getEntityImplementationClasss() {
+        return XapiVerbEntity.class;
     }
 
     @Override

@@ -31,7 +31,7 @@ public abstract class TestXapiActivityEndpointCore extends NanoLRSCoreTest{
         Assert.assertNotNull("Can create a new activity", activity);
 
         //now we should be able to find it by ID
-        XapiActivityManager manager = PersistenceManager.getInstance().getActivityManager();
+        XapiActivityManager manager = PersistenceManager.getInstance().getManager(XapiActivityManager.class);
         XapiActivity found = manager.findByActivityId(context,
                 activityObj.getString("id"));
         Assert.assertNotNull("Can find new activity just created", found);

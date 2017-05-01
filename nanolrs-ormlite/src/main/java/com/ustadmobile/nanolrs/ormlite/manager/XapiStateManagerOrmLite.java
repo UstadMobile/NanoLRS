@@ -18,8 +18,12 @@ import java.sql.SQLException;
 
 public class XapiStateManagerOrmLite extends BaseManagerOrmLite implements XapiStateManager {
 
-    public XapiStateManagerOrmLite(PersistenceManagerORMLite persistenceManager) {
-        super(persistenceManager);
+    public XapiStateManagerOrmLite() {
+    }
+
+    @Override
+    public Class getEntityImplementationClasss() {
+        return XapiStateEntity.class;
     }
 
     @Override

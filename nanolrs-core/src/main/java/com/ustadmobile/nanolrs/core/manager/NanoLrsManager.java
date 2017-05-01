@@ -3,6 +3,8 @@ package com.ustadmobile.nanolrs.core.manager;
 
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
+import java.sql.SQLException;
+
 /**
  * Base class for entity management.
  *
@@ -16,21 +18,21 @@ public interface NanoLrsManager<T extends NanoLrsModel, P> {
      *
      * @return blank new object
      */
-    T makeNew();
+    T makeNew() throws SQLException;
 
     /**
      * Persist the object to the database
      *
      * @param data object to be persisted
      */
-    void persist(T data);
+    void persist(Object dbContext, T data) throws SQLException;
 
     /**
      * Ddelete the object from the database
      *
      * @param data
      */
-    void delete(T data);
+    void delete(Object dbContext, T data) throws SQLException;
 
     /**
      * Find an object by it's primary key. Returns null if no such object exists.
@@ -39,6 +41,6 @@ public interface NanoLrsManager<T extends NanoLrsModel, P> {
      *
      * @return Object if found, otherwise null
      */
-    T findByPrimaryKey(P primaryKey);
+    T findByPrimaryKey(Object dbContext, P primaryKey) throws SQLException;
 
 }

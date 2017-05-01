@@ -3,7 +3,7 @@ package com.ustadmobile.nanolrs.core.model;
 /**
  * Created by mike on 9/13/16.
  */
-public interface XapiForwardingStatement {
+public interface XapiForwardingStatement extends NanoLrsModel {
 
 
     public static final int STATUS_QUEUED = 1;

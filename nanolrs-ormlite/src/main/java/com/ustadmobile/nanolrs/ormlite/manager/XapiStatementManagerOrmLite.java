@@ -21,10 +21,13 @@ import java.util.logging.Logger;
  */
 public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements XapiStatementManager {
 
-    public XapiStatementManagerOrmLite(PersistenceManagerORMLite persistenceManager) {
-        super(persistenceManager);
+    public XapiStatementManagerOrmLite() {
     }
 
+    @Override
+    public Class getEntityImplementationClasss() {
+        return XapiStatementEntity.class;
+    }
 
     @Override
     public void findByUuid(Object dbContext, int requestId, PersistenceReceiver receiver, String uuid) {

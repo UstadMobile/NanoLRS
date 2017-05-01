@@ -6,7 +6,7 @@ import com.ustadmobile.nanolrs.core.model.XapiActivity;
  * Created by mike on 10/2/16.
  */
 
-public interface XapiActivityManager {
+public interface XapiActivityManager extends NanoLrsManager {
 
     XapiActivity findByActivityId(Object dbContext, String id);
 

@@ -1,6 +1,7 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
 import com.ustadmobile.nanolrs.core.NanoLRSCoreTest;
+import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
 import com.ustadmobile.nanolrs.core.model.XapiState;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil;
@@ -37,15 +38,15 @@ public abstract class TestXapiStateEndpointCore extends NanoLRSCoreTest {
 
 
         //dig it out again
-        XapiState retrieved = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
+        XapiState retrieved = PersistenceManager.getInstance().getManager(XapiStateManager.class).findByActivityAndAgent(
                 context, activityId, mbox, null, null, null, stateId);
         Assert.assertNotNull("State object created can be retrieved by parameters", retrieved);
 
-        XapiState otherIdState = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
+        XapiState otherIdState = PersistenceManager.getInstance().getManager(XapiStateManager.class).findByActivityAndAgent(
                 context, activityId, mbox, null, null, null, stateId+"_otherid");
         Assert.assertNull("State object not matched when stateId is different", otherIdState);
 
-        XapiState otherAgent = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
+        XapiState otherAgent = PersistenceManager.getInstance().getManager(XapiStateManager.class).findByActivityAndAgent(
                 context, activityId, "mailto:someone@domain.com", null, null, null, stateId+"_otherid");
 
         Assert.assertNull("State not matched when searching by another agent", otherAgent);
@@ -53,7 +54,7 @@ public abstract class TestXapiStateEndpointCore extends NanoLRSCoreTest {
         //delete it
         boolean deleted = XapiStateEndpoint.delete(context, activityId, actorObj.toString(), null, stateId);
         Assert.assertTrue("XapiStateEndpoint returns true to confirm deleting state", deleted);
-        XapiState retrievedAfterDelete = PersistenceManager.getInstance().getStateManager().findByActivityAndAgent(
+        XapiState retrievedAfterDelete = PersistenceManager.getInstance().getManager(XapiStateManager.class).findByActivityAndAgent(
                 context, activityId, mbox, null, null, null, stateId);
         Assert.assertNull("State not found after being deleted", retrievedAfterDelete);
 

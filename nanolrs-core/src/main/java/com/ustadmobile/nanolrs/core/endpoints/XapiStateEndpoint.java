@@ -36,7 +36,7 @@ public class XapiStateEndpoint {
             XapiAgent agent = XapiAgentEndpoint.createOrUpdate(dbContext, agentJsonObj);
             JSONObject activityObj = new JSONObject();
             activityObj.put("id", activityId);
-            XapiStateManager manager = PersistenceManager.getInstance().getStateManager();
+            XapiStateManager manager = PersistenceManager.getInstance().getManager(XapiStateManager.class);
 
             String agentMbox =agentJsonObj.optString("mbox", null);
             String agentAccountName = null;
@@ -93,7 +93,7 @@ public class XapiStateEndpoint {
             JSONObject agentObject = new JSONObject(agentJson);
             JSONObject agentAccount = agentObject.optJSONObject("account");
 
-            XapiStateManager manager = PersistenceManager.getInstance().getStateManager();
+            XapiStateManager manager = PersistenceManager.getInstance().getManager(XapiStateManager.class);
             XapiState stateProxy = manager.findByActivityAndAgent(dbContext, activityId,
                     agentObject.optString("mbox", null),
                     agentAccount != null ? agentAccount.optString("name", null) : null,
@@ -107,7 +107,7 @@ public class XapiStateEndpoint {
     }
 
     public static boolean delete(Object dbContext, String activityId, String agentJson, String registration, String stateId) {
-        XapiStateManager manager = PersistenceManager.getInstance().getStateManager();
+        XapiStateManager manager = PersistenceManager.getInstance().getManager(XapiStateManager.class);
         XapiState state = getState(dbContext, activityId, agentJson, registration, stateId);
         if(state != null) {
             return manager.delete(dbContext, state);

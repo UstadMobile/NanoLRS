@@ -6,6 +6,7 @@ import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEndpoint;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEvent;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingListener;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
 import com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil;
@@ -40,8 +41,8 @@ public abstract class TestXapiForwardingStatement implements XapiStatementsForwa
         JSONObject stmtObj = new JSONObject(LrsIoUtils.inputStreamToString(stmtIn));
         XapiStatementsForwardingEndpoint.addQueueStatusListener(this);
         String generatedUUID = XapiStatementsEndpoint.putStatement(stmtObj, context);
-        XapiForwardingStatementManager manager = PersistenceManager.getInstance().getForwardingStatementManager();
-        this.watchedStmt = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
+        XapiForwardingStatementManager manager = PersistenceManager.getInstance().getManager(XapiForwardingStatementManager.class);
+        this.watchedStmt = PersistenceManager.getInstance().getManager(XapiStatementManager.class).findByUuidSync(context, generatedUUID);
 
         String username = TestConstants.TESTUSER;
         String password = TestConstants.TESTPASSWORD;

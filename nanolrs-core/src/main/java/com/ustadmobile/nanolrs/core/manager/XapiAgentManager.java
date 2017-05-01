@@ -8,7 +8,7 @@ import java.util.List;
  * Created by mike on 10/6/16.
  */
 
-public interface XapiAgentManager {
+public interface XapiAgentManager extends NanoLrsManager {
 
     List<XapiAgent> findAgentByParams(Object dbContext, String mbox, String accountName, String accountHomepage);
 

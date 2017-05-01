@@ -5,6 +5,7 @@
  */
 package com.ustadmobile.nanolrs.core.persistence;
 
+import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
@@ -12,10 +13,18 @@ import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
 import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
 import java.io.InputStream;
 
 /**
+ *
+ * The PersistenceManager on a given platform is responsible to handle persistence on the underlying
+ * platform e.g. using ORMLite, SharkORM etc.
+ *
+ * Classes using an entity can then do so in a platform independent fashion e.g.
+ *
+ * PersistenceManager.getInstance().getManager(EntityNameManager.class).doSomething
  *
  * @author mike
  */
@@ -31,19 +40,15 @@ public abstract class PersistenceManager {
         return instance;
     }
 
-    public abstract XapiStatementManager getStatementManager();
-
-    public abstract XapiForwardingStatementManager getForwardingStatementManager();
-
-    public abstract XapiUserManager getUserManager();
-
-    public abstract XapiStateManager getStateManager();
-
-    public abstract XapiActivityManager getActivityManager();
-
-    public abstract XapiAgentManager getAgentManager();
-
-    public abstract XapiVerbManager getVerbManager();
+    /**
+     * Get an implementation of a Manager.
+     *
+     * @param managerType The Manager class E.g. XapiStatementManager.class
+     * @param <M> The Manager class E.g. XapiStatementManager.class
+     *
+     * @return Implementation of the manager as available, null otherwise
+     */
+    public abstract <M extends NanoLrsManager<? extends NanoLrsModel, ?>> M getManager(Class<M> managerType);
 
     
 }

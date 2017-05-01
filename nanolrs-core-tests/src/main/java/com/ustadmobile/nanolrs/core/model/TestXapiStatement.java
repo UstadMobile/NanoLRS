@@ -1,6 +1,7 @@
 package com.ustadmobile.nanolrs.core.model;
 
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
@@ -34,7 +35,7 @@ public abstract class TestXapiStatement {
 
 
         lock = new CountDownLatch(1);
-        PersistenceManager.getInstance().getStatementManager().create(context, 1, new PersistenceReceiver() {
+        PersistenceManager.getInstance().getManager(XapiStatementManager.class).create(context, 1, new PersistenceReceiver() {
             @Override
             public void onPersistenceSuccess(Object result, int requestId) {
                 entity = (XapiStatement)result;
@@ -53,7 +54,7 @@ public abstract class TestXapiStatement {
         entity = null;
         lock = new CountDownLatch(1);
 
-        PersistenceManager.getInstance().getStatementManager().findByUuid(context, 2, new PersistenceReceiver() {
+        PersistenceManager.getInstance().getManager(XapiStatementManager.class).findByUuid(context, 2, new PersistenceReceiver() {
             @Override
             public void onPersistenceSuccess(Object result, int requestId) {
                 entity = (XapiStatement)result;
@@ -80,7 +81,7 @@ public abstract class TestXapiStatement {
         Assert.assertNotNull("Statement put and UUID generated", generatedUUID);
 
         //now look it up
-        XapiStatement retrieved = PersistenceManager.getInstance().getStatementManager().findByUuidSync(context, generatedUUID);
+        XapiStatement retrieved = PersistenceManager.getInstance().getManager(XapiStatementManager.class).findByUuidSync(context, generatedUUID);
         Assert.assertNotNull("Statement retrieved by UUID", retrieved);
 
         //make sure it has a timestamp
