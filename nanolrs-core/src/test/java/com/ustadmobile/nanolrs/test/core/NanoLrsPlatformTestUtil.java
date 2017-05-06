@@ -1,16 +1,13 @@
 package com.ustadmobile.nanolrs.test.core;
 
-/**
- * Created by mike on 5/6/17.
- */
-
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.ustadmobile.nanolrs.buildconfig.TestConstantsCore;
+
 import java.sql.SQLException;
 
 /**
- * Created by mike on 2/7/17.
+ * Created by mike on 5/6/17.
  */
 
 public class NanoLrsPlatformTestUtil {
@@ -33,4 +30,3 @@ public class NanoLrsPlatformTestUtil {
     }
 
 }
-

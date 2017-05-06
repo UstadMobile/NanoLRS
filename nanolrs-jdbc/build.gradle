@@ -12,32 +12,6 @@ buildscript {
     }
 }
 
-sourceSets {
-
-    coreTests {
-        java {
-            srcDir file("../nanolrs-core/src/test/java")
-            exclude "com/ustadmobile/nanolrs/core/util/NanoLrsPlatformTestUtil.java"
-        }
-
-        resources {
-            srcDir file("../nanolrs-core/src/test/resources")
-        }
-    }
-
-    test {
-        java {
-            srcDirs += [coreTests.allJava]
-        }
-
-        resources {
-            srcDirs += [coreTests.resources]
-        }
-    }
-
-}
-
-
 ext.buildConfigProperties = new Properties()
 ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.default.properties")))
 if(project.file("buildconfig.local.properties").exists()) {

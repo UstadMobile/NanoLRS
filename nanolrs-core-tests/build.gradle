@@ -1,0 +1,39 @@
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.7'
+    }
+}
+
+apply plugin: 'java'
+
+dependencies {
+    compile project(":nanolrs-core")
+    compile 'junit:junit:4.12'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+jar {
+    exclude "com/ustadmobile/nanolrs/test/core/NanoLrsPlatformTestUtil.class"
+}
+
+task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfig.GenerateBuildConfigTask) {
+    inputs.file("../buildconfig.default.properties")
+    inputs.file("../buildconfig.local.properties")
+    outputDir = new File("${projectDir}/src/main/java")
+    clsName = "TestConstantsCore"
+    packageName = "com.ustadmobile.nanolrs.buildconfig"
+    buildConfigField "String", "TEST_JDBC_URL", rootProject.ext.buildConfigProperties["test.jdbc.url"]
+    buildConfigField "String", "TESTUSER", rootProject.ext.buildConfigProperties["test.remotelrs.user"]
+    buildConfigField "String", "TESTPASSWORD", rootProject.ext.buildConfigProperties["test.remotelrs.password"]
+    buildConfigField "String", "TESTLRSENDPOINT", rootProject.ext.buildConfigProperties["test.remotelrs.endpoint"]
+}
+compileJava.dependsOn(generateCoreTestConstantsBuildConfig)
