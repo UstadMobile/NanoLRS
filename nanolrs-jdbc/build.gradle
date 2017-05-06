@@ -13,7 +13,7 @@ buildscript {
 }
 
 sourceSets {
-    /*
+
     coreTests {
         java {
             srcDir file("../nanolrs-core/src/test/java")
@@ -34,7 +34,7 @@ sourceSets {
             srcDirs += [coreTests.resources]
         }
     }
-    */
+
 }
 
 

@@ -15,6 +15,15 @@ apply plugin: 'java'
 apply plugin: 'jacoco'
 
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+sourceSets {
+    test {
+        java {
+            srcDirs += ["$projectDir/src/platformtest/java"]
+        }
+    }
+}
 
 task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfig.GenerateBuildConfigTask) {
     inputs.file("../buildconfig.default.properties")
