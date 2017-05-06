@@ -12,6 +12,30 @@ buildscript {
     }
 }
 
+sourceSets {
+    /*
+    coreTests {
+        java {
+            srcDir file("../nanolrs-core/src/test/java")
+            exclude "com/ustadmobile/nanolrs/core/util/NanoLrsPlatformTestUtil.java"
+        }
+
+        resources {
+            srcDir file("../nanolrs-core/src/test/resources")
+        }
+    }
+
+    test {
+        java {
+            srcDirs += [coreTests.allJava]
+        }
+
+        resources {
+            srcDirs += [coreTests.resources]
+        }
+    }
+    */
+}
 
 
 ext.buildConfigProperties = new Properties()
@@ -36,9 +60,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(":nanolrs-core")
     compile project(":nanolrs-ormlite")
-    testCompile project(":nanolrs-core-tests")
     ext.testDbDependency = project.ext.buildConfigProperties['test.jdbc.dbDriverDependency']
     testCompile "$testDbDependency"
+    testCompile 'junit:junit:4.12'
 
     compile "com.j256.ormlite:ormlite-core:5.0"
     compile "com.j256.ormlite:ormlite-jdbc:5.0"
@@ -67,7 +91,7 @@ publishing {
     repositories {
         //Set this in projectdir/extrasettings.gradle
         maven {
-            url rootProject.ext.repoDir
+            url rootProject.ext.buildConfigProperties['repo.dir']
         }
     }
 }

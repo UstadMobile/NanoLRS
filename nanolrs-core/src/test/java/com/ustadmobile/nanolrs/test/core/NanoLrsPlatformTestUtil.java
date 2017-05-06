@@ -1,9 +1,12 @@
-package com.ustadmobile.nanolrs.core.util;
+package com.ustadmobile.nanolrs.test.core;
+
+/**
+ * Created by mike on 5/6/17.
+ */
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
-import com.ustadmobile.nanolrs.buildconfig.TestConstantsJDBC;
-
+import com.ustadmobile.nanolrs.buildconfig.TestConstantsCore;
 import java.sql.SQLException;
 
 /**
@@ -18,7 +21,7 @@ public class NanoLrsPlatformTestUtil {
         if(connectionSource == null) {
 
             try {
-                connectionSource = new JdbcConnectionSource(TestConstantsJDBC.TEST_JDBC_URL);
+                connectionSource = new JdbcConnectionSource(TestConstantsCore.TEST_JDBC_URL);
             }catch(SQLException se){
                 se.printStackTrace();
                 System.out.println( "DB Sync Sql Exception! " + se );
@@ -30,3 +33,4 @@ public class NanoLrsPlatformTestUtil {
     }
 
 }
+

@@ -19,6 +19,13 @@ buildscript {
     }
 }
 
+ext.buildConfigProperties = new Properties()
+ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.default.properties")))
+if(project.file("buildconfig.local.properties").exists()) {
+    ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.local.properties")))
+}
+
+
 allprojects {
     repositories {
         jcenter()
