@@ -50,10 +50,6 @@ task copyTestResources(type: Copy) {
 processTestResources.dependsOn copyTestResources
 
 
-test {
-    include "com/ustadmobile/nanolrs/core/*/*Test**"
-}
-
 apply plugin: 'maven-publish'
 
 publishing {

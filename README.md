@@ -16,4 +16,8 @@ Any client side operation on GWT (which actually runs as transpiled Javascript) 
 
 Each entity has a Manager class.  PersistenceManager must be able to return a manager on each platform.  The manager class has abstract methods defining the query operations required for each entity.  This is implemented once in the OrmLite manager class and once in the SharkORM manager class.
 
+## Testing
 
+```
+$ ./gradlew nanolrs-core:test nanolrs-core:jacocoTestReport connectedAndroidTest
+```
