@@ -1,6 +1,9 @@
 package com.ustadmobile.nanolrs.test.core;
 
 
+import com.ustadmobile.nanolrs.test.core.endpoints.TestXapiActivityEndpointCore;
+import com.ustadmobile.nanolrs.test.core.endpoints.TestXapiAgentEndpointCore;
+
 /**
  * Base class for tests that allows for a core test to access implementation dependent context. Our
  * logic uses a system dependent context object : e.g. Context on Android, at least sometimes
@@ -12,5 +15,10 @@ package com.ustadmobile.nanolrs.test.core;
  */
 
 public abstract class NanoLrsCoreTest {
+
+    public static final Class[] CORE_TESTS = new Class[]{
+        TestXapiActivityEndpointCore.class,
+        TestXapiAgentEndpointCore.class
+    };
 
 }

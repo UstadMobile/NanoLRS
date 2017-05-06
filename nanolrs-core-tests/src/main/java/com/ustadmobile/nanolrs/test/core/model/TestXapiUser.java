@@ -4,7 +4,7 @@ import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
  * Created by mike on 2/7/17.
  */
 
-public abstract class TestXapiUser {
+public class TestXapiUser {
     @Test
     public void testLifecycle() throws Exception {
         Object context = NanoLrsPlatformTestUtil.getContext();

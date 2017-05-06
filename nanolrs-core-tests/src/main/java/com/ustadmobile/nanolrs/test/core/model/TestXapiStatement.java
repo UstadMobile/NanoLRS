@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * Created by mike on 2/7/17.
  */
 
-public abstract class TestXapiStatement {
+public class TestXapiStatement {
 
     protected XapiStatement entity;
 

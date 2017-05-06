@@ -12,8 +12,7 @@ import java.util.Calendar;
 /**
  * Created by mike on 10/5/16.
  */
-@RunWith(JUnit4.class)
-public class TestParseUtils {
+public abstract class TestParseUtils {
 
     @Test
     public void test8601Timestamp() {

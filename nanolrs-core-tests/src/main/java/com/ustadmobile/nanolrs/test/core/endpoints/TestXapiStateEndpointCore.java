@@ -15,7 +15,7 @@ import org.junit.Test;
  * Created by mike on 2/6/17.
  */
 
-public abstract class TestXapiStateEndpointCore extends NanoLrsCoreTest {
+public class TestXapiStateEndpointCore extends NanoLrsCoreTest {
 
     @Test
     public void testStateEndpoint() throws Exception {

@@ -43,24 +43,15 @@ jacoco {
     reportsDir = file("$buildDir/reports/jacoco")
 }
 
+task copyTestResources(type: Copy) {
+    from "${projectDir}/../nanolrs-core-tests/src/main/resources"
+    into "${buildDir}/classes/test"
+}
+processTestResources.dependsOn copyTestResources
+
+
 test {
     include "com/ustadmobile/nanolrs/core/*/*Test**"
-}
-
-//Expose test classes via a configuration and jar
-task testJar(type: Jar, dependsOn: testClasses) {
-    baseName = "test-${project.archivesBaseName}"
-    from sourceSets.test.output
-    exclude("com/ustadmobile/nanolrs/core/util/NanoLrsPlatformTestUtil.class")
-
-}
-
-configurations {
-    tests
-}
-
-artifacts {
-    tests testJar
 }
 
 apply plugin: 'maven-publish'
