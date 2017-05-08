@@ -1,4 +1,4 @@
-package com.ustadmobile.nanolrs.core.util;
+package com.ustadmobile.nanolrs.test.core;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;

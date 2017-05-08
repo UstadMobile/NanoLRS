@@ -6,6 +6,6 @@ package com.ustadmobile.port.sharedse.persistence.util;
 
 public class NanoLrsPlatformTestUtil {
     public static Object getContext() {
-        return com.ustadmobile.nanolrs.core.util.NanoLrsPlatformTestUtil.getContext();
+        return com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil.getContext();
     }
 }
