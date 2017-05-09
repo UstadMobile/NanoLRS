@@ -51,8 +51,6 @@ task copyTestResources(type: Copy) {
 processTestResources.dependsOn copyTestResources
 
 
-
-
 publishing {
     publications {
         nanolrscore(MavenPublication) {
@@ -71,7 +69,7 @@ publishing {
     repositories {
         //Set this in projectdir/extrasettings.gradle
         maven {
-            url rootProject.ext.buildConfigProperties['repo.dir']
+            url rootProject.ext.repoDir
         }
     }
 }
