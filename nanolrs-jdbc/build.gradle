@@ -37,6 +37,7 @@ dependencies {
     ext.testDbDependency = project.ext.buildConfigProperties['test.jdbc.dbDriverDependency']
     testCompile "$testDbDependency"
     testCompile 'junit:junit:4.12'
+    //compile project(":nanolrs-core-tests")
     testCompile project(":nanolrs-core-tests")
     compile "com.j256.ormlite:ormlite-core:5.0"
     compile "com.j256.ormlite:ormlite-jdbc:5.0"
