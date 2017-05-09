@@ -3,8 +3,9 @@
 //Local settings
 apply from: file("buildconfig.local.gradle").exists() ? "buildconfig.local.gradle" : "buildconfig.default.gradle"
 
+
 ext {
-    nanolrsversion = "0.1.53"
+    nanolrsversion = "0.1.55"
 }
 
 buildscript {
@@ -32,6 +33,9 @@ allprojects {
     }
 }
 
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+

@@ -51,6 +51,11 @@ task copyTestResources(type: Copy) {
 processTestResources.dependsOn copyTestResources
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> bb439f7b9f20dfbcfcd5fd3fff2c519f770ae8d1
 publishing {
     publications {
         nanolrscore(MavenPublication) {

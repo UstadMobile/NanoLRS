@@ -1,4 +1,8 @@
+
 apply plugin: 'com.android.library'
+apply plugin: "jacoco"
+apply plugin: 'maven-publish'
+
 
 android {
     compileSdkVersion 25
@@ -31,6 +35,10 @@ android {
     }
 }
 
+jacoco {
+    toolVersion = "0.7.9"
+}
+
 
 
 
@@ -46,7 +54,6 @@ dependencies {
     compile "com.j256.ormlite:ormlite-android:5.0"
 }
 
-apply plugin: 'maven-publish'
 
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
