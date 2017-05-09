@@ -13,6 +13,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -50,7 +51,7 @@ task copyTestResources(type: Copy) {
 processTestResources.dependsOn copyTestResources
 
 
-apply plugin: 'maven-publish'
+
 
 publishing {
     publications {
