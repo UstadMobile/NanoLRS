@@ -60,6 +60,15 @@ task sourceJar(type: Jar) {
     classifier "source"
 }
 
+task androidReportsZip(type: Zip) {
+    from "$buildDir/"
+    archiveName "android-test-outputs.zip"
+    include "reports/coverage/**"
+    include "reports/androidTests/**"
+}
+
+publish.finalizedBy androidReportsZip
+
 publishing {
     publications {
 
