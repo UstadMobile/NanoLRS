@@ -14,9 +14,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "TESTUSER", "\"" + rootProject.ext.testUser + "\""
-        buildConfigField "String", "TESTPASSWORD", "\"" + rootProject.ext.testPassword + "\""
-        buildConfigField "String", "TESTLRSENDPOINT", "\"" + rootProject.ext.testLrsEndpoint + "\""
+        buildConfigField "String", "TESTUSER", '"' + rootProject.ext.buildConfigProperties["test.remotelrs.user"] + '"'
+        buildConfigField "String", "TESTPASSWORD", '"' + rootProject.ext.buildConfigProperties["test.remotelrs.password"] + '"'
+        buildConfigField "String", "TESTLRSENDPOINT", '"' + rootProject.ext.buildConfigProperties["test.remotelrs.endpoint"] + '"'
     }
 
     buildTypes {
@@ -60,6 +60,15 @@ task sourceJar(type: Jar) {
     classifier "source"
 }
 
+task androidReportsZip(type: Zip) {
+    from "$buildDir/"
+    archiveName "android-test-outputs.zip"
+    include "reports/coverage/**"
+    include "reports/androidTests/**"
+}
+
+publish.finalizedBy androidReportsZip
+
 publishing {
     publications {
 
@@ -101,7 +110,7 @@ publishing {
     repositories {
         //Set this in projectdir/extrasettings.gradle
         maven {
-            url rootProject.ext.repoDir
+            url rootProject.ext.buildConfigProperties['repo.dir']
         }
     }
 }

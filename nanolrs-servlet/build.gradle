@@ -66,7 +66,7 @@ publishing {
     repositories {
         //Set this in projectdir/extrasettings.gradle
         maven {
-            url rootProject.ext.repoDir
+            url rootProject.ext.buildConfigProperties['repo.dir']
         }
     }
 }

@@ -1,8 +1,0 @@
-ext {
-    repoDir = "/home/mike/src/NanoLRS/repo"
-
-    testUser = "testremoteuser"
-    testPassword = "testremotepassword"
-    testLrsEndpoint = "https://server.com/remote-xapi"
-    testJdbcUrl = "jdbc:hsqldb:mem:public"
-}

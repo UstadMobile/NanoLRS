@@ -1,30 +1,5 @@
 apply plugin: 'java'
-
-/*
-sourceSets {
-
-    coreTests {
-        java {
-            srcDir file("../nanolrs-core/src/test/java")
-            exclude "com/ustadmobile/nanolrs/core/util/NanoLrsPlatformTestUtil.java"
-        }
-
-        resources {
-            srcDir file("../nanolrs-core/src/test/resources")
-        }
-    }
-
-    test {
-        java {
-            srcDirs += [coreTests.allJava]
-        }
-
-        resources {
-            srcDirs += [coreTests.resources]
-        }
-    }
-}
-*/
+apply plugin: 'jacoco'
 
 
 dependencies {
@@ -33,6 +8,11 @@ dependencies {
     compile 'org.nanohttpd:nanohttpd:2.3.1'
     compile 'org.nanohttpd:nanohttpd-nanolets:2.3.1'
     testCompile 'junit:junit:4.12'
+    testCompile project(":nanolrs-ormlite")
+    testCompile project(":nanolrs-jdbc")
+    testCompile project(":nanolrs-core-tests")
+    testCompile project(":nanolrs-nanohttpd-tests")
+
 }
 
 sourceCompatibility = "1.7"
@@ -78,7 +58,7 @@ publishing {
     repositories {
         //Set this in projectdir/extrasettings.gradle
         maven {
-            url rootProject.ext.repoDir
+            url rootProject.ext.buildConfigProperties['repo.dir']
         }
     }
 }

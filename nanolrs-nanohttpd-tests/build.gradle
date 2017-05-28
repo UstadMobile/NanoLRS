@@ -1,35 +1,12 @@
 apply plugin: 'java'
-
-/*
-sourceSets {
-    coreTests {
-        java {
-            srcDir file("../nanolrs-core/src/test/java")
-            exclude "com/ustadmobile/nanolrs/core/util/NanoLrsPlatformTestUtil.java"
-        }
-
-        resources {
-            srcDir file("../nanolrs-core/src/test/resources")
-        }
-    }
-
-    main {
-        java {
-            srcDirs += [coreTests.allJava]
-        }
-
-        resources {
-            srcDirs += [coreTests.resources]
-        }
-    }
-}
-*/
+apply plugin: "jacoco"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(":nanolrs-core")
     compile project(":nanolrs-http")
     compile project(":nanolrs-jdbc")
+    compile project(":nanolrs-core-tests")
     compile 'junit:junit:4.12'
 }
 

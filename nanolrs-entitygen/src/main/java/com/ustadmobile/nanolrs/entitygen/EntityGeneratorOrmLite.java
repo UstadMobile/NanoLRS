@@ -122,7 +122,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
 
     protected void generateFromIterator(Iterator<MethodSource<JavaInterfaceSource>> iterator,
                                         JavaClassSource ormLiteObj, JavaInterfaceSource proxyInterface){
-
         while(iterator.hasNext()) {
             MethodSource<JavaInterfaceSource> method = iterator.next();
             String methodPrefix = null;
