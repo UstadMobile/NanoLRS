@@ -17,6 +17,7 @@ import org.jboss.forge.roaster.model.source.PropertySource;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -72,6 +73,12 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
 
         //Find properties - Map of name -> Type
         Map<String, Object> propertiesFound = new HashMap<>();
+        generateFromIterator(iterator, ormLiteObj);
+
+        FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
+    }
+
+    protected void generateFromIterator(Iterator<MethodSource<JavaInterfaceSource>> iterator, JavaClassSource ormLiteObj) {
         while(iterator.hasNext()) {
             MethodSource<JavaInterfaceSource> method = iterator.next();
             String methodPrefix = null;
@@ -86,7 +93,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
 
 
             String propertyName = Character.toLowerCase(method.getName().charAt(methodPrefixLength)) +
-                method.getName().substring(methodPrefixLength+1);
+                    method.getName().substring(methodPrefixLength+1);
 
 
             String dbFieldName = convertCamelCaseNameToUnderscored(propertyName);
@@ -147,10 +154,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 databaseFieldAnnotation.setLiteralValue("id", "true");
             }
         }
-
-
-
-        FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
     }
 
     @Override
