@@ -1,9 +1,12 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
+import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 
 /**
@@ -29,9 +32,22 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
     public abstract Class getEntityImplementationClasss() ;
 
     @Override
-    public T makeNew() {
+    public T makeNew(Object primaryKey) {
         try {
             return (T)getEntityImplementationClasss().newInstance();
+            /*
+            Method primaryKeyMethod;
+            T created = (T)getEntityImplementationClasss().newInstance();
+            //Find the Primary Key from annotation:
+            Method[] allMethods = created.getClass().getMethods();
+            for(Method relatedMethod : allMethods) {
+                if(relatedMethod.isAnnotationPresent(PrimaryKeyAnnotationClass.class)) {
+                    primaryKeyMethod = relatedMethod;
+                    break;
+                }
+            }
+            return created;
+            */
         }catch(InstantiationException e) {
             throw new RuntimeException(e);
         }catch(IllegalAccessException e2) {
@@ -53,6 +69,8 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
     public T findByPrimaryKey(Object dbContext, P primaryKey) throws SQLException {
         return (T)persistenceManager.getDao(getEntityImplementationClasss(), dbContext).queryForId(primaryKey);
     }
+
+    public abstract T findAllRelatedToUser(Object dbContext, XapiUser user);
 
     public PersistenceManagerORMLite getPersistenceManager() {
         return persistenceManager;

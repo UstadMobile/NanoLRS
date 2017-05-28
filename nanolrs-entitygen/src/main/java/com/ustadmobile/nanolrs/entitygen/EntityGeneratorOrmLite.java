@@ -1,12 +1,15 @@
 package com.ustadmobile.nanolrs.entitygen;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaDocTag;
+import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -17,11 +20,13 @@ import org.jboss.forge.roaster.model.source.PropertySource;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Entity Generator to create Entity Classes for OrmLite.  For each entity it will:
@@ -52,7 +57,8 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
 
 
 
-    public void generate(String baseName, File proxyInterfaceFile, File outDir, String outPackage) throws IOException{
+    public void generate(String baseName, File proxyInterfaceFile,
+                         File outDir, String outPackage) throws IOException{
         String ormLiteClassName = baseName + "Entity";
         File outFile = new File(outDir, ormLiteClassName + ".java");
 
@@ -60,8 +66,10 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             return;
 
         String proxyStr = FileUtils.readFileToString(proxyInterfaceFile, "UTF-8");
-        JavaInterfaceSource proxyInterface = Roaster.parse(JavaInterfaceSource.class, proxyStr);
-        Iterator<MethodSource<JavaInterfaceSource>> iterator = proxyInterface.getMethods().iterator();
+        JavaInterfaceSource proxyInterface =
+                Roaster.parse(JavaInterfaceSource.class, proxyStr);
+        Iterator<MethodSource<JavaInterfaceSource>> iterator =
+                proxyInterface.getMethods().iterator();
         JavaClassSource ormLiteObj = Roaster.create(JavaClassSource.class);
         ormLiteObj.setPackage(outPackage).setName(ormLiteClassName);
 
@@ -70,8 +78,51 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         ormLiteObj.addAnnotation(DatabaseTable.class).setStringValue("tableName", tableName);
         ormLiteObj.addInterface(proxyInterface);
 
+        //Inheritence: Base class
+        /* Steps:
+        1. Get Base classes
+        2. Loop over them
+        3. Create entites for every method
+        */
+        List<String> allInterfaces = proxyInterface.getInterfaces();
+        for(String everyInterface:allInterfaces){
+            try {
+                //This won't work since entitygen doesn't have proxy in class path.
+                //Thats why we work with file paths.
+                //Class<?> interfaceClass = Class.forName(everyInterface);
+                //String everyInterfacePath = proxyInterface.resolveType(everyInterface);
+                String everyInterfacePath =
+                        proxyInterfaceFile.getParent() + "\\" +
+                                everyInterface.split("\\.")[everyInterface.split("\\.").length -1] +
+                                    ".java";
+
+                File everyInterfaceFile = new File(everyInterfacePath);
+
+                String everyInterfaceStr = FileUtils.readFileToString(everyInterfaceFile, "UTF-8");
+                JavaInterfaceSource evreryInterfaceSource =
+                        Roaster.parse(JavaInterfaceSource.class, everyInterfaceStr);
+                Iterator<MethodSource<JavaInterfaceSource>> everyInterfaceIterator =
+                        evreryInterfaceSource.getMethods().iterator();
+
+                generateFromIterator(everyInterfaceIterator, ormLiteObj, evreryInterfaceSource);
+
+                int x=0;
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
         //Find properties - Map of name -> Type
         Map<String, Object> propertiesFound = new HashMap<>();
+
+        generateFromIterator(iterator, ormLiteObj, proxyInterface);
+
+        FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
+    }
+
+    protected void generateFromIterator(Iterator<MethodSource<JavaInterfaceSource>> iterator,
+                                        JavaClassSource ormLiteObj, JavaInterfaceSource proxyInterface){
+
         while(iterator.hasNext()) {
             MethodSource<JavaInterfaceSource> method = iterator.next();
             String methodPrefix = null;
@@ -84,10 +135,9 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 continue;
             int methodPrefixLength = methodPrefix.length();
 
-
-            String propertyName = Character.toLowerCase(method.getName().charAt(methodPrefixLength)) +
-                method.getName().substring(methodPrefixLength+1);
-
+            String propertyName =
+                    Character.toLowerCase(method.getName().charAt(methodPrefixLength)) +
+                            method.getName().substring(methodPrefixLength+1);
 
             String dbFieldName = convertCamelCaseNameToUnderscored(propertyName);
 
@@ -101,9 +151,16 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             colNameField.setLiteralInitializer('\"' + dbFieldName + '\"');
 
             String propertyTypeName = method.getReturnType().getName();
-            PropertySource<JavaClassSource> property = ormLiteObj.addProperty(propertyTypeName, propertyName).setMutable(false);
+
+            if(propertyTypeName.startsWith("List")){
+                propertyTypeName = "List<" + method.getReturnType().getTypeArguments().get(0)+ ">";
+            }
+
+            PropertySource<JavaClassSource> property =
+                    ormLiteObj.addProperty(propertyTypeName, propertyName).setMutable(false);
             FieldSource propertyField = property.getField();
-            AnnotationSource databaseFieldAnnotation = propertyField.addAnnotation(DatabaseField.class);
+            AnnotationSource databaseFieldAnnotation =
+                    propertyField.addAnnotation(DatabaseField.class);
             databaseFieldAnnotation.setLiteralValue("columnName", "COLNAME_"
                     + dbFieldName.toUpperCase());
 
@@ -111,8 +168,81 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             /**
              * In case of handling a relationship field: The field must be the entity
              */
+            if(propertyTypeName.startsWith("Collection")){
+                Type<JavaInterfaceSource> listFirstType =
+                        method.getReturnType().getTypeArguments().get(0);
+                String propertyEntityClassName = null;
+                boolean complexType = false;
+                if (listFirstType.getSimpleName().startsWith("? extends ")){
+                    complexType = true;
+                    propertyEntityClassName =
+                            listFirstType.getName().split("\\s+")[listFirstType.getName().split("\\s+").length-1];
+                }else{
+                    propertyEntityClassName = listFirstType.getName();
+                }
+                propertyTypeName = method.getReturnType().toString();
+                String listTypeName = propertyEntityClassName;
+                if(!listFirstType.isPrimitive() && !listFirstType.getName().equals("String")) {
+                    String foreignFieldNameString = null;
+                    //Needs ForeignCollection
+                    AnnotationSource foreignCollectionField = propertyField.addAnnotation(ForeignCollectionField.class);
+                    Set<String> foreignFields = method.getJavaDoc().getTagNames();
+                    for (String field:foreignFields){
+                        if(field.startsWith("@nanolrs.foreignFieldName=")){
+                            foreignFieldNameString = field.substring(field.indexOf("=")+1);
+                            break;
+                        }
+                    }
+                    if(foreignFieldNameString != null){
+                        foreignCollectionField.setLiteralValue("foreignFieldName", "\"" + foreignFieldNameString + "\"");
+                    }
+
+                    foreignCollectionField.setLiteralValue("eager", "false");
+
+                    propertyEntityClassName = "ForeignCollection<" + listTypeName + ">";
+                }else{
+                    propertyEntityClassName = "List<" + listTypeName + ">";
+                }
+                propertyField.setType(propertyEntityClassName);
+                property.getField().setFinal(false);
+
+                MethodSource mutatorMethod;
+                if(property.getMutator() == null) {
+                    mutatorMethod = property.createMutator();
+                }else {
+                    mutatorMethod = property.getMutator();
+                }
+
+                mutatorMethod.setBody("this." + propertyName + ".clear();" +'\n'+
+                        "this." + propertyName + " = (" + propertyEntityClassName +")" + propertyName + ";");
+
+                databaseFieldAnnotation.setLiteralValue("foreign", "true");
+                databaseFieldAnnotation.setLiteralValue("foreignAutoRefresh", "true");
+                ormLiteObj.addImport(method.getReturnType().getQualifiedName());
+                ormLiteObj.addImport(ForeignCollection.class.getName());
+                for(Type<JavaInterfaceSource> everyType:method.getReturnType().getTypeArguments()){
+                    String qualifiedName = everyType.getQualifiedName();
+                    if(qualifiedName.startsWith("? extends ")){
+                        String newQualifiedName = qualifiedName.split("\\s+")[qualifiedName.split("\\s").length-1];
+                        if (newQualifiedName != null && newQualifiedName!=""){
+                            qualifiedName = proxyInterface.resolveType(newQualifiedName);
+                            //qualifiedName = newQualifiedName;
+                        }
+
+                    }
+                    ormLiteObj.addImport(qualifiedName);
+                }
+
+            }
+            else
             if(!method.getReturnType().isPrimitive() && !propertyTypeName.equals("String")) {
-                String propertyEntityClassName = propertyTypeName + "Entity";
+                String propertyEntityClassName = null;
+
+                if(method.getReturnType().getName().equals(("DateTimeType"))){
+                    propertyEntityClassName = propertyTypeName;
+                }else {
+                    propertyEntityClassName = propertyTypeName + "Entity";
+                }
                 propertyField.setType(propertyEntityClassName);
                 property.getField().setFinal(false);
 
@@ -146,11 +276,9 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             if(isPrimaryKey(method)) {
                 databaseFieldAnnotation.setLiteralValue("id", "true");
             }
+
         }
 
-
-
-        FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
     }
 
     @Override
