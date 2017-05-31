@@ -18,6 +18,12 @@ public interface NanoLrsModel {
     String getMasterSequence();
     void setMasterSequence(String masterSequence);
 
+    /* The date stored at source. Be it on server, client, etc.
+    While creation, this is auto value = now
+    During sync, we override that with the value in the sync
+    During conflict, we get the latest one (as usual) - might have extra changes
+    Does NOT get updated. Stays fixed
+     */
     long getDateCreated();
     void setDateCreated(long dateCreated);
 

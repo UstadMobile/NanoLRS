@@ -18,10 +18,8 @@ public interface IntermediaryTest extends NanoLrsModel {
     void setUuid(String id);
 
     XapiUser getStudent();
-
     void setStudent(XapiUser student);
 
     XapiUser getTeacher();
-
     void setTeacher(XapiUser teacher);
 }

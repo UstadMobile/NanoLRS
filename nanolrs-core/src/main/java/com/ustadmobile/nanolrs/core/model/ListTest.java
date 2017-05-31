@@ -35,33 +35,24 @@ public interface ListTest extends NanoLrsModel {
     //void setNames(List<String> names);
 
     //Users list: One to Many (reverse Foreignkey) - Another Entity
-
     /**
-     * @nanolrs.foreignFieldName=users
+     * Not using foreignFieldName here. Relationship is only one sided.
+     * nanolrs.foreignFieldName=listtest
      */
     Collection<? extends XapiUser> getUsers();
     void setUsers(Collection<? extends XapiUser> users);
-    /*
-    List<XapiUser> getUsers();
-    void setUsers(List<XapiUser> users);
-    */
+
 
     /**
-     * @nanolrs.foreignFieldName=students
+     * @nanolrs.foreignFieldName=student
      */
     Collection<? extends IntermediaryTest> getTestStudents();
     void setTestStudents(Collection<? extends IntermediaryTest> testStudents);
-    /*
-    List <IntermediaryTest> getTestStudents();
-    void setTestStudents(List<IntermediaryTest> testStudents);
-    */
+
     /**
      * @nanolrs.foreignFieldName=teacher
      */
     Collection<? extends IntermediaryTest> getTestTeachers();
     void setTestTeachers(Collection<? extends IntermediaryTest> testTeachers);
-    /*
-    List <IntermediaryTest> getTestTeachers();
-    void setTestTeachers(List<IntermediaryTest> testTeachers);
-    */
+
 }
