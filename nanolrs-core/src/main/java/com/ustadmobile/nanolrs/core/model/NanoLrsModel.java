@@ -12,11 +12,11 @@ public interface NanoLrsModel {
     String getNotes();
     void setNotes(String notes);
 
-    String getLocalSequence();
-    void setLocalSequence(String localSequence);
+    long getLocalSequence();
+    void setLocalSequence(long localSequence);
 
-    String getMasterSequence();
-    void setMasterSequence(String masterSequence);
+    long getMasterSequence();
+    void setMasterSequence(long masterSequence);
 
     /* The date stored at source. Be it on server, client, etc.
     While creation, this is auto value = now
@@ -27,13 +27,13 @@ public interface NanoLrsModel {
     long getDateCreated();
     void setDateCreated(long dateCreated);
 
-    long getDateStored();
-    void setDateStored(long dateStored);
+    //Changed name from dateStored to storedDate cause
+    // there is a variable what that name in XapiState. Ignoring.
+    long getStoredDate();
+    void setStoredDate(long storedDate);
 
     long getDateModifiedAtMaster();
     void setDateModifiedAtMaster(long dateModifiedAtMaster);
-
-
 
 
 }

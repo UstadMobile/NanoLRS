@@ -11,6 +11,7 @@ package com.ustadmobile.nanolrs.test.core;
 
 public class NanoLrsPlatformTestUtil {
 
+    //TODO: Check if this is necessary. If it is, document why
     public static Object getContext() {
         return new Object();
     }

@@ -7,7 +7,7 @@ import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
  *
  * Many-to-Many relationship intermediary class
  */
-public interface IntermediaryTest extends NanoLrsModel {
+public interface RelationshipTest2Teacher extends NanoLrsModel {
     /**
      * @return
      * @nanolrs.primarykey
@@ -17,8 +17,11 @@ public interface IntermediaryTest extends NanoLrsModel {
 
     void setUuid(String id);
 
-    XapiUser getStudent();
-    void setStudent(XapiUser student);
+    /**
+     * @nanolrs.foreignColumnName=uuid
+     */
+    RelationshipTest getRelationshipTest();
+    void setRelationshipTest(RelationshipTest relationshipTest);
 
     XapiUser getTeacher();
     void setTeacher(XapiUser teacher);

@@ -26,6 +26,12 @@ import java.io.InputStream;
  *
  * PersistenceManager.getInstance().getManager(EntityNameManager.class).doSomething
  *
+ * new PersistenceManagerFactoryImpl() will link to the platforms's PersistenceManagerFactoryImpl in platform
+ * eg: if run from nanolrs-servlet classpath, it will call nanolrs-servet's PersistenceManagerFactoryImpl.method
+ *
+ * Make sure in your platform you have PersistenceManagerFactoryImpl and a getPersistenceManager
+ * method to return the right persistenceManager for that platform.
+ *
  * @author mike
  */
 public abstract class PersistenceManager {
@@ -34,6 +40,7 @@ public abstract class PersistenceManager {
     
     public static PersistenceManager getInstance() {
         if(instance == null) {
+            // Get platform's persistence Manager.
             instance = new PersistenceManagerFactoryImpl().getPersistenceManager();
         }
         

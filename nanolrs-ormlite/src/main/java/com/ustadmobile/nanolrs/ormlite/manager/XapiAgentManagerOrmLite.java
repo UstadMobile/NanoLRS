@@ -4,7 +4,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
@@ -72,6 +74,11 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements Xapi
     }
 
     @Override
+    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+        return null;
+    }
+
+    @Override
     public void createOrUpdate(Object dbContext, XapiAgent data) {
         try {
             Dao<XapiAgentEntity, String> dao = persistenceManager.getDao(XapiAgentEntity.class, dbContext);
@@ -81,4 +88,11 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements Xapi
             e.printStackTrace();
         }
     }
+
+    /*
+    @Override
+    public NanoLrsModel makeNew() throws SQLException {
+        return null;
+    }
+    */
 }

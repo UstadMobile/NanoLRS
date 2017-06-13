@@ -8,6 +8,8 @@ import java.sql.SQLException;
 
 /**
  * Created by mike on 2/7/17.
+ *
+ * This is JDBC's NanoLrsPlatformTestUtil
  */
 
 public class NanoLrsPlatformTestUtil {

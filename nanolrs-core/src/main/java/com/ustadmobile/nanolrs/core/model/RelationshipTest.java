@@ -4,12 +4,10 @@ package com.ustadmobile.nanolrs.core.model;
  */
 
 import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
-import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
 import java.util.Collection;
-import java.util.List;
 
-public interface ListTest extends NanoLrsModel {
+public interface RelationshipTest extends NanoLrsModel {
 
     /**
      * @nanolrs.primarykey
@@ -34,25 +32,29 @@ public interface ListTest extends NanoLrsModel {
     //List<String> getNames();
     //void setNames(List<String> names);
 
+    //UPDATE: Not doing this, as I'd have to add something on XapiUser's side
+    //why- because its a one2m relationshp that means one XapiUser can be in
+    //only one RelationshipTest (another analogy: Mother to Many children.
+    //Every child has only one mother. So On XapiUser, there is a foreignKey
+    //which I wont change, since this is just a test.
     //Users list: One to Many (reverse Foreignkey) - Another Entity
     /**
      * Not using foreignFieldName here. Relationship is only one sided.
      * nanolrs.foreignFieldName=listtest
      */
-    Collection<? extends XapiUser> getUsers();
-    void setUsers(Collection<? extends XapiUser> users);
-
-
-    /**
-     * @nanolrs.foreignFieldName=student
-     */
-    Collection<? extends IntermediaryTest> getTestStudents();
-    void setTestStudents(Collection<? extends IntermediaryTest> testStudents);
+    //Collection<? extends XapiUser> getUsers();
+    //void setUsers(Collection<? extends XapiUser> users);
 
     /**
-     * @nanolrs.foreignFieldName=teacher
+     * foreignFieldName=student //Disabling
      */
-    Collection<? extends IntermediaryTest> getTestTeachers();
-    void setTestTeachers(Collection<? extends IntermediaryTest> testTeachers);
+    Collection<? extends RelationshipTest2Student> getTestStudents();
+    void setTestStudents(Collection<? extends RelationshipTest2Student> testStudents);
+
+    /**
+     * foreignFieldName=teacher //Disabling
+     */
+    Collection<? extends RelationshipTest2Teacher> getTestTeachers();
+    void setTestTeachers(Collection<? extends RelationshipTest2Teacher> testTeachers);
 
 }

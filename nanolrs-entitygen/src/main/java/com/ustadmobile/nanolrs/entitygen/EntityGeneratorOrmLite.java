@@ -158,10 +158,48 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             PropertySource<JavaClassSource> property =
                     ormLiteObj.addProperty(propertyTypeName, propertyName).setMutable(false);
             FieldSource propertyField = property.getField();
-            AnnotationSource databaseFieldAnnotation =
-                    propertyField.addAnnotation(DatabaseField.class);
-            databaseFieldAnnotation.setLiteralValue("columnName", "COLNAME_"
-                    + dbFieldName.toUpperCase());
+
+            /*
+            If it isn't a collection, add @Database . (We don't put that for foreignCollections)
+             */
+            if(!propertyTypeName.startsWith("Collection")){
+                AnnotationSource databaseFieldAnnotation =
+                        propertyField.addAnnotation(DatabaseField.class);
+                databaseFieldAnnotation.setLiteralValue("columnName", "COLNAME_"
+                        + dbFieldName.toUpperCase());
+                if(!method.getReturnType().isPrimitive() && !propertyTypeName.equals("String")) {
+                    databaseFieldAnnotation.setLiteralValue("foreign", "true");
+                    databaseFieldAnnotation.setLiteralValue("foreignAutoRefresh", "true");
+                }
+
+                List<JavaDocTag> dataTypeJavaDocTags = method.getJavaDoc().getTags("@nanolrs.datatype");
+                if(dataTypeJavaDocTags != null && dataTypeJavaDocTags.size() > 0) {
+                    String tagValue = dataTypeJavaDocTags.get(0).getValue();
+                    ormLiteObj.addImport(DataType.class);
+
+                    if(tagValue != null && tagValue.equals(DATA_TYPE_LONG_STRING)) {
+                        databaseFieldAnnotation.setLiteralValue("dataType", "DataType.LONG_STRING");
+                    }else if(tagValue != null && tagValue.equals(DATA_TYPE_BYTE_ARRAY)) {
+                        databaseFieldAnnotation.setLiteralValue("dataType", "DataType.BYTE_ARRAY");
+                    }
+                }
+
+                if(isPrimaryKey(method)) {
+                    databaseFieldAnnotation.setLiteralValue("id", "true");
+                }
+
+                String foreignColumnNameString = null;
+                Set<String> foreignFields = method.getJavaDoc().getTagNames();
+                for (String field:foreignFields){
+                    if(field.startsWith("@nanolrs.foreignColumnName=")){
+                        foreignColumnNameString = field.substring(field.indexOf("=")+1);
+                        break;
+                    }
+                }
+                if(foreignColumnNameString != null){
+                    databaseFieldAnnotation.setLiteralValue("foreignColumnName", "\"" + foreignColumnNameString + "\"");
+                }
+            }
 
 
             /**
@@ -178,13 +216,19 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                             listFirstType.getName().split("\\s+")[listFirstType.getName().split("\\s+").length-1];
                 }else{
                     propertyEntityClassName = listFirstType.getName();
+                    //propertyEntityClassName = propertyEntityClassName + "Entity";
                 }
                 propertyTypeName = method.getReturnType().toString();
                 String listTypeName = propertyEntityClassName;
+
                 if(!listFirstType.isPrimitive() && !listFirstType.getName().equals("String")) {
                     String foreignFieldNameString = null;
                     //Needs ForeignCollection
                     AnnotationSource foreignCollectionField = propertyField.addAnnotation(ForeignCollectionField.class);
+
+                    /*
+                    //Update foreignFieldName doesnt seem to be required for
+                    //one2m rel with intermediary table
                     Set<String> foreignFields = method.getJavaDoc().getTagNames();
                     for (String field:foreignFields){
                         if(field.startsWith("@nanolrs.foreignFieldName=")){
@@ -195,10 +239,11 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                     if(foreignFieldNameString != null){
                         foreignCollectionField.setLiteralValue("foreignFieldName", "\"" + foreignFieldNameString + "\"");
                     }
+                    */
 
                     foreignCollectionField.setLiteralValue("eager", "false");
 
-                    propertyEntityClassName = "ForeignCollection<" + listTypeName + ">";
+                    propertyEntityClassName = "ForeignCollection<" + listTypeName + "Entity" + ">";
                 }else{
                     propertyEntityClassName = "List<" + listTypeName + ">";
                 }
@@ -215,8 +260,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 mutatorMethod.setBody("this." + propertyName + ".clear();" +'\n'+
                         "this." + propertyName + " = (" + propertyEntityClassName +")" + propertyName + ";");
 
-                databaseFieldAnnotation.setLiteralValue("foreign", "true");
-                databaseFieldAnnotation.setLiteralValue("foreignAutoRefresh", "true");
                 ormLiteObj.addImport(method.getReturnType().getQualifiedName());
                 ormLiteObj.addImport(ForeignCollection.class.getName());
                 for(Type<JavaInterfaceSource> everyType:method.getReturnType().getTypeArguments()){
@@ -235,6 +278,8 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             }
             else
             if(!method.getReturnType().isPrimitive() && !propertyTypeName.equals("String")) {
+
+
                 String propertyEntityClassName = null;
 
                 if(method.getReturnType().getName().equals(("DateTimeType"))){
@@ -253,27 +298,10 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 }
 
                 mutatorMethod.setBody("this." + propertyName + " = (" + propertyEntityClassName +")" + propertyName + ";");
-                databaseFieldAnnotation.setLiteralValue("foreign", "true");
-                databaseFieldAnnotation.setLiteralValue("foreignAutoRefresh", "true");
+
                 ormLiteObj.addImport(method.getReturnType().getQualifiedName());
             }else {
                 property.setMutable(true);
-            }
-
-            List<JavaDocTag> dataTypeJavaDocTags = method.getJavaDoc().getTags("@nanolrs.datatype");
-            if(dataTypeJavaDocTags != null && dataTypeJavaDocTags.size() > 0) {
-                String tagValue = dataTypeJavaDocTags.get(0).getValue();
-                ormLiteObj.addImport(DataType.class);
-
-                if(tagValue != null && tagValue.equals(DATA_TYPE_LONG_STRING)) {
-                    databaseFieldAnnotation.setLiteralValue("dataType", "DataType.LONG_STRING");
-                }else if(tagValue != null && tagValue.equals(DATA_TYPE_BYTE_ARRAY)) {
-                    databaseFieldAnnotation.setLiteralValue("dataType", "DataType.BYTE_ARRAY");
-                }
-            }
-
-            if(isPrimaryKey(method)) {
-                databaseFieldAnnotation.setLiteralValue("id", "true");
             }
 
         }

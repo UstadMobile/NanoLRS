@@ -3,9 +3,11 @@ package com.ustadmobile.nanolrs.ormlite.manager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceReceiver;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
@@ -27,6 +29,11 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
     @Override
     public Class getEntityImplementationClasss() {
         return XapiStatementEntity.class;
+    }
+
+    @Override
+    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+        return null;
     }
 
     @Override
@@ -155,4 +162,11 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
 
         return null;
     }
+
+    /*
+    @Override
+    public NanoLrsModel makeNew() throws SQLException {
+        return null;
+    }
+    */
 }

@@ -31,8 +31,9 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
      */
     public abstract Class getEntityImplementationClasss() ;
 
+    //It used to be: public T makeNew(Object primaryKey) {
     @Override
-    public T makeNew(Object primaryKey) {
+    public T makeNew() {
         try {
             return (T)getEntityImplementationClasss().newInstance();
             /*
@@ -57,6 +58,11 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
 
     @Override
     public void persist(Object dbContext, T data) throws SQLException {
+        //Updating sequence number:
+        //TODO: Lookup Master Sequence nad local sequence from another table (max value)
+        // i think thats in Syncstatus or just gt latet of this table, etc
+        data.setLocalSequence(data.getLocalSequence() + 1);
+        data.setMasterSequence(data.getMasterSequence() + 1);
         persistenceManager.getDao(getEntityImplementationClasss(), dbContext).createOrUpdate(data);
     }
 
