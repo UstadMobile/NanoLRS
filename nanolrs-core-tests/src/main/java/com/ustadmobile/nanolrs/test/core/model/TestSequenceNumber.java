@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -146,16 +147,26 @@ public class TestSequenceNumber {
         Assert.assertEquals(rtStudents.size(), 2);
         Assert.assertEquals(rtTeachers.size(), 2);
 
-        if(rtStudents.iterator().hasNext()){
-            XapiUser student = rtStudents.iterator().next().getStudent();
+        List<String> studentUsernames = new ArrayList<String>();
+        Iterator<? extends RelationshipTest2Student> studentsIterator = rtStudents.iterator();
+        while(studentsIterator.hasNext()){
+            XapiUser student = studentsIterator.next().getStudent();
             String studentUsername = student.getUsername();
-            Assert.assertEquals(studentUsername, "testuser");
+            studentUsernames.add(studentUsername);
         }
-        if(rtTeachers.iterator().hasNext()){
-            XapiUser teacher = rtTeachers.iterator().next().getTeacher();
+        Assert.assertTrue(studentUsernames.contains("testuser"));
+        Assert.assertTrue(studentUsernames.contains("testuser2"));
+
+        List<String> teacherUsernames = new ArrayList<String>();
+        Iterator<? extends RelationshipTest2Teacher> teachersIterator = rtTeachers.iterator();
+        while(teachersIterator.hasNext()){
+            XapiUser teacher = teachersIterator.next().getTeacher();
             String teacherUsername = teacher.getUsername();
-            Assert.assertEquals(teacherUsername, "testuser4");
+            teacherUsernames.add(teacherUsername);
         }
+        Assert.assertTrue(teacherUsernames.contains("testuser3"));
+        Assert.assertTrue(teacherUsernames.contains("testuser4"));
+
 
 
     }

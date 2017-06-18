@@ -60,9 +60,32 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
     public void persist(Object dbContext, T data) throws SQLException {
         //Updating sequence number:
         //TODO: Lookup Master Sequence nad local sequence from another table (max value)
-        // i think thats in Syncstatus or just gt latet of this table, etc
-        data.setLocalSequence(data.getLocalSequence() + 1);
-        data.setMasterSequence(data.getMasterSequence() + 1);
+        // or just gt latest of this table, etc
+        long currentTableMaxSequence = data.getLocalSequence();
+        //currentTableMaxSequence =
+        data.setLocalSequence(currentTableMaxSequence + 1);
+        //The Sync API will set this, not here. Q: How does one know its a server/client/mini server ?
+        //data.setMasterSequence(data.getMasterSequence() + 1);
+        persistenceManager.getDao(getEntityImplementationClasss(), dbContext).createOrUpdate(data);
+    }
+
+    @Override
+    public long getLatestLocalSequence(Object dbContext) throws SQLException {
+        //TODO:
+        return 42;
+    }
+
+    @Override
+    public long getLatestMasterSequence(Object dbContext) throws SQLException {
+        //TODO:
+        return 42;
+    }
+
+    @Override
+    public void persist(Object dbContext, T data, NanoLrsManager manager) throws SQLException {
+        long currentTableMaxSequence = manager.getLatestLocalSequence(dbContext);
+        data.setLocalSequence(currentTableMaxSequence + 1);
+
         persistenceManager.getDao(getEntityImplementationClasss(), dbContext).createOrUpdate(data);
     }
 

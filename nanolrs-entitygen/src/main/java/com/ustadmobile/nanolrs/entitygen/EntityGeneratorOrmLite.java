@@ -256,9 +256,15 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 }else {
                     mutatorMethod = property.getMutator();
                 }
-
-                mutatorMethod.setBody("this." + propertyName + ".clear();" +'\n'+
-                        "this." + propertyName + " = (" + propertyEntityClassName +")" + propertyName + ";");
+                /*
+                if( this.testStudents != null){
+                    this.testStudents.clear();
+                }
+                 */
+                mutatorMethod.setBody("if(this." + propertyName + "!= null){" + '\n'+
+                        "    this." + propertyName + ".clear();" +'\n' +
+                        "}" + '\n'+ "this." + propertyName +
+                        " = (" + propertyEntityClassName +")" + propertyName + ";");
 
                 ormLiteObj.addImport(method.getReturnType().getQualifiedName());
                 ormLiteObj.addImport(ForeignCollection.class.getName());
