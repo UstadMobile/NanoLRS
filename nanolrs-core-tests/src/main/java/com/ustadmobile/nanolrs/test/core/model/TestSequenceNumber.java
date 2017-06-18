@@ -1,14 +1,19 @@
 package com.ustadmobile.nanolrs.test.core.model;
 
+import com.ustadmobile.nanolrs.core.manager.RelationshipTest2StudentManager;
+import com.ustadmobile.nanolrs.core.manager.RelationshipTest2TeacherManager;
 import com.ustadmobile.nanolrs.core.manager.RelationshipTestManager;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.model.RelationshipTest;
+import com.ustadmobile.nanolrs.core.model.RelationshipTest2Student;
+import com.ustadmobile.nanolrs.core.model.RelationshipTest2Teacher;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +25,7 @@ import java.util.UUID;
 public class TestSequenceNumber {
     @Test
     public void testLifecycle() throws Exception {
-        //Get the connectionSource from platform db pool (from NanoLrsPlatformTestUtil)
+        //Get the connectionSource from platform db pool (from NanoLrsPlatormTestUtil)
         Object context = NanoLrsPlatformTestUtil.getContext();
 
         //Create some users
@@ -51,10 +56,38 @@ public class TestSequenceNumber {
 
         newRelationshipTest.setName("New Relationship");
 
+        //Do we need to persist before m2m ? 
+        //Update: Nope, we do not need to persist before
+        //relationshipTestManager.persist(context, newRelationshipTest);
 
+
+        //create an relationshipTest m2m with users (assign students)
+        RelationshipTest2StudentManager relationshipTest2StudentManager =
+                PersistenceManager.getInstance().getManager(RelationshipTest2StudentManager.class);
+        RelationshipTest2Student newRelationshipTest2Student =
+                (RelationshipTest2Student) relationshipTest2StudentManager.makeNew();
+        newRelationshipTest2Student.setUuid(UUID.randomUUID().toString());
+        newRelationshipTest2Student.setRelationshipTest(newRelationshipTest);
+        newRelationshipTest2Student.setStudent(anotherNewUser);
+        relationshipTest2StudentManager.persist(context, newRelationshipTest2Student );
+
+
+
+        //newRelationshipTest.setTestStudents();
+
+        RelationshipTest2TeacherManager relationshipTest2TeacherManager =
+                PersistenceManager.getInstance().getManager(RelationshipTest2TeacherManager.class);
+        RelationshipTest2Teacher newRelationshipTest2Teacher =
+                (RelationshipTest2Teacher) relationshipTest2TeacherManager.makeNew();
+        newRelationshipTest2Teacher.setUuid(UUID.randomUUID().toString());
+        newRelationshipTest2Teacher.setRelationshipTest(newRelationshipTest);
+        newRelationshipTest2Teacher.setTeacher(newUser3);
+        relationshipTest2TeacherManager.persist(context, newRelationshipTest2Teacher);
 
         //newRelationshipTest.setTestTeachers();
-        //newRelationshipTest.setTestStudents();
+
+
+
         relationshipTestManager.persist(context, newRelationshipTest);
 
         long localSeqNumber = newRelationshipTest.getLocalSequence();

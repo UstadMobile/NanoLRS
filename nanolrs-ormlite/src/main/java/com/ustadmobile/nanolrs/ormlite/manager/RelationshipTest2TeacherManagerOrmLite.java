@@ -12,7 +12,7 @@ import java.util.List;
  * Created by varuna on 6/13/2017.
  */
 
-public class RelationshpTest2TeacherManagerOrmLite extends BaseManagerOrmLite implements RelationshipTest2TeacherManager {
+public class RelationshipTest2TeacherManagerOrmLite extends BaseManagerOrmLite implements RelationshipTest2TeacherManager {
     @Override
     public List findBySequenceNumber(XapiUser user, Object dbContext, String seqNum) {
         return null;
@@ -23,7 +23,7 @@ public class RelationshpTest2TeacherManagerOrmLite extends BaseManagerOrmLite im
         return null;
     }
 
-    public RelationshpTest2TeacherManagerOrmLite() {
+    public RelationshipTest2TeacherManagerOrmLite() {
         //super();
     }
 
