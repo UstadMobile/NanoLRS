@@ -1,5 +1,11 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
@@ -7,6 +13,7 @@ import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -70,23 +77,46 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
     }
 
     @Override
-    public long getLatestLocalSequence(Object dbContext) throws SQLException {
-        //TODO:
-        return 42;
-    }
-
-    @Override
     public long getLatestMasterSequence(Object dbContext) throws SQLException {
         //TODO:
         return 42;
     }
 
     @Override
+    public long getLatestLocalSequence(Object dbContext) throws SQLException {
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+        String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
+        QueryBuilder qb = thisDao.queryBuilder();
+        qb.selectRaw("MAX(\"local_sequence\")");
+        String rawString = qb.prepareStatementString();
+
+        GenericRawResults results = thisDao.queryRaw(rawString);
+        Object result = results.getFirstResult();
+        long currentMaxLocalSequence = thisDao.queryRawValue(rawString);
+        return currentMaxLocalSequence;
+
+    }
+
+    @Override
     public void persist(Object dbContext, T data, NanoLrsManager manager) throws SQLException {
         long currentTableMaxSequence = manager.getLatestLocalSequence(dbContext);
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+
+        //OR (without manager):
+        long currentTableMaxSequence2 = thisDao.queryRawValue(
+                thisDao.queryBuilder().selectRaw(
+                        "MAX(\"local_sequence\")").prepareStatementString());
+
         data.setLocalSequence(currentTableMaxSequence + 1);
 
-        persistenceManager.getDao(getEntityImplementationClasss(), dbContext).createOrUpdate(data);
+
+        thisDao.createOrUpdate(data);
+
+        //lets commit after this..
+        String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
+        ConnectionSource cs = (ConnectionSource) dbContext;
+        DatabaseConnection dc = cs.getReadWriteConnection(tableName);
+        thisDao.commit(dc);
     }
 
     @Override

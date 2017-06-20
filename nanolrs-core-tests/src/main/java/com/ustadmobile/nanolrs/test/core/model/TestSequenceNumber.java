@@ -105,33 +105,14 @@ public class TestSequenceNumber {
         newRelationshipTest2Teacher2.setTeacher(newUser4);
         relationshipTest2TeacherManager2.persist(context, newRelationshipTest2Teacher2);
 
-
-        /* //UPDATE: Cannot set Foreign Collections like so..
-        //newRelationshipTest.setTestStudents();
-        //newRelationshipTest.setTestStudents(Collection<? extends RelationshipTest2Student> testStudents);
-
-        //ForeignCollection<RelationshipTest2Student> testStudents;
-        //testStudents = new ForeignCollection<RelationshipTest2Student>;
-        //^ doesnt work..
-
-        //Collection testStudents = null;
-        //testStudents = new Collection<RelationshipTest2Student>();
-        testStudents = new HashSet(); //works but cannot cast to foreign. We cannot do this.
-        testStudents.add(newRelationshipTest2Student);
-        testStudents.add(newRelationshipTest2Student2);
-
-        newRelationshipTest.setTestStudents(testStudents);
-        */
-        /* UPDATE: Cannot set Foreign Collections like so..
-        //newRelationshipTest.setTestTeachers();
-        */
-
-        relationshipTestManager.persist(context, newRelationshipTest);
+        //relationshipTestManager.persist(context, newRelationshipTest);
+        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
         long localSeqNumber = newRelationshipTest.getLocalSequence();
         Assert.assertNotNull(localSeqNumber);
 
         newRelationshipTest.setNotes("This is an update to the relationship..");
-        relationshipTestManager.persist(context, newRelationshipTest);
+        //relationshipTestManager.persist(context, newRelationshipTest);
+        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
         long newLocalSeqNumber = newRelationshipTest.getLocalSequence();
         Assert.assertEquals(localSeqNumber +1, newLocalSeqNumber);
 
