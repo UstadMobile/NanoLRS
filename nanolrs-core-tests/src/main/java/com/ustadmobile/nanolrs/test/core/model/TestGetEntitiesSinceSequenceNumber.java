@@ -50,7 +50,7 @@ public class TestGetEntitiesSinceSequenceNumber {
         newRelationshipTest.setUuid(UUID.randomUUID().toString());
         newRelationshipTest.setOneUser(newUser);
 
-        newRelationshipTest.setName("New Relationship");
+        newRelationshipTest.setName("New Relationship1");
         relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
         
         //another 1
@@ -59,18 +59,44 @@ public class TestGetEntitiesSinceSequenceNumber {
         newRelationshipTest2.setUuid(UUID.randomUUID().toString());
         newRelationshipTest2.setOneUser(newUser);
 
-        newRelationshipTest2.setName("New Relationship");
+        newRelationshipTest2.setName("New Relationship2");
         relationshipTestManager.persist(context, newRelationshipTest2, relationshipTestManager);
+
+        //another 1
+        RelationshipTest newRelationshipTest3 =
+                (RelationshipTest) relationshipTestManager.makeNew();
+        newRelationshipTest3.setUuid(UUID.randomUUID().toString());
+        newRelationshipTest3.setOneUser(newUser);
+
+        newRelationshipTest3.setName("New Relationship3");
+        relationshipTestManager.persist(context, newRelationshipTest3, relationshipTestManager);
         
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
         XapiUser currentUser = null;
         String host = "testing_host";
 
+        /* Test that our list is not null and includes every entity */
         List allRelationshipTestsSince = relationshipTestManager.getAllSinceSequenceNumber(
                 currentUser, context, host, sequenceNumber);
         Assert.assertNotNull(allRelationshipTestsSince);
-        Assert.assertEquals(allRelationshipTestsSince.size(), 3);
+        //Supposed to be the 3 here + 1(from the previous test)
+        Assert.assertEquals(allRelationshipTestsSince.size(), 4);
+
+        /* Manually change master seq so that we get the right statmenets that need to be sent */
+        newRelationshipTest.setMasterSequence(2);
+        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
+        newRelationshipTest3.setMasterSequence(1);
+        relationshipTestManager.persist(context, newRelationshipTest3, relationshipTestManager);
+        newRelationshipTest2.setMasterSequence(3);
+        relationshipTestManager.persist(context, newRelationshipTest2, relationshipTestManager);
+
+        /* Test every statmente from seq 1 after change in master seq */
+        sequenceNumber=1;
+        List allRelationshipTestSince2 = relationshipTestManager.getAllSinceSequenceNumber(
+                currentUser, context, host, sequenceNumber);
+        Assert.assertNotNull(allRelationshipTestSince2);
+        Assert.assertEquals(allRelationshipTestSince2.size(), 2);
 
     }
 }

@@ -28,7 +28,6 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
 
     }
 
-
     /**
      * This must return the class that is used as the implementation of the entity proxy interface
      *
@@ -73,8 +72,6 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
         qb.selectRaw("MAX(\"local_sequence\")");
         String rawString = qb.prepareStatementString();
 
-        GenericRawResults results = thisDao.queryRaw(rawString);
-        Object result = results.getFirstResult();
         long currentMaxLocalSequence = thisDao.queryRawValue(rawString);
         return currentMaxLocalSequence;
 
@@ -85,13 +82,12 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
         long currentTableMaxSequence = manager.getLatestLocalSequence(dbContext);
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
 
-        //OR (without manager):
+        //OR (without manager): (TODO: check if this is a better way)
         long currentTableMaxSequence2 = thisDao.queryRawValue(
                 thisDao.queryBuilder().selectRaw(
                         "MAX(\"local_sequence\")").prepareStatementString());
 
         data.setLocalSequence(currentTableMaxSequence + 1);
-
 
         thisDao.createOrUpdate(data);
 

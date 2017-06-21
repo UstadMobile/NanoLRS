@@ -46,7 +46,6 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
     @Override
     public List getAllSinceSequenceNumber(
             XapiUser user, Object dbContext, String host, long seqNum) throws SQLException{
-        //TODO: this here. Can make use of super if needed.
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
         String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
 
@@ -56,12 +55,10 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
         //Step 3: that is a List<entities> and we return it.
         //Step 4: Figure out the role of user in this all (TODO)
 
-        long sent_sequence = 0;
-
         QueryBuilder qb = thisDao.queryBuilder();
         qb.selectRaw("*");
         Where whereNotSent = qb.where();
-        whereNotSent.gt("master_sequence", sent_sequence);
+        whereNotSent.gt("master_sequence", seqNum);
         String getAllNewString = qb.prepareStatementString();
 
         GenericRawResults foundNewEntries = thisDao.queryRaw(getAllNewString);
@@ -83,8 +80,6 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
             foundNewEntriesResults = allTheEntries.getResults();
             if(foundNewEntriesResults.size() >0){
                 foundNewEntriesIterator = allTheEntries.iterator();
-
-                int heyFoundSomething = 0;
 
             }else{
                 foundNewEntriesResults = null;
