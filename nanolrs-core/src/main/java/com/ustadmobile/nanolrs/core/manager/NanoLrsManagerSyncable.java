@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.core.manager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -12,8 +13,10 @@ import java.util.List;
 
 public interface NanoLrsManagerSyncable<T extends NanoLrsModel, P> extends NanoLrsManager {
 
-    List<T> findBySequenceNumber(XapiUser user, Object dbContext, String seqNum);
-    List<T> getAllSinceSequenceNumber(XapiUser user, Object dbContext, String seqNum);
+    List<T> findBySequenceNumber(
+            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
+    List<T> getAllSinceSequenceNumber(
+            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
 
 
 }

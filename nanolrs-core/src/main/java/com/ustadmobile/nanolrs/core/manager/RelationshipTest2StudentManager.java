@@ -12,8 +12,8 @@ public interface RelationshipTest2StudentManager extends NanoLrsManagerSyncable 
     //TODO: This
 
     @Override
-    List findBySequenceNumber(XapiUser user, Object dbContext, String seqNum);
+    List findBySequenceNumber(XapiUser user, Object dbContext, String host, long seqNum);
 
     @Override
-    List getAllSinceSequenceNumber(XapiUser user, Object dbContext, String seqNum);
+    List getAllSinceSequenceNumber(XapiUser user, Object dbContext, String host, long seqNum);
 }

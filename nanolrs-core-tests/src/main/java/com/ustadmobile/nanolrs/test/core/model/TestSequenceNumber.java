@@ -33,7 +33,8 @@ public class TestSequenceNumber {
         Object context = NanoLrsPlatformTestUtil.getContext();
 
         //Create some users
-        XapiUserManager userManager = PersistenceManager.getInstance().getManager(XapiUserManager.class);
+        XapiUserManager userManager =
+                PersistenceManager.getInstance().getManager(XapiUserManager.class);
 
         XapiUser newUser = userManager.createSync(context, UUID.randomUUID().toString());
         newUser.setUsername("testuser");
@@ -54,7 +55,8 @@ public class TestSequenceNumber {
         //create a relationship
         RelationshipTestManager relationshipTestManager =
                 PersistenceManager.getInstance().getManager(RelationshipTestManager.class);
-        RelationshipTest newRelationshipTest = (RelationshipTest) relationshipTestManager.makeNew();
+        RelationshipTest newRelationshipTest =
+                (RelationshipTest) relationshipTestManager.makeNew();
         newRelationshipTest.setUuid(UUID.randomUUID().toString());
         newRelationshipTest.setOneUser(newUser);
 
@@ -66,7 +68,8 @@ public class TestSequenceNumber {
 
         //create an relationshipTest m2m with users (assign students)
         RelationshipTest2StudentManager relationshipTest2StudentManager =
-                PersistenceManager.getInstance().getManager(RelationshipTest2StudentManager.class);
+                PersistenceManager.getInstance().getManager(
+                        RelationshipTest2StudentManager.class);
         RelationshipTest2Student newRelationshipTest2Student =
                 (RelationshipTest2Student) relationshipTest2StudentManager.makeNew();
         newRelationshipTest2Student.setUuid(UUID.randomUUID().toString());
@@ -87,7 +90,8 @@ public class TestSequenceNumber {
 
         //Creating a relationshipTest m2m with users(assign teachers)
         RelationshipTest2TeacherManager relationshipTest2TeacherManager =
-                PersistenceManager.getInstance().getManager(RelationshipTest2TeacherManager.class);
+                PersistenceManager.getInstance().getManager(
+                        RelationshipTest2TeacherManager.class);
         RelationshipTest2Teacher newRelationshipTest2Teacher =
                 (RelationshipTest2Teacher) relationshipTest2TeacherManager.makeNew();
         newRelationshipTest2Teacher.setUuid(UUID.randomUUID().toString());
@@ -97,7 +101,8 @@ public class TestSequenceNumber {
 
         //another teacher..
         RelationshipTest2TeacherManager relationshipTest2TeacherManager2 =
-                PersistenceManager.getInstance().getManager(RelationshipTest2TeacherManager.class);
+                PersistenceManager.getInstance().getManager(
+                        RelationshipTest2TeacherManager.class);
         RelationshipTest2Teacher newRelationshipTest2Teacher2 =
                 (RelationshipTest2Teacher) relationshipTest2TeacherManager2.makeNew();
         newRelationshipTest2Teacher2.setUuid(UUID.randomUUID().toString());
@@ -147,8 +152,6 @@ public class TestSequenceNumber {
         }
         Assert.assertTrue(teacherUsernames.contains("testuser3"));
         Assert.assertTrue(teacherUsernames.contains("testuser4"));
-
-
 
     }
 }

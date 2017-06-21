@@ -43,19 +43,6 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
     public T makeNew() {
         try {
             return (T)getEntityImplementationClasss().newInstance();
-            /*
-            Method primaryKeyMethod;
-            T created = (T)getEntityImplementationClasss().newInstance();
-            //Find the Primary Key from annotation:
-            Method[] allMethods = created.getClass().getMethods();
-            for(Method relatedMethod : allMethods) {
-                if(relatedMethod.isAnnotationPresent(PrimaryKeyAnnotationClass.class)) {
-                    primaryKeyMethod = relatedMethod;
-                    break;
-                }
-            }
-            return created;
-            */
         }catch(InstantiationException e) {
             throw new RuntimeException(e);
         }catch(IllegalAccessException e2) {
@@ -65,11 +52,7 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
 
     @Override
     public void persist(Object dbContext, T data) throws SQLException {
-        //Updating sequence number:
-        //TODO: Lookup Master Sequence nad local sequence from another table (max value)
-        // or just gt latest of this table, etc
         long currentTableMaxSequence = data.getLocalSequence();
-        //currentTableMaxSequence =
         data.setLocalSequence(currentTableMaxSequence + 1);
         //The Sync API will set this, not here. Q: How does one know its a server/client/mini server ?
         //data.setMasterSequence(data.getMasterSequence() + 1);
@@ -112,7 +95,7 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
 
         thisDao.createOrUpdate(data);
 
-        //lets commit after this..
+        //lets commit after this.. Not sure if autocommmit=true will solve this (TODO: check)
         String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
         ConnectionSource cs = (ConnectionSource) dbContext;
         DatabaseConnection dc = cs.getReadWriteConnection(tableName);

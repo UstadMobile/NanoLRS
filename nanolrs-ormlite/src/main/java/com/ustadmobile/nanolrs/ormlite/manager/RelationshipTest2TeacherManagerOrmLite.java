@@ -12,14 +12,17 @@ import java.util.List;
  * Created by varuna on 6/13/2017.
  */
 
-public class RelationshipTest2TeacherManagerOrmLite extends BaseManagerOrmLite implements RelationshipTest2TeacherManager {
+public class RelationshipTest2TeacherManagerOrmLite extends BaseManagerOrmLite
+        implements RelationshipTest2TeacherManager {
     @Override
-    public List findBySequenceNumber(XapiUser user, Object dbContext, String seqNum) {
+    public List findBySequenceNumber(XapiUser user, Object dbContext,
+                                     String host, long seqNum) {
         return null;
     }
 
     @Override
-    public List getAllSinceSequenceNumber(XapiUser user, Object dbContext, String seqNum) {
+    public List getAllSinceSequenceNumber(XapiUser user, Object dbContext,
+                                          String host, long seqNum) {
         return null;
     }
 

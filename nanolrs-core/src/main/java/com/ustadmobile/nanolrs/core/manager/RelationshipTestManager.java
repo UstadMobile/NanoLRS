@@ -18,8 +18,10 @@ public interface RelationshipTestManager extends NanoLrsManagerSyncable{
     // on to the Manager implementation : eg: RelationshipTestManagerOrmLite, etc
 
     @Override
-    List findBySequenceNumber(XapiUser user, Object dbContext, String seqNum);
+    List findBySequenceNumber(
+            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
 
     @Override
-    List getAllSinceSequenceNumber(XapiUser user, Object dbContext, String seqNum);
+    List getAllSinceSequenceNumber(
+            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
 }
