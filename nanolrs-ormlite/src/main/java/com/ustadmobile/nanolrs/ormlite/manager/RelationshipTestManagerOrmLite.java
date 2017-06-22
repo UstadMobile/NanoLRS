@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.ormlite.manager;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.RelationshipTestManager;
@@ -15,6 +16,7 @@ import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -44,7 +46,7 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
     }
 
     @Override
-    public List getAllSinceSequenceNumber(
+    public List<NanoLrsModel> getAllSinceSequenceNumber(
             XapiUser user, Object dbContext, String host, long seqNum) throws SQLException{
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
         String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
@@ -55,38 +57,25 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
         //Step 3: that is a List<entities> and we return it.
         //Step 4: Figure out the role of user in this all (TODO)
 
-        QueryBuilder qb = thisDao.queryBuilder();
-        qb.selectRaw("*");
+        QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
         Where whereNotSent = qb.where();
         whereNotSent.gt("master_sequence", seqNum);
-        String getAllNewString = qb.prepareStatementString();
+        PreparedQuery<NanoLrsModel> getAllNewPreparedQuery = qb.prepare();
+        List<NanoLrsModel> foundNewEntriesListModel = thisDao.query(getAllNewPreparedQuery);
 
-        GenericRawResults foundNewEntries = thisDao.queryRaw(getAllNewString);
-        Iterator foundNewEntriesIterator = foundNewEntries.iterator();
-        List foundNewEntriesResults = foundNewEntries.getResults();
 
-        if(foundNewEntriesIterator== null || foundNewEntriesResults.size() == 0){
+        if(foundNewEntriesListModel == null || foundNewEntriesListModel.size() == 0){
             try {
                 thisDao.closeLastIterator();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             QueryBuilder dbAll = thisDao.queryBuilder();
-            dbAll.selectRaw("*");
-            String getAllRawString = dbAll.prepareStatementString();
-
-            GenericRawResults allTheEntries = thisDao.queryRaw(getAllRawString);
-
-            foundNewEntriesResults = allTheEntries.getResults();
-            if(foundNewEntriesResults.size() >0){
-                foundNewEntriesIterator = allTheEntries.iterator();
-
-            }else{
-                foundNewEntriesResults = null;
-            }
+            PreparedQuery<NanoLrsModel> getAllPreparedQuery = dbAll.prepare();
+            foundNewEntriesListModel = thisDao.query(getAllPreparedQuery);
         }
 
-        return foundNewEntriesResults;
+        return foundNewEntriesListModel;
 
     }
 }

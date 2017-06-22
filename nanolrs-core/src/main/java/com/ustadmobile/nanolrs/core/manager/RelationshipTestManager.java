@@ -22,6 +22,6 @@ public interface RelationshipTestManager extends NanoLrsManagerSyncable{
             XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
 
     @Override
-    List getAllSinceSequenceNumber(
+    List<NanoLrsModel> getAllSinceSequenceNumber(
             XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
 }

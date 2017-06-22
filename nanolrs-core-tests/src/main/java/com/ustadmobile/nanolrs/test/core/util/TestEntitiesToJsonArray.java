@@ -1,8 +1,9 @@
-package com.ustadmobile.nanolrs.test.core.model;
+package com.ustadmobile.nanolrs.test.core.util;
 /**
- * Created by varuna on 6/21/2017.
+ * Created by varuna on 6/22/2017.
  */
 
+import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
 import com.ustadmobile.nanolrs.core.manager.RelationshipTestManager;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
@@ -11,13 +12,14 @@ import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.UUID;
 
-public class TestGetEntitiesSinceSequenceNumber {
+public class TestEntitiesToJsonArray {
     @Test
     public void testLifecycle() throws Exception {
         //Get the connectionSource from platform db pool (from NanoLrsPlatformTestUtil)
@@ -53,7 +55,7 @@ public class TestGetEntitiesSinceSequenceNumber {
 
         newRelationshipTest.setName("New Relationship1");
         relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
-        
+
         //another 1
         RelationshipTest newRelationshipTest2 =
                 (RelationshipTest) relationshipTestManager.makeNew();
@@ -71,18 +73,11 @@ public class TestGetEntitiesSinceSequenceNumber {
 
         newRelationshipTest3.setName("New Relationship3");
         relationshipTestManager.persist(context, newRelationshipTest3, relationshipTestManager);
-        
+
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
         XapiUser currentUser = null;
         String host = "testing_host";
-
-        /* Test that our list is not null and includes every entity */
-        List<NanoLrsModel> allRelationshipTestsSince = relationshipTestManager.getAllSinceSequenceNumber(
-                currentUser, context, host, sequenceNumber);
-        Assert.assertNotNull(allRelationshipTestsSince);
-        //Supposed to be the 3 here + 1(from the previous test)
-        Assert.assertEquals(allRelationshipTestsSince.size(), 4);
 
         /* Manually change master seq so that we get the right statmenets that need to be sent */
         newRelationshipTest.setMasterSequence(2);
@@ -93,11 +88,22 @@ public class TestGetEntitiesSinceSequenceNumber {
         relationshipTestManager.persist(context, newRelationshipTest2, relationshipTestManager);
 
         /* Test every statmente from seq 1 after change in master seq */
+
+
         sequenceNumber=1;
-        List<NanoLrsModel> allRelationshipTestSince2 = relationshipTestManager.getAllSinceSequenceNumber(
-                currentUser, context, host, sequenceNumber);
+        List<NanoLrsModel> allRelationshipTestSince2 =
+                relationshipTestManager.getAllSinceSequenceNumber(currentUser, context,
+                        host, sequenceNumber);
         Assert.assertNotNull(allRelationshipTestSince2);
-        Assert.assertEquals(allRelationshipTestSince2.size(), 2);
+        Assert.assertEquals(allRelationshipTestSince2.size(), 4);
+
+
+        RelationshipTest testThisEntity = (RelationshipTest) allRelationshipTestSince2.get(0);
+        /*
+        JSONObject thisEntityJson = ProxyJsonSerializer.toJson(
+                testThisEntity, RelationshipTest.class);
+        Assert.assertNotNull(thisEntityJson);
+        */
 
     }
 }

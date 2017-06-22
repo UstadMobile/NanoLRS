@@ -15,7 +15,7 @@ public interface NanoLrsManagerSyncable<T extends NanoLrsModel, P> extends NanoL
 
     List<T> findBySequenceNumber(
             XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
-    List<T> getAllSinceSequenceNumber(
+    List<NanoLrsModel> getAllSinceSequenceNumber(
             XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
 
 

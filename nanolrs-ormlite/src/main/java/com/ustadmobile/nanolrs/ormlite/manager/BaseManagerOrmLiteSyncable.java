@@ -1,6 +1,7 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 
@@ -20,7 +21,7 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
     }
 
     @Override
-    public List<T> getAllSinceSequenceNumber(
+    public List<NanoLrsModel> getAllSinceSequenceNumber(
             XapiUser user, Object dbContext, String host, long seqNum) throws SQLException {
 
         return null;
