@@ -5,7 +5,7 @@ package com.ustadmobile.nanolrs.core.model;
 
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
-public interface SyncStatus {
+public interface SyncStatus extends NanoLrsModel{
     /**
      * Tells the generator that this is the primary key.
      *
@@ -22,10 +22,10 @@ public interface SyncStatus {
     String getTable();
     void setTable(String table);
 
-    String getSentSeq();
-    void setSentSeq(String sentSeq);
+    long getSentSeq();
+    void setSentSeq(long sentSeq);
 
-    String getReceivedSeq();
-    void setReceivedSeq(String receivedSeq);
+    long getReceivedSeq();
+    void setReceivedSeq(long receivedSeq);
 
 }

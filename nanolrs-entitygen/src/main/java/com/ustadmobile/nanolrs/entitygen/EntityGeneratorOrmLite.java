@@ -226,21 +226,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                     //Needs ForeignCollection
                     AnnotationSource foreignCollectionField = propertyField.addAnnotation(ForeignCollectionField.class);
 
-                    /*
-                    //Update foreignFieldName doesnt seem to be required for
-                    //one2m rel with intermediary table
-                    Set<String> foreignFields = method.getJavaDoc().getTagNames();
-                    for (String field:foreignFields){
-                        if(field.startsWith("@nanolrs.foreignFieldName=")){
-                            foreignFieldNameString = field.substring(field.indexOf("=")+1);
-                            break;
-                        }
-                    }
-                    if(foreignFieldNameString != null){
-                        foreignCollectionField.setLiteralValue("foreignFieldName", "\"" + foreignFieldNameString + "\"");
-                    }
-                    */
-
                     foreignCollectionField.setLiteralValue("eager", "false");
 
                     propertyEntityClassName = "ForeignCollection<" + listTypeName + "Entity" + ">";
@@ -256,11 +241,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 }else {
                     mutatorMethod = property.getMutator();
                 }
-                /*
-                if( this.testStudents != null){
-                    this.testStudents.clear();
-                }
-                 */
+
                 mutatorMethod.setBody("if(this." + propertyName + "!= null){" + '\n'+
                         "    this." + propertyName + ".clear();" +'\n' +
                         "}" + '\n'+ "this." + propertyName +
@@ -272,7 +253,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                     String qualifiedName = everyType.getQualifiedName();
                     if(qualifiedName.startsWith("? extends ")){
                         String newQualifiedName = qualifiedName.split("\\s+")[qualifiedName.split("\\s").length-1];
-                        if (newQualifiedName != null && newQualifiedName!=""){
+                        if (newQualifiedName != null && !newQualifiedName.equals("")){
                             qualifiedName = proxyInterface.resolveType(newQualifiedName);
                             //qualifiedName = newQualifiedName;
                         }

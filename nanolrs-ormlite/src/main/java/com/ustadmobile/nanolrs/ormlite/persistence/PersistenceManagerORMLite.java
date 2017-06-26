@@ -1,6 +1,7 @@
 package com.ustadmobile.nanolrs.ormlite.persistence;
 
 import com.j256.ormlite.dao.Dao;
+import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.RelationshipTest2StudentManager;
 import com.ustadmobile.nanolrs.core.manager.RelationshipTest2TeacherManager;
@@ -17,6 +18,7 @@ import com.ustadmobile.nanolrs.core.model.RelationshipTest;
 import com.ustadmobile.nanolrs.core.model.RelationshipTest2Student;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.manager.BaseManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.ChangeSeqManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.RelationshipTest2StudentManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.RelationshipTest2TeacherManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.RelationshipTestManagerOrmLite;
@@ -51,14 +53,21 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
         MANAGER_IMPL_MAP = new HashMap<>();
         registerManagerImplementation(XapiActivityManager.class, XapiActivityManagerOrmLite.class);
         registerManagerImplementation(XapiAgentManager.class, XapiAgentManagerOrmLite.class);
-        registerManagerImplementation(XapiForwardingStatementManager.class, XapiForwardingStatementManagerOrmLite.class);
+        registerManagerImplementation(XapiForwardingStatementManager.class,
+                XapiForwardingStatementManagerOrmLite.class);
         registerManagerImplementation(XapiStateManager.class, XapiStateManagerOrmLite.class);
-        registerManagerImplementation(XapiStatementManager.class, XapiStatementManagerOrmLite.class);
+        registerManagerImplementation(XapiStatementManager.class,
+                XapiStatementManagerOrmLite.class);
         registerManagerImplementation(XapiUserManager.class, XapiUserManagerOrmLite.class);
         registerManagerImplementation(XapiVerbManager.class, XapiVerbManagerOrmLite.class);
-        registerManagerImplementation(RelationshipTestManager.class, RelationshipTestManagerOrmLite.class);
-        registerManagerImplementation(RelationshipTest2StudentManager.class, RelationshipTest2StudentManagerOrmLite.class);
-        registerManagerImplementation(RelationshipTest2TeacherManager.class, RelationshipTest2TeacherManagerOrmLite.class);
+        registerManagerImplementation(RelationshipTestManager.class,
+                RelationshipTestManagerOrmLite.class);
+        registerManagerImplementation(RelationshipTest2StudentManager.class,
+                RelationshipTest2StudentManagerOrmLite.class);
+        registerManagerImplementation(RelationshipTest2TeacherManager.class,
+                RelationshipTest2TeacherManagerOrmLite.class);
+        registerManagerImplementation(ChangeSeqManager.class, ChangeSeqManagerOrmLite.class);
+
     }
 
 

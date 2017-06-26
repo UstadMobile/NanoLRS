@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.test.core;
 import com.ustadmobile.nanolrs.test.core.endpoints.TestXapiActivityEndpointCore;
 import com.ustadmobile.nanolrs.test.core.endpoints.TestXapiAgentEndpointCore;
 import com.ustadmobile.nanolrs.test.core.endpoints.TestXapiStateEndpointCore;
+import com.ustadmobile.nanolrs.test.core.model.TestChangeSeq;
 import com.ustadmobile.nanolrs.test.core.model.TestGetEntitiesSinceSequenceNumber;
 import com.ustadmobile.nanolrs.test.core.model.TestSequenceNumber;
 import com.ustadmobile.nanolrs.test.core.model.TestXapiForwardingStatement;
@@ -32,6 +33,7 @@ import org.junit.runners.Suite;
         TestSequenceNumber.class,
         TestGetEntitiesSinceSequenceNumber.class,
         TestEntitiesToJsonArray.class,
+        TestChangeSeq.class,
 })
 
 public abstract class NanoLrsTestSuite {

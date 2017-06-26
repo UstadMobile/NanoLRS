@@ -8,6 +8,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.ustadmobile.nanolrs.core.model.RelationshipTest2Student;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.RelationshipTest2StudentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.RelationshipTest2TeacherEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.RelationshipTestEntity;
@@ -62,7 +63,7 @@ public class PersistenceManagerJDBC extends PersistenceManagerORMLite {
             XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
             XapiUserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class,
             RelationshipTestEntity.class, RelationshipTest2StudentEntity.class,
-            RelationshipTest2TeacherEntity.class
+            RelationshipTest2TeacherEntity.class, ChangeSeqEntity.class
     };
 
 

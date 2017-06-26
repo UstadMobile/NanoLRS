@@ -5,7 +5,7 @@ package com.ustadmobile.nanolrs.core.model;
 
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
-public interface ChangeSeq {
+public interface ChangeSeq extends NanoLrsModel{
     /**
      * Tells the generator that this is the primary key.
      *
@@ -19,8 +19,7 @@ public interface ChangeSeq {
     String getTable();
     void setTable(String table);
 
-    String getNextChangeSeqNum();
-    void setNextChangeSeqNum(String nextChangeSeqNum);
-
+    long getNextChangeSeqNum();
+    void setNextChangeSeqNum(long nextChangeSeqNum);
 
 }

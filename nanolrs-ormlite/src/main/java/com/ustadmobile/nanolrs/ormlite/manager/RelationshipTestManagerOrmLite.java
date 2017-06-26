@@ -30,9 +30,7 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
         implements RelationshipTestManager {
 
     //Constructor
-    public RelationshipTestManagerOrmLite() {
-
-    }
+    public RelationshipTestManagerOrmLite() {}
 
     @Override
     public Class getEntityImplementationClasss() {
@@ -51,9 +49,10 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
         String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
 
-        //Step 1: select sent_sequence from sync_status where host=host, table=tableName;
+        //Step 1: select sent_sequence from sync_status where host=host,table=tableName;
         //  If nothing exists, sent_sequence = 0;
-        //Step 2: select * from tableName where local_sequence/master_sequence > sent_sequence;
+        //Step 2: select * from tableName where
+        // local_sequence/master_sequence > sent_sequence;
         //Step 3: that is a List<entities> and we return it.
         //Step 4: Figure out the role of user in this all (TODO)
 
@@ -62,7 +61,6 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
         whereNotSent.gt("master_sequence", seqNum);
         PreparedQuery<NanoLrsModel> getAllNewPreparedQuery = qb.prepare();
         List<NanoLrsModel> foundNewEntriesListModel = thisDao.query(getAllNewPreparedQuery);
-
 
         if(foundNewEntriesListModel == null || foundNewEntriesListModel.size() == 0){
             try {
@@ -76,67 +74,7 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
         }
 
         return foundNewEntriesListModel;
-
     }
 }
-
-
-
-    /*
-    //BaseManagerOrmLite:
-
-    @Override
-    public Class getEntityImplementationClasss() {
-        return RelationshipTestEntity.class;
-    }
-
-    @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
-        //TODO: this
-        return null;
-    }
-
-    //Constructor
-    public RelationshipTestManagerOrmLite() {
-
-    }
-
-    //NanoLrsManager (via BaseManagerOrmLite) :
-
-    @Override
-    public NanoLrsModel makeNew() {
-        return super.makeNew();
-    }
-
-    @Override
-    public void persist(Object dbContext, NanoLrsModel data) throws SQLException {
-        super.persist(dbContext, data);
-    }
-
-    @Override
-    public void delete(Object dbContext, NanoLrsModel data) throws SQLException {
-        super.delete(dbContext, data);
-    }
-
-    @Override
-    public NanoLrsModel findByPrimaryKey(Object dbContext, Object primaryKey) throws SQLException {
-        return super.findByPrimaryKey(dbContext, primaryKey);
-    }
-
-    //RelationshipTestManager (NanoLrsManagerSyncable + RelationshipTestManager):
-    @Override
-    public List findBySequenceNumber(XapiUser user, Object dbContext,
-                                     String host,  long seqNum) {
-        //TODO: this? or do we super it ?
-        return null;
-    }
-
-    @Override
-    public List getAllSinceSequenceNumber(XapiUser user, Object dbContext,
-                                          String host, long seqNum) {
-        //TODO: this? or do we super it ?
-        return null;
-    }
-    */
 
 
