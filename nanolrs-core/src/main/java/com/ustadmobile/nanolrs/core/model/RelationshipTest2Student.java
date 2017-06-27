@@ -7,7 +7,7 @@ import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
  *
  * Many-to-Many relationship intermediary class
  */
-public interface RelationshipTest2Student extends NanoLrsModel {
+public interface RelationshipTest2Student extends NanoLrsModelSyncable {
     /**
      * @return
      * @nanolrs.primarykey

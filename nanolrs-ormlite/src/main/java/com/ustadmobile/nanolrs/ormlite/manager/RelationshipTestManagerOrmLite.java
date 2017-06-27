@@ -8,6 +8,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.RelationshipTestManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.RelationshipTest;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.RelationshipTestEntity;
@@ -38,7 +39,7 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user){
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user){
         //TODO: this here or super ?
         return null;
     }

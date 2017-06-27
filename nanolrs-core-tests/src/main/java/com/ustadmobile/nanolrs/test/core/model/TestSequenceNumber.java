@@ -27,6 +27,8 @@ import java.util.UUID;
  */
 
 public class TestSequenceNumber {
+
+
     @Test
     public void testLifecycle() throws Exception {
         //Get the connectionSource from platform db pool (from NanoLrsPlatormTestUtil)
@@ -111,13 +113,13 @@ public class TestSequenceNumber {
         relationshipTest2TeacherManager2.persist(context, newRelationshipTest2Teacher2);
 
         //relationshipTestManager.persist(context, newRelationshipTest);
-        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest);
         long localSeqNumber = newRelationshipTest.getLocalSequence();
         Assert.assertNotNull(localSeqNumber);
 
         newRelationshipTest.setNotes("This is an update to the relationship..");
         //relationshipTestManager.persist(context, newRelationshipTest);
-        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest);
         long newLocalSeqNumber = newRelationshipTest.getLocalSequence();
         Assert.assertEquals(localSeqNumber +1, newLocalSeqNumber);
 

@@ -1,6 +1,7 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
+import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.XapiActivity;
@@ -70,6 +71,11 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
             System.err.println("Exception deleteById");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void persist(Object dbContext, NanoLrsModel data) throws SQLException {
+        super.persist(dbContext, data);
     }
 
     /*

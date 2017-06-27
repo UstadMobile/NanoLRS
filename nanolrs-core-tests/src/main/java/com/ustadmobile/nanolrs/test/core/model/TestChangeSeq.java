@@ -30,7 +30,7 @@ public class TestChangeSeq {
         changeSeq.setUUID(UUID.randomUUID().toString());
         changeSeq.setTable(tableName);
         changeSeq.setNextChangeSeqNum(nextSeqNum);
-        changeSeqManager.persist(context, changeSeq, changeSeqManager);
+        changeSeqManager.persist(context, changeSeq);
 
         long gottenNextSeqNum = changeSeqManager.getNextChangeByTableName(tableName, context);
         Assert.assertEquals(gottenNextSeqNum, 42);

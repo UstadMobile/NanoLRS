@@ -6,6 +6,7 @@ package com.ustadmobile.nanolrs.test.core.model;
 import com.ustadmobile.nanolrs.core.manager.RelationshipTestManager;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.RelationshipTest;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
@@ -52,7 +53,7 @@ public class TestGetEntitiesSinceSequenceNumber {
         newRelationshipTest.setOneUser(newUser);
 
         newRelationshipTest.setName("New Relationship1");
-        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest);
         
         //another 1
         RelationshipTest newRelationshipTest2 =
@@ -61,7 +62,7 @@ public class TestGetEntitiesSinceSequenceNumber {
         newRelationshipTest2.setOneUser(newUser);
 
         newRelationshipTest2.setName("New Relationship2");
-        relationshipTestManager.persist(context, newRelationshipTest2, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest2);
 
         //another 1
         RelationshipTest newRelationshipTest3 =
@@ -70,7 +71,7 @@ public class TestGetEntitiesSinceSequenceNumber {
         newRelationshipTest3.setOneUser(newUser);
 
         newRelationshipTest3.setName("New Relationship3");
-        relationshipTestManager.persist(context, newRelationshipTest3, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest3);
         
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
@@ -86,11 +87,11 @@ public class TestGetEntitiesSinceSequenceNumber {
 
         /* Manually change master seq so that we get the right statmenets that need to be sent */
         newRelationshipTest.setMasterSequence(2);
-        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest);
         newRelationshipTest3.setMasterSequence(1);
-        relationshipTestManager.persist(context, newRelationshipTest3, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest3);
         newRelationshipTest2.setMasterSequence(3);
-        relationshipTestManager.persist(context, newRelationshipTest2, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest2);
 
         /* Test every statmente from seq 1 after change in master seq */
         sequenceNumber=1;

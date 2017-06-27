@@ -51,51 +51,8 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
 
     @Override
     public void persist(Object dbContext, T data) throws SQLException {
-        long currentTableMaxSequence = data.getLocalSequence();
-        data.setLocalSequence(currentTableMaxSequence + 1);
-        //The Sync API will set this, not here. Q: How does one know its a server/client/mini server ?
-        //data.setMasterSequence(data.getMasterSequence() + 1);
-        persistenceManager.getDao(getEntityImplementationClasss(), dbContext).createOrUpdate(data);
-    }
-
-    @Override
-    public long getLatestMasterSequence(Object dbContext) throws SQLException {
-        //TODO:
-        return 42;
-    }
-
-    @Override
-    public long getLatestLocalSequence(Object dbContext) throws SQLException {
-        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
-        String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
-        QueryBuilder qb = thisDao.queryBuilder();
-        qb.selectRaw("MAX(\"local_sequence\")");
-        String rawString = qb.prepareStatementString();
-
-        long currentMaxLocalSequence = thisDao.queryRawValue(rawString);
-        return currentMaxLocalSequence;
-
-    }
-
-    @Override
-    public void persist(Object dbContext, T data, NanoLrsManager manager) throws SQLException {
-        long currentTableMaxSequence = manager.getLatestLocalSequence(dbContext);
-        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
-
-        //OR (without manager): (TODO: check if this is a better way)
-        long currentTableMaxSequence2 = thisDao.queryRawValue(
-                thisDao.queryBuilder().selectRaw(
-                        "MAX(\"local_sequence\")").prepareStatementString());
-
-        data.setLocalSequence(currentTableMaxSequence + 1);
-
-        thisDao.createOrUpdate(data);
-
-        //lets commit after this.. Not sure if autocommmit=true will solve this (TODO: check)
-        String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
-        ConnectionSource cs = (ConnectionSource) dbContext;
-        DatabaseConnection dc = cs.getReadWriteConnection(tableName);
-        thisDao.commit(dc);
+        persistenceManager.getDao(getEntityImplementationClasss(),
+                dbContext).createOrUpdate(data);
     }
 
     @Override

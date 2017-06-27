@@ -7,7 +7,7 @@ import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 
 import java.util.Collection;
 
-public interface RelationshipTest extends NanoLrsModel {
+public interface RelationshipTest extends NanoLrsModelSyncable {
 
     /**
      * @nanolrs.primarykey

@@ -5,7 +5,7 @@ package com.ustadmobile.nanolrs.core.model;
 
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
-public interface ChangeSeq extends NanoLrsModel{
+public interface ChangeSeq extends NanoLrsModelSyncable{
     /**
      * Tells the generator that this is the primary key.
      *

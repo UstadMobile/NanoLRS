@@ -8,6 +8,7 @@ import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.model.ChangeSeq;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChangeSeqManagerOrmLite extends BaseManagerOrmLite
+public class ChangeSeqManagerOrmLite extends BaseManagerOrmLiteSyncable
         implements ChangeSeqManager {
 
     //Constructor
@@ -85,15 +86,20 @@ public class ChangeSeqManagerOrmLite extends BaseManagerOrmLite
             ChangeSeq newChangeSeq = (ChangeSeq) changeSeqManager.makeNew();
             newChangeSeq.setTable(tableName);
             newChangeSeq.setNextChangeSeqNum(increment);
-            changeSeqManager.persist(dbContext, newChangeSeq, changeSeqManager);
+            changeSeqManager.persist(dbContext, newChangeSeq);
         }
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user) {
         //TODO: This
         return null;
     }
 
+    /* Try to not override and use the one above..
+    @Override
+    public void persist(Object dbContext, NanoLrsModel data, NanoLrsManager manager) throws SQLException {
 
+    }
+    */
 }

@@ -7,7 +7,7 @@ import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 
 import java.sql.SQLException;
 
-public interface ChangeSeqManager extends NanoLrsManager {
+public interface ChangeSeqManager extends NanoLrsManagerSyncable {
     /**
      * Gets the nextChangeSeqNumber for table name (string)
      * @param tableName

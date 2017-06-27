@@ -27,12 +27,6 @@ public interface NanoLrsManager<T extends NanoLrsModel, P> {
      */
     void persist(Object dbContext, T data) throws SQLException;
 
-    /*
-    Trying persist with manager, so we can get properties of the table
-    eg: latest field value, etc
-     */
-    void persist(Object dbContext, T data, NanoLrsManager manager) throws SQLException;
-
     /**
      * Ddelete the object from the database
      *
@@ -49,14 +43,6 @@ public interface NanoLrsManager<T extends NanoLrsModel, P> {
      */
     T findByPrimaryKey(Object dbContext, P primaryKey) throws SQLException;
 
-    /*
-    Gets latest local sequence of this table
-     */
-    long getLatestLocalSequence(Object dbContext) throws SQLException;
 
-    /*
-    Gets latest master sequence of this table
-     */
-    long getLatestMasterSequence(Object dbContext) throws SQLException;
 
 }

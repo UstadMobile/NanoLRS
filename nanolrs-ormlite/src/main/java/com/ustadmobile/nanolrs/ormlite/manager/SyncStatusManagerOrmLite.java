@@ -9,10 +9,17 @@ import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.SyncStatusEntity;
 
+import java.sql.SQLException;
+
 public class SyncStatusManagerOrmLite extends BaseManagerOrmLite implements SyncStatusManager {
 
     //Constructor
     public SyncStatusManagerOrmLite() {
+    }
+
+    @Override
+    public void persist(Object dbContext, NanoLrsModel data) throws SQLException {
+        super.persist(dbContext, data);
     }
 
     @Override
@@ -25,6 +32,4 @@ public class SyncStatusManagerOrmLite extends BaseManagerOrmLite implements Sync
         //TOOD: this
         return null;
     }
-
-
 }

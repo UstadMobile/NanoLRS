@@ -54,7 +54,7 @@ public class TestEntitiesToJsonArray {
         newRelationshipTest.setOneUser(newUser);
 
         newRelationshipTest.setName("New Relationship1");
-        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest);
 
         //another 1
         RelationshipTest newRelationshipTest2 =
@@ -63,7 +63,7 @@ public class TestEntitiesToJsonArray {
         newRelationshipTest2.setOneUser(newUser);
 
         newRelationshipTest2.setName("New Relationship2");
-        relationshipTestManager.persist(context, newRelationshipTest2, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest2);
 
         //another 1
         RelationshipTest newRelationshipTest3 =
@@ -72,7 +72,7 @@ public class TestEntitiesToJsonArray {
         newRelationshipTest3.setOneUser(newUser);
 
         newRelationshipTest3.setName("New Relationship3");
-        relationshipTestManager.persist(context, newRelationshipTest3, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest3);
 
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
@@ -81,11 +81,11 @@ public class TestEntitiesToJsonArray {
 
         /* Manually change master seq so that we get the right statmenets that need to be sent */
         newRelationshipTest.setMasterSequence(2);
-        relationshipTestManager.persist(context, newRelationshipTest, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest);
         newRelationshipTest3.setMasterSequence(1);
-        relationshipTestManager.persist(context, newRelationshipTest3, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest3);
         newRelationshipTest2.setMasterSequence(3);
-        relationshipTestManager.persist(context, newRelationshipTest2, relationshipTestManager);
+        relationshipTestManager.persist(context, newRelationshipTest2);
 
         /* Test every statmente from seq 1 after change in master seq */
 

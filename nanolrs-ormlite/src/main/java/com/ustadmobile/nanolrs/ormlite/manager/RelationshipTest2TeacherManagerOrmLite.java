@@ -2,6 +2,7 @@ package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.ustadmobile.nanolrs.core.manager.RelationshipTest2TeacherManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.RelationshipTest2TeacherEntity;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * Created by varuna on 6/13/2017.
  */
 
-public class RelationshipTest2TeacherManagerOrmLite extends BaseManagerOrmLite
+public class RelationshipTest2TeacherManagerOrmLite extends BaseManagerOrmLiteSyncable
         implements RelationshipTest2TeacherManager {
     @Override
     public List findBySequenceNumber(XapiUser user, Object dbContext,
@@ -56,7 +57,7 @@ public class RelationshipTest2TeacherManagerOrmLite extends BaseManagerOrmLite
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user) {
         return null;
     }
 }
