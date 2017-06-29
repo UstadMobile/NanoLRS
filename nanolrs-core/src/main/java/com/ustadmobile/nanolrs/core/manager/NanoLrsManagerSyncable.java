@@ -14,10 +14,6 @@ import java.util.List;
 
 public interface NanoLrsManagerSyncable<T extends NanoLrsModelSyncable, P> extends NanoLrsManager {
 
-    /*
-    Gets latest local sequence of this table
-     */
-    long getLatestLocalSequence(Object dbContext) throws SQLException;
 
     /*
     Gets latest master sequence of this table

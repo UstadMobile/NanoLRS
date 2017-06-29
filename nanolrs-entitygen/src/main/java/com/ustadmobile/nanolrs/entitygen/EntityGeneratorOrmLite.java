@@ -85,6 +85,8 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         3. Create entites for every method
         */
         List<String> allInterfaces = proxyInterface.getInterfaces();
+
+
         for(String everyInterface:allInterfaces){
             try {
                 //This won't work since entitygen doesn't have proxy in class path.
@@ -99,12 +101,44 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 File everyInterfaceFile = new File(everyInterfacePath);
 
                 String everyInterfaceStr = FileUtils.readFileToString(everyInterfaceFile, "UTF-8");
-                JavaInterfaceSource evreryInterfaceSource =
+                JavaInterfaceSource everyInterfaceSource =
                         Roaster.parse(JavaInterfaceSource.class, everyInterfaceStr);
-                Iterator<MethodSource<JavaInterfaceSource>> everyInterfaceIterator =
-                        evreryInterfaceSource.getMethods().iterator();
 
-                generateFromIterator(everyInterfaceIterator, ormLiteObj, evreryInterfaceSource);
+                //Iterator<MethodSource<JavaInterfaceSource>> everyInterfaceIterator =
+                //        everyInterfaceSource.getMethods().iterator();
+
+                /*
+                Before we go ahead, the following must be extending something.
+                eg: NanoLrsModelSyncable extends NanoLrsModel . So we need that
+                as well..
+                 */
+                List<String> allSubInterfaces = everyInterfaceSource.getInterfaces();
+                for(String everySubInterface:allSubInterfaces){
+                    try{
+                        String everySubInterfacePath =
+                                proxyInterfaceFile.getParent() + "\\" +
+                                        everySubInterface.split("\\.")[everySubInterface.split("\\.").length -1] +
+                                        ".java";
+
+                        File everySubInterfaceFile = new File(everySubInterfacePath);
+
+                        String everySubInterfaceStr = FileUtils.readFileToString(everySubInterfaceFile, "UTF-8");
+                        JavaInterfaceSource everySubInterfaceSource =
+                                Roaster.parse(JavaInterfaceSource.class, everySubInterfaceStr);
+                        Iterator<MethodSource<JavaInterfaceSource>> everySubInterfaceIterator =
+                                everySubInterfaceSource.getMethods().iterator();
+                        while(everySubInterfaceIterator.hasNext()){
+                            everyInterfaceSource.addMethod(everySubInterfaceIterator.next());
+                        }
+
+                    }catch(Exception ex){
+                        ex.printStackTrace();
+                    }
+                }
+                Iterator<MethodSource<JavaInterfaceSource>> everyInterfaceIterator =
+                        everyInterfaceSource.getMethods().iterator();
+
+                generateFromIterator(everyInterfaceIterator, ormLiteObj, everyInterfaceSource);
 
                 int x=0;
             }catch(Exception e){
@@ -118,6 +152,36 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         generateFromIterator(iterator, ormLiteObj, proxyInterface);
 
         FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
+    }
+
+    public Iterator<MethodSource<JavaInterfaceSource>> getMethodIteratorFromClass(){
+        /*
+        List<String> allInterfaces = proxyInterface.getInterfaces();
+        for(String everyInterface:allInterfaces){
+            try {
+                String everyInterfacePath =
+                        proxyInterfaceFile.getParent() + "\\" +
+                                everyInterface.split("\\.")[everyInterface.split("\\.").length -1] +
+                                ".java";
+
+                File everyInterfaceFile = new File(everyInterfacePath);
+
+                String everyInterfaceStr = FileUtils.readFileToString(everyInterfaceFile, "UTF-8");
+                JavaInterfaceSource evreryInterfaceSource =
+                        Roaster.parse(JavaInterfaceSource.class, everyInterfaceStr);
+                Iterator<MethodSource<JavaInterfaceSource>> everyInterfaceIterator =
+                        evreryInterfaceSource.getMethods().iterator();
+
+                return everyInterfaceIterator;
+
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+        */
+
+        return null;
     }
 
     protected void generateFromIterator(Iterator<MethodSource<JavaInterfaceSource>> iterator,

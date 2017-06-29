@@ -24,6 +24,6 @@ public interface ChangeSeqManager extends NanoLrsManagerSyncable {
      * @param dbContext
      * @throws SQLException
      */
-    void getNextChangeAddSeqByTableName(String tableName, int increment, Object dbContext)
+    long getNextChangeAddSeqByTableName(String tableName, int increment, Object dbContext)
             throws SQLException;
 }

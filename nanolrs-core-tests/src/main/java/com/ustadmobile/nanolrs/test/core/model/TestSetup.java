@@ -1,26 +1,23 @@
 package com.ustadmobile.nanolrs.test.core.model;
-/**
- * Created by varuna on 6/21/2017.
- */
 
 import com.ustadmobile.nanolrs.core.manager.RelationshipTestManager;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
-import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.RelationshipTest;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
-public class TestGetEntitiesSinceSequenceNumber {
-    @Test
-    public void testLifecycle() throws Exception {
+/**
+ * Created by varuna on 6/29/2017.
+ */
+
+public class TestSetup {
+
+    public void setup() throws Exception{
+
         //Get the connectionSource from platform db pool (from NanoLrsPlatformTestUtil)
         Object context = NanoLrsPlatformTestUtil.getContext();
 
@@ -47,13 +44,13 @@ public class TestGetEntitiesSinceSequenceNumber {
         //create a relationship
         RelationshipTestManager relationshipTestManager =
                 PersistenceManager.getInstance().getManager(RelationshipTestManager.class);
-        RelationshipTest newRelationshipTest =
+        RelationshipTest newRelationshipTest1 =
                 (RelationshipTest) relationshipTestManager.makeNew();
-        newRelationshipTest.setUuid(UUID.randomUUID().toString());
-        newRelationshipTest.setOneUser(newUser);
+        newRelationshipTest1.setUuid(UUID.randomUUID().toString());
+        newRelationshipTest1.setOneUser(newUser);
 
-        newRelationshipTest.setName("New Relationship1");
-        relationshipTestManager.persist(context, newRelationshipTest);
+        newRelationshipTest1.setName("New Relationship1");
+        relationshipTestManager.persist(context, newRelationshipTest1);
 
         //another 1
         RelationshipTest newRelationshipTest2 =
@@ -72,33 +69,5 @@ public class TestGetEntitiesSinceSequenceNumber {
 
         newRelationshipTest3.setName("New Relationship3");
         relationshipTestManager.persist(context, newRelationshipTest3);
-        
-        //Get all entities since sequence number 0
-        long sequenceNumber = 0;
-        XapiUser currentUser = null;
-        String host = "testing_host";
-
-        /* Test that our list is not null and includes every entity */
-        List<NanoLrsModel> allRelationshipTestsSince = relationshipTestManager.getAllSinceSequenceNumber(
-                currentUser, context, host, sequenceNumber);
-        Assert.assertNotNull(allRelationshipTestsSince);
-        //Supposed to be the 3 here + 1(from the previous test)
-        Assert.assertEquals(allRelationshipTestsSince.size(), 4);
-
-        /* Manually change master seq so that we get the right statmenets that need to be sent */
-        newRelationshipTest.setMasterSequence(2);
-        relationshipTestManager.persist(context, newRelationshipTest);
-        newRelationshipTest3.setMasterSequence(1);
-        relationshipTestManager.persist(context, newRelationshipTest3);
-        newRelationshipTest2.setMasterSequence(3);
-        relationshipTestManager.persist(context, newRelationshipTest2);
-
-        /* Test every statmente from seq 1 after change in master seq */
-        sequenceNumber=1;
-        List<NanoLrsModel> allRelationshipTestSince2 = relationshipTestManager.getAllSinceSequenceNumber(
-                currentUser, context, host, sequenceNumber);
-        Assert.assertNotNull(allRelationshipTestSince2);
-        Assert.assertEquals(allRelationshipTestSince2.size(), 2);
-
     }
 }

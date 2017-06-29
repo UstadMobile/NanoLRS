@@ -6,16 +6,16 @@ package com.ustadmobile.nanolrs.core.model;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
 public interface ChangeSeq extends NanoLrsModelSyncable{
+
+    String getUUID();
+    void setUUID(String uuid);
+
     /**
      * Tells the generator that this is the primary key.
      *
      * @return
      * @nanolrs.primarykey
      */
-    String getUUID();
-
-    void setUUID(String uuid);
-
     String getTable();
     void setTable(String table);
 

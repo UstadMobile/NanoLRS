@@ -112,6 +112,9 @@ public class TestSequenceNumber {
         newRelationshipTest2Teacher2.setTeacher(newUser4);
         relationshipTest2TeacherManager2.persist(context, newRelationshipTest2Teacher2);
 
+
+
+
         //relationshipTestManager.persist(context, newRelationshipTest);
         relationshipTestManager.persist(context, newRelationshipTest);
         long localSeqNumber = newRelationshipTest.getLocalSequence();
@@ -120,6 +123,7 @@ public class TestSequenceNumber {
         newRelationshipTest.setNotes("This is an update to the relationship..");
         //relationshipTestManager.persist(context, newRelationshipTest);
         relationshipTestManager.persist(context, newRelationshipTest);
+
         long newLocalSeqNumber = newRelationshipTest.getLocalSequence();
         Assert.assertEquals(localSeqNumber +1, newLocalSeqNumber);
 

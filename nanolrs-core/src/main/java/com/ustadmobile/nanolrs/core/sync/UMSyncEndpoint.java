@@ -1,5 +1,9 @@
 package com.ustadmobile.nanolrs.core.sync;
 
+import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
+import com.ustadmobile.nanolrs.core.model.SyncStatus;
+import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+
 import java.io.InputStream;
 import java.util.Map;
 
@@ -9,15 +13,24 @@ import java.util.Map;
  * and servers via HTTP request.
  * Created by varuna on 6/27/2017.
  */
-public class UMSyncEndpoint {
+public interface UMSyncEndpoint {
 
-    public UMSyncResult handleIncomingSync(InputStream inputStream, Map headers){
-        //TODO: this
-        return null;
-    }
+    /**
+     * Handles incoming sync requests. Essentially an endpoint to process request and
+     * update database and handle it
+     * @param inputStream
+     * @param headers
+     * @return
+     */
+    public UMSyncResult handleIncomingSync(InputStream inputStream, Map headers, Object dbContext);
 
-    public UMSyncResult startSync(String syncURL, String host){
-        //TODO: this
-        return null;
-    }
+    /**
+     * Handles sync process : gets all entites to be synced from syncstatus seqnum and
+     * builds entities list to convert to json array to send in a request to host's
+     * syncURL endpoint
+     * @param syncURL
+     * @param host
+     * @return
+     */
+    public UMSyncResult startSync(String syncURL, String host, Object dbContext);
 }
