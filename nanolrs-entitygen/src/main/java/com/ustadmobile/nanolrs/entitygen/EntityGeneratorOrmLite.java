@@ -60,8 +60,18 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         String ormLiteClassName = baseName + "Entity";
         File outFile = new File(outDir, ormLiteClassName + ".java");
 
+        String generatorPath =
+                "..\\nanolrs-entitygen\\src\\main\\java\\com\\ustadmobile\\nanolrs\\entitygen";
+        File thisGeneratorFile =
+                new File(generatorPath, this.getClass().getSimpleName() + ".java");
+
+        //This is checking if the proxy file is newer than the entity file created
+        //(ie: no more changes)
+        //This is also checking if there is any change to EntityGen itself.
+        //If Entitygen is newer than the proxy, this will be processed.
         if(outFile.lastModified() > proxyInterfaceFile.lastModified())
-            return;
+            if(thisGeneratorFile.lastModified() < outFile.lastModified())
+                return;
 
         String proxyStr = FileUtils.readFileToString(proxyInterfaceFile, "UTF-8");
         JavaInterfaceSource proxyInterface =
