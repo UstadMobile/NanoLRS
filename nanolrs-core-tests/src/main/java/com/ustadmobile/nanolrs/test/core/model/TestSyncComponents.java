@@ -3,11 +3,21 @@ package com.ustadmobile.nanolrs.test.core.model;
  * Created by varuna on 6/29/2017.
  */
 
+import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
+import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
+import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
+import com.ustadmobile.nanolrs.core.model.ChangeSeq;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.UUID;
 
 public class TestSyncComponents {
     @Test
@@ -15,7 +25,75 @@ public class TestSyncComponents {
         //Get the connectionSource from platform db pool (from NanoLrsPlatformTestUtil)
         Object context = NanoLrsPlatformTestUtil.getContext();
 
-        //TODO: Write tests here..
+        XapiUserManager userManager =
+                PersistenceManager.getInstance().getManager(XapiUserManager.class);
+        ChangeSeqManager changeSeqManager = PersistenceManager.getInstance().getManager(
+                ChangeSeqManager.class);
+        String tableName = "XAPI_USER";
+
+        long initialSeqNum =
+                changeSeqManager.getNextChangeByTableName(tableName, context) -1;
+
+        String newUserId = UUID.randomUUID().toString();
+        XapiUser newUser = (XapiUser)userManager.makeNew();
+        newUser.setUuid(newUserId);
+        newUser.setUsername("thebestuser");
+        userManager.persist(context, newUser);
+
+        XapiUser theUser = (XapiUser)userManager.findByPrimaryKey(context, newUserId);
+        long seqNumber = theUser.getLocalSequence();
+        Assert.assertNotNull(seqNumber);
+
+        theUser.setNotes("Update01");
+        userManager.persist(context, theUser);
+        XapiUser updatedUser = (XapiUser) userManager.findByPrimaryKey(context, newUserId);
+        long updatedSeqNumber = updatedUser.getLocalSequence();
+        Assert.assertEquals(updatedSeqNumber, seqNumber + 1);
+
+        //Lets create another user
+        XapiUser anotherUser = (XapiUser)userManager.makeNew();
+        anotherUser.setUuid(UUID.randomUUID().toString());
+        anotherUser.setUsername("anotheruser");
+        userManager.persist(context, anotherUser);
+
+        //Get all entities since sequence number 0
+        long sequenceNumber = 0;
+        XapiUser currentUser = null;
+        String host = "testing_host";
+
+        /* Test that our list is not null and includes every entity */
+        List<NanoLrsModel> allUsersSince = userManager.getAllSinceSequenceNumber(
+                currentUser, context, host, sequenceNumber);
+        Assert.assertNotNull(allUsersSince);
+
+        //Supposed to be the 2 created above
+        Assert.assertEquals(allUsersSince.size(), 2);
+
+        //Manually change master seq so that we get the right statmenets that need to be sent
+        theUser.setMasterSequence(2);
+        userManager.persist(context, theUser);
+        anotherUser.setMasterSequence(1);
+        userManager.persist(context, anotherUser);
+
+        // Test every statmente from seq 1 after change in master seq
+        sequenceNumber=1;
+        List<NanoLrsModel> allUsersSince2 =
+                userManager.getAllSinceSequenceNumber(
+                currentUser, context, host, sequenceNumber);
+        Assert.assertNotNull(allUsersSince2);
+        Assert.assertEquals(allUsersSince2.size(), 1);
+
+        //Get XAPI_USER changeseq entry:
+        //Test the value will be
+        long gottenNextSeqNum = changeSeqManager.getNextChangeByTableName(tableName, context);
+        Assert.assertEquals(gottenNextSeqNum, 6);
+
+        //Allocate +2
+        changeSeqManager.getNextChangeAddSeqByTableName(tableName, 2, context);
+        //Test value
+        long postIncrementGottenNextSeqNumber =
+                changeSeqManager.getNextChangeByTableName(tableName, context);
+        Assert.assertEquals(postIncrementGottenNextSeqNumber, 8);
 
 
     }

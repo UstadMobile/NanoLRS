@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiUserEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
@@ -15,7 +16,7 @@ import java.util.List;
  * Created by mike on 9/27/16.
  */
 
-public class XapiUserManagerOrmLite extends BaseManagerOrmLite implements XapiUserManager {
+public class XapiUserManagerOrmLite extends BaseManagerOrmLiteSyncable implements XapiUserManager {
 
     public XapiUserManagerOrmLite() {
     }
@@ -26,7 +27,7 @@ public class XapiUserManagerOrmLite extends BaseManagerOrmLite implements XapiUs
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user) {
         return null;
     }
 
@@ -36,25 +37,6 @@ public class XapiUserManagerOrmLite extends BaseManagerOrmLite implements XapiUs
         created.setUuid(id);
         return created;
     }
-
-    @Override
-    public void persist(Object dbContext, XapiUser user) {
-        try {
-            super.persist(dbContext, user);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Dao<XapiUserEntity, String> dao = persistenceManager.getDao(XapiUserEntity.class, dbContext);
-            dao.createOrUpdate((XapiUserEntity)user);
-        }catch(SQLException e) {
-            System.err.println("Exception persist");
-            e.printStackTrace();
-        }
-
-    }
-
 
     @Override
     public XapiUser findById(Object dbContext, String id) {
@@ -95,11 +77,4 @@ public class XapiUserManagerOrmLite extends BaseManagerOrmLite implements XapiUs
             e.printStackTrace();
         }
     }
-
-    /*
-    @Override
-    public NanoLrsModel makeNew() throws SQLException {
-        return null;
-    }
-    */
 }

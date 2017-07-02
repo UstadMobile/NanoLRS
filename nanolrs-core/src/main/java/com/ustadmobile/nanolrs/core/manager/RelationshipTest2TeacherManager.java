@@ -9,10 +9,6 @@ import java.util.List;
  */
 
 public interface RelationshipTest2TeacherManager extends NanoLrsManagerSyncable {
-    //TODO: This
-
-    @Override
-    List findBySequenceNumber(XapiUser user, Object dbContext, String host, long seqNum);
 
     @Override
     List getAllSinceSequenceNumber(XapiUser user, Object dbContext, String host, long seqNum);

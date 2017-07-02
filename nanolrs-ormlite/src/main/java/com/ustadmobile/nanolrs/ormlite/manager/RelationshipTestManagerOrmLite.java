@@ -38,44 +38,6 @@ public class RelationshipTestManagerOrmLite extends BaseManagerOrmLiteSyncable
         return RelationshipTestEntity.class;
     }
 
-    @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user){
-        //TODO: this here or super ?
-        return null;
-    }
-
-    @Override
-    public List<NanoLrsModel> getAllSinceSequenceNumber(
-            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException{
-        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
-        String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
-
-        //Step 1: select sent_sequence from sync_status where host=host,table=tableName;
-        //  If nothing exists, sent_sequence = 0;
-        //Step 2: select * from tableName where
-        // local_sequence/master_sequence > sent_sequence;
-        //Step 3: that is a List<entities> and we return it.
-        //Step 4: Figure out the role of user in this all (TODO)
-
-        QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
-        Where whereNotSent = qb.where();
-        whereNotSent.gt("master_sequence", seqNum);
-        PreparedQuery<NanoLrsModel> getAllNewPreparedQuery = qb.prepare();
-        List<NanoLrsModel> foundNewEntriesListModel = thisDao.query(getAllNewPreparedQuery);
-
-        if(foundNewEntriesListModel == null || foundNewEntriesListModel.size() == 0){
-            try {
-                thisDao.closeLastIterator();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            QueryBuilder dbAll = thisDao.queryBuilder();
-            PreparedQuery<NanoLrsModel> getAllPreparedQuery = dbAll.prepare();
-            foundNewEntriesListModel = thisDao.query(getAllPreparedQuery);
-        }
-
-        return foundNewEntriesListModel;
-    }
 }
 
 

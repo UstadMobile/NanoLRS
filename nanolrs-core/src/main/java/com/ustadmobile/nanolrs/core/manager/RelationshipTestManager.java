@@ -17,11 +17,7 @@ public interface RelationshipTestManager extends NanoLrsManagerSyncable{
     // the NanoLrsManagerSyncable entities. We Override those so that they get passed
     // on to the Manager implementation : eg: RelationshipTestManagerOrmLite, etc
 
-    @Override
-    List findBySequenceNumber(
-            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
+    //We actually don't need to override anything here. All in base manager. Only specific
+    //to this entity is enough..
 
-    @Override
-    List<NanoLrsModel> getAllSinceSequenceNumber(
-            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
 }

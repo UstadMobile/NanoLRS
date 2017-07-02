@@ -15,11 +15,6 @@ import java.util.List;
 
 public class RelationshipTest2TeacherManagerOrmLite extends BaseManagerOrmLiteSyncable
         implements RelationshipTest2TeacherManager {
-    @Override
-    public List findBySequenceNumber(XapiUser user, Object dbContext,
-                                     String host, long seqNum) {
-        return null;
-    }
 
     @Override
     public List getAllSinceSequenceNumber(XapiUser user, Object dbContext,

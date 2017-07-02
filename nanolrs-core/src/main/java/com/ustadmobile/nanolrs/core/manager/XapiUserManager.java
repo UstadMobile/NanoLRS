@@ -8,11 +8,9 @@ import java.util.List;
  * Created by mike on 9/27/16.
  */
 
-public interface XapiUserManager extends NanoLrsManager {
+public interface XapiUserManager extends NanoLrsManagerSyncable {
 
     XapiUser createSync(Object dbContext, String id);
-
-    void persist(Object dbContext, XapiUser user);
 
     XapiUser findById(Object dbContext, String id);
 

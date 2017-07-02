@@ -2,17 +2,17 @@ package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
-import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -24,39 +24,49 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         extends BaseManagerOrmLite implements NanoLrsManagerSyncable<T,P> {
 
     @Override
-    public List<T> findBySequenceNumber(
-            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException {
-        return null;
-    }
-
-    @Override
     public List<NanoLrsModel> getAllSinceSequenceNumber(
             XapiUser user, Object dbContext, String host, long seqNum) throws SQLException {
 
-        return null;
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+
+        //Step 1: select sent_sequence from sync_status where host=host,table=tableName;
+        //  If nothing exists, sent_sequence = 0;
+        //Step 2: select * from tableName where
+        // local_sequence/master_sequence > sent_sequence;
+        //Step 3: that is a List<entities> and we return it.
+        //Step 4: Figure out the role of user in this all (TODO)
+
+        QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
+        Where whereNotSent = qb.where();
+        whereNotSent.gt("master_sequence", seqNum);
+        PreparedQuery<NanoLrsModel> getAllNewPreparedQuery = qb.prepare();
+        List<NanoLrsModel> foundNewEntriesListModel = thisDao.query(getAllNewPreparedQuery);
+
+        if(foundNewEntriesListModel == null || foundNewEntriesListModel.size() == 0){
+            try {
+                thisDao.closeLastIterator();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            QueryBuilder dbAll = thisDao.queryBuilder();
+            PreparedQuery<NanoLrsModel> getAllPreparedQuery = dbAll.prepare();
+            foundNewEntriesListModel = thisDao.query(getAllPreparedQuery);
+        }
+
+        return foundNewEntriesListModel;
     }
 
     @Override
     public void persist(Object dbContext, NanoLrsModel data) throws SQLException {
-        //Used to be T data
         NanoLrsModelSyncable dataS = (NanoLrsModelSyncable)data;
 
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
-        /*
-        long currentTableMaxSequence = thisDao.queryRawValue(
-                thisDao.queryBuilder().selectRaw(
-                        "MAX(\"local_sequence\")").prepareStatementString());
-        dataS.setLocalSequence(currentTableMaxSequence + 1);
-        */
-        ///*
 
         String tableName = ((BaseDaoImpl)thisDao).getTableInfo().getTableName();
         ChangeSeqManager changeSeqManager =
                 PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
-        //long setThis = changeSeqManager.getNextChangeByTableName(tableName, dbContext);
         long setThis = changeSeqManager.getNextChangeAddSeqByTableName(tableName, 1, dbContext);
         dataS.setLocalSequence(setThis);
-        ///*
 
         super.persist(dbContext, dataS);
     }
@@ -67,6 +77,10 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         return 42;
     }
 
-    public abstract T findAllRelatedToUser(Object dbContext, XapiUser user);
+    @Override
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user) {
+        //TODO:
+        return null;
+    }
 
 }

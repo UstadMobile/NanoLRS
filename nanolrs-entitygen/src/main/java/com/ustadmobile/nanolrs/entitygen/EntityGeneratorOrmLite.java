@@ -55,8 +55,6 @@ import java.util.Set;
 
 public class EntityGeneratorOrmLite extends EntityGenerator {
 
-
-
     public void generate(String baseName, File proxyInterfaceFile,
                          File outDir, String outPackage) throws IOException{
         String ormLiteClassName = baseName + "Entity";
@@ -104,9 +102,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 JavaInterfaceSource everyInterfaceSource =
                         Roaster.parse(JavaInterfaceSource.class, everyInterfaceStr);
 
-                //Iterator<MethodSource<JavaInterfaceSource>> everyInterfaceIterator =
-                //        everyInterfaceSource.getMethods().iterator();
-
                 /*
                 Before we go ahead, the following must be extending something.
                 eg: NanoLrsModelSyncable extends NanoLrsModel . So we need that
@@ -140,7 +135,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
 
                 generateFromIterator(everyInterfaceIterator, ormLiteObj, everyInterfaceSource);
 
-                int x=0;
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -152,36 +146,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         generateFromIterator(iterator, ormLiteObj, proxyInterface);
 
         FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
-    }
-
-    public Iterator<MethodSource<JavaInterfaceSource>> getMethodIteratorFromClass(){
-        /*
-        List<String> allInterfaces = proxyInterface.getInterfaces();
-        for(String everyInterface:allInterfaces){
-            try {
-                String everyInterfacePath =
-                        proxyInterfaceFile.getParent() + "\\" +
-                                everyInterface.split("\\.")[everyInterface.split("\\.").length -1] +
-                                ".java";
-
-                File everyInterfaceFile = new File(everyInterfacePath);
-
-                String everyInterfaceStr = FileUtils.readFileToString(everyInterfaceFile, "UTF-8");
-                JavaInterfaceSource evreryInterfaceSource =
-                        Roaster.parse(JavaInterfaceSource.class, everyInterfaceStr);
-                Iterator<MethodSource<JavaInterfaceSource>> everyInterfaceIterator =
-                        evreryInterfaceSource.getMethods().iterator();
-
-                return everyInterfaceIterator;
-
-
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-
-        */
-
-        return null;
     }
 
     protected void generateFromIterator(Iterator<MethodSource<JavaInterfaceSource>> iterator,
@@ -280,7 +244,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                             listFirstType.getName().split("\\s+")[listFirstType.getName().split("\\s+").length-1];
                 }else{
                     propertyEntityClassName = listFirstType.getName();
-                    //propertyEntityClassName = propertyEntityClassName + "Entity";
                 }
                 propertyTypeName = method.getReturnType().toString();
                 String listTypeName = propertyEntityClassName;
@@ -379,7 +342,6 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 entityFile.delete();
             }
         }
-
     }
 
     /**
