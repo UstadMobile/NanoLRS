@@ -4,10 +4,8 @@ package com.ustadmobile.nanolrs.test.core.util;
  */
 
 import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
-import com.ustadmobile.nanolrs.core.manager.RelationshipTestManager;
 import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.model.RelationshipTest;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;

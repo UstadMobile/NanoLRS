@@ -5,9 +5,9 @@ package com.ustadmobile.nanolrs.core;
  */
 
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
-import com.ustadmobile.nanolrs.core.manager.RelationshipTestManager;
+import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.model.RelationshipTest;
+import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import org.json.JSONObject;
@@ -16,21 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
-import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
-
-import org.json.JSONObject;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import sun.reflect.annotation.AnnotatedTypeFactory;
 
 public class ProxyJsonSerializer {
 
@@ -49,8 +34,8 @@ public class ProxyJsonSerializer {
 
     //TODO: Find a central place for this and other mappings..
     static {
-        proxyNameToClassMap.put(RelationshipTest.class.getName(), RelationshipTest.class);
-        proxyClassToManagerMap.put(RelationshipTest.class, RelationshipTestManager.class);
+        proxyNameToClassMap.put(XapiUser.class.getName(), XapiUser.class);
+        proxyClassToManagerMap.put(XapiUser.class, XapiUserManager.class);
 
         /*
         proxyNameToClassMap.put(Person.class.getName(), Person.class);

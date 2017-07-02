@@ -4,18 +4,13 @@ package com.ustadmobile.nanolrs.ormlite.manager;
  */
 
 import com.j256.ormlite.dao.Dao;
-import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.model.ChangeSeq;
-import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ChangeSeqManagerOrmLite extends BaseManagerOrmLiteSyncable
         implements ChangeSeqManager {
