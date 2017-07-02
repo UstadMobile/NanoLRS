@@ -102,9 +102,9 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
                 //Class<?> interfaceClass = Class.forName(everyInterface);
                 //String everyInterfacePath = proxyInterface.resolveType(everyInterface);
                 String everyInterfacePath =
-                        proxyInterfaceFile.getParent() + "\\" +
-                                everyInterface.split("\\.")[everyInterface.split("\\.").length -1] +
-                                    ".java";
+                        proxyInterfaceFile.getParent() + File.separator +
+                                everyInterface.split(File.separator + ".")
+                                        [everyInterface.split(File.separator + ".").length -1] + ".java";
 
                 File everyInterfaceFile = new File(everyInterfacePath);
 
