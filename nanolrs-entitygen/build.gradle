@@ -18,6 +18,12 @@ task runOrmLiteGeneration(type: JavaExec) {
     args "../nanolrs-core/src/main/java/com/ustadmobile/nanolrs/core/model/", "../nanolrs-ormlite/src/main/java/com/ustadmobile/nanolrs/ormlite/generated/model", "com.ustadmobile.nanolrs.ormlite.generated.model"
 }
 
+task cleanGeneratedEntites(type: Delete) {
+    delete "../nanolrs-ormlite/src/main/java/com/ustadmobile/nanolrs/ormlite/generated/model"
+}
+
+runOrmLiteGeneration.dependsOn(cleanGeneratedEntites)
+
 task runSharkOrmGeneration(type: JavaExec){
     classpath sourceSets.main.runtimeClasspath
     main = "com.ustadmobile.nanolrs.entitygen.EntityGeneratorSharkOrm"
