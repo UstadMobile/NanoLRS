@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.SyncStatusEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiDocumentEntity;
@@ -14,12 +15,8 @@ import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
-//import com.ustadmobile.nanolrs.buildconfig.TestConstants;
 
 import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
 
 /**
  * Created by Varuna on 4/4/2017.
@@ -52,10 +49,10 @@ public class PersistenceManagerJDBC extends PersistenceManagerORMLite {
         }
     }
 
-    public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
-            XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
-            UserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class,
-            ChangeSeqEntity.class
+    public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class,
+            XapiAgentEntity.class, XapiStatementEntity.class, XapiVerbEntity.class,
+            XapiForwardingStatementEntity.class, UserEntity.class, XapiDocumentEntity.class,
+            XapiStateEntity.class, ChangeSeqEntity.class, SyncStatusEntity.class
     };
 
 

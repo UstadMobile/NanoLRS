@@ -8,6 +8,8 @@ import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
+import com.ustadmobile.nanolrs.core.sync.UMSyncResult;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
 import org.junit.Assert;
@@ -15,6 +17,8 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.UUID;
+
+import static com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint.*;
 
 public class TestSyncComponents {
     @Test
@@ -95,6 +99,11 @@ public class TestSyncComponents {
                 changeSeqManager.getNextChangeByTableName(tableName, context);
         Assert.assertEquals(postIncrementGottenNextSeqNumber, gottenNextSeqNum + 2);
 
+        String syncURL = "test";
+
+        //TODO: Continue this..
+        //UMSyncResult result = UMSyncEndpoint.startSync(syncURL, host, context);
+        //Assert.assertNotNull(result);
 
     }
 }

@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.ormlite.persistence;
 import com.j256.ormlite.dao.Dao;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
+import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
@@ -14,6 +15,7 @@ import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.manager.BaseManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.ChangeSeqManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.SyncStatusManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.XapiActivityManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.XapiAgentManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.XapiForwardingStatementManagerOrmLite;
@@ -53,6 +55,7 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
         registerManagerImplementation(UserManager.class, UserManagerOrmLite.class);
         registerManagerImplementation(XapiVerbManager.class, XapiVerbManagerOrmLite.class);
         registerManagerImplementation(ChangeSeqManager.class, ChangeSeqManagerOrmLite.class);
+        registerManagerImplementation(SyncStatusManager.class, SyncStatusManagerOrmLite.class);
 
     }
 
