@@ -9,7 +9,7 @@ import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
 
     @Override
     public List<NanoLrsModel> getAllSinceSequenceNumber(
-            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException {
+            User user, Object dbContext, String host, long seqNum) throws SQLException {
 
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
 
@@ -78,7 +78,7 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
     }
 
     @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
         //TODO:
         return null;
     }

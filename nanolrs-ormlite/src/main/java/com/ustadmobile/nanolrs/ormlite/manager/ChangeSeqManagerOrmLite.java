@@ -7,7 +7,7 @@ import com.j256.ormlite.dao.Dao;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.model.ChangeSeq;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 
 import java.sql.SQLException;
@@ -85,7 +85,7 @@ public class ChangeSeqManagerOrmLite extends BaseManagerOrmLiteSyncable
     }
 
     @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
         //TODO: This
         return null;
     }

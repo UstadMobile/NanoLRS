@@ -1,19 +1,10 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
-import java.lang.reflect.Method;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -65,7 +56,7 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
         return (T)persistenceManager.getDao(getEntityImplementationClasss(), dbContext).queryForId(primaryKey);
     }
 
-    public abstract T findAllRelatedToUser(Object dbContext, XapiUser user);
+    public abstract T findAllRelatedToUser(Object dbContext, User user);
 
     public PersistenceManagerORMLite getPersistenceManager() {
         return persistenceManager;

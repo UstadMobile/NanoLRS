@@ -5,10 +5,9 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
-import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -74,7 +73,7 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements Xapi
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
         return null;
     }
 

@@ -5,9 +5,9 @@ package com.ustadmobile.nanolrs.core;
  */
 
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
-import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
+import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import org.json.JSONObject;
@@ -34,8 +34,8 @@ public class ProxyJsonSerializer {
 
     //TODO: Find a central place for this and other mappings..
     static {
-        proxyNameToClassMap.put(XapiUser.class.getName(), XapiUser.class);
-        proxyClassToManagerMap.put(XapiUser.class, XapiUserManager.class);
+        proxyNameToClassMap.put(User.class.getName(), User.class);
+        proxyClassToManagerMap.put(User.class, UserManager.class);
 
         /*
         proxyNameToClassMap.put(Person.class.getName(), Person.class);

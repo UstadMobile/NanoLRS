@@ -6,7 +6,7 @@ import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
  * Created by mike on 9/27/16.
  */
 
-public interface XapiUser extends NanoLrsModelSyncable {
+public interface User extends NanoLrsModelSyncable {
 
     /**
      * @nanolrs.primarykey

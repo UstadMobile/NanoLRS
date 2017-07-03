@@ -4,9 +4,9 @@ package com.ustadmobile.nanolrs.test.core.util;
  */
 
 import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
-import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
+import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
@@ -15,7 +15,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.UUID;
 
 public class TestEntitiesToJsonArray {
     @Test
@@ -24,12 +23,12 @@ public class TestEntitiesToJsonArray {
         Object context = NanoLrsPlatformTestUtil.getContext();
 
         //Create some users
-        XapiUserManager userManager =
-                PersistenceManager.getInstance().getManager(XapiUserManager.class);
+        UserManager userManager =
+                PersistenceManager.getInstance().getManager(UserManager.class);
 
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
-        XapiUser currentUser = null;
+        User currentUser = null;
         String host = "testing_host";
 
         /* Test that our list is not null and includes every entity */
@@ -37,10 +36,10 @@ public class TestEntitiesToJsonArray {
                 currentUser, context, host, sequenceNumber);
         Assert.assertNotNull(allUsersSince);
 
-        XapiUser testThisUser = (XapiUser) allUsersSince.get(0);
+        User testThisUser = (User) allUsersSince.get(0);
 
         JSONObject thisEntityJson = ProxyJsonSerializer.toJson(
-                testThisUser, XapiUser.class);
+                testThisUser, User.class);
         Assert.assertNotNull(thisEntityJson);
     }
 }

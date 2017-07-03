@@ -8,7 +8,7 @@ import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
 import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
 import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
-import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
+import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
@@ -19,7 +19,7 @@ import com.ustadmobile.nanolrs.ormlite.manager.XapiAgentManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.XapiForwardingStatementManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.XapiStateManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.XapiStatementManagerOrmLite;
-import com.ustadmobile.nanolrs.ormlite.manager.XapiUserManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.UserManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.XapiVerbManagerOrmLite;
 
 import java.sql.SQLException;
@@ -50,7 +50,7 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
         registerManagerImplementation(XapiStateManager.class, XapiStateManagerOrmLite.class);
         registerManagerImplementation(XapiStatementManager.class,
                 XapiStatementManagerOrmLite.class);
-        registerManagerImplementation(XapiUserManager.class, XapiUserManagerOrmLite.class);
+        registerManagerImplementation(UserManager.class, UserManagerOrmLite.class);
         registerManagerImplementation(XapiVerbManager.class, XapiVerbManagerOrmLite.class);
         registerManagerImplementation(ChangeSeqManager.class, ChangeSeqManagerOrmLite.class);
 

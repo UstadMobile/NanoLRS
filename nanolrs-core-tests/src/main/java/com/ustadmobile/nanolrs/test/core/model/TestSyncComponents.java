@@ -3,16 +3,13 @@ package com.ustadmobile.nanolrs.test.core.model;
  * Created by varuna on 6/29/2017.
  */
 
-import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
-import com.ustadmobile.nanolrs.core.manager.XapiUserManager;
-import com.ustadmobile.nanolrs.core.model.ChangeSeq;
+import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
-import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,41 +22,41 @@ public class TestSyncComponents {
         //Get the connectionSource from platform db pool (from NanoLrsPlatformTestUtil)
         Object context = NanoLrsPlatformTestUtil.getContext();
 
-        XapiUserManager userManager =
-                PersistenceManager.getInstance().getManager(XapiUserManager.class);
+        UserManager userManager =
+                PersistenceManager.getInstance().getManager(UserManager.class);
         ChangeSeqManager changeSeqManager = PersistenceManager.getInstance().getManager(
                 ChangeSeqManager.class);
-        String tableName = "XAPI_USER";
+        String tableName = "USER";
 
         long initialSeqNum =
                 changeSeqManager.getNextChangeByTableName(tableName, context) -1;
         System.out.println("InitialSeqNum: " + initialSeqNum);
 
         String newUserId = UUID.randomUUID().toString();
-        XapiUser newUser = (XapiUser)userManager.makeNew();
+        User newUser = (User)userManager.makeNew();
         newUser.setUuid(newUserId);
         newUser.setUsername("thebestuser");
         userManager.persist(context, newUser);
 
-        XapiUser theUser = (XapiUser)userManager.findByPrimaryKey(context, newUserId);
+        User theUser = (User)userManager.findByPrimaryKey(context, newUserId);
         long seqNumber = theUser.getLocalSequence();
         Assert.assertNotNull(seqNumber);
 
         theUser.setNotes("Update01");
         userManager.persist(context, theUser);
-        XapiUser updatedUser = (XapiUser) userManager.findByPrimaryKey(context, newUserId);
+        User updatedUser = (User) userManager.findByPrimaryKey(context, newUserId);
         long updatedSeqNumber = updatedUser.getLocalSequence();
         Assert.assertEquals(updatedSeqNumber, seqNumber + 1);
 
         //Lets create another user
-        XapiUser anotherUser = (XapiUser)userManager.makeNew();
+        User anotherUser = (User)userManager.makeNew();
         anotherUser.setUuid(UUID.randomUUID().toString());
         anotherUser.setUsername("anotheruser");
         userManager.persist(context, anotherUser);
 
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
-        XapiUser currentUser = null;
+        User currentUser = null;
         String host = "testing_host";
 
         /* Test that our list is not null and includes every entity */
@@ -85,7 +82,7 @@ public class TestSyncComponents {
         //Assert.assertEquals(allUsersSince2.size(), 1);
         //Expected 2 (not 1) in jenkins
 
-        //Get XAPI_USER changeseq entry:
+        //Get USER changeseq entry:
         //Test the value will be
         long gottenNextSeqNum = changeSeqManager.getNextChangeByTableName(tableName, context);
         //Assert.assertEquals(gottenNextSeqNum, 6);

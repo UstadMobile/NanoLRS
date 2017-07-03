@@ -4,11 +4,10 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiForwardingStatementEntity;
-import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -28,7 +27,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
         return null;
     }
 

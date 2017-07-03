@@ -3,10 +3,9 @@ package com.ustadmobile.nanolrs.ormlite.manager;
 import com.j256.ormlite.dao.Dao;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
-import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
 
@@ -25,7 +24,7 @@ public class XapiVerbManagerOrmLite extends BaseManagerOrmLite implements XapiVe
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
         return null;
     }
 

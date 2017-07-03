@@ -2,7 +2,7 @@ package com.ustadmobile.nanolrs.core.manager;
 
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
+import com.ustadmobile.nanolrs.core.model.User;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -21,7 +21,7 @@ public interface NanoLrsManagerSyncable<T extends NanoLrsModelSyncable, P> exten
     long getLatestMasterSequence(Object dbContext) throws SQLException;
 
     List<NanoLrsModel> getAllSinceSequenceNumber(
-            XapiUser user, Object dbContext, String host, long seqNum) throws SQLException;
+            User user, Object dbContext, String host, long seqNum) throws SQLException;
 
-    NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, XapiUser user) throws SQLException;
+    NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) throws SQLException;
 }

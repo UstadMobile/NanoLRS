@@ -8,13 +8,13 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiDocumentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiForwardingStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStateEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.XapiUserEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
 
 import java.sql.SQLException;
@@ -30,7 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * Database Name to be used: nanolrs.db was used by previous versions.  From DATABASE_VERSION 11
      */
-    private static final String DATABASE_NAME="nanolrs4.db";
+    private static final String DATABASE_NAME="nanolrs3.db";
 
     private static final int DATABASE_VERSION = 12;
 
@@ -44,7 +44,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
             XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
-            XapiUserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class
+            UserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class
     };
 
     @Override
@@ -66,7 +66,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             if(oldVersion < 9) {
-                TableUtils.createTable(connectionSource, XapiUserEntity.class);
+                TableUtils.createTable(connectionSource, UserEntity.class);
             }
 
             if(oldVersion < 10) {

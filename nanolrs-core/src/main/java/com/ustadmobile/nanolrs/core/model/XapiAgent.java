@@ -14,9 +14,9 @@ public interface XapiAgent extends NanoLrsModel {
 
     void setUuid(String uuid);
 
-    XapiUser getUser();
+    User getUser();
 
-    void setUser(XapiUser user);
+    void setUser(User user);
 
     String getName();
 

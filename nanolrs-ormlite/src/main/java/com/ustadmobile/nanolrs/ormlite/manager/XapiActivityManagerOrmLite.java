@@ -1,13 +1,11 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
-import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiActivity;
-import com.ustadmobile.nanolrs.core.model.XapiUser;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
-import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
 
@@ -47,7 +45,7 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, XapiUser user) {
+    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
         return null;
     }
 

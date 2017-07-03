@@ -11,7 +11,7 @@ import com.ustadmobile.nanolrs.ormlite.generated.model.XapiDocumentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiForwardingStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStateEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.XapiUserEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 //import com.ustadmobile.nanolrs.buildconfig.TestConstants;
@@ -54,7 +54,7 @@ public class PersistenceManagerJDBC extends PersistenceManagerORMLite {
 
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
             XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
-            XapiUserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class,
+            UserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class,
             ChangeSeqEntity.class
     };
 
