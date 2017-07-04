@@ -14,6 +14,10 @@ public class UMSyncResult {
     Map headers;
     Map parameters;
 
+    public UMSyncResult(){
+       //Blank space
+    }
+
     public UMSyncResult(int status, Map headers, Map parameters) {
         this.status = status;
         this.headers = headers;

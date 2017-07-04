@@ -99,11 +99,11 @@ public class TestSyncComponents {
                 changeSeqManager.getNextChangeByTableName(tableName, context);
         Assert.assertEquals(postIncrementGottenNextSeqNumber, gottenNextSeqNum + 2);
 
-        String syncURL = "test";
+        String syncURL = "http://httpbin.org/post";
 
         //TODO: Continue this..
-        //UMSyncResult result = UMSyncEndpoint.startSync(syncURL, host, context);
-        //Assert.assertNotNull(result);
+        UMSyncResult result = UMSyncEndpoint.startSync(syncURL, host, context);
+        Assert.assertNotNull(result);
 
     }
 }

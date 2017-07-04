@@ -13,7 +13,12 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -122,15 +127,94 @@ public class UMSyncEndpoint {
                     }
                 }
             }
-
         }
 
-        //Make a request with the JOSN:
+        //Make a request with the JOSN in POST body
+        Map <String, String> headers = new HashMap<String, String>();
+        headers.put("someheader", "somevalue");
 
-        return result;
+        return makeSyncRequest(syncURL, "POST", headers, null, pendingJSONEntitesToBeSynced,
+                "application/json", null );
+
     }
 
     public static Class[] SYNCABLE_ENTITIES = new Class[]{
             User.class,
     };
+
+    private static void setHeaders(HttpURLConnection connection, Map headers) throws IOException {
+        Iterator it = headers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+            connection.setRequestProperty(pair.getKey().toString(), pair.getValue().toString());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+    }
+
+    public static UMSyncResult makeSyncRequest(String destURL, String method, Map headers,
+               Map parameters, JSONArray dataJSONArray, String contentType, byte[] content) {
+        UMSyncResult response = new UMSyncResult();
+
+        HttpURLConnection con = null;
+        OutputStream out = null;
+        OutputStreamWriter outw = null;
+        try {
+            URL url = new URL(destURL);
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod(method.toUpperCase());
+
+            con.setDoOutput(true);
+            setHeaders(con, headers);
+            if(contentType != null) {
+                //For JSON it is: application/json
+                con.setRequestProperty("Content-Type", contentType);
+                con.setRequestProperty("Accept", contentType);
+
+            }
+            if(!dataJSONArray.isNull(0) && content == null){
+                con.setFixedLengthStreamingMode(dataJSONArray.toString().length());
+
+                outw = new OutputStreamWriter(con.getOutputStream());
+                outw.write(dataJSONArray.toString());
+                outw.flush();
+                outw.close();
+                outw = null;
+            }else {
+                con.setFixedLengthStreamingMode(content.length);
+
+                out = con.getOutputStream();
+                out.write(content);
+                out.flush();
+                out.close();
+                outw = null;
+            }
+
+
+
+
+            int statusCode = con.getResponseCode();
+            response.setStatus(statusCode);
+        }catch(IOException e) {
+            System.err.println("saveState Exception");
+            e.printStackTrace();
+        }finally {
+            if(out != null) {
+                try { out.close(); }
+                catch(IOException e) {}
+            }
+
+            if(outw != null){
+                try{ outw.close();}
+                catch(IOException ioe){}
+            }
+
+            if(con != null) {
+                con.disconnect();
+            }
+
+        }
+
+        return response;
+    }
 }
