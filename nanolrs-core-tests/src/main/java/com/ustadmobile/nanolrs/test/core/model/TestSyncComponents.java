@@ -72,7 +72,7 @@ public class TestSyncComponents {
         Assert.assertNotNull(allUsersSince);
 
         //Supposed to be the 2 created above
-        Assert.assertEquals(allUsersSince.size(), 2);
+        Assert.assertEquals(allUsersSince.size(), 2 + initialSeqNum);
 
         //Manually change master seq so that we get the right statmenets that need to be sent
         theUser.setMasterSequence(2);
