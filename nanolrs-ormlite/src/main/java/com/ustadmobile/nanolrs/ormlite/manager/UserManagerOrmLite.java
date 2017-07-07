@@ -75,4 +75,13 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             e.printStackTrace();
         }
     }
+
+    @Override
+    public List<User> getAll(Object dbContext) throws SQLException{
+        Dao thisDao = persistenceManager.getDao(UserEntity.class, dbContext);
+        QueryBuilder<UserEntity, String> qb = thisDao.queryBuilder();
+        List<User> allEntities = thisDao.query(qb.prepare());
+        return allEntities;
+
+    }
 }

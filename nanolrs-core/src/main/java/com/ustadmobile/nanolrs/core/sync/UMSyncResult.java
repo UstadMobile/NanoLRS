@@ -13,15 +13,17 @@ public class UMSyncResult {
     int status;
     Map headers;
     Map parameters;
+    String response;
 
     public UMSyncResult(){
        //Blank space
     }
 
-    public UMSyncResult(int status, Map headers, Map parameters) {
+    public UMSyncResult(int status, Map headers, Map parameters, String response) {
         this.status = status;
         this.headers = headers;
         this.parameters = parameters;
+        this.response = response;
     }
 
     public int getStatus() {
@@ -46,6 +48,14 @@ public class UMSyncResult {
 
     public void setParameters(Map parameters) {
         this.parameters = parameters;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 
     public Object getHeader(String headerName){

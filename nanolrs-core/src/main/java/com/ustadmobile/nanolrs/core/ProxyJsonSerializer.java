@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -212,10 +213,41 @@ public class ProxyJsonSerializer {
 
                 //gets the setter Method on the current methodName with argument of
                 // value's type (class)
-                Method setterMethod = proxyClass.getMethod(methodName, valueType);
+
+                Method[] methods = proxyClass.getMethods();
+                Type methodReturnType = null;
+                Class methodReturnClass = null;
+                Class methodReturnClassClass = null;
+                String methodReturnTypeName = null;
+                Object valueCasted = null;
+                for(Method method:methods){
+                    if (method.getName().equals(methodName)) {
+                        methodReturnType = method.getParameterTypes()[0];
+                        methodReturnClass = (Class)methodReturnType;
+
+                        //Cannot get class for primitive
+                        //methodReturnClassClass = Class.forName(methodReturnTypeName);
+                        break;
+                    }
+                }
+                if (methodReturnType == null){
+                    continue;
+            }
+
+                if(methodReturnClass.getName().equals("long")){
+                    valueCasted = new Long((int)value);
+                }else{
+                    valueCasted=value;
+                }
+                //Cannot cast long to int, etc
+                //methodReturnClass.cast(valueCasted);
+
+                //Method setterMethod = proxyClass.getMethod(methodName, valueType);
+                Method setterMethod = proxyClass.getMethod(methodName, methodReturnClass);
                 //Invokes the setter Method that we got and gives it the value to pass
                 //to its argument
-                setterMethod.invoke(newObj, value);
+                //setterMethod.invoke(newObj, value);
+                setterMethod.invoke(newObj, valueCasted);
             }
         }catch(Exception e) {
             e.printStackTrace();

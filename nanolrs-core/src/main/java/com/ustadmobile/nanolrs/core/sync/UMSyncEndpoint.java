@@ -6,6 +6,7 @@ import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
@@ -20,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,6 +57,10 @@ public class UMSyncEndpoint {
         */
     }
 
+    public static String convertStreamToString(InputStream is, String encoding) {
+        java.util.Scanner s = new java.util.Scanner(is, encoding).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 
     /**
      * Handles incoming sync requests. Essentially an endpoint to process request and
@@ -63,8 +69,50 @@ public class UMSyncEndpoint {
      * @param headers
      * @return
      */
-    public UMSyncResult handleIncomingSync(InputStream inputStream, Map headers, Object dbContext){
+    public static UMSyncResult handleIncomingSync(InputStream inputStream, Map headers, Object dbContext)
+            throws SQLException{
         UMSyncResult result = null;
+
+        /*
+        Steps:
+        1. Validate headers and param and input stream
+        2. Get the json array from input stream
+        3. convert to entityies
+        4. get number
+        5. add to db (persist)
+        6. Send repsonse
+        */
+
+        String streamString = convertStreamToString(inputStream, "UTF-8");
+        Map<NanoLrsModelSyncable, String> allNewEntitiesMap =
+                new HashMap<NanoLrsModelSyncable, String>();
+        JSONArray entitiesJSON = new JSONArray(streamString);
+        Iterator entitiesJSONIterator = entitiesJSON.iterator();
+        while(entitiesJSONIterator.hasNext()){
+            JSONObject entityJSON = (JSONObject)entitiesJSONIterator.next();
+            NanoLrsModel thisEntity = ProxyJsonSerializer.toEntity(entityJSON, dbContext);
+            String thisProxyClass =
+                    entityJSON.getString(ProxyJsonSerializer.PROXY_CLASS_JSON_FIELD);
+
+            allNewEntitiesMap.put((NanoLrsModelSyncable)thisEntity, thisProxyClass);
+        }
+
+        Iterator<Map.Entry<NanoLrsModelSyncable, String>> allNewEntitiesMapIterator = 
+                allNewEntitiesMap.entrySet().iterator();
+        while(allNewEntitiesMapIterator.hasNext()){
+            Map.Entry<NanoLrsModelSyncable, String> thisNewEntityMap = (Map.Entry)
+                    allNewEntitiesMapIterator.next();
+            NanoLrsModelSyncable thisNewEntity = thisNewEntityMap.getKey();
+            String thisProxyClassName = thisNewEntityMap.getValue();
+
+            Class thisProxyClass = proxyNameToClassMap.get(thisProxyClassName);
+            Class thisManagerClass = proxyClassToManagerMap.get(thisProxyClass);
+            NanoLrsManagerSyncable manager = (NanoLrsManagerSyncable)
+                    PersistenceManager.getInstance().getManager(thisManagerClass);
+            manager.persist(dbContext, thisNewEntity);
+        }
+
+        // Create a request of whats stored, and give back what need to be given..
 
         return result;
     }
@@ -178,8 +226,8 @@ public class UMSyncEndpoint {
                 outw = new OutputStreamWriter(con.getOutputStream());
                 outw.write(dataJSONArray.toString());
                 outw.flush();
-                outw.close();
-                outw = null;
+                //outw.close();
+                //outw = null;
             }else {
                 con.setFixedLengthStreamingMode(content.length);
 
@@ -187,7 +235,7 @@ public class UMSyncEndpoint {
                 out.write(content);
                 out.flush();
                 out.close();
-                outw = null;
+                out = null;
             }
 
 
@@ -195,6 +243,8 @@ public class UMSyncEndpoint {
 
             int statusCode = con.getResponseCode();
             response.setStatus(statusCode);
+            response.setResponse(con.getResponseMessage());
+
         }catch(IOException e) {
             System.err.println("saveState Exception");
             e.printStackTrace();

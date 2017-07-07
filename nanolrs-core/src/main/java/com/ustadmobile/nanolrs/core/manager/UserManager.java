@@ -2,6 +2,7 @@ package com.ustadmobile.nanolrs.core.manager;
 
 import com.ustadmobile.nanolrs.core.model.User;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -17,6 +18,8 @@ public interface UserManager extends NanoLrsManagerSyncable {
     List<User> findByUsername(Object dbContext, String username);
 
     void delete(Object dbContext, User data);
+
+    List<User> getAll(Object dbContext) throws SQLException;
 
 
 }
