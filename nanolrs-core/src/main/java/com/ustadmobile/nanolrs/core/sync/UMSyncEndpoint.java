@@ -87,9 +87,12 @@ public class UMSyncEndpoint {
         Map<NanoLrsModelSyncable, String> allNewEntitiesMap =
                 new HashMap<NanoLrsModelSyncable, String>();
         JSONArray entitiesJSON = new JSONArray(streamString);
-        Iterator entitiesJSONIterator = entitiesJSON.iterator();
-        while(entitiesJSONIterator.hasNext()){
-            JSONObject entityJSON = (JSONObject)entitiesJSONIterator.next();
+        for(int i=0; i < entitiesJSON.length(); i++){
+            JSONObject entityJSON = entitiesJSON.getJSONObject(i);
+        //}
+        //Iterator entitiesJSONIterator = entitiesJSON.iterator();
+        //while(entitiesJSONIterator.hasNext()){
+            //JSONObject entityJSON = (JSONObject)entitiesJSONIterator.next();
             NanoLrsModel thisEntity = ProxyJsonSerializer.toEntity(entityJSON, dbContext);
             String thisProxyClass =
                     entityJSON.getString(ProxyJsonSerializer.PROXY_CLASS_JSON_FIELD);
