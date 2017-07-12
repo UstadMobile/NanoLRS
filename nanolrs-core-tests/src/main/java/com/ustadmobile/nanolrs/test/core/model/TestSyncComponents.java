@@ -77,10 +77,12 @@ public class TestSyncComponents {
         //Assert.assertEquals(allUsersSince.size(), 2);
 
         //Manually change master seq so that we get the right statmenets that need to be sent
+        /*
         theUser.setMasterSequence(2);
         userManager.persist(context, theUser);
         anotherUser.setMasterSequence(1);
         userManager.persist(context, anotherUser);
+        */
 
         // Test every statmente from seq 1 after change in master seq
         sequenceNumber=1;
@@ -129,9 +131,6 @@ public class TestSyncComponents {
         //Get all users and check first:
         List<User> allUsersBeforeIncomingSync = userManager.getAll(context);
 
-        //String entitiesAsJSONString =
-        //        "[{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":1,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"750b870e-0a1f-4a5b-a14f-2e8d810ae2fe\",\"username\":\"anotheruser\"},{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":2,\"notes\":\"Update01\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"9abc536f-81ff-4e4e-89b0-498306bd4193\",\"username\":\"thebestuser\"}]";
-
         String newUserId3 = UUID.randomUUID().toString();
         String newUserId4 = UUID.randomUUID().toString();
         int userEntitiesCount = 4;
@@ -139,13 +138,13 @@ public class TestSyncComponents {
         "{    \"data\" : " +
             "[" +
              //New Entry
-             "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":1,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" +  newUserId3 + "\",\"username\":\"anotheruser2\"}," +
+             "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":0,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" +  newUserId3 + "\",\"username\":\"anotheruser2\"}," +
              //New Entry
-             "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":2,\"notes\":\"Update01\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId4 + "\",\"username\":\"thebestuser2\"}," +
+             "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":0,\"notes\":\"Update01\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId4 + "\",\"username\":\"thebestuser2\"}," +
              //Same Entity not updated
-             "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":1,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId2 + "\",\"username\":\"anotheruser\"}," +
+             "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":0,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId2 + "\",\"username\":\"anotheruser\"}," +
              //Same Entity updated
-             "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":2,\"notes\":\"Update02\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId1 + "\",\"username\":\"thebestuser\"}" +
+             "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":0,\"notes\":\"Update02\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId1 + "\",\"username\":\"thebestuser\"}" +
             "]" +
         ", \"info\" :" + "" +
             " [" +
@@ -154,7 +153,6 @@ public class TestSyncComponents {
             "]" +
         "}"
         ;
-
 
         InputStream entitiesAsStream =
                 new ByteArrayInputStream(entitiesAsJSONString.getBytes(encoding));

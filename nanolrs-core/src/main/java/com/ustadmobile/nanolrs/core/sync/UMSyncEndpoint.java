@@ -1,5 +1,6 @@
 package com.ustadmobile.nanolrs.core.sync;
 
+import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
@@ -250,6 +251,25 @@ public class UMSyncEndpoint {
     }
 
     /**
+     * Converts a property name from e.g. from fullName to full_name
+     *
+     * @param propertyName Property Name e.g. propertyName
+     *
+     * @return Property named in lower case separated by underscores e.g. property_name
+     */
+    public static String convertCamelCaseNameToUnderscored(String propertyName) {
+        String undererScoredName = "";
+        for(int i = 0; i < propertyName.length(); i++) {
+            if(Character.isUpperCase(propertyName.charAt(i)) && (i == 0 || Character.isLowerCase(propertyName.charAt(i-1)))) {
+                undererScoredName += "_";
+            }
+            undererScoredName += Character.toLowerCase(propertyName.charAt(i));
+        }
+
+        return undererScoredName;
+    }
+
+    /**
      * Handles sync process : gets all entites to be synced from syncstatus seqnum and
      * builds entities list to convert to json array to send in a request to host's
      * syncURL endpoint
@@ -280,46 +300,115 @@ public class UMSyncEndpoint {
         long getUserSentSeqForThisHost =
                 syncStatusManager.getSentStatus(node.getHost(), User.class, dbContext);
 
-        JSONArray pendingJSONEntitesToBeSynced = new JSONArray();
+        JSONArray pendingJSONEntites = new JSONArray(); //entities
+        JSONArray pendingJSONInfo = new JSONArray(); //entities info
+        JSONObject pendingEntitiesWithInfo = new JSONObject(); //entities with entities info
+        //Scan through every Syncable entity..
         for(Class syncableEntity : SYNCABLE_ENTITIES) {
-            long getSyncableEntitySeqForThisHost =
-                    syncStatusManager.getSentStatus(node.getHost(), syncableEntity, dbContext);
-
-
+            //Get its manager
             Class managerClass = proxyClassToManagerMap.get(syncableEntity);
             NanoLrsManagerSyncable syncableEntityManager = (NanoLrsManagerSyncable)
                     PersistenceManager.getInstance().getManager(managerClass);
+            
+            //Get the primary key
+            Method[] allEntityMethods = syncableEntity.getMethods();
+            String pkMethod = null;
+            String pkField = null;
+            for(Method method : allEntityMethods) {
+                if(method.isAnnotationPresent(PrimaryKeyAnnotationClass.class)) {
+                    pkMethod = method.getName();
+                    break;
+                }
+            }
+            int prefixLen = 0;
+            if(pkMethod.startsWith("is"))
+                prefixLen = 2;
+            else if(pkMethod.startsWith("get"))
+                prefixLen = 3;
+            pkField = Character.toLowerCase(pkMethod.charAt(3)) +
+                    pkMethod.substring(prefixLen+1);
 
+            //Get table name
+            String tableName = convertCamelCaseNameToUnderscored(
+                    Character.toLowerCase(syncableEntity.getSimpleName().charAt(0)) +
+                            syncableEntity.getSimpleName().substring(1));
+
+            //Create JSON of this Entity's info used for syncing
+            JSONObject thisEntityInfo = new JSONObject();
+            thisEntityInfo.put("pCls", syncableEntity.getName());
+            thisEntityInfo.put("tableName", tableName);
+            thisEntityInfo.put("count", 0);
+            thisEntityInfo.put("pk", pkField);
+
+            //Add this entity to an array list of entity info for this sync
+            pendingJSONInfo.put(thisEntityInfo);
+
+            //Get the last sync status for this host
+            long getSyncableEntitySeqForThisHost =
+                    syncStatusManager.getSentStatus(node.getHost(), syncableEntity, dbContext);
+            
+            //Get pendingEntities since the last sync status for this host
             List<NanoLrsModel> pendingEntitesToBeSynced =
                     syncableEntityManager.getAllSinceSequenceNumber(
                     this_user, dbContext, node.getHost(), getSyncableEntitySeqForThisHost);
 
+            //Populate Entities and Info JSONArrays
             if(!pendingEntitesToBeSynced.isEmpty()){
-
                 Iterator<NanoLrsModel> pendingEntitesIterator = pendingEntitesToBeSynced.iterator();
                 while(pendingEntitesIterator.hasNext()){
+                    NanoLrsModelSyncable thisEntity =
+                            (NanoLrsModelSyncable)pendingEntitesIterator.next();
                     JSONObject thisEntityInJSON =
-                            ProxyJsonSerializer.toJson(pendingEntitesIterator.next(), syncableEntity);
+                            ProxyJsonSerializer.toJson(thisEntity, syncableEntity);
+                    //Increment count for every entity's type in info
+                    for(int i=0;i<pendingJSONInfo.length();i++){
+                        if (pendingJSONInfo.getJSONObject(i).getString("pCls").equals(syncableEntity.getName())) {
+                            int currentCount = pendingJSONInfo.getJSONObject(i).getInt("count") + 1;
+                            pendingJSONInfo.getJSONObject(i).put("count", currentCount);
+                        }
+                    }
                     if(thisEntityInJSON != null){
-                        pendingJSONEntitesToBeSynced.put(thisEntityInJSON);
+                        pendingJSONEntites.put(thisEntityInJSON);
                     }
                 }
             }
         }
 
-        //Make a request with the JOSN in POST body
+        //Headers if any..
         Map <String, String> headers = new HashMap<String, String>();
         headers.put("someheader", "somevalue");
 
-        return makeSyncRequest(node.getUrl(), "POST", headers, null, pendingJSONEntitesToBeSynced,
-                "application/json", null );
+        //Parameters if any..
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("someparameter", "somevalue");
 
+        //Create a JSONObject with entities JSONArray and info JSONArray
+        //to be sent in request body
+        pendingEntitiesWithInfo.put("data", pendingJSONEntites);
+        pendingEntitiesWithInfo.put("info", pendingJSONInfo);
+
+
+        //Make a request with the JOSN in POST body and return the
+        //UMSyncResult
+        return makeSyncRequest(node.getUrl(), "POST", headers, parameters,
+                pendingEntitiesWithInfo, "application/json", null );
     }
 
+    /**
+     * Store syncable entities.
+     * TODO: Put this in one common place , OR
+     * TODO: Find a way to get all from NanoLrsModelSyncable extentsion.
+     */
     public static Class[] SYNCABLE_ENTITIES = new Class[]{
             User.class,
     };
 
+    /**
+     * Sets headers to the connection from a given header Map
+     * @param connection
+     * @param headers
+     * @throws IOException
+     */
     private static void setHeaders(HttpURLConnection connection, Map headers) throws IOException {
         Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {
@@ -330,8 +419,19 @@ public class UMSyncEndpoint {
         }
     }
 
+    /**
+     * Makes Sync Request with given JSON, headers, etc. Returns a UMSyncResult object
+     * @param destURL
+     * @param method
+     * @param headers
+     * @param parameters
+     * @param dataJSON
+     * @param contentType
+     * @param content
+     * @return
+     */
     public static UMSyncResult makeSyncRequest(String destURL, String method, Map headers,
-               Map parameters, JSONArray dataJSONArray, String contentType, byte[] content) {
+               Map parameters, JSONObject dataJSON, String contentType, byte[] content) {
         UMSyncResult response = new UMSyncResult();
 
         HttpURLConnection con = null;
@@ -350,15 +450,14 @@ public class UMSyncEndpoint {
                 con.setRequestProperty("Accept", contentType);
 
             }
-            if(!dataJSONArray.isNull(0) && content == null){
-                con.setFixedLengthStreamingMode(dataJSONArray.toString().length());
+            //if(!dataJSONArray.isNull(0) && content == null){
+            if(!dataJSON.equals(null) && dataJSON.length()>0 && content == null){
+                con.setFixedLengthStreamingMode(dataJSON.toString().length());
 
                 outw = new OutputStreamWriter(con.getOutputStream());
-                outw.write(dataJSONArray.toString());
+                outw.write(dataJSON.toString());
                 outw.flush();
-                //outw.close();
-                //outw = null;
-            }else {
+            }else if(content != null){
                 con.setFixedLengthStreamingMode(content.length);
 
                 out = con.getOutputStream();
@@ -366,10 +465,28 @@ public class UMSyncEndpoint {
                 out.flush();
                 out.close();
                 out = null;
+            }else if(parameters != null && method.equalsIgnoreCase("POST")){
+                //Build String from param map
+                String paramString = "";
+                Iterator paramIterator = parameters.entrySet().iterator();
+                while(paramIterator.hasNext()){
+                    Map.Entry thisParameter = (Map.Entry)paramIterator.next();
+                    String amp = "";
+                    if(paramString != ""){
+                        amp = "&";
+                    }
+                    paramString = paramString + amp + thisParameter.getKey() + "=" +
+                            thisParameter.getValue();
+                }
+                byte[] postData = paramString.getBytes("UTF-8");
+                int postDataLength = postData.length;
+                con.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
+                //con.setUseCaches( false );
+
+                outw = new OutputStreamWriter(con.getOutputStream());
+                outw.write(paramString);
+                outw.flush();
             }
-
-
-
 
             int statusCode = con.getResponseCode();
             response.setStatus(statusCode);
@@ -383,16 +500,13 @@ public class UMSyncEndpoint {
                 try { out.close(); }
                 catch(IOException e) {}
             }
-
             if(outw != null){
                 try{ outw.close();}
                 catch(IOException ioe){}
             }
-
             if(con != null) {
                 con.disconnect();
             }
-
         }
 
         return response;
