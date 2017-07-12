@@ -7,8 +7,11 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
+import com.ustadmobile.nanolrs.core.manager.ThisNodeManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
+import com.ustadmobile.nanolrs.core.model.Node;
+import com.ustadmobile.nanolrs.core.model.ThisNode;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
@@ -57,19 +60,39 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
     }
 
     @Override
-    public void persist(Object dbContext, NanoLrsModel data) throws SQLException {
+    public void persist(Object dbContext, NanoLrsModel data) throws SQLException{
+        persist(dbContext, data, true);
+    }
+
+    @Override
+    public void persist(Object dbContext, NanoLrsModel data, boolean incrementChangeSeq)
+            throws SQLException {
         NanoLrsModelSyncable dataS = (NanoLrsModelSyncable)data;
 
-        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
-
-        String tableName = ((BaseDaoImpl)thisDao).getTableInfo().getTableName();
-        ChangeSeqManager changeSeqManager =
-                PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
-        long setThis = changeSeqManager.getNextChangeAddSeqByTableName(tableName, 1, dbContext);
-        dataS.setLocalSequence(setThis);
+        if(incrementChangeSeq == true) {
+            Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+            String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
+            ChangeSeqManager changeSeqManager =
+                    PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
+            long setThis = changeSeqManager.getNextChangeAddSeqByTableName(tableName, 1, dbContext);
+            dataS.setLocalSequence(setThis);
+            /*
+            For Master Server
+             */
+            ThisNodeManager thisNodeManager =
+                    PersistenceManager.getInstance().getManager(ThisNodeManager.class);
+            //TODO: Get this ID either as final or get All.get(0)
+            ThisNode thisNode = (ThisNode) thisNodeManager.findByPrimaryKey(dbContext, "this_device");
+            if (thisNode != null) {
+                if (thisNode.isMaster()) {
+                    dataS.setMasterSequence(setThis);
+                }
+            }
+        }
 
         super.persist(dbContext, dataS);
     }
+
 
     @Override
     public long getLatestMasterSequence(Object dbContext) throws SQLException {

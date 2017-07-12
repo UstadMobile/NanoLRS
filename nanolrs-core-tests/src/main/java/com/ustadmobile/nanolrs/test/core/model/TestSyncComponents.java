@@ -4,8 +4,10 @@ package com.ustadmobile.nanolrs.test.core.model;
  */
 
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
+import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
@@ -105,7 +107,15 @@ public class TestSyncComponents {
         String syncURL = "http://httpbin.org/post";
 
         //TODO: Continue this..
-        UMSyncResult result = UMSyncEndpoint.startSync(syncURL, host, context);
+        NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
+        Node testingNode = (Node) nodeManager.makeNew();
+        testingNode.setUUID(UUID.randomUUID().toString());
+        testingNode.setUrl(syncURL);
+        testingNode.setHost("testhost");
+        testingNode.setName("Testing node");
+        testingNode.setRole("tester");
+        nodeManager.persist(context, testingNode);
+        UMSyncResult result = UMSyncEndpoint.startSync(testingNode, context);
         Assert.assertNotNull(result);
 
         //InputStream to String and back
@@ -124,23 +134,33 @@ public class TestSyncComponents {
 
         String newUserId3 = UUID.randomUUID().toString();
         String newUserId4 = UUID.randomUUID().toString();
+        int userEntitiesCount = 4;
         String entitiesAsJSONString =
-                "[" +
-                 //New Entry
-                 "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":1,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" +  newUserId3 + "\",\"username\":\"anotheruser2\"}," +
-                 //New Entry
-                 "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":2,\"notes\":\"Update01\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId4 + "\",\"username\":\"thebestuser2\"}," +
-                 //Same Entity not updated
-                 "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":1,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId2 + "\",\"username\":\"anotheruser\"}," +
-                 //Same Entity updated
-                 "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":2,\"notes\":\"Update02\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId1 + "\",\"username\":\"thebestuser\"}" +
-                "]";
+        "{    \"data\" : " +
+            "[" +
+             //New Entry
+             "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":1,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" +  newUserId3 + "\",\"username\":\"anotheruser2\"}," +
+             //New Entry
+             "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":2,\"notes\":\"Update01\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId4 + "\",\"username\":\"thebestuser2\"}," +
+             //Same Entity not updated
+             "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":1,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId2 + "\",\"username\":\"anotheruser\"}," +
+             //Same Entity updated
+             "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":2,\"notes\":\"Update02\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId1 + "\",\"username\":\"thebestuser\"}" +
+            "]" +
+        ", \"info\" :" + "" +
+            " [" +
+            "{\"pCls\" : \"com.ustadmobile.nanolrs.core.model.User\",\"tableName\" : \"User\",\"count\" : " + userEntitiesCount + ", \"pk\":\"uuid\"}," +
+            "{\"pCls\" : \"com.ustadmobile.nanolrs.core.model.AnotherEntity\",\"tableName\" : \"AnotherEntity\",\"count\" : 0, \"pk\":\"uuid\"}" +
+            "]" +
+        "}"
+        ;
 
 
         InputStream entitiesAsStream =
                 new ByteArrayInputStream(entitiesAsJSONString.getBytes(encoding));
 
-        UMSyncResult incomingSyncResult = UMSyncEndpoint.handleIncomingSync(entitiesAsStream, null, context);
+        UMSyncResult incomingSyncResult = UMSyncEndpoint.handleIncomingSync(
+                entitiesAsStream, testingNode, null, null, context);
         //Get all users after sync:
         List<User> allUsersAfterIncomingSync = userManager.getAll(context);
         Assert.assertEquals(allUsersAfterIncomingSync.size(),

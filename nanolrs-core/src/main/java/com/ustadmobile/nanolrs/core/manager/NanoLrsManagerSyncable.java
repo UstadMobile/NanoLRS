@@ -14,6 +14,8 @@ import java.util.List;
 
 public interface NanoLrsManagerSyncable<T extends NanoLrsModelSyncable, P> extends NanoLrsManager {
 
+    void persist(Object dbContext, NanoLrsModel data, boolean incrementChangeSeq)
+            throws SQLException;
 
     /*
     Gets latest master sequence of this table
@@ -24,4 +26,6 @@ public interface NanoLrsManagerSyncable<T extends NanoLrsModelSyncable, P> exten
             User user, Object dbContext, String host, long seqNum) throws SQLException;
 
     NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) throws SQLException;
+
+    //Object getPrimaryKey(Object dbContext, NanoLrsManagerSyncable entity) throws SQLException;
 }
