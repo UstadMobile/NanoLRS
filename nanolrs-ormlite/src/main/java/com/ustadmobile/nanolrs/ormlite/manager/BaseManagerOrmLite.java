@@ -42,6 +42,7 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
 
     @Override
     public void persist(Object dbContext, T data) throws SQLException {
+        data.setStoredDate(System.currentTimeMillis());
         persistenceManager.getDao(getEntityImplementationClasss(),
                 dbContext).createOrUpdate(data);
     }

@@ -1,6 +1,8 @@
 package com.ustadmobile.nanolrs.core.sync;
 
+import java.io.InputStream;
 import java.util.Map;
+
 
 /**
  * This class represents the sync result of UMSync. This object will be returned upon every
@@ -14,16 +16,26 @@ public class UMSyncResult {
     Map headers;
     Map parameters;
     String response;
+    String  responseMessage;
 
     public UMSyncResult(){
        //Blank space
     }
 
-    public UMSyncResult(int status, Map headers, Map parameters, String response) {
+    public UMSyncResult(int status, Map headers, Map parameters, String response, String responseMessage) {
         this.status = status;
         this.headers = headers;
         this.parameters = parameters;
         this.response = response;
+        this.responseMessage = responseMessage;
+    }
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
     }
 
     public int getStatus() {

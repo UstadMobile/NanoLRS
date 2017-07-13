@@ -90,4 +90,56 @@ public class SyncStatusManagerOrmLite extends BaseManagerOrmLite implements Sync
             return syncStatusesForHost.get(0).getSentSeq();
         }
     }
+
+    @Override
+    public boolean updateSyncStatusSeqNum(String host, Class entity, long newSentSeq,
+                                          long newRecSeq, Object dbContext) throws SQLException {
+
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+        SyncStatus syncStatus = (SyncStatus)getSyncStatus(host, entity, dbContext);
+        if(newRecSeq < 0 && newSentSeq > 0){
+            syncStatus.setSentSeq(newSentSeq);
+            thisDao.createOrUpdate(syncStatus);
+        }
+        else if(newRecSeq > 0 && newSentSeq < 0){
+            syncStatus.setReceivedSeq(newRecSeq);
+            thisDao.createOrUpdate(syncStatus);
+        }else if(newRecSeq > 0 && newSentSeq > 0){
+            syncStatus.setSentSeq(newSentSeq);
+            syncStatus.setReceivedSeq(newRecSeq);
+            thisDao.createOrUpdate(syncStatus);
+        }else{
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public NanoLrsModel getSyncStatus(String host, Class entity, Object dbContext) throws SQLException{
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+        String table_name = convertCamelCaseNameToUnderscored(
+                Character.toLowerCase(entity.getSimpleName().charAt(0)) +
+                        entity.getSimpleName().substring(1));
+        QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
+        Where whereHostTableIs = qb.where();
+        whereHostTableIs.eq(SyncStatusEntity.COLNAME_HOST, host)
+                .and().eq(SyncStatusEntity.COLNAME_TABLE, table_name);
+        PreparedQuery<NanoLrsModel> getAllForHostQuery = qb.prepare();
+        List<SyncStatus> syncStatusesForHost = thisDao.query(getAllForHostQuery);
+
+        if(syncStatusesForHost.isEmpty()){
+            /* Create new */
+            SyncStatusEntity newHostForEntity = (SyncStatusEntity) makeNew();
+            newHostForEntity.setTable(table_name);
+            newHostForEntity.setHost(host);
+            newHostForEntity.setNotes("First sync");
+            newHostForEntity.setSentSeq(0);
+            newHostForEntity.setReceivedSeq(0);
+            newHostForEntity.setUUID(UUID.randomUUID().toString());
+            thisDao.createOrUpdate(newHostForEntity);
+            return newHostForEntity;
+        }else{
+            return syncStatusesForHost.get(0);
+        }
+    }
 }

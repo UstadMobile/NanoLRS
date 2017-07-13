@@ -235,7 +235,8 @@ public class ProxyJsonSerializer {
             }
 
                 if(methodReturnClass.getName().equals("long")){
-                    valueCasted = new Long((int)value);
+                    valueCasted = Long.parseLong(value.toString());
+                    //valueCasted = new Long((int)value);
                 }else{
                     valueCasted=value;
                 }

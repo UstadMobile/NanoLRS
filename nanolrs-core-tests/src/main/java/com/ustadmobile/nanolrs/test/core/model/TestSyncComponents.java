@@ -48,6 +48,7 @@ public class TestSyncComponents {
 
         User theUser = (User)userManager.findByPrimaryKey(context, newUserId1);
         long seqNumber = theUser.getLocalSequence();
+        long newUserId1DateCreated = theUser.getDateCreated();
         Assert.assertNotNull(seqNumber);
 
         theUser.setNotes("Update01");
@@ -131,20 +132,26 @@ public class TestSyncComponents {
         //Get all users and check first:
         List<User> allUsersBeforeIncomingSync = userManager.getAll(context);
 
+        /* Test starting Sync again to check if more to be sent .. */
+        UMSyncResult syncAgainResult = UMSyncEndpoint.startSync(testingNode, context);
+        Assert.assertNotNull(syncAgainResult);
+
+
         String newUserId3 = UUID.randomUUID().toString();
         String newUserId4 = UUID.randomUUID().toString();
         int userEntitiesCount = 4;
+        long currentTime = System.currentTimeMillis();
         String entitiesAsJSONString =
         "{    \"data\" : " +
             "[" +
              //New Entry
-             "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":0,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" +  newUserId3 + "\",\"username\":\"anotheruser2\"}," +
+             "{\"localSequence\":5,\"storedDate\":\"" + currentTime + "\",\"dateCreated\":\"" + currentTime + "\",\"masterSequence\":0,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" +  newUserId3 + "\",\"username\":\"anotheruser2\"}," +
              //New Entry
-             "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":0,\"notes\":\"Update01\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId4 + "\",\"username\":\"thebestuser2\"}," +
+             "{\"localSequence\":4,\"storedDate\":\"" + currentTime + "\",\"dateCreated\":\"" + currentTime + "\",\"masterSequence\":0,\"notes\":\"Update01\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId4 + "\",\"username\":\"thebestuser2\"}," +
              //Same Entity not updated
-             "{\"localSequence\":5,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":0,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId2 + "\",\"username\":\"anotheruser\"}," +
+             "{\"localSequence\":5,\"storedDate\":" + "\"0\"" + ",\"dateCreated\":" + "\"0\"" +",\"masterSequence\":0,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId2 + "\",\"username\":\"anotheruser\"}," +
              //Same Entity updated
-             "{\"localSequence\":4,\"storedDate\":0,\"dateCreated\":0,\"masterSequence\":0,\"notes\":\"Update02\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId1 + "\",\"username\":\"thebestuser\"}" +
+             "{\"localSequence\":4,\"storedDate\":" +"\"0\"" + ",\"dateCreated\":" + newUserId1DateCreated + ",\"masterSequence\":0,\"notes\":\"Update02\",\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" + newUserId1 + "\",\"username\":\"thebestuser\"}" +
             "]" +
         ", \"info\" :" + "" +
             " [" +
