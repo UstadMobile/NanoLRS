@@ -33,8 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-
 /**
  * This sync endpoint is responsible for syncing databases between servers and other UstadMobile
  * instances. Sync is initiated on client and is communicated between other UstadMobile devices
