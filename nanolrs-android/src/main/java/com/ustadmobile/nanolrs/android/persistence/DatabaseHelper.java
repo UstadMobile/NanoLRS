@@ -8,11 +8,9 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.ustadmobile.nanolrs.core.model.ThisNode;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.NodeEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.SyncStatusEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.ThisNodeEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
@@ -50,7 +48,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
             XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
             UserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class, ChangeSeqEntity.class,
-            SyncStatusEntity.class, NodeEntity.class, ThisNodeEntity.class
+            SyncStatusEntity.class, NodeEntity.class
     };
 
     @Override

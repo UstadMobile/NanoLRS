@@ -7,7 +7,6 @@ import com.j256.ormlite.table.TableUtils;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.NodeEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.SyncStatusEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.ThisNodeEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiDocumentEntity;
@@ -55,7 +54,7 @@ public class PersistenceManagerJDBC extends PersistenceManagerORMLite {
             XapiAgentEntity.class, XapiStatementEntity.class, XapiVerbEntity.class,
             XapiForwardingStatementEntity.class, UserEntity.class, XapiDocumentEntity.class,
             XapiStateEntity.class, ChangeSeqEntity.class, SyncStatusEntity.class,
-            ThisNodeEntity.class, NodeEntity.class
+            NodeEntity.class
     };
 
 

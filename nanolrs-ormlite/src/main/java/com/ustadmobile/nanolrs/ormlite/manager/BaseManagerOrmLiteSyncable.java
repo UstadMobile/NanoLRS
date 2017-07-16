@@ -6,13 +6,11 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
-import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
-import com.ustadmobile.nanolrs.core.manager.ThisNodeManager;
+import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.Node;
-import com.ustadmobile.nanolrs.core.model.ThisNode;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
@@ -98,10 +96,10 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
             /*
             For Master Server
              */
-            ThisNodeManager thisNodeManager =
-                    PersistenceManager.getInstance().getManager(ThisNodeManager.class);
+            NodeManager nodeManager =
+                    PersistenceManager.getInstance().getManager(NodeManager.class);
             //TODO: Get this ID either as final or get All.get(0)
-            ThisNode thisNode = (ThisNode) thisNodeManager.findByPrimaryKey(dbContext, "this_device");
+            Node thisNode = (Node) nodeManager.findByPrimaryKey(dbContext, "this_device");
             if (thisNode != null) {
                 if (thisNode.isMaster()) {
                     dataS.setMasterSequence(setThis);

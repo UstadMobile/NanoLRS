@@ -6,12 +6,10 @@ import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
-import com.ustadmobile.nanolrs.core.manager.ThisNodeManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.Node;
-import com.ustadmobile.nanolrs.core.model.ThisNode;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
@@ -93,8 +91,6 @@ public class UMSyncEndpoint {
         UMSyncResult resultResponse = null;
         ChangeSeqManager changeSeqManager =
                 PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
-        ThisNodeManager thisNodeManager =
-                PersistenceManager.getInstance().getManager(ThisNodeManager.class);
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
 
         //Map of <entity object,entity class name>
@@ -148,7 +144,6 @@ public class UMSyncEndpoint {
         //Primary key needs to be set to "this_device"
         //We use that to check if this device is the master server or not..
         //Also needs some form of authentication, else - anyone can  be master
-        //ThisNode thisNode = (ThisNode) thisNodeManager.findByPrimaryKey(dbContext, "this_device");
         Node thisNode = (Node)nodeManager.findByPrimaryKey(dbContext, "this_node");
 
         //Loop over the <Entities, pCls> to add them to this node's DB and persist
@@ -483,6 +478,7 @@ public class UMSyncEndpoint {
         InputStream syncResultResponseStream = syncResult.getResponseData();
         String syncResultResponse = convertStreamToString(syncResultResponseStream, "UTF-8");
         if(!syncResultResponse.isEmpty()){
+
             JSONObject syncResultAllResponseJSON = new JSONObject(syncResultResponse);
             JSONObject syncResultConflictJSON = new JSONObject();
             syncResultConflictJSON = null;
