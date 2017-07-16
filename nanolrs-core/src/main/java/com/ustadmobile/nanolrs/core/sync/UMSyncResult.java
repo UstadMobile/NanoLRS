@@ -14,28 +14,28 @@ public class UMSyncResult {
 
     int status;
     Map headers;
-    Map parameters;
-    String response;
-    String  responseMessage;
+
+    private InputStream responseData;
+    private long responseLength;
 
     public UMSyncResult(){
        //Blank space
     }
 
-    public UMSyncResult(int status, Map headers, Map parameters, String response, String responseMessage) {
+    public long getResponseLength() {
+        return responseLength;
+    }
+
+    public void setResponseLength(long responseLength) {
+        this.responseLength = responseLength;
+    }
+
+    public UMSyncResult(int status, Map headers, InputStream responseData,
+                        long responseLength) {
         this.status = status;
         this.headers = headers;
-        this.parameters = parameters;
-        this.response = response;
-        this.responseMessage = responseMessage;
-    }
-
-    public String getResponseMessage() {
-        return responseMessage;
-    }
-
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
+        this.responseData = responseData;
+        this.responseLength = responseLength;
     }
 
     public int getStatus() {
@@ -54,33 +54,9 @@ public class UMSyncResult {
         this.headers = headers;
     }
 
-    public Map getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Map parameters) {
-        this.parameters = parameters;
-    }
-
-    public String getResponse() {
-        return response;
-    }
-
-    public void setResponse(String response) {
-        this.response = response;
-    }
-
     public Object getHeader(String headerName){
         if(headers.containsKey(headerName)){
             return this.headers.get(headerName);
-        }else{
-            return null;
-        }
-    }
-
-    public Object getParameter(String parameterName){
-        if(parameters.containsKey(parameterName)) {
-            return this.parameters.get(parameterName);
         }else{
             return null;
         }
@@ -92,5 +68,13 @@ public class UMSyncResult {
         }else{
             return false;
         }
+    }
+
+    public InputStream getResponseData() {
+        return responseData;
+    }
+
+    public void setResponseData(InputStream responseData) {
+        this.responseData = responseData;
     }
 }

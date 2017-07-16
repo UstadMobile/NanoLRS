@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint.*;
@@ -30,87 +31,21 @@ public class TestSyncComponents {
         //Get the connectionSource from platform db pool (from NanoLrsPlatformTestUtil)
         Object context = NanoLrsPlatformTestUtil.getContext();
 
+        //Get managers
         UserManager userManager =
                 PersistenceManager.getInstance().getManager(UserManager.class);
         ChangeSeqManager changeSeqManager = PersistenceManager.getInstance().getManager(
                 ChangeSeqManager.class);
-        String tableName = "USER";
+        NodeManager nodeManager =
+                PersistenceManager.getInstance().getManager(NodeManager.class);
 
+        //Get initial seq number for user table - for debugging purposes
+        String tableName = "USER";
         long initialSeqNum =
                 changeSeqManager.getNextChangeByTableName(tableName, context) -1;
-        System.out.println("InitialSeqNum: " + initialSeqNum);
 
-        String newUserId1 = UUID.randomUUID().toString();
-        User newUser = (User)userManager.makeNew();
-        newUser.setUuid(newUserId1);
-        newUser.setUsername("thebestuser");
-        userManager.persist(context, newUser);
-
-        User theUser = (User)userManager.findByPrimaryKey(context, newUserId1);
-        long seqNumber = theUser.getLocalSequence();
-        long newUserId1DateCreated = theUser.getDateCreated();
-        Assert.assertNotNull(seqNumber);
-
-        theUser.setNotes("Update01");
-        userManager.persist(context, theUser);
-        User updatedUser = (User) userManager.findByPrimaryKey(context, newUserId1);
-        long updatedSeqNumber = updatedUser.getLocalSequence();
-        Assert.assertEquals(updatedSeqNumber, seqNumber + 1);
-
-        //Lets create another user
-        User anotherUser = (User)userManager.makeNew();
-        String newUserId2 = UUID.randomUUID().toString();
-        anotherUser.setUuid(newUserId2);
-        anotherUser.setUsername("anotheruser");
-        userManager.persist(context, anotherUser);
-
-        //Get all entities since sequence number 0
-        long sequenceNumber = 0;
-        User currentUser = null;
-        String host = "testing_host";
-
-        /* Test that our list is not null and includes every entity */
-        List<NanoLrsModel> allUsersSince = userManager.getAllSinceSequenceNumber(
-                currentUser, context, host, sequenceNumber);
-        Assert.assertNotNull(allUsersSince);
-
-        //Supposed to be the 2 created above
-        //Assert.assertEquals(allUsersSince.size(), 2);
-
-        //Manually change master seq so that we get the right statmenets that need to be sent
-        /*
-        theUser.setMasterSequence(2);
-        userManager.persist(context, theUser);
-        anotherUser.setMasterSequence(1);
-        userManager.persist(context, anotherUser);
-        */
-
-        // Test every statmente from seq 1 after change in master seq
-        sequenceNumber=1;
-        List<NanoLrsModel> allUsersSince2 =
-                userManager.getAllSinceSequenceNumber(
-                currentUser, context, host, sequenceNumber);
-        Assert.assertNotNull(allUsersSince2);
-        //Assert.assertEquals(allUsersSince2.size(), 1);
-        //Expected 2 (not 1) in jenkins
-
-        //Get USER changeseq entry:
-        //Test the value will be
-        long gottenNextSeqNum = changeSeqManager.getNextChangeByTableName(tableName, context);
-        //Assert.assertEquals(gottenNextSeqNum, 6);
-        //Expected 14 not 6 in jenkins
-
-        //Allocate +2
-        changeSeqManager.getNextChangeAddSeqByTableName(tableName, 2, context);
-        //Test value
-        long postIncrementGottenNextSeqNumber =
-                changeSeqManager.getNextChangeByTableName(tableName, context);
-        Assert.assertEquals(postIncrementGottenNextSeqNumber, gottenNextSeqNum + 2);
-
+        //Create a node for testing
         String syncURL = "http://httpbin.org/post";
-
-        //TODO: Continue this..
-        NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
         Node testingNode = (Node) nodeManager.makeNew();
         testingNode.setUUID(UUID.randomUUID().toString());
         testingNode.setUrl(syncURL);
@@ -118,25 +53,94 @@ public class TestSyncComponents {
         testingNode.setName("Testing node");
         testingNode.setRole("tester");
         nodeManager.persist(context, testingNode);
-        UMSyncResult result = UMSyncEndpoint.startSync(testingNode, context);
+
+        //Create this testing user: testinguser
+        //Use it for Sync purposes. Assign it roles and
+        //users for testing user specific syncing.
+        String newTestingUserID = UUID.randomUUID().toString();
+        User testingUser = (User)userManager.makeNew();
+        testingUser.setUuid(newTestingUserID);
+        testingUser.setUsername("testinguser");
+        userManager.persist(context, testingUser);
+
+        //Get number of users already in system
+        int initialUserCount = userManager.getAll(context).size();
+
+        //Create a user: thebestuser
+        String newUserId1 = UUID.randomUUID().toString();
+        User newUser = (User)userManager.makeNew();
+        newUser.setUuid(newUserId1);
+        newUser.setUsername("thebestuser");
+        userManager.persist(context, newUser);
+
+        //Test that the user's local sequence number got created and set.
+        User theUser = (User)userManager.findByPrimaryKey(context, newUserId1);
+        long seqNumber = theUser.getLocalSequence();
+        long newUserId1DateCreated = theUser.getDateCreated();
+        Assert.assertNotNull(seqNumber);
+
+        //Update this user and test the seq(local sequence should get a +1)
+        theUser.setNotes("Update01");
+        userManager.persist(context, theUser);
+        //You need to get the user object again from the manager
+        User updatedUser = (User) userManager.findByPrimaryKey(context, newUserId1);
+        long updatedSeqNumber = updatedUser.getLocalSequence();
+        Assert.assertEquals(updatedSeqNumber, seqNumber + 1);
+
+        //Lets create another user for syncing purposes
+        User anotherUser = (User)userManager.makeNew();
+        String newUserId2 = UUID.randomUUID().toString();
+        anotherUser.setUuid(newUserId2);
+        anotherUser.setUsername("anotheruser");
+        userManager.persist(context, anotherUser);
+
+        //Get all entities since sequence number 0 and test their size
+        long sequenceNumber = 0;
+        List allUsersSince = userManager.getAllSinceSequenceNumber(
+                testingUser, context, testingNode.getHost(), sequenceNumber);
+        Assert.assertNotNull(allUsersSince);
+        //Supposed to be an extra 2 from above
+        Assert.assertEquals(allUsersSince.size(), initialUserCount + 2);
+
+
+        //Test changeseq manager
+        long gottenNextSeqNum = changeSeqManager.getNextChangeByTableName(tableName, context);
+        Assert.assertNotNull(gottenNextSeqNum);
+        //We cannot test exactly what the value was. Without deleting everything
+        // and starting fresh. If we want we can empty the tables before the
+        // tests run.
+        //Test that we can Allocate +2
+        changeSeqManager.getNextChangeAddSeqByTableName(tableName, 2, context);
+        long postIncrementGottenNextSeqNumber =
+                changeSeqManager.getNextChangeByTableName(tableName, context);
+        Assert.assertEquals(postIncrementGottenNextSeqNumber, gottenNextSeqNum + 2);
+
+
+        //Start Sync
+        UMSyncResult result =
+                UMSyncEndpoint.startSync(testingUser, testingNode, context);
         Assert.assertNotNull(result);
 
         //InputStream to String and back
         String streamString = "The quick brown fox, jumped over the lazy dog.";
         String encoding = "UTF-8";
         InputStream stream = new ByteArrayInputStream(streamString.getBytes(encoding));
-
         String streamToString = UMSyncEndpoint.convertStreamToString(stream, encoding);
         Assert.assertEquals(streamString, streamString);
-
         //Get all users and check first:
         List<User> allUsersBeforeIncomingSync = userManager.getAll(context);
 
-        /* Test starting Sync again to check if more to be sent .. */
-        UMSyncResult syncAgainResult = UMSyncEndpoint.startSync(testingNode, context);
+        /* Test starting Sync again to check if more to be sent ..
+         * There should not be any more  */
+        UMSyncResult syncAgainResult =
+                UMSyncEndpoint.startSync(testingUser, testingNode, context);
         Assert.assertNotNull(syncAgainResult);
 
-
+        /* Create JSONs to tests handleIncomingSync.
+        Includes two new entities
+        One Entity Updated
+        One Entity Not updated, but sent anyway
+         */
         String newUserId3 = UUID.randomUUID().toString();
         String newUserId4 = UUID.randomUUID().toString();
         int userEntitiesCount = 4;
@@ -160,12 +164,16 @@ public class TestSyncComponents {
             "]" +
         "}"
         ;
-
+        //create input-stream of json to send to sync and give it to endpoint
         InputStream entitiesAsStream =
                 new ByteArrayInputStream(entitiesAsJSONString.getBytes(encoding));
-
+        Map<String, String> headers = null;
+        Map<String, String> parameters = null;
         UMSyncResult incomingSyncResult = UMSyncEndpoint.handleIncomingSync(
-                entitiesAsStream, testingNode, null, null, context);
+                entitiesAsStream, testingNode, headers, parameters, context);
+        Assert.assertNotNull(incomingSyncResult);
+        Assert.assertEquals(incomingSyncResult.getStatus(), 200);
+
         //Get all users after sync:
         List<User> allUsersAfterIncomingSync = userManager.getAll(context);
         Assert.assertEquals(allUsersAfterIncomingSync.size(),

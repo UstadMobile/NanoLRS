@@ -4,6 +4,7 @@ import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
+import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.ThisNodeManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
@@ -18,10 +19,12 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
@@ -71,7 +74,8 @@ public class UMSyncEndpoint {
      */
     public static UMSyncResult handleIncomingSync(InputStream inputStream, Node node, Map headers,
                                                   Map parameters, Object dbContext)
-            throws SQLException{
+            throws SQLException, UnsupportedEncodingException {
+
         /*
         Steps:
         1. Validate headers and param and input stream
@@ -80,8 +84,10 @@ public class UMSyncEndpoint {
         4. convert to entities
         5. get number
         6. add to db (persist)
-        7. Send repsonse
+        7. Send response
         */
+
+        int resultStatus;
 
         //Managers
         UMSyncResult resultResponse = null;
@@ -89,6 +95,7 @@ public class UMSyncEndpoint {
                 PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
         ThisNodeManager thisNodeManager =
                 PersistenceManager.getInstance().getManager(ThisNodeManager.class);
+        NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
 
         //Map of <entity object,entity class name>
         Map<NanoLrsModelSyncable, String> allNewEntitiesMap =
@@ -135,9 +142,14 @@ public class UMSyncEndpoint {
             }
         }
 
-        //Get thisNode to find if this is master or not
-        //TODO: Get this ID either as final or get All.get(0)
-        ThisNode thisNode = (ThisNode) thisNodeManager.findByPrimaryKey(dbContext, "this_device");
+        //Get this device/node
+        //Needs to get created if not set by the device itself. Name can be a combination
+        // of device name, location, random uuid.toString(), etc.
+        //Primary key needs to be set to "this_device"
+        //We use that to check if this device is the master server or not..
+        //Also needs some form of authentication, else - anyone can  be master
+        //ThisNode thisNode = (ThisNode) thisNodeManager.findByPrimaryKey(dbContext, "this_device");
+        Node thisNode = (Node)nodeManager.findByPrimaryKey(dbContext, "this_node");
 
         //Loop over the <Entities, pCls> to add them to this node's DB and persist
         Iterator<Map.Entry<NanoLrsModelSyncable, String>> allNewEntitiesMapIterator =
@@ -166,7 +178,6 @@ public class UMSyncEndpoint {
                     thisNewEntity.setMasterSequence(thisNewEntitySeq);
                 }
             }
-
 
             /* Conflict resolution:
             Check if thisNewEntity if present (by pk) is an update ie:
@@ -218,7 +229,7 @@ public class UMSyncEndpoint {
                         //TODO: Change this 0 to the the existing entity's stored Date
                         //You may need to have a method in manager to return PK object and
                         //user thisNewEntity's pk object to search via manager.GetviaPK..
-                        // and compare stored date here to ressolve
+                        // and compare stored date here to resolve
                         if(thisNewEntity.getStoredDate() < 0){
                             //Have a newer update. Lets keep what we have
                             break;
@@ -231,22 +242,41 @@ public class UMSyncEndpoint {
 
             thisManager.persist(dbContext, thisNewEntity, false);
         }
-
+        JSONObject responseJSON;
+        resultStatus = 200; //regardless of conflicts, its gonna be 200
+        Map<String, String> responseHeaders = null;
+        String resultForClient = null;
+        InputStream responseData = null;
+        long responseLength = 0;
         if(conflictEntries != null && conflictEntries.size() > 0){
             /*
-            Add conflictEntries to response
+            Add conflictEntries to response below
              */
-            //TODO:
+            responseJSON = new JSONObject();
+            JSONArray conflictEntitiesJSON = new JSONArray();
+            for(NanoLrsModel thisConflictEntry:conflictEntries){
+                JSONObject thisConflictEntryJSON =
+                        ProxyJsonSerializer.toJson(thisConflictEntry, thisConflictEntry.getClass());
+                conflictEntitiesJSON.put(thisConflictEntryJSON);
+            }
+            responseJSON.put("conflict", conflictEntitiesJSON);
+
+            resultForClient = responseJSON.toString();
+            responseData =
+                    new ByteArrayInputStream(resultForClient.getBytes("UTF-8"));
+            responseLength = resultForClient.length();
+        }else{
+            responseData = null;
+            responseLength = 0;
         }
 
-        /* Create a request of whats stored, and give back what need to be given..
+        /* Create a request result of whats stored, and give back what need to be given..
             The request response should contain :
             a. Any conflict
             b. ?? (anything you can think of ?)
          */
-
-
-        //Assign the response request to resultResponse..
+        resultResponse = new UMSyncResult(resultStatus,responseHeaders,
+                responseData, responseLength);
 
         return resultResponse;
     }
@@ -277,8 +307,7 @@ public class UMSyncEndpoint {
      * @param node : The server, client, proxy, etc
      * @return
      */
-    public static UMSyncResult startSync(Node node, Object dbContext) throws SQLException{
-        //TODO: this
+    public static UMSyncResult startSync(User thisUser, Node node, Object dbContext) throws SQLException{
         /*
         Steps:
         1. We check the syncURL < make sure its a valid url
@@ -291,9 +320,6 @@ public class UMSyncEndpoint {
         8. Make a request
         9. Send >>
          */
-
-        UMSyncResult result = null;
-        User this_user = null;
 
         //SyncStatus manager
         SyncStatusManager syncStatusManager=
@@ -357,7 +383,7 @@ public class UMSyncEndpoint {
             //Get pendingEntities since the last sync status for this host
             List<NanoLrsModel> pendingEntitesToBeSynced =
                     syncableEntityManager.getAllSinceSequenceNumber(
-                    this_user, dbContext, node.getHost(), getSyncableEntitySeqForThisHost);
+                    thisUser, dbContext, node.getHost(), getSyncableEntitySeqForThisHost);
 
             long latestSeqNumToUpdateSyncStatus = -1;
             long latestMasterSeqNumToUpdateSyncStatus = -1;
@@ -454,8 +480,8 @@ public class UMSyncEndpoint {
         }
 
         //Check if response has conflicts
-        String syncResultResponse = syncResult.getResponse();
-        //String syncResultResponseString = convertStreamToString(syncResultResponse, "UTF-8");
+        InputStream syncResultResponseStream = syncResult.getResponseData();
+        String syncResultResponse = convertStreamToString(syncResultResponseStream, "UTF-8");
         if(!syncResultResponse.isEmpty()){
             JSONObject syncResultAllResponseJSON = new JSONObject(syncResultResponse);
             JSONObject syncResultConflictJSON = new JSONObject();
@@ -598,8 +624,8 @@ public class UMSyncEndpoint {
 
             int statusCode = con.getResponseCode();
             response.setStatus(statusCode);
-            response.setResponseMessage(con.getResponseMessage());
-            response.setResponse(convertStreamToString(con.getInputStream(), "UTF-8"));
+            response.setResponseData(con.getInputStream());
+            response.setResponseLength(con.getContentLength());
 
         }catch(IOException e) {
             System.err.println("saveState Exception");

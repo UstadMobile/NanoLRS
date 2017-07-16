@@ -1,6 +1,8 @@
 package com.ustadmobile.nanolrs.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.SQLException;
 
 import javax.servlet.ServletConfig;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.j256.ormlite.support.ConnectionSource;
 import com.ustadmobile.nanolrs.core.model.XapiState;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStateEndpoint;
+import com.ustadmobile.nanolrs.core.sync.UMSyncResult;
 
 import java.util.Scanner;
 
@@ -82,6 +85,18 @@ public class StateServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException{
+        /*
+        UMSyncResult result = null;
+        response.setStatus(result.getStatus());
+        InputStream dataIn = result.getResponseData();
+        OutputStream clientOut = response.getOutputStream();
+        byte[] buf = new byte[1024];
+        int bytesRead;
+        while((bytesRead = dataIn.read(buf, 0, buf.length)) != -1) {
+            clientOut.write(buf, 0, bytesRead);
+        }
+        */
+
         try {
             putPost(request, response);
         } catch (SQLException e) {
