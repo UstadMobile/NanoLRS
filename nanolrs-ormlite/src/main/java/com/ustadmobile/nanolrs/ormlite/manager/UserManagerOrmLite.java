@@ -1,8 +1,11 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
@@ -27,6 +30,21 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
     @Override
     public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
         return null;
+    }
+
+    @Override
+    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user)
+            throws SQLException{
+        // Return all user entities realted to user.
+        //You will only return this user as a prepared Query
+        Dao<UserEntity, String> thisDao = persistenceManager.getDao(UserEntity.class, dbContext);
+
+        QueryBuilder<UserEntity, String> subQueryQB = thisDao.queryBuilder();
+        QueryBuilder<UserEntity, String> subQueryQBColumn = subQueryQB.selectColumns("uuid");
+        Where subQueryColumnWhere = subQueryQBColumn.where();
+        subQueryColumnWhere.eq(UserEntity.COLNAME_UUID, user.getUuid());
+        PreparedQuery<UserEntity> subQueryColumnPQ = subQueryQBColumn.prepare();
+        return subQueryColumnPQ;
     }
 
     @Override

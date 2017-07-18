@@ -44,5 +44,4 @@ public interface NanoLrsManager<T extends NanoLrsModel, P> {
     T findByPrimaryKey(Object dbContext, P primaryKey) throws SQLException;
 
 
-
 }

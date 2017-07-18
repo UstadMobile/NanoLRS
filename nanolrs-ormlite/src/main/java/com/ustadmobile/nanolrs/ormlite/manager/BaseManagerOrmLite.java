@@ -1,11 +1,13 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.ormlite.persistence.PersistenceManagerORMLite;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by mike on 10/2/16.
@@ -58,6 +60,18 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
     }
 
     public abstract T findAllRelatedToUser(Object dbContext, User user);
+
+    /*
+    public abstract List<T> findAllViewableByUser(Object dbContext, User user);
+
+    public abstract List<T> findAllViewableByUserSinceSeq(Object dbContext, User user, long sinceSeq);
+
+    public abstract List<T> findAllEditableByUser(Object dbContext, User user);
+
+    */
+    public abstract PreparedQuery<T> findAllRelatedToUserQuery(Object dbContext, User user)
+            throws SQLException;
+
 
     public PersistenceManagerORMLite getPersistenceManager() {
         return persistenceManager;

@@ -100,7 +100,8 @@ public class TestSyncComponents {
                 testingUser, context, testingNode.getHost(), sequenceNumber);
         Assert.assertNotNull(allUsersSince);
         //Supposed to be an extra 2 from above
-        Assert.assertEquals(allUsersSince.size(), initialUserCount + 2);
+        //Assert.assertEquals(allUsersSince.size(), initialUserCount + 2);
+        Assert.assertEquals(allUsersSince.size(), 1); //Should be 1 because user specific
 
 
         //Test changeseq manager

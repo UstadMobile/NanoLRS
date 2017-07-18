@@ -1,6 +1,7 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.User;
@@ -46,6 +47,11 @@ public class XapiActivityManagerOrmLite extends BaseManagerOrmLite implements Xa
 
     @Override
     public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
+        return null;
+    }
+
+    @Override
+    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) {
         return null;
     }
 

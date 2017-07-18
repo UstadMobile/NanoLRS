@@ -41,6 +41,11 @@ public class SyncStatusManagerOrmLite extends BaseManagerOrmLite implements Sync
         return null;
     }
 
+    @Override
+    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) {
+        return null;
+    }
+
     /**
      * Converts a property name from e.g. from fullName to full_name
      *

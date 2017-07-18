@@ -1,5 +1,6 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.User;
@@ -19,6 +20,11 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
     @Override
     public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
         //TODO: This
+        return null;
+    }
+
+    @Override
+    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) {
         return null;
     }
 

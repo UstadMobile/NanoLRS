@@ -4,6 +4,7 @@ package com.ustadmobile.nanolrs.ormlite.manager;
  */
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.model.ChangeSeq;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
@@ -87,6 +88,12 @@ public class ChangeSeqManagerOrmLite extends BaseManagerOrmLiteSyncable
     @Override
     public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
         //TODO: This
+        return null;
+    }
+
+    @Override
+    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) throws SQLException {
+        //TODO:
         return null;
     }
 

@@ -28,12 +28,13 @@ public class TestEntitiesToJsonArray {
 
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
-        User currentUser = null;
+        List<User> testingUsers = userManager.findByUsername(context, "testinguser");
+        User testingUser = testingUsers.get(0);
         String host = "testing_host";
 
         /* Test that our list is not null and includes every entity */
         List<NanoLrsModel> allUsersSince = userManager.getAllSinceSequenceNumber(
-                currentUser, context, host, sequenceNumber);
+                testingUser, context, host, sequenceNumber);
         Assert.assertNotNull(allUsersSince);
 
         User testThisUser = (User) allUsersSince.get(0);
