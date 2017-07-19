@@ -20,8 +20,10 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -60,8 +62,19 @@ public class UMSyncEndpoint {
         return s.hasNext() ? s.next() : "";
     }
 
-
-
+    public static String convertStreamToString2(InputStream is, String encoding) throws IOException {
+        final int bufferSize = 1024;
+        final char[] buffer = new char[bufferSize];
+        final StringBuilder out = new StringBuilder();
+        Reader in = new InputStreamReader(is, encoding);
+        for (; ; ) {
+            int rsz = in.read(buffer, 0, buffer.length);
+            if (rsz < 0)
+                break;
+            out.append(buffer, 0, rsz);
+        }
+        return out.toString();
+    }
     /**
      * Handles incoming sync requests. Essentially an endpoint to process request and
      * update database and handle it
@@ -302,7 +315,7 @@ public class UMSyncEndpoint {
      * @param node : The server, client, proxy, etc
      * @return
      */
-    public static UMSyncResult startSync(User thisUser, Node node, Object dbContext) throws SQLException{
+    public static UMSyncResult startSync(User thisUser, Node node, Object dbContext) throws SQLException, IOException {
         /*
         Steps:
         1. We check the syncURL < make sure its a valid url
@@ -476,7 +489,8 @@ public class UMSyncEndpoint {
 
         //Check if response has conflicts
         InputStream syncResultResponseStream = syncResult.getResponseData();
-        String syncResultResponse = convertStreamToString(syncResultResponseStream, "UTF-8");
+        String syncResultResponse = convertStreamToString2(syncResultResponseStream, "UTF-8");
+        //String syncResultResponse = convertStreamToString(syncResultResponseStream, "UTF-8");
         if(!syncResultResponse.isEmpty()){
 
             JSONObject syncResultAllResponseJSON = new JSONObject(syncResultResponse);
