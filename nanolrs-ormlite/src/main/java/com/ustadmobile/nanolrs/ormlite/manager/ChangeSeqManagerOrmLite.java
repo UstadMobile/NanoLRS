@@ -13,7 +13,7 @@ import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 
 import java.sql.SQLException;
 
-public class ChangeSeqManagerOrmLite extends BaseManagerOrmLiteSyncable
+public class ChangeSeqManagerOrmLite extends BaseManagerOrmLite
         implements ChangeSeqManager {
 
     //Constructor

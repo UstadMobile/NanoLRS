@@ -3,9 +3,8 @@ package com.ustadmobile.nanolrs.core.model;
  * Created by varuna on 6/9/2017.
  */
 
-import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
-public interface ChangeSeq extends NanoLrsModelSyncable{
+public interface ChangeSeq extends NanoLrsModel{
 
     String getUUID();
     void setUUID(String uuid);

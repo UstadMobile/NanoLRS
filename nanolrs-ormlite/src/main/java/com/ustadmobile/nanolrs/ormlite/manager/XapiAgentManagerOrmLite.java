@@ -6,6 +6,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
@@ -17,7 +18,7 @@ import java.util.List;
  * Created by mike on 10/6/16.
  */
 
-public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements XapiAgentManager{
+public class XapiAgentManagerOrmLite extends BaseManagerOrmLiteSyncable  implements XapiAgentManager{
 
     public XapiAgentManagerOrmLite() {
     }
@@ -74,7 +75,7 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLite  implements Xapi
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
         return null;
     }
 

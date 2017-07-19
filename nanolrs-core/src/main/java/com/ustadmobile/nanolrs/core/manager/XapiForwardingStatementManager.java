@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by mike on 9/13/16.
  */
-public interface XapiForwardingStatementManager extends NanoLrsManager {
+public interface XapiForwardingStatementManager extends NanoLrsManagerSyncable {
 
     XapiForwardingStatement createSync(Object dbContext, String uuid);
 

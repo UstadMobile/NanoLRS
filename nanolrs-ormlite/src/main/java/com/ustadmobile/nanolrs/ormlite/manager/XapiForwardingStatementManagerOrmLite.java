@@ -5,6 +5,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
@@ -17,7 +18,7 @@ import java.util.logging.Level;
 /**
  * Created by mike on 9/13/16.
  */
-public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite implements XapiForwardingStatementManager {
+public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLiteSyncable implements XapiForwardingStatementManager {
 
     public XapiForwardingStatementManagerOrmLite() {
     }
@@ -28,7 +29,7 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLite im
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
         return null;
     }
 

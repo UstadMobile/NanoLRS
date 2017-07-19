@@ -5,6 +5,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Created by mike on 9/6/16.
  */
-public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements XapiStatementManager {
+public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable implements XapiStatementManager {
 
     public XapiStatementManagerOrmLite() {
     }
@@ -32,7 +33,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLite implements X
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
         return null;
     }
 

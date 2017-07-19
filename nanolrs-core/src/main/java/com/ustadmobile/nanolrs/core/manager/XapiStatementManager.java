@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author mike
  */
-public interface XapiStatementManager extends NanoLrsManager {
+public interface XapiStatementManager extends NanoLrsManagerSyncable {
     
     public void findByUuid(Object dbContext, int requestId, PersistenceReceiver receiver, String uuid);
 

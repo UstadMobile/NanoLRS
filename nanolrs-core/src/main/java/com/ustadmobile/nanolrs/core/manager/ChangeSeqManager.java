@@ -3,11 +3,10 @@ package com.ustadmobile.nanolrs.core.manager;
  * Created by varuna on 6/23/2017.
  */
 
-import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 
 import java.sql.SQLException;
 
-public interface ChangeSeqManager extends NanoLrsManagerSyncable {
+public interface ChangeSeqManager extends NanoLrsManager {
     /**
      * Gets the nextChangeSeqNumber for table name (string)
      * @param tableName

@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
+import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
  * Created by mike on 17/11/16.
  */
 
-public class XapiVerbManagerOrmLite extends BaseManagerOrmLite implements XapiVerbManager {
+public class XapiVerbManagerOrmLite extends BaseManagerOrmLiteSyncable implements XapiVerbManager {
 
     public XapiVerbManagerOrmLite() {
     }
@@ -25,7 +26,7 @@ public class XapiVerbManagerOrmLite extends BaseManagerOrmLite implements XapiVe
     }
 
     @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
+    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
         return null;
     }
 
