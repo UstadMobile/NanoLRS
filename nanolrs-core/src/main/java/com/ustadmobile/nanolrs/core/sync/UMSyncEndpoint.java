@@ -650,7 +650,8 @@ public class UMSyncEndpoint {
                 catch(IOException ioe){}
             }
             if(con != null) {
-                con.disconnect();
+                //con.disconnect();
+                //TODO: Check, disabled because it makes InputStream invalid
             }
         }
 
