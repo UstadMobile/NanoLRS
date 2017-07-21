@@ -360,7 +360,11 @@ public class UMSyncEndpoint {
         //We use that to check if this device is the master server or not..
         //Also needs some form of authentication, else - anyone can  be master
         //Node thisNode = (Node)nodeManager.findByPrimaryKey(dbContext, "this_node");
-        Node thisNode = (Node)nodeManager.getNodeByRoleName(dbContext, "this_node").get(0);
+        List<Node> nodes = nodeManager.getNodeByRoleName(dbContext, "this_node");
+        Node thisNode = null;
+        if (nodes != null && !nodes.isEmpty()){
+            thisNode = nodes.get(0);
+        }
 
 
         //Map of Entity and latestSeq got so we can update sync status upon sync success

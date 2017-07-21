@@ -52,6 +52,14 @@ public class TestSyncComponents {
         testingNode.setRole("tester");
         nodeManager.persist(context, testingNode);
 
+        //Create this node
+        Node thisNode = (Node) nodeManager.makeNew();
+        thisNode.setRole("this_node");
+        thisNode.setUUID(UUID.randomUUID().toString());
+        thisNode.setHost("client");
+        thisNode.setUrl("http://loclhost:4243");
+        nodeManager.persist(context, thisNode);
+
         //Create this testing user: testinguser
         //Use it for Sync purposes. Assign it roles and
         //users for testing user specific syncing.
@@ -59,6 +67,7 @@ public class TestSyncComponents {
         User testingUser = (User)userManager.makeNew();
         testingUser.setUuid(newTestingUserID);
         testingUser.setUsername("testinguser");
+        testingUser.setPassword("secret");
         userManager.persist(context, testingUser);
 
         //Get number of users already in system

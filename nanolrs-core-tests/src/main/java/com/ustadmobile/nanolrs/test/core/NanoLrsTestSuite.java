@@ -20,7 +20,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        /*
+
         TestXapiActivityEndpointCore.class,
         TestXapiAgentEndpointCore.class,
         TestXapiStateEndpointCore.class,
@@ -30,7 +30,6 @@ import org.junit.runners.Suite;
         TestJsonUtil.class,
         TestSyncComponents.class,
         TestEntitiesToJsonArray.class,
-        */
         TestSync.class
 })
 
