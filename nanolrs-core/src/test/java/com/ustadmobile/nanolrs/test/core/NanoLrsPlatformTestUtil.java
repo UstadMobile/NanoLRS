@@ -14,9 +14,10 @@ public class NanoLrsPlatformTestUtil {
 
     public static ConnectionSource connectionSource;
 
+    public static ConnectionSource endpointConnectionSource;
+
     public static Object getContext() {
         if(connectionSource == null) {
-
             try {
                 connectionSource = new JdbcConnectionSource(TestConstantsCore.TEST_JDBC_URL);
             }catch(SQLException se){
@@ -27,6 +28,17 @@ public class NanoLrsPlatformTestUtil {
         }
 
         return connectionSource;
+    }
+
+    public static Object getSyncEndpointContext() {
+        if(endpointConnectionSource == null) {
+            try {
+                endpointConnectionSource = new JdbcConnectionSource(TestConstantsCore.TEST_JDBC_URL_ENDPOINT);
+            }catch(SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return endpointConnectionSource;
     }
 
 }

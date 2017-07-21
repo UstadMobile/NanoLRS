@@ -30,6 +30,10 @@ public class NanoLrsHttpd extends RouterNanoHTTPD {
         mountXapiEndpointsOnServer(this, dbContext, basePath);
     }
 
+    public void mapSyncEndpoint(String path) {
+        addRoute(path, SyncUriResponder.class, dbContext);
+    }
+
     /**
      * Mount the xAPI server endpoint responders to the given RouterNanoHTTPD server
      *

@@ -116,7 +116,13 @@ public class UMSyncEndpoint {
         List<NanoLrsModelSyncable> conflictEntries = new ArrayList<NanoLrsModelSyncable>();
 
         //Convert inputstream->string->entities json array
-        String streamString = convertStreamToString(inputStream, "UTF-8");
+        //String streamString = convertStreamToString(inputStream, "UTF-8");
+        String streamString = null;
+        try {
+            streamString = convertStreamToString2(inputStream, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         JSONObject entitiesWithInfoJSON = new JSONObject(streamString);
         JSONArray entitiesJSON = entitiesWithInfoJSON.getJSONArray("data");
         JSONArray entitiesInfoJSON = entitiesWithInfoJSON.getJSONArray("info");
@@ -157,7 +163,17 @@ public class UMSyncEndpoint {
         //Primary key needs to be set to "this_device"
         //We use that to check if this device is the master server or not..
         //Also needs some form of authentication, else - anyone can  be master
-        Node thisNode = (Node)nodeManager.findByPrimaryKey(dbContext, "this_node");
+        //TODO: Check if UUID should be this_node or a random uuid and role
+        //could be this_node since we may need to identify via uuid at the
+        // endpoint side.
+        //Node thisNode = (Node)nodeManager.findByPrimaryKey(dbContext, "this_node");
+        Node thisNode = null;
+        List<Node> nodes = nodeManager.getNodeByRoleName(dbContext, "this_name");
+        if(nodes == null || nodes.size() == 0){
+            thisNode = null;
+        }else {
+            thisNode = (Node) nodeManager.getNodeByRoleName(dbContext, "this_node").get(0);
+        }
 
         //Loop over the <Entities, pCls> to add them to this node's DB and persist
         Iterator<Map.Entry<NanoLrsModelSyncable, String>> allNewEntitiesMapIterator =
@@ -315,7 +331,8 @@ public class UMSyncEndpoint {
      * @param node : The server, client, proxy, etc
      * @return
      */
-    public static UMSyncResult startSync(User thisUser, Node node, Object dbContext) throws SQLException, IOException {
+    public static UMSyncResult startSync(User thisUser, Node node, Object dbContext)
+            throws SQLException, IOException {
         /*
         Steps:
         1. We check the syncURL < make sure its a valid url
@@ -332,6 +349,19 @@ public class UMSyncEndpoint {
         //SyncStatus manager
         SyncStatusManager syncStatusManager=
                 PersistenceManager.getInstance().getManager(SyncStatusManager.class);
+        //NodeManager
+        NodeManager nodeManager =
+                PersistenceManager.getInstance().getManager(NodeManager.class);
+
+        //Get this device/node
+        //Needs to get created if not set by the device itself. Name can be a combination
+        // of device name, location, random uuid.toString(), etc.
+        //Primary key needs to be set to "this_device"
+        //We use that to check if this device is the master server or not..
+        //Also needs some form of authentication, else - anyone can  be master
+        //Node thisNode = (Node)nodeManager.findByPrimaryKey(dbContext, "this_node");
+        Node thisNode = (Node)nodeManager.getNodeByRoleName(dbContext, "this_node").get(0);
+
 
         //Map of Entity and latestSeq got so we can update sync status upon sync success
         Map<Class, Long> entityToLatestLocalSeqNum = new HashMap<>();
@@ -396,6 +426,7 @@ public class UMSyncEndpoint {
             long latestSeqNumToUpdateSyncStatus = -1;
             long latestMasterSeqNumToUpdateSyncStatus = -1;
 
+            //TODO: Remove If statement. (Not needed)
             //Populate Entities and Info JSONArrays
             if(!pendingEntitesToBeSynced.isEmpty()){
                 Iterator<NanoLrsModel> pendingEntitesIterator = pendingEntitesToBeSynced.iterator();
@@ -413,6 +444,7 @@ public class UMSyncEndpoint {
                     }
                     JSONObject thisEntityInJSON =
                             ProxyJsonSerializer.toJson(thisEntity, syncableEntity);
+                    //TODO: Probably better than digging count, use a variable
                     //Increment count for every entity's type in info
                     for(int i=0;i<pendingJSONInfo.length();i++){
                         if (pendingJSONInfo.getJSONObject(i).getString("pCls").equals(syncableEntity.getName())) {
@@ -438,9 +470,25 @@ public class UMSyncEndpoint {
             }
         }
 
+        String username = thisUser.getUsername();
+        String password = thisUser.getPassword();
+        String nodeUuid = thisNode.getUUID();
+        String userUuid = thisUser.getUuid();
+        String thisNodeHost = thisNode.getHost();
+        String thisNodeURL = thisNode.getUrl();
+        //TODO: remove this and move it outside
+        String isNewUser = "true";
+
         //Headers if any..
         Map <String, String> headers = new HashMap<String, String>();
         headers.put("someheader", "somevalue");
+        headers.put("username", username);
+        headers.put("password", password);
+        headers.put("nodeuuid", nodeUuid);
+        headers.put("useruuid", userUuid);
+        headers.put("isnewuser", isNewUser);
+        headers.put("hostname", thisNodeHost);
+        headers.put("hosturl", thisNodeURL);
 
         //Parameters if any..
         Map<String, String> parameters = new HashMap<String, String>();

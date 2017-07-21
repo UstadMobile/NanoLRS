@@ -26,7 +26,7 @@ task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfi
     outputDir = new File("${projectDir}/src/test/java")
     clsName = "TestConstantsServlet"
     packageName = "com.ustadmobile.nanolrs.buildconfig"
-
+    buildConfigField "String", "TEST_JDBC_URL_ENDPOINT", rootProject.ext.buildConfigProperties["test.jdbc.url.endpoint"]
     buildConfigField "String", "TEST_JDBC_URL", project.ext.buildConfigProperties["test.jdbc.url"]
 }
 compileTestJava.dependsOn(generateCoreTestConstantsBuildConfig)

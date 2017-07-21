@@ -11,8 +11,21 @@ package com.ustadmobile.nanolrs.test.core;
 
 public class NanoLrsPlatformTestUtil {
 
-    //TODO: Check if this is necessary. If it is, document why
+    /**
+     * Provide a database context object for running the tests.
+     *
+     * @return
+     */
     public static Object getContext() {
+        return new Object();
+    }
+
+    /**
+     * Provide a second database context object e.g. for testing sync operations
+     *
+     * @return
+     */
+    public static Object getSyncEndpointContext() {
         return new Object();
     }
 

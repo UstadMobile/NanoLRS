@@ -9,6 +9,8 @@ public final class TestConstantsServlet
 
    public static final String NAME = "nanolrs-servlet";
 
+   public static final String TEST_JDBC_URL_ENDPOINT = "jdbc:hsqldb:mem:endpoint";
+
    public static final String TEST_JDBC_URL = "jdbc:hsqldb:mem:public";
 
 }

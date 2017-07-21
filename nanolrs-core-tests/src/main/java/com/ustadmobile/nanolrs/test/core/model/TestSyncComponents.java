@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint.*;
-
 public class TestSyncComponents {
     @Test
     public void testLifecycle() throws Exception {

@@ -14,6 +14,8 @@ apply plugin: 'java'
 
 dependencies {
     compile project(":nanolrs-core")
+    compile project(":nanolrs-http")
+    compile project(":nanolrs-jdbc")
     compile 'junit:junit:4.12'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
@@ -33,6 +35,7 @@ task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfi
     clsName = "TestConstantsCore"
     packageName = "com.ustadmobile.nanolrs.buildconfig"
     buildConfigField "String", "TEST_JDBC_URL", rootProject.ext.buildConfigProperties["test.jdbc.url"]
+    buildConfigField "String", "TEST_JDBC_URL_ENDPOINT", rootProject.ext.buildConfigProperties["test.jdbc.url.endpoint"]
     buildConfigField "String", "TESTUSER", rootProject.ext.buildConfigProperties["test.remotelrs.user"]
     buildConfigField "String", "TESTPASSWORD", rootProject.ext.buildConfigProperties["test.remotelrs.password"]
     buildConfigField "String", "TESTLRSENDPOINT", rootProject.ext.buildConfigProperties["test.remotelrs.endpoint"]

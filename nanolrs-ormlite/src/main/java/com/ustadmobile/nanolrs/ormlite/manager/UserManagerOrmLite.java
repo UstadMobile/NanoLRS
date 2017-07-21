@@ -102,4 +102,19 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
         return allEntities;
 
     }
+
+    @Override
+    public boolean authenticate(Object dbContext, String username, String password) {
+        //TODO: Make username a primary key
+        List<User> users = findByUsername(dbContext, username);
+        if(users == null || users.size() == 0){
+            return false;
+        }
+        User user = users.get(0);
+        if(user.getPassword() == password){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
