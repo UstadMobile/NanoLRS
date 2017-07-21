@@ -135,6 +135,8 @@ public class TestSyncComponents {
         InputStream stream = new ByteArrayInputStream(streamString.getBytes(encoding));
         String streamToString = UMSyncEndpoint.convertStreamToString(stream, encoding);
         Assert.assertEquals(streamString, streamString);
+
+
         //Get all users and check first:
         List<User> allUsersBeforeIncomingSync = userManager.getAll(context);
 
