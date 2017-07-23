@@ -25,7 +25,4 @@ public interface NanoLrsManagerSyncable<T extends NanoLrsModelSyncable, P> exten
     List<NanoLrsModel> getAllSinceSequenceNumber(
             User user, Object dbContext, String host, long seqNum) throws SQLException;
 
-    NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) throws SQLException;
-
-    //Object getPrimaryKey(Object dbContext, NanoLrsManagerSyncable entity) throws SQLException;
 }

@@ -1,10 +1,7 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.dao.CloseableIterable;
-import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -17,13 +14,10 @@ import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.management.Query;
 
 
 /**
@@ -32,14 +26,7 @@ import javax.management.Query;
 
 public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable, P>
         extends BaseManagerOrmLite implements NanoLrsManagerSyncable<T,P> {
-    /*
-    @Override
-    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) {
-        //TODO:
-        //This will be very specific to every entity.
-        return null;
-    }
-    */
+
 
     @Override
     public List<NanoLrsModel> getAllSinceSequenceNumber(
@@ -117,7 +104,8 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
             NodeManager nodeManager =
                     PersistenceManager.getInstance().getManager(NodeManager.class);
             //TODO: Get this ID either as final or get All.get(0)
-            Node thisNode = (Node) nodeManager.findByPrimaryKey(dbContext, "this_device");
+            Node thisNode = nodeManager.getThisNode(dbContext);
+            //Node thisNode = (Node) nodeManager.findByPrimaryKey(dbContext, "this_device");
             if (thisNode != null) {
                 if (thisNode.isMaster()) {
                     dataS.setMasterSequence(setThis);
@@ -135,37 +123,19 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         return 42;
     }
 
+    //TODO: Think of adding these in
     /*
-    @Override
-    public List findAllViewableByUser(Object dbContext, User user) {
-        //TODO:
-        return null;
-    }
+    public abstract List<T> findAllViewableByUser(Object dbContext, User user);
 
-    @Override
-    public List findAllViewableByUserSinceSeq(Object dbContext, User user, long sinceSeq) {
-        //TODO:
-        return null;
-    }
+    public abstract List<T> findAllViewableByUserSinceSeq(Object dbContext, User user, long sinceSeq);
 
-    @Override
-    public List findAllEditableByUser(Object dbContext, User user) {
-        return null;
-    }
+    public abstract List<T> findAllEditableByUser(Object dbContext, User user);
+
     */
 
-    @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
-        //TODO:
-        /*
-        So this method is used to find all entites that are related to this user.
-        Why would we need to find that ?
-        eg: varunasCanViewTheseClasses = clazzManager.findAllRelatedtoUser(context, varuna);
-        schoolManagerCanViewTheseClasses = clazzManager.findAllRelatedToUser(context, schoolManager);
+    public abstract NanoLrsModel findAllRelatedToUser(Object dbContext, User user);
 
-        View and Edit are different. So we ideally need two methods : View and Edit ?
-         */
-        return null;
-    }
+    public abstract PreparedQuery<NanoLrsModel> findAllRelatedToUserQuery(Object dbContext, User user)
+            throws SQLException;
 
 }

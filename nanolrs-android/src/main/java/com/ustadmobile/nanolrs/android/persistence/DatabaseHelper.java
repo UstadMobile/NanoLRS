@@ -8,6 +8,9 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.ustadmobile.nanolrs.core.manager.NodeManager;
+import com.ustadmobile.nanolrs.core.model.Node;
+import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.NodeEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.SyncStatusEntity;
@@ -21,6 +24,7 @@ import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Created by mike on 9/6/16.
@@ -63,12 +67,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             throw new RuntimeException(e);
         }
 
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
+
+            checkAndCreateMainNode(connectionSource);
+            checkAndCreateThisNode(connectionSource);
+
             if(oldVersion < 9) {
                 TableUtils.createTable(connectionSource, UserEntity.class);
             }
@@ -87,5 +94,38 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.e(LOGTAG, "Exception onUpgrade", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private void checkAndCreateMainNode(ConnectionSource connectionSource) throws SQLException {
+        String mainNodeName = "main1";
+        String mainNodeHostName = "umcloud1.ustadmobile.com:8545";
+        String mainNodeEndpointUrl = "http://umcloud1.ustadmobile:8545/syncendpoint/";
+        String mainNodeRole = "main";
+        String mainNodeUUID = UUID.randomUUID().toString();
+
+        NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
+
+        if(!nodeManager.doesThisMainNodeExist(mainNodeName, mainNodeHostName, (Object)connectionSource)){
+            Node mainNode = (Node)nodeManager.makeNew();
+            mainNode.setUUID(mainNodeUUID);
+            mainNode.setMaster(true);
+            mainNode.setRole(mainNodeRole);
+            mainNode.setUrl(mainNodeEndpointUrl);
+            mainNode.setName(mainNodeName);
+            mainNode.setHost(mainNodeHostName);
+            mainNode.setStoredDate(System.currentTimeMillis());
+            nodeManager.persist((Object)connectionSource,mainNode);
+            //getDao(NodeEntity.class).createOrUpdate(mainNode);
+        }
+    }
+
+    private void checkAndCreateThisNode(ConnectionSource connectionSource) throws SQLException {
+        NodeManager nodeManager =
+                PersistenceManager.getInstance().getManager(NodeManager.class);
+        String thisNodeUUID = UUID.randomUUID().toString();
+        String thisNodeName = "this_device"; //TODO: Check if we want to get device's name & info
+        String thisNodeEndpointUrl = "";
+        nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName,
+                thisNodeEndpointUrl, (Object)connectionSource);
     }
 }

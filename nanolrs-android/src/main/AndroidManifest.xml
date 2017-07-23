@@ -12,7 +12,14 @@
         <service
             android:name=".service.XapiStatementForwardingService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true">
+        </service>
+
+        <service
+            android:name=".service.UMSyncService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

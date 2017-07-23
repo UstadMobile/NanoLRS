@@ -85,16 +85,4 @@ public class ChangeSeqManagerOrmLite extends BaseManagerOrmLite
         }
     }
 
-    @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
-        //TODO: This
-        return null;
-    }
-
-    @Override
-    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) throws SQLException {
-        //TODO:
-        return null;
-    }
-
 }

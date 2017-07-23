@@ -59,19 +59,6 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
         return (T)persistenceManager.getDao(getEntityImplementationClasss(), dbContext).queryForId(primaryKey);
     }
 
-    public abstract T findAllRelatedToUser(Object dbContext, User user);
-
-    /*
-    public abstract List<T> findAllViewableByUser(Object dbContext, User user);
-
-    public abstract List<T> findAllViewableByUserSinceSeq(Object dbContext, User user, long sinceSeq);
-
-    public abstract List<T> findAllEditableByUser(Object dbContext, User user);
-
-    */
-    public abstract PreparedQuery<T> findAllRelatedToUserQuery(Object dbContext, User user)
-            throws SQLException;
-
 
     public PersistenceManagerORMLite getPersistenceManager() {
         return persistenceManager;

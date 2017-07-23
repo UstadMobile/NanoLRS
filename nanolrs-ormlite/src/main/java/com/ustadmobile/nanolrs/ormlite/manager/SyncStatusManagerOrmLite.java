@@ -35,17 +35,6 @@ public class SyncStatusManagerOrmLite extends BaseManagerOrmLite implements Sync
         return SyncStatusEntity.class;
     }
 
-    @Override
-    public NanoLrsModel findAllRelatedToUser(Object dbContext, User user) {
-        //TOOD: this
-        return null;
-    }
-
-    @Override
-    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) {
-        return null;
-    }
-
     /**
      * Converts a property name from e.g. from fullName to full_name
      *
