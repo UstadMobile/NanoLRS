@@ -18,5 +18,9 @@ public interface NodeManager extends NanoLrsManager {
     Node createThisDeviceNode(String uuid, String deviceName, String endpointUrl,
                               Object dbContext) throws SQLException;
 
+    List<Node> getMainNodes(Object dbContext) throws SQLException;
+
+    Node getMainNode(String host_name, Object dbContext) throws SQLException;
+
     boolean doesThisMainNodeExist(String name, String host, Object dbContext) throws  SQLException;
 }

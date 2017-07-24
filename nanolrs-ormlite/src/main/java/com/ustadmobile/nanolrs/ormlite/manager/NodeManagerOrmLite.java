@@ -64,6 +64,33 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
     }
 
     @Override
+    public List<Node> getMainNodes(Object dbContext) throws SQLException {
+        Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
+        QueryBuilder<NodeEntity, String> qb = thisDao.queryBuilder();
+        List<Node> allMainNodes = thisDao.query(qb.where().eq(NodeEntity.COLNAME_MASTER, true).prepare());
+        if(allMainNodes!=null && !allMainNodes.isEmpty()){
+            return allMainNodes;
+        }else{
+            return null;
+        }
+
+    }
+
+    @Override
+    public Node getMainNode(String host_name, Object dbContext) throws SQLException {
+        Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
+        QueryBuilder<NodeEntity, String> qb = thisDao.queryBuilder();
+        List<Node> allMainNodes = thisDao.query(qb.where().eq(
+                NodeEntity.COLNAME_MASTER, true).and().eq(
+                        NodeEntity.COLNAME_NAME, host_name).prepare());
+        if(allMainNodes!=null && !allMainNodes.isEmpty()){
+            return allMainNodes.get(0);
+        }else{
+            return null;
+        }
+    }
+
+    @Override
     public boolean doesThisMainNodeExist(String name, String host_name, Object dbContext) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
         QueryBuilder<NodeEntity, String> qb = thisDao.queryBuilder();

@@ -37,9 +37,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * Database Name to be used: nanolrs.db was used by previous versions.  From DATABASE_VERSION 11
      */
-    private static final String DATABASE_NAME="nanolrs6.db";
+    private static final String DATABASE_NAME="nanolrs10.db";
 
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
 
     private Context context;
 
@@ -47,6 +47,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
@@ -59,9 +60,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             Log.i(DatabaseHelper.class.getName(), "onCreate");
+
             for(Class clazz : TABLE_CLASSES) {
                 TableUtils.createTable(connectionSource, clazz);
             }
+
+            try {
+                checkAndCreateMainNode();
+                checkAndCreateThisNode();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }catch(SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "can't create database", e);
             throw new RuntimeException(e);
@@ -69,12 +79,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     }
 
+
+
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-
-            checkAndCreateMainNode(connectionSource);
-            checkAndCreateThisNode(connectionSource);
 
             if(oldVersion < 9) {
                 TableUtils.createTable(connectionSource, UserEntity.class);
@@ -96,7 +105,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    private void checkAndCreateMainNode(ConnectionSource connectionSource) throws SQLException {
+    private void checkAndCreateMainNode() throws SQLException {
         String mainNodeName = "main1";
         String mainNodeHostName = "umcloud1.ustadmobile.com:8545";
         String mainNodeEndpointUrl = "http://umcloud1.ustadmobile:8545/syncendpoint/";
@@ -105,7 +114,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
 
-        if(!nodeManager.doesThisMainNodeExist(mainNodeName, mainNodeHostName, (Object)connectionSource)){
+        if(!nodeManager.doesThisMainNodeExist(mainNodeName, mainNodeHostName, context)){
             Node mainNode = (Node)nodeManager.makeNew();
             mainNode.setUUID(mainNodeUUID);
             mainNode.setMaster(true);
@@ -114,18 +123,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             mainNode.setName(mainNodeName);
             mainNode.setHost(mainNodeHostName);
             mainNode.setStoredDate(System.currentTimeMillis());
-            nodeManager.persist((Object)connectionSource,mainNode);
+            nodeManager.persist(context,mainNode);
             //getDao(NodeEntity.class).createOrUpdate(mainNode);
         }
     }
 
-    private void checkAndCreateThisNode(ConnectionSource connectionSource) throws SQLException {
+    private void checkAndCreateThisNode() throws SQLException {
         NodeManager nodeManager =
                 PersistenceManager.getInstance().getManager(NodeManager.class);
         String thisNodeUUID = UUID.randomUUID().toString();
         String thisNodeName = "this_device"; //TODO: Check if we want to get device's name & info
         String thisNodeEndpointUrl = "";
         nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName,
-                thisNodeEndpointUrl, (Object)connectionSource);
+                thisNodeEndpointUrl, context);
     }
+
 }

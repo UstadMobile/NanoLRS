@@ -63,3 +63,6 @@ buildconfig.local.gradle
 buildconfig.local.properties
 
 nanolrs-core/src/test/java/com/ustadmobile/nanolrs/buildconfig/*.java
+
+#publish repo
+nanolrs-repo/

@@ -31,6 +31,7 @@ public class XapiStatementForwardingService extends Service {
 
     @Override
     public void onCreate() {
+        System.out.println("XapiStatementForwardingService : onCreate()");
         mTimer = new Timer();
         mTimer.scheduleAtFixedRate(new XapiStatementForwardingTimerTask(), FORWARD_INTERVAL, FORWARD_INTERVAL);
     }
@@ -44,12 +45,14 @@ public class XapiStatementForwardingService extends Service {
 
     public class XapiStatementForwardingTimerTask extends TimerTask {
         public void run() {
+            System.out.println("XapiStatementForwardingService : run()");
             int numSent = XapiStatementsForwardingEndpoint.sendQueue(XapiStatementForwardingService.this);
         }
     }
 
     @Override
     public void onDestroy() {
+        System.out.println("XapiStatementForwardingService : onDestroy()");
         mTimer.cancel();
         mTimer = null;
         PersistenceManagerAndroid.getInstanceAndroid().releaseHelperForContext(this);

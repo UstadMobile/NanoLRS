@@ -14,13 +14,13 @@
             android:enabled="true"
             android:exported="true">
         </service>
-        <!-- TODO:
+
         <service
             android:name=".service.UMSyncService"
             android:enabled="true"
             android:exported="true">
         </service>
-        -->
+
     </application>
 
 </manifest>
