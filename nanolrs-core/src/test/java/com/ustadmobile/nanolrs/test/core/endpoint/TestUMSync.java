@@ -34,7 +34,7 @@ public class TestUMSync {
         endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
         context = NanoLrsPlatformTestUtil.getContext();
         PersistenceManager.getInstance().forceInit(endpointContext);
-        //PersistenceManager.getInstance().forceInit(context);
+        PersistenceManager.getInstance().forceInit(context);
     }
 
     @Test
