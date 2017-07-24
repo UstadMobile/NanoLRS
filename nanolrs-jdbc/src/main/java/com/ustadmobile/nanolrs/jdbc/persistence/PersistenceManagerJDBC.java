@@ -37,6 +37,11 @@ public class PersistenceManagerJDBC extends PersistenceManagerORMLite {
         return DaoManager.createDao((ConnectionSource)dbContext, clazz);
     }
 
+    @Override
+    public void forceInit(Object dbContext) {
+        init((ConnectionSource) dbContext);
+    }
+
     public void init(ConnectionSource connectionSource) {
         try {
             System.out.println("onCreate");

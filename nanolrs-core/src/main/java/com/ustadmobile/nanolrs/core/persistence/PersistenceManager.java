@@ -48,5 +48,5 @@ public abstract class PersistenceManager {
      */
     public abstract <M extends NanoLrsManager<? extends NanoLrsModel, ?>> M getManager(Class<M> managerType);
 
-    
+    public abstract void forceInit(Object dbContext);
 }

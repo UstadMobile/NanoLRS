@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
@@ -117,8 +116,10 @@ public class SyncUriResponder extends NanoLrsResponder{
         String requestHostUrl = getHeaderVal(session, "hosturl");
 
         //could send name, etc
+        PersistenceManager pm = PersistenceManager.getInstance();
 
-        UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
+        UserManager userManager = pm.getManager(UserManager.class);
+
         if (userManager.authenticate(dbContext, username, password) == false){
             if(userManager.findByUsername(dbContext, username) == null ||
                     userManager.findByUsername(dbContext, username).isEmpty()){
@@ -137,7 +138,7 @@ public class SyncUriResponder extends NanoLrsResponder{
             }
         }
 
-        NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
+        NodeManager nodeManager = pm.getManager(NodeManager.class);
         Node node = null;
 
         try {

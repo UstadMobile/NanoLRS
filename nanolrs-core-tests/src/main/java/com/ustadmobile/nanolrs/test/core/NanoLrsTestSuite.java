@@ -29,8 +29,8 @@ import org.junit.runners.Suite;
         TestUser.class,
         TestJsonUtil.class,
         TestSyncComponents.class,
-        TestEntitiesToJsonArray.class,
-        TestSync.class
+        TestEntitiesToJsonArray.class
+        //TestSync.class - moved to nanolrs-core
 })
 
 public abstract class NanoLrsTestSuite {

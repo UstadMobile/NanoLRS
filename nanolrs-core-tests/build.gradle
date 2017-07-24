@@ -15,7 +15,8 @@ apply plugin: 'java'
 dependencies {
     compile project(":nanolrs-core")
     compile project(":nanolrs-http")
-    compile project(":nanolrs-jdbc")
+    testCompile project(":nanolrs-ormlite")
+    testCompile project(":nanolrs-jdbc")
     compile 'junit:junit:4.12'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

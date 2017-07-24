@@ -34,8 +34,6 @@ public class PersistenceManagerAndroid extends PersistenceManagerORMLite {
     }
 
 
-
-
     /**
      * Add a Create or Update Listener : use this BEFORE any database operation
      * @param listener
@@ -67,7 +65,13 @@ public class PersistenceManagerAndroid extends PersistenceManagerORMLite {
     }
 
     @Override
-    public <D extends Dao<T, ?>, T> D getDao(Class<T> clazz, Object dbContext) throws SQLException {
+    public <D extends Dao<T, ?>, T> D getDao(Class<T> clazz, Object dbContext)
+            throws SQLException {
         return getHelperForContext((Context)dbContext).getDao(clazz);
+    }
+
+    @Override
+    public void forceInit(Object dbContext) {
+        //If you want, you can force initialising the databse here.
     }
 }

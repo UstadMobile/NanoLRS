@@ -1,8 +1,9 @@
-package com.ustadmobile.nanolrs.test.core.model;
+package com.ustadmobile.nanolrs.test.core.endpoint;
 /**
  * Created by varuna on 7/20/2017.
  */
 
+import com.j256.ormlite.support.ConnectionSource;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
@@ -21,26 +22,27 @@ import org.junit.Test;
 import java.util.List;
 import java.util.UUID;
 
-public class TestSync {
+public class TestUMSync {
+
+    public static Object context;
+
+    public static Object endpointContext;
 
 
-    //@Before
+    @Before
     public void setUp() throws Exception{
-        Object endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
+        endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
+        context = NanoLrsPlatformTestUtil.getContext();
         PersistenceManager.getInstance().forceInit(endpointContext);
+        //PersistenceManager.getInstance().forceInit(context);
     }
 
     @Test
     public void testLifecycle() throws Exception {
-        //Get the connectionSource from platform db pool (from NanoLrsPlatformTestUtil)
-        Object context = NanoLrsPlatformTestUtil.getContext();
-
         //Get the endpoint connectionSource from platform db pool
-        Object endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
-
-        //Create Entities at Endpoint
-        //PersistenceManagerJDBC persistenceManagerJDBC = new PersistenceManagerJDBC();
-        //persistenceManagerJDBC.init((ConnectionSource) endpointContext);
+        if(endpointContext == null) {
+            Object endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
+        }
 
         //Create an endpoint server
         NanoLrsHttpd httpd = new NanoLrsHttpd(0, endpointContext);

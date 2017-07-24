@@ -4,6 +4,8 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.ustadmobile.nanolrs.buildconfig.TestConstantsCore;
 import com.ustadmobile.nanolrs.buildconfig.TestConstantsJDBC;
+import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.jdbc.persistence.PersistenceManagerJDBC;
 
 import java.sql.SQLException;
 

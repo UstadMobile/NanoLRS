@@ -78,7 +78,6 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
     public abstract <D extends Dao<T, ?>, T> D getDao(Class<T> clazz, Object dbContext) throws SQLException;
 
 
-
     public PersistenceManagerORMLite() {
         managersCache = new WeakHashMap<>();
     }

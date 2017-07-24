@@ -44,9 +44,6 @@ public class NanoLrsHttpdService extends Service {
         nanoLrshttpd = null;
     }
 
-
-
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

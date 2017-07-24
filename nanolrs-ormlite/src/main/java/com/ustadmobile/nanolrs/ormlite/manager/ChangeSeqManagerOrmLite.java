@@ -12,6 +12,7 @@ import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class ChangeSeqManagerOrmLite extends BaseManagerOrmLite
         implements ChangeSeqManager {
@@ -37,18 +38,31 @@ public class ChangeSeqManagerOrmLite extends BaseManagerOrmLite
         Dao thisDao =
                 persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
 
-        try {
-            ChangeSeq tableChangeSeq = (ChangeSeq) thisDao.query(thisDao.queryBuilder().where().eq(
-                    ChangeSeqEntity.COLNAME_TABLE, tableName).prepare()).get(0);
-            if(tableChangeSeq != null){
+        boolean createNew = false;
+        List<ChangeSeq> tableChangeSeqs = thisDao.query(thisDao.queryBuilder().where().eq(
+                ChangeSeqEntity.COLNAME_TABLE, tableName).prepare());
+
+        if (tableChangeSeqs != null && !tableChangeSeqs.isEmpty()) {
+            ChangeSeq tableChangeSeq = tableChangeSeqs.get(0);
+            if (tableChangeSeq != null) {
                 return tableChangeSeq.getNextChangeSeqNum();
             }else{
-                return 0;
+                createNew = true;
             }
-        }catch(IndexOutOfBoundsException ob){
+        }else{
+            createNew = true;
+        }
+        if(createNew == true){
+            //create a new one
+            ChangeSeqManager changeSeqManager =
+                    persistenceManager.getManager(ChangeSeqManager.class);
+            ChangeSeq newChangeSeq = (ChangeSeq) changeSeqManager.makeNew();
+            newChangeSeq.setTable(tableName);
+            newChangeSeq.setNextChangeSeqNum(0);
+            thisDao.createOrUpdate(newChangeSeq);
             return 0;
         }
-
+        return 0;
     }
 
     /**

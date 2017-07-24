@@ -3,6 +3,8 @@ apply plugin: 'java'
 apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 compileJava.dependsOn(":nanolrs-entitygen:runOrmLiteGeneration")
 
 dependencies {
