@@ -24,6 +24,8 @@ public class XapiStatementsEndpoint {
     public static String putStatement(JSONObject stmt, Object dbContext) {
         try {
             XapiStatement stmtProxy =PersistenceManager.getInstance().getManager(XapiStatementManager.class).createSync(dbContext);
+            XapiAgent agent = XapiAgentEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("actor"));
+            stmtProxy.setAgent(agent);
             if(stmt.has("id")) {
                 stmtProxy.setUuid(stmt.getString("id"));
             }else {
