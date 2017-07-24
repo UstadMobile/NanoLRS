@@ -12,6 +12,16 @@
       "en-US": "hosted"
     }
   },
+  "result": {
+    "success" : true,
+    "completion" : true,
+    "score" : {
+      "scaled" : 0.5
+    },
+    "extensions": {
+      "https://w3id.org/xapi/cmi5/result/extensions/progress" : 50
+    }
+  },
   "object": {
     "id": "http://www.ustadmobile.com/activities/attended-class/CLASSID",
     "objectType": "Activity",
