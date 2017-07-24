@@ -86,6 +86,9 @@ public class TestXapiStatement {
 
         //make sure it has a timestamp
         Assert.assertTrue("Statement has timestamp added", retrieved.getTimestamp() >= timeStarted);
+        Assert.assertTrue("Statement has result success set true", retrieved.isResultSuccess());
+        Assert.assertTrue("Statement has completion set true", retrieved.isResultComplete());
+        Assert.assertEquals("Progress is 50", 50, retrieved.getResultProgress());
 
         //make sure that we can find it using a search by parameters
         long since = 0;

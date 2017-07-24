@@ -56,6 +56,40 @@ public class XapiStatementsEndpoint {
                 }
             }
 
+            if(stmt.has("result")) {
+                JSONObject result = stmt.getJSONObject("result");
+                if(result.has("score")) {
+                    JSONObject score = result.getJSONObject("score");
+                    if(score.has("scaled")){
+                        stmtProxy.setResultScoreScaled((float)score.getDouble("scaled"));
+                    }
+                    if(score.has("raw")) {
+                        stmtProxy.setResultScoreRaw((float)score.getDouble("raw"));
+                    }
+                    if(score.has("min")) {
+                        stmtProxy.setResultScoreMin((float)score.get("min"));
+                    }
+                    if(score.has("max")) {
+                        stmtProxy.setResultScoreMax((float)score.get("max"));
+                    }
+                }
+
+                if(result.has("completion")) {
+                    stmtProxy.setResultComplete(result.getBoolean("completion"));
+                }
+
+                if(result.has("success")) {
+                    stmtProxy.setResultSuccess(result.getBoolean("success"));
+                }
+
+                if(result.has("extensions")) {
+                    JSONObject extensions = result.getJSONObject("extensions");
+                    if(extensions.has("https://w3id.org/xapi/cmi5/result/extensions/progress")){
+                        stmtProxy.setResultProgress(extensions.getInt("https://w3id.org/xapi/cmi5/result/extensions/progress"));
+                    }
+                }
+            }
+
             stmtProxy.setFullStatement(stmt.toString());
 
             PersistenceManager.getInstance().getManager(XapiStatementManager.class).persistSync(dbContext, stmtProxy);

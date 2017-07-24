@@ -81,6 +81,10 @@ public interface XapiStatement extends NanoLrsModelSyncable{
 
     void setResultExtensions(String resultExtensions);
 
+    int getResultProgress();
+
+    void setResultProgress(int resultProgress);
+
     long getStored();
 
     void setStored(long stored);
