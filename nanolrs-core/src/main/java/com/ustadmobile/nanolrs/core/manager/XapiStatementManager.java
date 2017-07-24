@@ -21,6 +21,8 @@ public interface XapiStatementManager extends NanoLrsManagerSyncable {
 
     List<? extends XapiStatement> findByParams(Object dbContext, String statementid, String voidedStatemendid, XapiAgent agent, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit);
 
+    List<? extends XapiStatement> findByProgress(Object dbContext, String activityId, XapiAgent agent, String registration, String[] verbIds, int minProgress);
+
     XapiStatement findByUuidSync(Object dbContext, String uuid);
 
     void create(Object dbContext, int requestId, PersistenceReceiver receiver);

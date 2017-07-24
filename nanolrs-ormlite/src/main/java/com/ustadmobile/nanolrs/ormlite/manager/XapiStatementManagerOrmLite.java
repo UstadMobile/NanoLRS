@@ -169,6 +169,39 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
         return null;
     }
 
+    @Override
+    public List<? extends XapiStatement> findByProgress(Object dbContext, String activityId, XapiAgent agent, String registration, String[] verbIds, int minProgress) {
+        try {
+            Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
+            QueryBuilder<XapiStatementEntity, String> queryBuilder = dao.queryBuilder();
+            Where<XapiStatementEntity, String> where = queryBuilder.where();
+
+            where.eq(XapiStatementEntity.COLNAME_AGENT, agent.getUuid());
+            where.and().eq(XapiStatementEntity.COLNAME_ACTIVITY, activityId);
+            if(registration != null){
+                where.and().eq(XapiStatementEntity.COLNAME_CONTEXT_REGISTRATION, registration);
+            }
+
+            for(int i = 0; i < verbIds.length; i++) {
+                where.or().eq(XapiStatementEntity.COLNAME_VERB, verbIds[i]);
+            }
+            where.and(verbIds.length);
+
+            if(agent != null) {
+                where.and().eq(XapiStatementEntity.COLNAME_AGENT, agent.getUuid());
+            }
+
+            where.and().gt(XapiStatementEntity.COLNAME_RESULT_PROGRESS, minProgress);
+
+            queryBuilder.orderBy(XapiStatementEntity.COLNAME_TIMESTAMP, false);
+            return dao.query(queryBuilder.prepare());
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     /*
     @Override
     public NanoLrsModel makeNew() throws SQLException {
