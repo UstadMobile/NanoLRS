@@ -641,14 +641,17 @@ public class UMSyncEndpoint {
             con.setRequestMethod(method.toUpperCase());
 
             con.setDoOutput(true);
-            setHeaders(con, headers);
+            if(!headers.isEmpty()){
+                setHeaders(con, headers);
+            }
+
             if(contentType != null) {
                 //For JSON it is: application/json
                 con.setRequestProperty("Content-Type", contentType);
                 con.setRequestProperty("Accept", contentType);
 
             }
-            //if(!dataJSONArray.isNull(0) && content == null){
+
             if(!dataJSON.equals(null) && dataJSON.length()>0 && content == null){
                 con.setFixedLengthStreamingMode(dataJSON.toString().length());
 
@@ -657,7 +660,6 @@ public class UMSyncEndpoint {
                 outw.flush();
             }else if(content != null){
                 con.setFixedLengthStreamingMode(content.length);
-
                 out = con.getOutputStream();
                 out.write(content);
                 out.flush();
