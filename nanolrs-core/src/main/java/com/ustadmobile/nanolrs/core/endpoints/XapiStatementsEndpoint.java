@@ -69,10 +69,10 @@ public class XapiStatementsEndpoint {
                         stmtProxy.setResultScoreRaw((float)score.getDouble("raw"));
                     }
                     if(score.has("min")) {
-                        stmtProxy.setResultScoreMin((float)score.get("min"));
+                        stmtProxy.setResultScoreMin((float)score.getDouble("min"));
                     }
                     if(score.has("max")) {
-                        stmtProxy.setResultScoreMax((float)score.get("max"));
+                        stmtProxy.setResultScoreMax((float)score.getDouble("max"));
                     }
                 }
 
