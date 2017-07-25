@@ -176,22 +176,17 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
             QueryBuilder<XapiStatementEntity, String> queryBuilder = dao.queryBuilder();
             Where<XapiStatementEntity, String> where = queryBuilder.where();
 
-            where.eq(XapiStatementEntity.COLNAME_AGENT, agent.getUuid());
-            where.and().eq(XapiStatementEntity.COLNAME_ACTIVITY, activityId);
-            if(registration != null){
-                where.and().eq(XapiStatementEntity.COLNAME_CONTEXT_REGISTRATION, registration);
-            }
-
             for(int i = 0; i < verbIds.length; i++) {
-                where.or().eq(XapiStatementEntity.COLNAME_VERB, verbIds[i]);
+                where.eq(XapiStatementEntity.COLNAME_VERB, verbIds[i]);
             }
-            where.and(verbIds.length);
-
-            if(agent != null) {
-                where.and().eq(XapiStatementEntity.COLNAME_AGENT, agent.getUuid());
+            where.or(verbIds.length);
+            where.eq(XapiStatementEntity.COLNAME_AGENT, agent.getUuid());
+            where.eq(XapiStatementEntity.COLNAME_ACTIVITY, activityId);
+            if(registration != null) {
+                where.eq(XapiStatementEntity.COLNAME_CONTEXT_REGISTRATION, registration);
             }
-
-            where.and().gt(XapiStatementEntity.COLNAME_RESULT_PROGRESS, minProgress);
+            where.gt(XapiStatementEntity.COLNAME_RESULT_PROGRESS, minProgress);
+            where.and(registration != null ? 5: 4);
 
             queryBuilder.orderBy(XapiStatementEntity.COLNAME_TIMESTAMP, false);
             return dao.query(queryBuilder.prepare());

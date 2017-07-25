@@ -111,7 +111,8 @@ public class TestXapiStatement {
         XapiStatementManager manager = PersistenceManager.getInstance().getManager(XapiStatementManager.class);
         XapiAgent agent = PersistenceManager.getInstance().getManager(XapiAgentManager.class).findAgentByParams(
                 context, null, "miketestecop", "http://umcloud1.ustadmobile.com/umlrs").get(0);
-        String[] verbIds = new String[]{"http://activitystrea.ms/schema/1.0/host"};
+        String[] verbIds = new String[]{"http://activitystrea.ms/schema/1.0/host",
+                "http://ustadmobile.com/verb/done", "http://ustadmobile.com/verb/failed"};
         List<? extends XapiStatement> progressResult = manager.findByProgress(context,
                 "http://www.ustadmobile.com/activities/attended-class/CLASSID", agent, null, verbIds, 30);
         Assert.assertTrue("Found result by progress", progressResult.size() > 0);
