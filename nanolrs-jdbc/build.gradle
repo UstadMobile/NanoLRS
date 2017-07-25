@@ -13,6 +13,9 @@ buildscript {
     }
 }
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 ext.buildConfigProperties = new Properties()
 ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.default.properties")))
 if(project.file("buildconfig.local.properties").exists()) {
