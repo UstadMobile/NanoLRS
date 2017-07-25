@@ -18,4 +18,14 @@
         <servlet-name>StateServlet</servlet-name>
         <servlet-class>com.ustadmobile.nanolrs.servlet.StateServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>UMSyncServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.UMSyncServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UMSyncServlet</servlet-name>
+        <url-pattern>/sync/</url-pattern>
+    </servlet-mapping>
 </web-app>

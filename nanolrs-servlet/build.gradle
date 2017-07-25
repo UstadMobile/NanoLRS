@@ -14,6 +14,9 @@ buildscript {
     }
 }
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 ext.buildConfigProperties = new Properties()
 ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.default.properties")))
 if(project.file("buildconfig.local.properties").exists()) {
@@ -34,13 +37,15 @@ compileTestJava.dependsOn(generateCoreTestConstantsBuildConfig)
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(":nanolrs-ormlite")
+    compile project(":nanolrs-core")
     compile project(":nanolrs-jdbc")
     compile "javax.servlet:javax.servlet-api:3.0.1"
     compile 'org.mockito:mockito-core:2.7.22'
     compile 'junit:junit:4.12'
     testCompile project(":nanolrs-core-tests")
+
     ext.testDbDependency = project.ext.buildConfigProperties['test.jdbc.dbDriverDependency']
-    testCompile "$testDbDependency"
+    compile "$testDbDependency" //changed from testcompule, because were using jdbc for sure for now.
 }
 
 task sourceJar(type: Jar) {

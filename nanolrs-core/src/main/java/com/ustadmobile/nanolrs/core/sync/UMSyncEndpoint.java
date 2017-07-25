@@ -290,7 +290,9 @@ public class UMSyncEndpoint {
                     new ByteArrayInputStream(resultForClient.getBytes("UTF-8"));
             responseLength = resultForClient.length();
         }else{
-            responseData = null;
+            //responseData = null;
+            String emptyResponse = "";
+            responseData = new ByteArrayInputStream(emptyResponse.getBytes("UTF-8"));
             responseLength = 0;
         }
 

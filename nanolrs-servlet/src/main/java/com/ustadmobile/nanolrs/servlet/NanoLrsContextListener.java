@@ -21,6 +21,7 @@ public class NanoLrsContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        System.out.println("In Context Listener : contextInitialized..");
         ServletContext context = sce.getServletContext();
         File webInfDir = new File(context.getRealPath("/WEB-INF"));
         Properties props = new Properties();
@@ -32,6 +33,8 @@ public class NanoLrsContextListener implements ServletContextListener {
             }
 
             String jdbcUrl = props.getProperty("JDBCURL");
+
+            System.out.println("Got JDBC URL : " + jdbcUrl);
             ConnectionSource connectionSource = new JdbcPooledConnectionSource(jdbcUrl);
             context.setAttribute(ATTR_CONNECTION_SOURCE, connectionSource);
         }catch(Exception e) {
