@@ -181,7 +181,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
             }
             where.or(verbIds.length);
             where.eq(XapiStatementEntity.COLNAME_AGENT, agent.getUuid());
-            where.eq(XapiStatementEntity.COLNAME_ACTIVITY, activityId);
+            where.like(XapiStatementEntity.COLNAME_ACTIVITY, activityId + "%");
             if(registration != null) {
                 where.eq(XapiStatementEntity.COLNAME_CONTEXT_REGISTRATION, registration);
             }
