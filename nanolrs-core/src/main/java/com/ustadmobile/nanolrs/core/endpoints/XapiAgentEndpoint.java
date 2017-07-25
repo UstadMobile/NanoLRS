@@ -27,28 +27,32 @@ public class XapiAgentEndpoint {
                 accountName = accountObj.getString("name");
             }
 
-            XapiAgentManager manager = PersistenceManager.getInstance().getManager(XapiAgentManager.class);
-            List<XapiAgent> matchingAgents = manager.findAgentByParams(
-                    dbContext, mbox, accountName, accountHomepage);
-
-            if(matchingAgents != null && matchingAgents.size() > 0) {
-                return matchingAgents.get(0);
-            }
-
-            //does not exist - needs to be created
-            XapiAgent agent = manager.makeNew(dbContext);
-            agent.setUuid(UUID.randomUUID().toString());
-            agent.setMbox(mbox);
-            agent.setAccountHomepage(accountHomepage);
-            agent.setAccountName(accountName);
-            manager.createOrUpdate(dbContext, agent);
-
-            return agent;
+            return createOrUpdate(dbContext, mbox, accountName, accountHomepage);
         }catch(JSONException e) {
             throw new IllegalArgumentException("Invalid Agent JSON supplied", e);
         }
-
     }
+
+    public static XapiAgent createOrUpdate(Object dbContext, String mbox, String accountName, String accountHomepage) {
+        XapiAgentManager manager = PersistenceManager.getInstance().getManager(XapiAgentManager.class);
+        List<XapiAgent> matchingAgents = manager.findAgentByParams(
+                dbContext, mbox, accountName, accountHomepage);
+
+        if(matchingAgents != null && matchingAgents.size() > 0) {
+            return matchingAgents.get(0);
+        }
+
+        //does not exist - needs to be created
+        XapiAgent agent = manager.makeNew(dbContext);
+        agent.setUuid(UUID.randomUUID().toString());
+        agent.setMbox(mbox);
+        agent.setAccountHomepage(accountHomepage);
+        agent.setAccountName(accountName);
+        manager.createOrUpdate(dbContext, agent);
+
+        return agent;
+    }
+
 
     public static XapiAgent makeFromJson(Object dbContext, JSONObject agentJson) {
         return null;
