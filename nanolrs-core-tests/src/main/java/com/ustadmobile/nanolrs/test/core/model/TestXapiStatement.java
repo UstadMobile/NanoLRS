@@ -113,8 +113,10 @@ public class TestXapiStatement {
                 context, null, "miketestecop", "http://umcloud1.ustadmobile.com/umlrs").get(0);
         String[] verbIds = new String[]{"http://activitystrea.ms/schema/1.0/host",
                 "http://ustadmobile.com/verb/done", "http://ustadmobile.com/verb/failed"};
-        List<? extends XapiStatement> progressResult = manager.findByProgress(context,
-                "http://www.ustadmobile.com/activities/attended-class/CLASSID", agent, null, verbIds, 30);
+        String[] activityIds = new String[]{"http://www.ustadmobile.com/activities/attended-class/CLASSID",
+            "http://www.ustadmobile.com/activities/attended-class/something-else"};
+        List<? extends XapiStatement> progressResult = manager.findByProgress(context, activityIds,
+                agent, null, verbIds, 30);
         Assert.assertTrue("Found result by progress", progressResult.size() > 0);
 
 

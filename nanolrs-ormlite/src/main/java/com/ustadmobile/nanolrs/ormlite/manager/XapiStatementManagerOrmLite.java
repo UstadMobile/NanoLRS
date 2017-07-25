@@ -170,7 +170,7 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
     }
 
     @Override
-    public List<? extends XapiStatement> findByProgress(Object dbContext, String activityId, XapiAgent agent, String registration, String[] verbIds, int minProgress) {
+    public List<? extends XapiStatement> findByProgress(Object dbContext, String[] activityIds, XapiAgent agent, String registration, String[] verbIds, int minProgress) {
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
             QueryBuilder<XapiStatementEntity, String> queryBuilder = dao.queryBuilder();
@@ -180,8 +180,14 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
                 where.eq(XapiStatementEntity.COLNAME_VERB, verbIds[i]);
             }
             where.or(verbIds.length);
+
+            for(int i = 0; i < activityIds.length; i++) {
+                where.like(XapiStatementEntity.COLNAME_ACTIVITY, activityIds[i] + "%");
+            }
+            where.or(activityIds.length);
+
             where.eq(XapiStatementEntity.COLNAME_AGENT, agent.getUuid());
-            where.like(XapiStatementEntity.COLNAME_ACTIVITY, activityId + "%");
+
             if(registration != null) {
                 where.eq(XapiStatementEntity.COLNAME_CONTEXT_REGISTRATION, registration);
             }
