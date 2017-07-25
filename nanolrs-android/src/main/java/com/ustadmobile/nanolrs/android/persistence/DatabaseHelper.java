@@ -39,7 +39,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      */
     private static final String DATABASE_NAME="nanolrs10.db";
 
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
 
     private Context context;
 
@@ -108,7 +108,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private void checkAndCreateMainNode() throws SQLException {
         String mainNodeName = "main1";
         String mainNodeHostName = "umcloud1.ustadmobile.com:8545";
-        String mainNodeEndpointUrl = "http://umcloud1.ustadmobile:8545/syncendpoint/";
+        String mainNodeEndpointUrl = "http://umcloud1.ustadmobile.com:8545/syncendpoint/";
         String mainNodeRole = "main";
         String mainNodeUUID = UUID.randomUUID().toString();
 
