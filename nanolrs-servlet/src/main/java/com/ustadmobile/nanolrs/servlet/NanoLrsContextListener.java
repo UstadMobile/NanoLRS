@@ -32,7 +32,15 @@ public class NanoLrsContextListener implements ServletContextListener {
                 props.load(new FileInputStream(localProperties));
             }
 
-            String jdbcUrl = props.getProperty("JDBCURL");
+            String jdbcUrlHost = props.getProperty("JDBCURL");
+            String jdbcUsername = props.getProperty("DATABASE_USER");
+            String jdbcPassword = props.getProperty("DATABASE_PASS");
+            String jdbcUrl="";
+            if(!jdbcUsername.isEmpty() && !jdbcPassword.isEmpty()){
+                jdbcUrl = jdbcUrlHost + "?user=" + jdbcUsername + "&password=" + jdbcPassword;
+            }else{
+                jdbcUrl = jdbcUrlHost;
+            }
 
             System.out.println("Got JDBC URL : " + jdbcUrl);
             ConnectionSource connectionSource = new JdbcPooledConnectionSource(jdbcUrl);

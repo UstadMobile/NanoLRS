@@ -34,6 +34,13 @@ task generateCoreTestConstantsBuildConfig (type: de.fuerstenau.gradle.buildconfi
 }
 compileTestJava.dependsOn(generateCoreTestConstantsBuildConfig)
 
+task copyBuildConfigToServletWEBINF(type: Copy){
+    from "${projectDir}/buildconfig.default.properties"
+    from "${projectDir}/buildconfig.local.properties"
+    into "${projectDir}/src/main/webapp/WEB-INF/"
+}
+compileJava.dependsOn(copyBuildConfigToServletWEBINF)
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(":nanolrs-ormlite")
@@ -45,7 +52,13 @@ dependencies {
     testCompile project(":nanolrs-core-tests")
 
     ext.testDbDependency = project.ext.buildConfigProperties['test.jdbc.dbDriverDependency']
-    compile "$testDbDependency" //changed from testcompule, because were using jdbc for sure for now.
+    testCompile "$testDbDependency"
+
+    ext.dbDependency = project.ext.buildConfigProperties['jdbc.dbDriverDependency']
+    compile "$dbDependency"
+    //if($dbDependency) {
+    //    compile "$dbDependency"
+    //}
 }
 
 task sourceJar(type: Jar) {
@@ -73,5 +86,9 @@ publishing {
         maven {
             url rootProject.ext.buildConfigProperties['repo.dir']
         }
+    }
+
+    war {
+        archiveName 'syncendpoint.war'
     }
 }

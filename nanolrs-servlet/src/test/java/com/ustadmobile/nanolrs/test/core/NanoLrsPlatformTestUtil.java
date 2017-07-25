@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * Created by mike on 2/7/17.
  *
  * This class is the platform test util class (that is present in other platforms as well. Since this
- *  module is nanolrs-sevlet, here we have the connection source made from JDBC pool. We create that
+ *  module is nanolrs-servlet, here we have the connection source made from JDBC pool. We create that
  *  connectionSource from the JDBC URL thats gets generated in TestConstants (that is auto generated
  *  from properties file in another pre process. We have defaulted that to JDBC mem url)
  *
