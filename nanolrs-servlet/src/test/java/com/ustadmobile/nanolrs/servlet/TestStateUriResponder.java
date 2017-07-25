@@ -58,7 +58,7 @@ public class TestStateUriResponder extends Mockito {
         String registration=null;
         String stateId="test_state_id";
         String contentType="application/json";
-        byte[] content=jsonData;
+
 
         Hashtable parameters = new Hashtable();
         parameters.clear();

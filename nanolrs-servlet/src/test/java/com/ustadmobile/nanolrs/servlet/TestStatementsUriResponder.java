@@ -86,7 +86,9 @@ public class TestStatementsUriResponder extends Mockito {
                 new ByteArrayInputStream(stmtStr.getBytes());
         ServletInputStream servletInputStream = new ServletInputStream(){
             public int read() throws IOException {
-                return statementByteArrayInputStream.read();
+                //TODO: fix this
+                //return statementByteArrayInputStream.read();
+                return 0;
             }
         };
         when(request.getInputStream()).thenReturn(servletInputStream);
