@@ -6,8 +6,18 @@ package com.ustadmobile.nanolrs.core;
 
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
+import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.User;
+import com.ustadmobile.nanolrs.core.model.XapiActivity;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.model.XapiState;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
+import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import org.json.JSONObject;
@@ -37,6 +47,21 @@ public class ProxyJsonSerializer {
     static {
         proxyNameToClassMap.put(User.class.getName(), User.class);
         proxyClassToManagerMap.put(User.class, UserManager.class);
+
+        proxyNameToClassMap.put(XapiVerb.class.getName(), XapiVerb.class);
+        proxyClassToManagerMap.put(XapiVerb.class, XapiVerbManager.class);
+
+        proxyNameToClassMap.put(XapiState.class.getName(), XapiState.class);
+        proxyClassToManagerMap.put(XapiState.class, XapiStateManager.class);
+
+        proxyNameToClassMap.put(XapiAgent.class.getName(), XapiAgent.class);
+        proxyClassToManagerMap.put(XapiAgent.class, XapiAgentManager.class);
+
+        proxyNameToClassMap.put(XapiActivity.class.getName(), XapiActivity.class);
+        proxyClassToManagerMap.put(XapiActivity.class, XapiActivityManager.class);
+
+        proxyNameToClassMap.put(XapiStatement.class.getName(), XapiStatement.class);
+        proxyClassToManagerMap.put(XapiStatement.class, XapiStatementManager.class);
 
         /*
         proxyNameToClassMap.put(Person.class.getName(), Person.class);
@@ -95,7 +120,12 @@ public class ProxyJsonSerializer {
                 }
 
                 try {
-                    returnVal.put(propName, valGetterMethod.invoke(invocationTarget));
+                    if(invocationTarget != null) {
+                        Object propValue = valGetterMethod.invoke(invocationTarget);
+                        if(propValue != null) {
+                            returnVal.put(propName, propValue);
+                        }
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {

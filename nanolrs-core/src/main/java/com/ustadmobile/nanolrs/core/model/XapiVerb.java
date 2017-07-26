@@ -1,5 +1,7 @@
 package com.ustadmobile.nanolrs.core.model;
 
+import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
+
 /**
  * Created by mike on 9/13/16.
  */
@@ -10,6 +12,7 @@ public interface XapiVerb extends NanoLrsModelSyncable {
      *
      * @return
      */
+    @PrimaryKeyAnnotationClass(str="pk")
     String getVerbId();
 
     void setVerbId(String verbId);

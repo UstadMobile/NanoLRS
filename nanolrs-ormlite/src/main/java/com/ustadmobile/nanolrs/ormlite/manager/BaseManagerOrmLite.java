@@ -1,6 +1,8 @@
 package com.ustadmobile.nanolrs.ormlite.manager;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.User;
@@ -57,6 +59,14 @@ public abstract class BaseManagerOrmLite<T extends NanoLrsModel, P> implements N
     @Override
     public T findByPrimaryKey(Object dbContext, P primaryKey) throws SQLException {
         return (T)persistenceManager.getDao(getEntityImplementationClasss(), dbContext).queryForId(primaryKey);
+    }
+
+    @Override
+    public List<T> getAllEntities(Object dbContext) throws SQLException {
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+        QueryBuilder<T, String> qb = thisDao.queryBuilder();
+        List<T> allEntities = thisDao.query(qb.prepare());
+        return allEntities;
     }
 
 

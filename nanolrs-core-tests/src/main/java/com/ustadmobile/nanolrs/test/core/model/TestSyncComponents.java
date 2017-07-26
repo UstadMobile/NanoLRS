@@ -71,7 +71,7 @@ public class TestSyncComponents {
         userManager.persist(context, testingUser);
 
         //Get number of users already in system
-        int initialUserCount = userManager.getAll(context).size();
+        int initialUserCount = userManager.getAllEntities(context).size();
 
         //Create a user: thebestuser
         String newUserId1 = UUID.randomUUID().toString();
@@ -138,7 +138,7 @@ public class TestSyncComponents {
 
 
         //Get all users and check first:
-        List<User> allUsersBeforeIncomingSync = userManager.getAll(context);
+        List<User> allUsersBeforeIncomingSync = userManager.getAllEntities(context);
 
         /* Test starting Sync again to check if more to be sent ..
          * There should not be any more  */
@@ -185,7 +185,7 @@ public class TestSyncComponents {
         Assert.assertEquals(incomingSyncResult.getStatus(), 200);
 
         //Get all users after sync:
-        List<User> allUsersAfterIncomingSync = userManager.getAll(context);
+        List<User> allUsersAfterIncomingSync = userManager.getAllEntities(context);
         Assert.assertEquals(allUsersAfterIncomingSync.size(),
                 allUsersBeforeIncomingSync.size() +2);
         //Assert.assertNotNull(incomingSyncResult);

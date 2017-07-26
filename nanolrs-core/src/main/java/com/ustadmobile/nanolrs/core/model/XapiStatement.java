@@ -5,6 +5,8 @@
  */
 package com.ustadmobile.nanolrs.core.model;
 
+import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
+
 /**
  *
  * @author mike
@@ -19,6 +21,7 @@ public interface XapiStatement extends NanoLrsModelSyncable{
      *
      * @return 
      */
+    @PrimaryKeyAnnotationClass(str="pk")
     String getUuid();
     
     void setUuid(String uuid);

@@ -1,7 +1,9 @@
 package com.ustadmobile.nanolrs.core.manager;
 
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -15,5 +17,7 @@ public interface XapiAgentManager extends NanoLrsManagerSyncable {
     XapiAgent makeNew(Object dbContext);
 
     void createOrUpdate(Object dbContext, XapiAgent data);
+
+    List<XapiAgent> findByUser(Object dbContext, User user) throws SQLException;
 
 }

@@ -29,7 +29,8 @@ public class XapiForwardingStatementManagerOrmLite extends BaseManagerOrmLiteSyn
     }
 
     @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
+    public List<NanoLrsModelSyncable> findAllRelatedToUser(Object dbContext, User user)
+            throws SQLException{
         return null;
     }
 

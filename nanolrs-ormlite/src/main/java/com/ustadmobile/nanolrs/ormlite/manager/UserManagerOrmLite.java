@@ -28,7 +28,8 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
     }
 
     @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
+    public List<NanoLrsModelSyncable> findAllRelatedToUser(Object dbContext, User user)
+            throws SQLException{
         return null;
     }
 
@@ -92,15 +93,6 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             System.err.println("exception deleting");
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public List<User> getAll(Object dbContext) throws SQLException{
-        Dao thisDao = persistenceManager.getDao(UserEntity.class, dbContext);
-        QueryBuilder<UserEntity, String> qb = thisDao.queryBuilder();
-        List<User> allEntities = thisDao.query(qb.prepare());
-        return allEntities;
-
     }
 
     @Override

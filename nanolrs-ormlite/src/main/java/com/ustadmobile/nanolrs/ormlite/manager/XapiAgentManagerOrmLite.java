@@ -9,6 +9,7 @@ import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
 
 import java.sql.SQLException;
@@ -75,17 +76,47 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLiteSyncable  impleme
     }
 
     @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
-        return null;
+    public List<NanoLrsModelSyncable> findAllRelatedToUser(Object dbContext, User user)
+            throws SQLException{
+
+        //TODO: fix this (althought not used right now)
+        XapiAgentManager agentManager =
+                PersistenceManager.getInstance().getManager(XapiAgentManager.class);
+
+        List<XapiAgent> usersCorrespondingAgents = agentManager.findByUser(dbContext, user);
+        XapiAgent userCorrespondingAgent;
+        if(usersCorrespondingAgents != null &&
+                !usersCorrespondingAgents.isEmpty() ){
+            //return usersCorrespondingAgents;
+            return null;
+        }else{
+            return null;
+        }
     }
 
     @Override
-    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) {
-        return null;
+    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) throws SQLException {
+
+        Dao<XapiAgentEntity, String> dao =
+                persistenceManager.getDao(XapiAgentEntity.class, dbContext);
+        QueryBuilder<XapiAgentEntity, String> qb = dao.queryBuilder();
+        QueryBuilder<XapiAgentEntity, String> qbSelect = qb.selectColumns(XapiAgentEntity.COLNAME_UUID);
+        Where where = qbSelect.where();
+        where.eq(XapiAgentEntity.COLNAME_USER, user.getUuid());
+        PreparedQuery pq = qbSelect.prepare();
+
+        return pq;
     }
 
     @Override
     public void createOrUpdate(Object dbContext, XapiAgent data) {
+        try {
+            persist(dbContext, data);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        /* UPDATE: every update and creation goes through persist now
+        This is so that local sequence always gets a +1
         try {
             Dao<XapiAgentEntity, String> dao = persistenceManager.getDao(XapiAgentEntity.class, dbContext);
             dao.createOrUpdate((XapiAgentEntity) data);
@@ -93,12 +124,24 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLiteSyncable  impleme
             System.err.println("Exception agent manager createOrUpdate");
             e.printStackTrace();
         }
+        */
     }
 
-    /*
     @Override
-    public NanoLrsModel makeNew() throws SQLException {
-        return null;
+    public List<XapiAgent> findByUser(Object dbContext, User user) throws SQLException {
+        Dao<XapiAgentEntity, String> dao =
+                persistenceManager.getDao(XapiAgentEntity.class, dbContext);
+        QueryBuilder<XapiAgentEntity, String> qb = dao.queryBuilder();
+        Where where = qb.where();
+        where.eq(XapiAgentEntity.COLNAME_USER, user.getUuid());
+        PreparedQuery pq = qb.prepare();
+        List<XapiAgent> agents = dao.query(pq);
+
+        if(agents!= null && !agents.isEmpty()){
+            return agents;
+        }else{
+            return null;
+        }
     }
-    */
+
 }

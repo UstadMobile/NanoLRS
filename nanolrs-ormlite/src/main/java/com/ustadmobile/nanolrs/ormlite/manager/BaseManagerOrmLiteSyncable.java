@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
@@ -14,6 +15,7 @@ import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,47 @@ import java.util.List;
 public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable, P>
         extends BaseManagerOrmLite implements NanoLrsManagerSyncable<T,P> {
 
+    public static String convertCamelCaseNameToUnderscored(String propertyName) {
+        String undererScoredName = "";
+        for(int i = 0; i < propertyName.length(); i++) {
+            if(Character.isUpperCase(propertyName.charAt(i)) && (i == 0 || Character.isLowerCase(propertyName.charAt(i-1)))) {
+                undererScoredName += "_";
+            }
+            undererScoredName += Character.toLowerCase(propertyName.charAt(i));
+        }
+
+        return undererScoredName;
+    }
+
+    public String getPrimaryKeyFromEntity(Class syncableEntity){
+        Class syncableProxy = syncableEntity.getInterfaces()[0];
+
+        //Get the primary key
+        Method[] allEntityMethods = syncableProxy.getMethods();
+        String pkMethod = null;
+        String pkField = null;
+        for(Method method : allEntityMethods) {
+            if(method.isAnnotationPresent(PrimaryKeyAnnotationClass.class)) {
+                pkMethod = method.getName();
+                break;
+            }
+        }
+        if(pkMethod == null){
+            pkField = "uuid";
+        }else{
+            int prefixLen = 0;
+            if(pkMethod.startsWith("is"))
+                prefixLen = 2;
+            else if(pkMethod.startsWith("get"))
+                prefixLen = 3;
+            pkField = Character.toLowerCase(pkMethod.charAt(3)) +
+                    pkMethod.substring(prefixLen+1);
+
+        }
+
+        return convertCamelCaseNameToUnderscored(pkField);
+
+    }
 
     @Override
     public List<NanoLrsModel> getAllSinceSequenceNumber(
@@ -34,21 +77,15 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
 
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
 
-        //Step 1: select sent_sequence from sync_status where host=host,table=tableName;
-        //  If nothing exists, sent_sequence = 0;
-        //Step 2: select * from tableName where
-        // local_sequence/master_sequence > sent_sequence;
-        //Step 2b: extra step: If Master Sequence is 0, we compare local
-        // sequence numbers so we don't send the same thing back to the
-        // node that we got it from.. (proxy, another node) : cause master
-        // will be compared with master sequence.
-        //Step 3: that is a List<entities> and we return it.
-        //Step 4: Figure out the role of user in this all
-
         List<String> uuidList = new ArrayList<>();
+        String entityName =
+                getEntityImplementationClasss().getSimpleName();
         //Get user's specific subQuery:
         PreparedQuery<NanoLrsModel> subQueryPQ = findAllRelatedToUserQuery(dbContext, user);
 
+        if(subQueryPQ == null){
+            return null;
+        }
         //Get list of uuids from subQuery
         List<String[]> subQueryColResultSingle =
                 thisDao.queryRaw(subQueryPQ.getStatement()).getResults();
@@ -56,11 +93,19 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
             uuidList.add(thisEntry[0]);
         }
 
+        if(uuidList.isEmpty()){
+            List<NanoLrsModel> blank = new ArrayList<>();
+            return blank;
+        }
 
+        String pkField = getPrimaryKeyFromEntity(getEntityImplementationClasss());
+
+
+        //Basically searching for new entries that have never been synced with main server.
         QueryBuilder<NanoLrsModel, String> qbIfMasterSeqNull = thisDao.queryBuilder();
         Where whereMasterSeqNullAndCSGTSN = qbIfMasterSeqNull.where();
         whereMasterSeqNullAndCSGTSN.eq("master_sequence", 0).and().gt("local_sequence", seqNum);
-        whereMasterSeqNullAndCSGTSN.and().in("uuid", uuidList);
+        whereMasterSeqNullAndCSGTSN.and().in(pkField, uuidList);
         PreparedQuery<NanoLrsModel> getAllWhereMSNullAndCSGTSN =
                 qbIfMasterSeqNull.prepare();
         List<NanoLrsModel> foundAllWhereMSNullAndCSGTSN =
@@ -133,7 +178,7 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
 
     */
 
-    public abstract NanoLrsModel findAllRelatedToUser(Object dbContext, User user);
+    public abstract List<NanoLrsModel> findAllRelatedToUser(Object dbContext, User user) throws SQLException;
 
     public abstract PreparedQuery<NanoLrsModel> findAllRelatedToUserQuery(Object dbContext, User user)
             throws SQLException;

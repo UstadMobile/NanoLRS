@@ -19,8 +19,6 @@ public interface UserManager extends NanoLrsManagerSyncable {
 
     void delete(Object dbContext, User data);
 
-    List<User> getAll(Object dbContext) throws SQLException;
-
     boolean authenticate(Object dbContext, String username, String password);
 
 

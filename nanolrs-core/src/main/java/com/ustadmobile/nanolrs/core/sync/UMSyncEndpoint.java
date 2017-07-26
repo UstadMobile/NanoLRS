@@ -7,6 +7,12 @@ import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
+import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.Node;
@@ -58,10 +64,29 @@ public class UMSyncEndpoint {
 
     private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();
 
+    /*
+        User.class, XapiStatement.class, XapiActivity.class, XapiAgent.class, XapiDocument.class,
+        XapiForwardingStatement.class, XapiState.class, XapiVerb.class
+     */
+
     //TODO: Find a central place for this and other mappings..
     static {
         proxyNameToClassMap.put(User.class.getName(), User.class);
         proxyClassToManagerMap.put(User.class, UserManager.class);
+        proxyNameToClassMap.put(XapiStatement.class.getName(), XapiStatement.class);
+        proxyClassToManagerMap.put(XapiStatement.class, XapiStatementManager.class);
+        proxyNameToClassMap.put(XapiActivity.class.getName(), XapiActivity.class);
+        proxyClassToManagerMap.put(XapiActivity.class, XapiActivityManager.class);
+        proxyNameToClassMap.put(XapiAgent.class.getName(), XapiAgent.class);
+        proxyClassToManagerMap.put(XapiAgent.class, XapiAgentManager.class);
+        //proxyNameToClassMap.put(XapiDocument.class.getName(),XapiDocument.class);
+        //proxyClassToManagerMap.put(XapiDocument.class,XapiDocumentManager.class);
+        proxyNameToClassMap.put(XapiForwardingStatement.class.getName(), XapiForwardingStatement.class);
+        proxyClassToManagerMap.put(XapiForwardingStatement.class, XapiForwardingStatementManager.class);
+        proxyNameToClassMap.put(XapiState.class.getName(), XapiState.class);
+        proxyClassToManagerMap.put(XapiState.class, XapiStateManager.class);
+        proxyNameToClassMap.put(XapiVerb.class.getName(), XapiVerb.class);
+        proxyClassToManagerMap.put(XapiVerb.class, XapiVerbManager.class);
     }
 
     public static String convertStreamToString(InputStream is, String encoding) {
@@ -441,7 +466,7 @@ public class UMSyncEndpoint {
 
             //TODO: Remove If statement. (Not needed)
             //Populate Entities and Info JSONArrays
-            if(!pendingEntitesToBeSynced.isEmpty()){
+            if(pendingEntitesToBeSynced != null && !pendingEntitesToBeSynced.isEmpty()){
                 Iterator<NanoLrsModel> pendingEntitesIterator = pendingEntitesToBeSynced.iterator();
                 while(pendingEntitesIterator.hasNext()){
                     NanoLrsModelSyncable thisEntity =
@@ -457,7 +482,7 @@ public class UMSyncEndpoint {
                     }
                     JSONObject thisEntityInJSON =
                             ProxyJsonSerializer.toJson(thisEntity, syncableEntity);
-                    //TODO: Probably better than digging count, use a variable
+                    //TODO: Probably better than digging count, use a variable: Mike
                     //Increment count for every entity's type in info
                     for(int i=0;i<pendingJSONInfo.length();i++){
                         if (pendingJSONInfo.getJSONObject(i).getString("pCls").equals(syncableEntity.getName())) {
@@ -605,8 +630,9 @@ public class UMSyncEndpoint {
      * TODO: Find a way to get all from NanoLrsModelSyncable extentsion.
      */
     public static Class[] SYNCABLE_ENTITIES = new Class[]{
-            User.class, XapiStatement.class, XapiActivity.class, XapiAgent.class, XapiDocument.class,
-            XapiForwardingStatement.class, XapiState.class, XapiVerb.class
+            User.class, XapiStatement.class, XapiActivity.class, XapiAgent.class,
+            //XapiDocument.class,
+            XapiState.class, XapiVerb.class
     };
 
     /**

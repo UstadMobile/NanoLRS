@@ -4,16 +4,21 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.model.XapiState;
+import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStateEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by mike on 10/2/16.
@@ -35,13 +40,56 @@ public class XapiStateManagerOrmLite extends BaseManagerOrmLiteSyncable implemen
     // From XapiStateManager:
 
     @Override
-    public NanoLrsModelSyncable findAllRelatedToUser(Object dbContext, User user) {
+    public List<NanoLrsModelSyncable> findAllRelatedToUser(Object dbContext, User user)
+            throws SQLException {
+        //TODO: (although not used right now..)
         return null;
     }
 
     @Override
-    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) {
-        return null;
+    public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user) throws SQLException {
+
+        XapiAgentManager agentManager =
+                PersistenceManager.getInstance().getManager(XapiAgentManager.class);
+
+        //getting agent from user
+        List<XapiAgent> usersCorrespondingAgents = agentManager.findByUser(dbContext, user);
+        XapiAgent userCorrespondingAgent;
+        if(usersCorrespondingAgents != null &&
+                !usersCorrespondingAgents.isEmpty() && usersCorrespondingAgents.size() == 1){
+            userCorrespondingAgent = usersCorrespondingAgents.get(0);
+        }else{
+            return null;
+        }
+
+        //XapiState's dao, qb and where:
+        Dao<XapiStateEntity, String> xapiStateDao =
+                persistenceManager.getDao(XapiStateEntity.class, dbContext);
+        QueryBuilder<XapiStateEntity, String> xapiStateQB = xapiStateDao.queryBuilder();
+        QueryBuilder<XapiStateEntity, String> xapiStateSelectQB = xapiStateQB.selectColumns(XapiStateEntity.COLNAME_UUID);
+        Where xapiStateWhere = xapiStateSelectQB.where();
+        xapiStateWhere.eq(XapiStateEntity.COLNAME_AGENT, userCorrespondingAgent.getUuid());
+        PreparedQuery pq = xapiStateSelectQB.prepare();
+
+
+        //TODO: maybe we need to do more like get all state from statement's activity?
+        //XapiStatement's dao, qb and where:
+        Dao<XapiStatementEntity, String> xapiStatementDao =
+                persistenceManager.getDao(XapiStatementEntity.class, dbContext);
+        QueryBuilder<XapiStatementEntity, String> xapiStatementQB = xapiStatementDao.queryBuilder();
+        QueryBuilder<XapiStatementEntity, String> xapiStatementSelect =
+                xapiStatementQB.selectColumns(XapiStatementEntity.COLNAME_ACTIVITY);
+        Where xapiStatementWhere = xapiStatementSelect.where();
+        xapiStatementWhere.eq(XapiStatementEntity.COLNAME_AGENT, userCorrespondingAgent.getUuid())
+                .or().eq(XapiStatementEntity.COLNAME_ACTOR, userCorrespondingAgent.getUuid());
+
+        PreparedQuery xapiStatementPQ = xapiStatementSelect.prepare();
+
+        List res = xapiStatementDao.query(xapiStatementPQ);
+
+
+
+        return pq;
     }
 
     @Override

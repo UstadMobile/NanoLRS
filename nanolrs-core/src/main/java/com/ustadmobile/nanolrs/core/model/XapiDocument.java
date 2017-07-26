@@ -1,5 +1,7 @@
 package com.ustadmobile.nanolrs.core.model;
 
+import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
+
 /**
  * Represents a Docuemnt with the Docuemnt Storage APIs (State, Activity Profile, Agent Profile)
  *
@@ -13,6 +15,7 @@ public interface XapiDocument extends NanoLrsModelSyncable{
      *
      * @return
      */
+    @PrimaryKeyAnnotationClass(str="pk")
     String getUuid();
 
     void setUuid(String id);

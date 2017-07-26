@@ -4,6 +4,7 @@ package com.ustadmobile.nanolrs.core.manager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Base class for entity management.
@@ -42,6 +43,15 @@ public interface NanoLrsManager<T extends NanoLrsModel, P> {
      * @return Object if found, otherwise null
      */
     T findByPrimaryKey(Object dbContext, P primaryKey) throws SQLException;
+
+
+    /**
+     * Get all (used for testing)
+     * @param dbContext
+     * @return
+     * @throws SQLException
+     */
+    List<T> getAllEntities(Object dbContext) throws SQLException;
 
 
 }

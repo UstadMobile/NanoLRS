@@ -7,6 +7,7 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ public class XapiAgentEndpoint {
         }
     }
 
-    public static XapiAgent createOrUpdate(Object dbContext, String mbox, String accountName, String accountHomepage) {
+    public static XapiAgent createOrUpdate(Object dbContext, String mbox, String accountName, String accountHomepage){
         XapiAgentManager manager = PersistenceManager.getInstance().getManager(XapiAgentManager.class);
         List<XapiAgent> matchingAgents = manager.findAgentByParams(
                 dbContext, mbox, accountName, accountHomepage);

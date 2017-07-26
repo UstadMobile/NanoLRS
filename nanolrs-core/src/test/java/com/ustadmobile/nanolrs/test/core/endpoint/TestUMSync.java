@@ -3,22 +3,34 @@ package com.ustadmobile.nanolrs.test.core.endpoint;
  * Created by varuna on 7/20/2017.
  */
 
-import com.j256.ormlite.support.ConnectionSource;
+import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
+import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
+import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
+import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.User;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.model.XapiStatement;
+import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 import com.ustadmobile.nanolrs.core.sync.UMSyncResult;
+import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
 import com.ustadmobile.nanolrs.http.NanoLrsHttpd;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,8 +46,10 @@ public class TestUMSync {
         endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
         context = NanoLrsPlatformTestUtil.getContext();
         PersistenceManager.getInstance().forceInit(endpointContext);
+        //TODO: Check if we need to remove below or keep it :
         PersistenceManager.getInstance().forceInit(context);
     }
+
 
     @Test
     public void testLifecycle() throws Exception {
@@ -58,6 +72,16 @@ public class TestUMSync {
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
         ChangeSeqManager changeSeqManager = PersistenceManager.getInstance().getManager(
                 ChangeSeqManager.class);
+        XapiAgentManager agentManager =
+                PersistenceManager.getInstance().getManager(XapiAgentManager.class);
+        XapiStatementManager statementManager =
+                PersistenceManager.getInstance().getManager(XapiStatementManager.class);
+        XapiVerbManager verbManager =
+                PersistenceManager.getInstance().getManager(XapiVerbManager.class);
+        XapiStateManager stateManager =
+                PersistenceManager.getInstance().getManager(XapiStateManager.class);
+        XapiActivityManager activityManager =
+                PersistenceManager.getInstance().getManager(XapiActivityManager.class);
 
         //Get initial seq number for user table - for debugging purposes
         String tableName = "USER";
@@ -91,11 +115,8 @@ public class TestUMSync {
         testingNode.setRole("tester");
         nodeManager.persist(context, testingNode);
 
-
-        //pasting
-
         //Get number of users already in system
-        int initialUserCount = userManager.getAll(context).size();
+        int initialUserCount = userManager.getAllEntities(context).size();
 
         //Create a user: thebestuser
         String newUserId1 = UUID.randomUUID().toString();
@@ -146,7 +167,70 @@ public class TestUMSync {
         long postIncrementGottenNextSeqNumber =
                 changeSeqManager.getNextChangeByTableName(tableName, context);
         Assert.assertEquals(postIncrementGottenNextSeqNumber, gottenNextSeqNum + 2);
-        //endofpasting
+
+
+
+
+
+
+        //Set up Xapi tables:
+        InputStream stmtIn = getClass().getResourceAsStream("/com/ustadmobile/nanolrs/core/xapi-statement-synctest.json");
+        Assert.assertNotNull("Can get statement resource input stream", stmtIn);
+        long timeStarted = new Date().getTime();
+        JSONObject stmtObj = new JSONObject(LrsIoUtils.inputStreamToString(stmtIn));
+        String generatedUUID = XapiStatementsEndpoint.putStatement(stmtObj, context);
+        Assert.assertNotNull("Statement put and UUID generated", generatedUUID);
+
+        //now look it up
+        XapiStatement retrieved = PersistenceManager.getInstance().getManager(XapiStatementManager.class).findByUuidSync(context, generatedUUID);
+        Assert.assertNotNull("Statement retrieved by UUID", retrieved);
+
+        //make sure it has a timestamp
+        Assert.assertTrue("Statement has timestamp added", retrieved.getTimestamp() >= timeStarted);
+        Assert.assertTrue("Statement has result success set true", retrieved.isResultSuccess());
+        Assert.assertTrue("Statement has completion set true", retrieved.isResultComplete());
+        Assert.assertEquals("Progress is 50", 50, retrieved.getResultProgress());
+
+        //make sure that we can find it using a search by parameters
+        long since = 0;
+        List<? extends XapiStatement> queryResults = XapiStatementsEndpoint.getStatements(context,
+                null, null, null, "http://activitystrea.ms/schema/1.0/host",
+                "http://www.ustadmobile.com/activities/attended-class/CLASSID", null, false, false,
+                null, null, -1);
+
+        boolean foundLastStmt = false;
+        for(int i = 0; i < queryResults.size(); i++) {
+            if(queryResults.get(i).getUuid().equals(generatedUUID)) {
+                foundLastStmt = true;
+                break;
+            }
+        }
+
+        XapiStatementManager manager =
+                PersistenceManager.getInstance().getManager(XapiStatementManager.class);
+        XapiAgent agent = PersistenceManager.getInstance().getManager(XapiAgentManager.class).findAgentByParams(
+                context, null, "newtestinguser", "http://umcloud1.ustadmobile.com/umlrs").get(0);
+
+        agent.setUser(testingUser);
+        agentManager.persist(context, agent);
+
+        //testing:
+        List allAgents = agentManager.getAllEntities(context);
+        List allActivities = activityManager.getAllEntities(context);
+        List allVerbs = verbManager.getAllEntities(context);
+        List allStatements = statementManager.getAllEntities(context);
+        List allStates = stateManager.getAllEntities(context);
+
+        int x=0;
+
+
+
+
+
+
+
+
+
 
 
         //Start Sync
@@ -156,7 +240,7 @@ public class TestUMSync {
 
 
         //Get all users and check first:
-        List<User> allUsersBeforeIncomingSync = userManager.getAll(context);
+        List<User> allUsersBeforeIncomingSync = userManager.getAllEntities(context);
 
         /* Test starting Sync again to check if more to be sent ..
          * There should not be any more  */
