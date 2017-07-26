@@ -6,6 +6,7 @@ import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
+import com.ustadmobile.nanolrs.core.manager.UserCustomFieldsManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
@@ -17,6 +18,7 @@ import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.User;
+import com.ustadmobile.nanolrs.core.model.UserCustomFields;
 import com.ustadmobile.nanolrs.core.model.XapiActivity;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.model.XapiDocument;
@@ -73,18 +75,28 @@ public class UMSyncEndpoint {
     static {
         proxyNameToClassMap.put(User.class.getName(), User.class);
         proxyClassToManagerMap.put(User.class, UserManager.class);
+
+        proxyNameToClassMap.put(UserCustomFields.class.getName(), UserCustomFields.class);
+        proxyClassToManagerMap.put(UserCustomFields.class, UserCustomFieldsManager.class);
+
         proxyNameToClassMap.put(XapiStatement.class.getName(), XapiStatement.class);
         proxyClassToManagerMap.put(XapiStatement.class, XapiStatementManager.class);
+
         proxyNameToClassMap.put(XapiActivity.class.getName(), XapiActivity.class);
         proxyClassToManagerMap.put(XapiActivity.class, XapiActivityManager.class);
+
         proxyNameToClassMap.put(XapiAgent.class.getName(), XapiAgent.class);
         proxyClassToManagerMap.put(XapiAgent.class, XapiAgentManager.class);
+
         //proxyNameToClassMap.put(XapiDocument.class.getName(),XapiDocument.class);
         //proxyClassToManagerMap.put(XapiDocument.class,XapiDocumentManager.class);
+
         proxyNameToClassMap.put(XapiForwardingStatement.class.getName(), XapiForwardingStatement.class);
         proxyClassToManagerMap.put(XapiForwardingStatement.class, XapiForwardingStatementManager.class);
+
         proxyNameToClassMap.put(XapiState.class.getName(), XapiState.class);
         proxyClassToManagerMap.put(XapiState.class, XapiStateManager.class);
+
         proxyNameToClassMap.put(XapiVerb.class.getName(), XapiVerb.class);
         proxyClassToManagerMap.put(XapiVerb.class, XapiVerbManager.class);
     }
@@ -620,8 +632,8 @@ public class UMSyncEndpoint {
      */
     public static Class[] SYNCABLE_ENTITIES = new Class[]{
             User.class, XapiStatement.class, XapiActivity.class, XapiAgent.class,
-            //XapiDocument.class,
-            XapiState.class, XapiVerb.class
+            //XapiDocument.class, XapiForwardingState.class  //Disabled: not needed?
+            XapiState.class, XapiVerb.class, UserCustomFields.class
     };
 
     /**

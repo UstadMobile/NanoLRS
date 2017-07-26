@@ -6,6 +6,7 @@ package com.ustadmobile.nanolrs.test.core.endpoint;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
+import com.ustadmobile.nanolrs.core.manager.UserCustomFieldsManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
@@ -14,6 +15,7 @@ import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.User;
+import com.ustadmobile.nanolrs.core.model.UserCustomFields;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.model.XapiVerb;
@@ -30,8 +32,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class TestUMSync {
@@ -220,8 +225,6 @@ public class TestUMSync {
         List allStatements = statementManager.getAllEntities(context);
         List allStates = stateManager.getAllEntities(context);
 
-        int x=0;
-
         //Start Sync
         UMSyncResult result =
                 UMSyncEndpoint.startSync(testingUser, testingNode, context);
@@ -260,6 +263,40 @@ public class TestUMSync {
 
         Assert.assertNotNull(allUsers);
 
+        // Testing UserCustomFields
+        UserCustomFieldsManager userCustomFieldsManager =
+                PersistenceManager.getInstance().getManager(UserCustomFieldsManager.class);
+        UserCustomFields userCustomFields = (UserCustomFields)userCustomFieldsManager.makeNew();
+
+        String universityName = "Web University";
+        String name = "Bob Burger";
+        String gender = "M";
+        String email = "bob@bobsburgers.com";
+        String phoneNumber = "+0123456789";
+        String faculty = "A faculty";
+        String username = "autocustomreguser";
+        String password = "secret";
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(70, universityName);
+        map.put(71, name);
+        map.put(72, gender);
+        map.put(73, email);
+        map.put(74, phoneNumber);
+        map.put(75, faculty);
+        map.put(76, username);
+        map.put(77, password);
+
+        //userCustomFields.
+        userCustomFieldsManager.createUserCustom(map,user6, context);
+        List allCustomFields = userCustomFieldsManager.getAllEntities(context);
+
+        userCustomFieldsManager.createUserCustom(map,testingUser, context);
+
+        //Start Sync - should have user custom fields (8 of them for this user):
+        UMSyncResult resultucf =
+                UMSyncEndpoint.startSync(testingUser, testingNode, context);
+        Assert.assertNotNull(resultucf);
 
         httpd.stop();
 

@@ -14,6 +14,7 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.NodeEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.SyncStatusEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.model.UserCustomFieldsEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
@@ -53,7 +54,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
             XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
             UserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class, ChangeSeqEntity.class,
-            SyncStatusEntity.class, NodeEntity.class
+            SyncStatusEntity.class, NodeEntity.class, UserCustomFieldsEntity.class
     };
 
     @Override

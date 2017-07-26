@@ -5,6 +5,7 @@ package com.ustadmobile.nanolrs.core;
  */
 
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
+import com.ustadmobile.nanolrs.core.manager.UserCustomFieldsManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
@@ -13,6 +14,7 @@ import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.User;
+import com.ustadmobile.nanolrs.core.model.UserCustomFields;
 import com.ustadmobile.nanolrs.core.model.XapiActivity;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.model.XapiState;
@@ -48,6 +50,9 @@ public class ProxyJsonSerializer {
         proxyNameToClassMap.put(User.class.getName(), User.class);
         proxyClassToManagerMap.put(User.class, UserManager.class);
 
+        proxyNameToClassMap.put(UserCustomFields.class.getName(), UserCustomFields.class);
+        proxyClassToManagerMap.put(UserCustomFields.class, UserCustomFieldsManager.class);
+
         proxyNameToClassMap.put(XapiVerb.class.getName(), XapiVerb.class);
         proxyClassToManagerMap.put(XapiVerb.class, XapiVerbManager.class);
 
@@ -63,14 +68,6 @@ public class ProxyJsonSerializer {
         proxyNameToClassMap.put(XapiStatement.class.getName(), XapiStatement.class);
         proxyClassToManagerMap.put(XapiStatement.class, XapiStatementManager.class);
 
-        /*
-        proxyNameToClassMap.put(Person.class.getName(), Person.class);
-        proxyClassToManagerMap.put(Person.class, PersonManager.class);
-        proxyNameToClassMap.put(Clazz.class.getName(), Clazz.class);
-        proxyClassToManagerMap.put(Clazz.class, ClazzManager.class);
-        proxyNameToClassMap.put(School.class.getName(), School.class);
-        proxyClassToManagerMap.put(School.class, SchoolManager.class);
-        */
     }
 
     /**
