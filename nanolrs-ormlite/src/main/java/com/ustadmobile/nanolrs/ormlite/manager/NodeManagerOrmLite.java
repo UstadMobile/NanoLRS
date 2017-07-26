@@ -40,11 +40,10 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
         }else{
             return null;
         }
-
     }
 
     @Override
-    public Node createThisDeviceNode(String uuid, String deviceName, String endpointUrl,
+    public Node createThisDeviceNode(String uuid, String thisNodeName, String endpointUrl,
                                      Object dbContext) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
         Node thisNode = getThisNode(dbContext);
@@ -52,12 +51,16 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
             thisNode = (Node)makeNew();
             thisNode.setUrl(endpointUrl);
             thisNode.setUUID(uuid);
-            thisNode.setRole("this_node");
+            thisNode.setName(thisNodeName);
             thisNode.setStoredDate(System.currentTimeMillis());
             thisNode.setHost("this_node");
-            thisNode.setName("this_node");
+            thisNode.setNotes("this_node");
+            //*Role is always local.*
+            thisNode.setRole("this_node");
+
             thisNode.setMaster(false);
             thisNode.setProxy(false);
+
             thisDao.createOrUpdate(thisNode);
         }
         return thisNode;

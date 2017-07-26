@@ -195,17 +195,8 @@ public class UMSyncEndpoint {
         //Primary key needs to be set to "this_device"
         //We use that to check if this device is the master server or not..
         //Also needs some form of authentication, else - anyone can  be master
-        //TODO: Check if UUID should be this_node or a random uuid and role
-        //could be this_node since we may need to identify via uuid at the
-        // endpoint side.
-        //Node thisNode = (Node)nodeManager.findByPrimaryKey(dbContext, "this_node");
         Node thisNode = null;
-        List<Node> nodes = nodeManager.getNodeByRoleName(dbContext, "this_name");
-        if(nodes == null || nodes.size() == 0){
-            thisNode = null;
-        }else {
-            thisNode = (Node) nodeManager.getNodeByRoleName(dbContext, "this_node").get(0);
-        }
+        thisNode = nodeManager.getThisNode(dbContext);
 
         //Loop over the <Entities, pCls> to add them to this node's DB and persist
         Iterator<Map.Entry<NanoLrsModelSyncable, String>> allNewEntitiesMapIterator =
@@ -390,15 +381,10 @@ public class UMSyncEndpoint {
         //Get this device/node
         //Needs to get created if not set by the device itself. Name can be a combination
         // of device name, location, random uuid.toString(), etc.
-        //Primary key needs to be set to "this_device"
         //We use that to check if this device is the master server or not..
         //Also needs some form of authentication, else - anyone can  be master
-        //Node thisNode = (Node)nodeManager.findByPrimaryKey(dbContext, "this_node");
-        List<Node> nodes = nodeManager.getNodeByRoleName(dbContext, "this_node");
         Node thisNode = null;
-        if (nodes != null && !nodes.isEmpty()){
-            thisNode = nodes.get(0);
-        }
+        thisNode = nodeManager.getThisNode(dbContext);
 
 
         //Map of Entity and latestSeq got so we can update sync status upon sync success
@@ -510,21 +496,24 @@ public class UMSyncEndpoint {
 
         String username = thisUser.getUsername();
         String password = thisUser.getPassword();
-        String nodeUuid = thisNode.getUUID();
+        String thisNodeUuid = thisNode.getUUID();
         String userUuid = thisUser.getUuid();
         String thisNodeHost = thisNode.getHost();
         String thisNodeURL = thisNode.getUrl();
-        //TODO: remove this and move it outside
-        String isNewUser = "true";
+        String isNewUser = "false";
+        if(thisUser.getMasterSequence() <1 ) {
+            isNewUser = "true";
+        }
 
         //Headers if any..
         Map <String, String> headers = new HashMap<String, String>();
         headers.put("someheader", "somevalue");
         headers.put("username", username);
         headers.put("password", password);
-        headers.put("nodeuuid", nodeUuid);
         headers.put("useruuid", userUuid);
         headers.put("isnewuser", isNewUser);
+
+        headers.put("nodeuuid", thisNodeUuid);
         headers.put("hostname", thisNodeHost);
         headers.put("hosturl", thisNodeURL);
 

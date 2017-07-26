@@ -54,11 +54,9 @@ public class TestSyncComponents {
 
         //Create this node
         Node thisNode = (Node) nodeManager.makeNew();
-        thisNode.setRole("this_node");
-        thisNode.setUUID(UUID.randomUUID().toString());
-        thisNode.setHost("client");
-        thisNode.setUrl("http://loclhost:4243");
-        nodeManager.persist(context, thisNode);
+        String thisNodeUUID = UUID.randomUUID().toString();
+        thisNode = nodeManager.createThisDeviceNode(UUID.randomUUID().toString(), "node:"+thisNodeUUID,
+                "http://localhost:4242/syncendpoint/", context);
 
         //Create this testing user: testinguser
         //Use it for Sync purposes. Assign it roles and

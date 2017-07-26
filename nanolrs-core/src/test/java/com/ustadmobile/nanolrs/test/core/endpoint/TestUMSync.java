@@ -100,11 +100,10 @@ public class TestUMSync {
 
         //Create this node
         Node thisNode = (Node) nodeManager.makeNew();
-        thisNode.setRole("this_node");
-        thisNode.setUUID(UUID.randomUUID().toString());
-        thisNode.setHost("client");
-        thisNode.setUrl("http://loclhost:4242");
-        nodeManager.persist(context, thisNode);
+        String thisNodeUUID = UUID.randomUUID().toString();
+        thisNode = nodeManager.createThisDeviceNode(UUID.randomUUID().toString(), "node:"+thisNodeUUID,
+                "http://localhost:4242/syncendpoint/", context);
+
 
         ///Create a node for testing
         Node testingNode = (Node) nodeManager.makeNew();
@@ -223,16 +222,6 @@ public class TestUMSync {
 
         int x=0;
 
-
-
-
-
-
-
-
-
-
-
         //Start Sync
         UMSyncResult result =
                 UMSyncEndpoint.startSync(testingUser, testingNode, context);
@@ -251,6 +240,25 @@ public class TestUMSync {
 
         //TODO: Check the entities on endpoint side.
 
+        //Test same user createion
+        //Lets create another user for syncing purposes
+        User user5 = (User)userManager.makeNew();
+        String user5uuid = UUID.randomUUID().toString();
+        user5.setUuid(user5uuid);
+        user5.setUsername("varunasingh");
+        userManager.persist(context, user5);
+
+        List<User> allUsers = userManager.getAllEntities(context);
+
+        User user6 = (User)userManager.makeNew();
+        String user6uuid = UUID.randomUUID().toString();
+        user6.setUuid(user6uuid);
+        user6.setUsername("varunasingh");
+        userManager.persist(context, user6);
+
+        allUsers = userManager.getAllEntities(context);
+
+        Assert.assertNotNull(allUsers);
 
 
         httpd.stop();

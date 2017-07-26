@@ -126,9 +126,10 @@ public class UMSyncServlet extends HttpServlet {
         String username = getHeaderVal(req, "username");
         String password = getHeaderVal(req, "password");
         String isNewUser = getHeaderVal(req, "isnewuser");
+
         String nodeUuid = getHeaderVal(req, "nodeuuid");
-        String requestHostName = getHeaderVal(req, "hostname");
-        String requestHostUrl = getHeaderVal(req, "hosturl");
+        String nodetHostName = getHeaderVal(req, "hostname");
+        String nodeHostUrl = getHeaderVal(req, "hosturl");
         //TODO:Fill this up:
         String thisURL = "";
         PersistenceManager pm = PersistenceManager.getInstance();
@@ -163,9 +164,10 @@ public class UMSyncServlet extends HttpServlet {
                 //Create this new node
                 node = (Node)nodeManager.makeNew();
                 node.setUUID(nodeUuid);
-                node.setUrl(thisURL);
-                node.setName(requestHostName);
-                node.setRole(requestHostUrl);
+                node.setUrl(nodeHostUrl);
+                node.setName(nodetHostName);
+                /* Role is always local */
+                node.setRole("client");
                 nodeManager.persist(dbContext, node);
             }
 

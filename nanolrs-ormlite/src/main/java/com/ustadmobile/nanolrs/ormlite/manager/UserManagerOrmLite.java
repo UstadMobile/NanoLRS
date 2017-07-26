@@ -34,6 +34,30 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
     }
 
     @Override
+    public void persist(Object dbContext, NanoLrsModel data) throws SQLException {
+        //Check username
+        User user = (User) data;
+        String givenUsername = user.getUsername();
+        String givenUserUUID = user.getUuid();
+        String newUsername = null;
+
+        User existingUser = (User)findByPrimaryKey(dbContext, givenUserUUID);
+        if(existingUser == null){
+            //Likely a new user creation not an update
+            List<User> usersWithSameUsername = findByUsername(dbContext, givenUsername);
+            if(usersWithSameUsername != null && !usersWithSameUsername.isEmpty()){
+                newUsername = givenUsername + (int)Math.random()*99;
+                ((User) data).setUsername(newUsername);
+                //Since we changed the username. we persist again to bump local seq
+                super.persist(dbContext, data);
+            }
+        }
+
+        super.persist(dbContext, data);
+
+    }
+
+    @Override
     public PreparedQuery findAllRelatedToUserQuery(Object dbContext, User user)
             throws SQLException{
         // Return all user entities realted to user.

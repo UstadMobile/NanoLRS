@@ -37,7 +37,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * Database Name to be used: nanolrs.db was used by previous versions.  From DATABASE_VERSION 11
      */
-    private static final String DATABASE_NAME="nanolrs11.db";
+    private static final String DATABASE_NAME="nanolrs12.db";
 
     private static final int DATABASE_VERSION = 14;
 
@@ -132,10 +132,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         NodeManager nodeManager =
                 PersistenceManager.getInstance().getManager(NodeManager.class);
         String thisNodeUUID = UUID.randomUUID().toString();
-        String thisNodeName = "this_device"; //TODO: Check if we want to get device's name & info
-        String thisNodeEndpointUrl = "";
+        String thisNodeUrl = "set-my-url";
+        //TODO: Check if we want to get device's name & info
+        String thisNodeName = "nodeL" + thisNodeUUID;
+
         nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName,
-                thisNodeEndpointUrl, context);
+                thisNodeUrl, context);
     }
 
 }

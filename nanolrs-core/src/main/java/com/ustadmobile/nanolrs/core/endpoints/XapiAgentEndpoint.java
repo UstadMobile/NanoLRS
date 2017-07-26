@@ -1,6 +1,8 @@
 package com.ustadmobile.nanolrs.core.endpoints;
 
+import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
@@ -49,8 +51,25 @@ public class XapiAgentEndpoint {
         agent.setMbox(mbox);
         agent.setAccountHomepage(accountHomepage);
         agent.setAccountName(accountName);
-        manager.createOrUpdate(dbContext, agent);
 
+        //TODO: Check if username gets changed, should we set agent before user ?
+        //I think its okay, since the agent's user will get set when its created
+        //which is before the sync. The sync will change the user's username
+        // not the user assigned. So it should be okay.
+        //Add user to agent
+        UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
+        List<User> usersWithAgentName = userManager.findByUsername(dbContext, accountName);
+        User agentUser = null;
+        if(usersWithAgentName != null && !usersWithAgentName.isEmpty()){
+            if(usersWithAgentName.size() == 1){
+                agentUser = usersWithAgentName.get(0);
+            }
+        }
+        if(agentUser != null){
+            agent.setUser(agentUser);
+        }
+
+        manager.createOrUpdate(dbContext, agent);
         return agent;
     }
 
