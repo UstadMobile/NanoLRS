@@ -103,17 +103,17 @@ public class SyncUriResponder extends NanoLrsResponder{
         Object dbContext = uriResource.initParameter(0, Object.class);
         String thisURL = "http://" + session.getRemoteHostName() + session.getUri();
 
-        //TODO: send content from post request into handleIncomingSync, return reply
         byte[] postBodyReceived = NanoLrsHttpd.getRequestContent(session);
         //send the data received to the handleIncomingSync method
 
-        String userUuid = getHeaderVal(session, "useruuid");
-        String username = getHeaderVal(session, "username");
-        String password = getHeaderVal(session, "password");
-        String isNewUser = getHeaderVal(session, "isnewuser");
-        String nodeUuid = getHeaderVal(session, "nodeuuid");
-        String requestHostName = getHeaderVal(session, "hostname");
-        String requestHostUrl = getHeaderVal(session, "hosturl");
+        String userUuid = getHeaderVal(session, UMSyncEndpoint.HEADER_USER_UUID);
+        String username = getHeaderVal(session, UMSyncEndpoint.HEADER_USER_USERNAME);
+        String password = getHeaderVal(session, UMSyncEndpoint.HEADER_USER_PASSWORD);
+        String isNewUser = getHeaderVal(session, UMSyncEndpoint.HEADER_USER_IS_NEW);
+        String nodeUuid = getHeaderVal(session, UMSyncEndpoint.HEADER_NODE_UUID);
+        String nodetHostName = getHeaderVal(session, UMSyncEndpoint.HEADER_NODE_HOST);
+        String nodeHostUrl = getHeaderVal(session, UMSyncEndpoint.HEADER_NODE_URL);
+        String nodeRole = getHeaderVal(session, UMSyncEndpoint.HEADER_NODE_ROLE);
 
         //could send name, etc
         PersistenceManager pm = PersistenceManager.getInstance();
@@ -148,9 +148,17 @@ public class SyncUriResponder extends NanoLrsResponder{
                 //Create this new node
                 node = (Node)nodeManager.makeNew();
                 node.setUUID(nodeUuid);
-                node.setUrl(thisURL);
-                node.setName(requestHostName);
-                node.setRole(requestHostUrl);
+                node.setUrl(nodeHostUrl);
+                node.setName(nodetHostName);
+                node.setHost(nodetHostName);
+                /* Role is always local */
+                node.setRole(nodeRole); //it will mostly be "client"
+                if(nodeRole.equals("proxy")){
+                    node.setProxy(true);
+                }
+                if(nodeRole.equals("main")){
+                    node.setMaster(true);
+                }
                 nodeManager.persist(dbContext, node);
             }
 

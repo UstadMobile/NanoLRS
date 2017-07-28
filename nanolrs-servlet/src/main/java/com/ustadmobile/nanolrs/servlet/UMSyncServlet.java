@@ -122,16 +122,16 @@ public class UMSyncServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Object dbContext = getServletContext().getAttribute(NanoLrsContextListener.ATTR_CONNECTION_SOURCE);
 
-        String userUuid = getHeaderVal(req, "useruuid");
-        String username = getHeaderVal(req, "username");
-        String password = getHeaderVal(req, "password");
-        String isNewUser = getHeaderVal(req, "isnewuser");
+        String userUuid = getHeaderVal(req, UMSyncEndpoint.HEADER_USER_UUID);
+        String username = getHeaderVal(req, UMSyncEndpoint.HEADER_USER_USERNAME);
+        String password = getHeaderVal(req, UMSyncEndpoint.HEADER_USER_PASSWORD);
+        String isNewUser = getHeaderVal(req, UMSyncEndpoint.HEADER_USER_IS_NEW);
 
-        String nodeUuid = getHeaderVal(req, "nodeuuid");
-        String nodetHostName = getHeaderVal(req, "hostname");
-        String nodeHostUrl = getHeaderVal(req, "hosturl");
-        //TODO:Fill this up:
-        String thisURL = "";
+        String nodeUuid = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_UUID);
+        String nodetHostName = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_HOST);
+        String nodeHostUrl = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_URL);
+        String nodeRole = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_ROLE);
+
         PersistenceManager pm = PersistenceManager.getInstance();
 
         UserManager userManager = pm.getManager(UserManager.class);
@@ -166,8 +166,16 @@ public class UMSyncServlet extends HttpServlet {
                 node.setUUID(nodeUuid);
                 node.setUrl(nodeHostUrl);
                 node.setName(nodetHostName);
+                node.setHost(nodetHostName);
                 /* Role is always local */
-                node.setRole("client");
+                node.setRole(nodeRole); //it will mostly be "client"
+                if(nodeRole.equals("proxy")){
+                    node.setProxy(true);
+                }
+                if(nodeRole.equals("main")){
+                    node.setMaster(true);
+                }
+
                 nodeManager.persist(dbContext, node);
             }
 
@@ -176,10 +184,20 @@ public class UMSyncServlet extends HttpServlet {
         }
 
         Map<String, String> reqHeaders = new HashMap<>();
+        reqHeaders.put(UMSyncEndpoint.HEADER_USER_UUID, userUuid);
+        reqHeaders.put(UMSyncEndpoint.HEADER_USER_USERNAME, username);
+        reqHeaders.put(UMSyncEndpoint.HEADER_USER_PASSWORD, password);
+        reqHeaders.put(UMSyncEndpoint.HEADER_USER_IS_NEW, isNewUser);
+
+        reqHeaders.put(UMSyncEndpoint.HEADER_NODE_UUID, nodeUuid);
+        reqHeaders.put(UMSyncEndpoint.HEADER_NODE_HOST, nodetHostName);
+        reqHeaders.put(UMSyncEndpoint.HEADER_NODE_URL, nodeHostUrl);
+        reqHeaders.put(UMSyncEndpoint.HEADER_NODE_ROLE, nodeRole);
+
         Map<String, String> reqParams = new HashMap<>();
 
-        reqHeaders = getHeadersFromRequest(req);
-        reqParams = getParamsFromRequest(req);
+        //reqHeaders = getHeadersFromRequest(req);
+        //reqParams = getParamsFromRequest(req);
 
         InputStream reqInputStream = req.getInputStream();
 
@@ -212,7 +230,7 @@ public class UMSyncServlet extends HttpServlet {
 
         ServletOutputStream sos = resp.getOutputStream();
         //TODO: this Check this
-        String responseDataString = convertStreamToString(result.getResponseData(), "UTF-8");
+        String responseDataString = convertStreamToString(result.getResponseData(), UMSyncEndpoint.UTF_ENCODING);
         byte[] responseDataBytes = responseDataString.getBytes();
         sos.write(responseDataBytes);
         sos.close();

@@ -22,7 +22,31 @@ public interface NanoLrsManagerSyncable<T extends NanoLrsModelSyncable, P> exten
      */
     long getLatestMasterSequence(Object dbContext) throws SQLException;
 
+    /**
+     * Gets all entities in a list that have been modified since a particular
+     * local sequence number. This number is usually gotten during sync
+     * During sync:
+     * We know which node we are to sent updates to . so we know the last latest local sequence number
+     * for that entity that that node has from us.
+     * We simply get everything on our end since that local seq number sent .
+     * This value will be in sync_status's sent local seq number for that node and this entity.
+     *
+     * This method will give back all the new entities since that number.
+     * If the entities were synced with master and they have a master seq set, we :
+     *
+     *
+     * @param user
+     * @param dbContext
+     * @param host
+     * @param seqNum
+     * @return
+     * @throws SQLException
+     */
     List<NanoLrsModel> getAllSinceSequenceNumber(
             User user, Object dbContext, String host, long seqNum) throws SQLException;
+
+    List<NanoLrsModel> getAllSinceTwoSequenceNumber(User user, String host,
+        long fromSeqNum, long toSeqNum, Object dbContext) throws SQLException;
+
 
 }

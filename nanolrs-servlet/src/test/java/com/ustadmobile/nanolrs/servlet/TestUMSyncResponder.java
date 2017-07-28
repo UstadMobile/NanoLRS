@@ -2,6 +2,7 @@ package com.ustadmobile.nanolrs.servlet;
 
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -70,15 +71,18 @@ public class TestUMSyncResponder  extends Mockito {
 
         Hashtable headers = new Hashtable();
         headers.clear();
-        headers.put("content-type",URLEncoder.encode(contentType, "UTF-8"));
 
-        headers.put("useruuid","test1");
-        headers.put("username","test");
-        headers.put("password","secret");
-        headers.put("isnewuser","true");
-        headers.put("nodeuuid","client1");
-        headers.put("hostname","client1");
-        headers.put("hosturl","http://client1.com/sync/endpoint/");
+        headers.put(UMSyncEndpoint.REQUEST_CONTENT_TYPE,URLEncoder.encode(contentType, UMSyncEndpoint.UTF_ENCODING));
+
+        headers.put(UMSyncEndpoint.HEADER_USER_UUID,"test1");
+        headers.put(UMSyncEndpoint.HEADER_USER_USERNAME,"test");
+        headers.put(UMSyncEndpoint.HEADER_USER_PASSWORD,"secret");
+        headers.put(UMSyncEndpoint.HEADER_USER_IS_NEW,"true");
+        headers.put(UMSyncEndpoint.HEADER_NODE_UUID,"client1");
+        headers.put(UMSyncEndpoint.HEADER_NODE_NAME,"client1");
+        headers.put(UMSyncEndpoint.HEADER_NODE_ROLE, "client");
+        headers.put(UMSyncEndpoint.HEADER_NODE_HOST, "client1");
+        headers.put(UMSyncEndpoint.HEADER_NODE_URL,"http://client1.com/sync/endpoint/");
 
 
         UMSyncServlet someServlet = new UMSyncServlet(){
@@ -118,7 +122,7 @@ public class TestUMSyncResponder  extends Mockito {
         umSyncServlet.doPost(request, response);
 
         System.out.println("POST done.");
-        verify(response).setContentType("application/json");
+        verify(response).setContentType(UMSyncEndpoint.JSON_MIMETYPE);
         verify(response).setStatus(200);
 
 

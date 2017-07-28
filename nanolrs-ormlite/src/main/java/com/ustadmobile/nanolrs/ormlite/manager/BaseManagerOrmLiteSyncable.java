@@ -71,6 +71,8 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
 
     }
 
+
+    /*
     @Override
     public List<NanoLrsModel> getAllSinceSequenceNumber(
             User user, Object dbContext, String host, long seqNum) throws SQLException {
@@ -78,13 +80,15 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
 
         List<String> uuidList = new ArrayList<>();
+        List<NanoLrsModel> blank = new ArrayList<>();
         String entityName =
                 getEntityImplementationClasss().getSimpleName();
         //Get user's specific subQuery:
         PreparedQuery<NanoLrsModel> subQueryPQ = findAllRelatedToUserQuery(dbContext, user);
 
         if(subQueryPQ == null){
-            return null;
+            return blank;
+            //return null;
         }
         //Get list of uuids from subQuery
         List<String[]> subQueryColResultSingle =
@@ -94,7 +98,6 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         }
 
         if(uuidList.isEmpty()){
-            List<NanoLrsModel> blank = new ArrayList<>();
             return blank;
         }
 
@@ -111,11 +114,93 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         List<NanoLrsModel> foundAllWhereMSNullAndCSGTSN =
                 thisDao.query(getAllWhereMSNullAndCSGTSN);
 
+        //However there might still be entities that have been synced with master and have
+        //newer changes ...
+        QueryBuilder<NanoLrsModel, String> qb2 = thisDao.queryBuilder();
+        Where whereMasterIsNotNullAndUpdated = qb2.where();
+        whereMasterIsNotNullAndUpdated.ne("master_sequence", 0).and().gt("local_sequence", seqNum);
+        List<NanoLrsModel> allWhereMasterIsNotNullAndUpdated = thisDao.query(qb2.prepare());
+        //What do we do about these ?
 
+        //In fact there might be a mix of both : new entities and updates
+        //Update: NOPE WE NULL/0 master if locally changed. So delete the above TODO
+
+        //If no new entities that have updates
         if(foundAllWhereMSNullAndCSGTSN.isEmpty()) {
             QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
             Where whereNotSent = qb.where();
             whereNotSent.gt("master_sequence", seqNum);
+            PreparedQuery<NanoLrsModel> getAllNewPreparedQuery = qb.prepare();
+            List<NanoLrsModel> foundNewEntriesListModel = thisDao.query(getAllNewPreparedQuery);
+
+            return foundNewEntriesListModel;
+        }else{
+            return foundAllWhereMSNullAndCSGTSN;
+        }
+
+    }
+    */
+
+    @Override
+    public List<NanoLrsModel> getAllSinceSequenceNumber(
+            User user, Object dbContext, String host, long seqNum) throws SQLException {
+        return getAllSinceTwoSequenceNumber(user, host, seqNum, -1, dbContext);
+    }
+
+    @Override
+    public List<NanoLrsModel> getAllSinceTwoSequenceNumber(User user, String host,
+        long fromSeqNum, long toSeqNum, Object dbContext) throws SQLException {
+
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+
+        //Get user speific uuids
+        List<String> uuidList = new ArrayList<>();
+        List<NanoLrsModel> blank = new ArrayList<>();
+        //Get user's specific subQuery:
+        PreparedQuery<NanoLrsModel> subQueryPQ = findAllRelatedToUserQuery(dbContext, user);
+        if(subQueryPQ == null){
+            return blank;
+        }
+        //Get list of uuids from subQuery
+        List<String[]> subQueryColResultSingle =
+                thisDao.queryRaw(subQueryPQ.getStatement()).getResults();
+        for(String[] thisEntry:subQueryColResultSingle){
+            uuidList.add(thisEntry[0]);
+        }
+        if(uuidList.isEmpty()){
+            return blank;
+        }
+
+        String pkField = getPrimaryKeyFromEntity(getEntityImplementationClasss());
+
+        //Basically searching for new entries that have never been synced with main server
+        // between two
+        QueryBuilder<NanoLrsModel, String> qbIfMasterSeqNull = thisDao.queryBuilder();
+        Where whereMasterSeqNullAndCSGTSN = qbIfMasterSeqNull.where();
+        Long to = toSeqNum;
+        if(toSeqNum == 0 && fromSeqNum ==0){
+            whereMasterSeqNullAndCSGTSN.eq("master_sequence", 0).and()
+                    .gt("local_sequence", fromSeqNum);
+        }else if(to != -1){
+            whereMasterSeqNullAndCSGTSN.eq("master_sequence", 0).and()
+                    .gt("local_sequence", fromSeqNum).and().lt("local_sequence", toSeqNum);
+        }else{
+            whereMasterSeqNullAndCSGTSN.eq("master_sequence", 0).and()
+                    .gt("local_sequence", fromSeqNum);
+        }
+
+        whereMasterSeqNullAndCSGTSN.and().in(pkField, uuidList);
+        PreparedQuery<NanoLrsModel> getAllWhereMSNullAndCSGTSN =
+                qbIfMasterSeqNull.prepare();
+        List<NanoLrsModel> foundAllWhereMSNullAndCSGTSN =
+                thisDao.query(getAllWhereMSNullAndCSGTSN);
+
+
+        //If no new entities that have updates
+        if(foundAllWhereMSNullAndCSGTSN.isEmpty()) {
+            QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
+            Where whereNotSent = qb.where();
+            whereNotSent.gt("master_sequence", fromSeqNum);
             PreparedQuery<NanoLrsModel> getAllNewPreparedQuery = qb.prepare();
             List<NanoLrsModel> foundNewEntriesListModel = thisDao.query(getAllNewPreparedQuery);
 
@@ -136,6 +221,16 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
             throws SQLException {
         NanoLrsModelSyncable dataS = (NanoLrsModelSyncable)data;
 
+        //set date created if does not exist
+        Long dateCreated = dataS.getDateCreated();
+        if(dateCreated == null || dataS.getDateCreated() < 1){
+            dataS.setDateCreated(System.currentTimeMillis());
+        }
+
+        NodeManager nodeManager =
+                PersistenceManager.getInstance().getManager(NodeManager.class);
+        Node thisNode = nodeManager.getThisNode(dbContext);
+
         if(incrementChangeSeq == true) {
             Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
             String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
@@ -143,17 +238,15 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
                     PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
             long setThis = changeSeqManager.getNextChangeAddSeqByTableName(tableName, 1, dbContext);
             dataS.setLocalSequence(setThis);
+
             /*
-            For Master Server
+            If master, set master seq same as local seq
              */
-            NodeManager nodeManager =
-                    PersistenceManager.getInstance().getManager(NodeManager.class);
-            //TODO: Get this ID either as final or get All.get(0)
-            Node thisNode = nodeManager.getThisNode(dbContext);
-            //Node thisNode = (Node) nodeManager.findByPrimaryKey(dbContext, "this_device");
             if (thisNode != null) {
                 if (thisNode.isMaster()) {
                     dataS.setMasterSequence(setThis);
+                }else{
+                    dataS.setMasterSequence(0);
                 }
             }
         }

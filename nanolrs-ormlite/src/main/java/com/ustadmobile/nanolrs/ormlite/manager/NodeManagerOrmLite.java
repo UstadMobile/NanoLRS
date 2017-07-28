@@ -24,26 +24,51 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
     }
 
     @Override
-    public List<Node> getNodeByRoleName(Object dbContext, String role_name) throws SQLException {
+    public List<Node> getNodesByRoleName(Object dbContext, String role_name) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
         QueryBuilder<NodeEntity, String> qb = thisDao.queryBuilder();
         List allNodes = thisDao.query(qb.where().eq(NodeEntity.COLNAME_ROLE, role_name).prepare());
         return allNodes;
     }
 
+    ///Proxy
+    @Override
+    public List<Node> getProxys(Object dbContext) throws SQLException{
+        Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
+        List<Node> proxyNodes = getNodesByRoleName(dbContext, "proxy");
+        if(proxyNodes != null && !proxyNodes.isEmpty()) {
+            return proxyNodes;
+        }else{
+            return null;
+        }
+    }
+
+    ///Client
+    @Override
+    public List<Node> getClients(Object dbContext) throws SQLException{
+        Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
+        List<Node> clientNodes = getNodesByRoleName(dbContext, "client");
+        if(clientNodes != null && !clientNodes.isEmpty()) {
+            return clientNodes;
+        }else{
+            return null;
+        }
+    }
+
+    ///This Device's node
     @Override
     public Node getThisNode(Object dbContext) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
-        List<Node> thisNodes = getNodeByRoleName(dbContext, "this_node");
+        List<Node> thisNodes = getNodesByRoleName(dbContext, "this_node");
         if(thisNodes != null && !thisNodes.isEmpty()) {
             return thisNodes.get(0);
         }else{
             return null;
         }
     }
-
     @Override
     public Node createThisDeviceNode(String uuid, String thisNodeName, String endpointUrl,
+                                     boolean isMaster, boolean isProxy,
                                      Object dbContext) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
         Node thisNode = getThisNode(dbContext);
@@ -58,16 +83,17 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
             //*Role is always local.*
             thisNode.setRole("this_node");
 
-            thisNode.setMaster(false);
-            thisNode.setProxy(false);
+            thisNode.setMaster(isMaster);
+            thisNode.setProxy(isProxy);
 
             thisDao.createOrUpdate(thisNode);
         }
         return thisNode;
     }
 
+    ///Get Main Node:
     @Override
-    public List<Node> getMainNodes(Object dbContext) throws SQLException {
+    public List<Node> getAllMainNodes(Object dbContext) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
         QueryBuilder<NodeEntity, String> qb = thisDao.queryBuilder();
         List<Node> allMainNodes = thisDao.query(qb.where().eq(NodeEntity.COLNAME_MASTER, true).prepare());
@@ -78,7 +104,6 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
         }
 
     }
-
     @Override
     public Node getMainNode(String host_name, Object dbContext) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
@@ -92,23 +117,12 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
             return null;
         }
     }
-
     @Override
-    public boolean doesThisMainNodeExist(String name, String host_name, Object dbContext) throws SQLException {
-        Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
-        QueryBuilder<NodeEntity, String> qb = thisDao.queryBuilder();
-        List<Node> allNodes = thisDao.query(qb.where().eq(
-                NodeEntity.COLNAME_HOST, host_name
-                ).and().eq(NodeEntity.COLNAME_NAME, name
-            ).prepare());
-        if(allNodes != null && !allNodes.isEmpty()){
-            for(Node everynode:allNodes){
-                if(everynode.isMaster()){
-                    return true;
-                }
-            }
+    public boolean doesThisMainNodeExist(String host_name, Object dbContext) throws SQLException {
+        Node mainNode = getMainNode(host_name, dbContext);
+        if(mainNode.isMaster()){
+            return true;
         }
-
         return false;
     }
 

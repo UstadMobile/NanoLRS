@@ -107,15 +107,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     private void checkAndCreateMainNode() throws SQLException {
-        String mainNodeName = "main1";
-        String mainNodeHostName = "umcloud1.ustadmobile.com:8545";
+        String mainNodeName = "umcloud1 servlet";
+        String mainNodeHostName = "umcloud1svlt";
         String mainNodeEndpointUrl = "http://umcloud1.ustadmobile.com:8545/syncendpoint/";
         String mainNodeRole = "main";
         String mainNodeUUID = UUID.randomUUID().toString();
 
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
 
-        if(!nodeManager.doesThisMainNodeExist(mainNodeName, mainNodeHostName, context)){
+        if(!nodeManager.doesThisMainNodeExist(mainNodeHostName, context)){
             Node mainNode = (Node)nodeManager.makeNew();
             mainNode.setUUID(mainNodeUUID);
             mainNode.setMaster(true);
@@ -135,10 +135,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         String thisNodeUUID = UUID.randomUUID().toString();
         String thisNodeUrl = "set-my-url";
         //TODO: Check if we want to get device's name & info
-        String thisNodeName = "nodeL" + thisNodeUUID;
+        String thisNodeName = "node:" + thisNodeUUID;
+        //String thisNodeRole = "this_node";
 
         nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName,
-                thisNodeUrl, context);
+                thisNodeUrl, false, false, context);
     }
 
 }

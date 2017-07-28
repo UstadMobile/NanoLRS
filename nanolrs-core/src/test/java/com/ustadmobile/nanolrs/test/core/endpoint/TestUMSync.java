@@ -6,6 +6,7 @@ package com.ustadmobile.nanolrs.test.core.endpoint;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
+import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.UserCustomFieldsManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
@@ -31,13 +32,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class TestUMSync {
 
@@ -87,6 +92,10 @@ public class TestUMSync {
                 PersistenceManager.getInstance().getManager(XapiStateManager.class);
         XapiActivityManager activityManager =
                 PersistenceManager.getInstance().getManager(XapiActivityManager.class);
+        UserCustomFieldsManager ucfManager =
+                PersistenceManager.getInstance().getManager(UserCustomFieldsManager.class);
+        SyncStatusManager ssManager =
+                PersistenceManager.getInstance().getManager(SyncStatusManager.class);
 
         //Get initial seq number for user table - for debugging purposes
         String tableName = "USER";
@@ -107,7 +116,7 @@ public class TestUMSync {
         Node thisNode = (Node) nodeManager.makeNew();
         String thisNodeUUID = UUID.randomUUID().toString();
         thisNode = nodeManager.createThisDeviceNode(UUID.randomUUID().toString(), "node:"+thisNodeUUID,
-                "http://localhost:4242/syncendpoint/", context);
+                "http://localhost:4242/syncendpoint/", false, false, context);
 
 
         ///Create a node for testing
@@ -173,10 +182,6 @@ public class TestUMSync {
         Assert.assertEquals(postIncrementGottenNextSeqNumber, gottenNextSeqNum + 2);
 
 
-
-
-
-
         //Set up Xapi tables:
         InputStream stmtIn = getClass().getResourceAsStream("/com/ustadmobile/nanolrs/core/xapi-statement-synctest.json");
         Assert.assertNotNull("Can get statement resource input stream", stmtIn);
@@ -225,23 +230,112 @@ public class TestUMSync {
         List allStatements = statementManager.getAllEntities(context);
         List allStates = stateManager.getAllEntities(context);
 
-        //Start Sync
-        UMSyncResult result =
+
+        List allUsersHere = userManager.getAllEntities(context);
+        List allUsersthere = userManager.getAllEntities(endpointContext);
+
+        List allStatementsHere = statementManager.getAllEntities(context);
+        List allStatementsThere  = statementManager.getAllEntities(endpointContext);
+
+        List ssh = ssManager.getAllEntities(context);
+        List sst = ssManager.getAllEntities(endpointContext);
+
+        UMSyncResult oneDirectionResult =
                 UMSyncEndpoint.startSync(testingUser, testingNode, context);
-        Assert.assertNotNull(result);
 
+        ssh = ssManager.getAllEntities(context);
+        sst = ssManager.getAllEntities(endpointContext);
 
-        //Get all users and check first:
-        List<User> allUsersBeforeIncomingSync = userManager.getAllEntities(context);
+        //Create a user update on endpoint
+        User userOnEndpoint = (User)userManager.findByPrimaryKey(
+                endpointContext, testingUser.getUuid());
+        UserCustomFields newUserCustomFieldOnEndpoint = (UserCustomFields)ucfManager.makeNew();
+        newUserCustomFieldOnEndpoint.setUuid(UUID.randomUUID().toString());
+        newUserCustomFieldOnEndpoint.setUser(userOnEndpoint);
+        newUserCustomFieldOnEndpoint.setFieldName(101);
+        newUserCustomFieldOnEndpoint.setFieldValue("The Matrix has you.");
+        ucfManager.persist(endpointContext, newUserCustomFieldOnEndpoint);
 
-        /* Test starting Sync again to check if more to be sent ..
-         * There should not be any more  */
+        UserCustomFields newUserCustomFieldOnEndpoint2 = (UserCustomFields)ucfManager.makeNew();
+        newUserCustomFieldOnEndpoint2.setUuid(UUID.randomUUID().toString());
+        newUserCustomFieldOnEndpoint2.setUser(userOnEndpoint);
+        newUserCustomFieldOnEndpoint2.setFieldName(100);
+        newUserCustomFieldOnEndpoint2.setFieldValue("The next room");
+        ucfManager.persist(endpointContext, newUserCustomFieldOnEndpoint2);
+
+        //Start Sync
+        Thread t  = new Thread(new Runnable() {
+            User testingUser;
+            Node testingNode;
+            Object context;
+            Object endpointContext;
+            NanoLrsHttpd httpd;
+            UserManager userManager =
+                    PersistenceManager.getInstance().getManager(UserManager.class);
+            XapiStatementManager statementManager =
+                    PersistenceManager.getInstance().getManager(XapiStatementManager.class);
+            UserCustomFieldsManager ucfManager =
+                    PersistenceManager.getInstance().getManager(UserCustomFieldsManager.class);
+
+            public Runnable startSyncThread(User testingUser, Node testingNode,
+                                            Object context, Object endpointContext,
+                                            NanoLrsHttpd httpd) {
+                // store parameter for later user
+                this.testingNode = testingNode;
+                this.testingUser = testingUser;
+                this.context = context;
+                this.endpointContext = endpointContext;
+                this.httpd = httpd;
+                return this;
+            }
+
+            public void run() {
+                // code goes here.
+                UMSyncResult result =
+                        null;
+                try {
+                    result = UMSyncEndpoint.startSync(testingUser, testingNode, context);
+                    //TimeUnit.SECONDS.sleep(10);
+                    Thread.sleep(10000);
+                    List allUsersHere = userManager.getAllEntities(context);
+                    List allUsersthere = userManager.getAllEntities(endpointContext);
+
+                    List allStatementsHere = statementManager.getAllEntities(context);
+                    List allStatementsThere  = statementManager.getAllEntities(endpointContext);
+                    List allUCFHere = ucfManager.getAllEntities(context);
+                    List allUCFThere = ucfManager.getAllEntities(endpointContext);
+
+                    int x = 0;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Assert.assertNotNull(result);
+
+                //httpd.stop();
+
+            }
+        }.startSyncThread(testingUser, testingNode, context, endpointContext, httpd));
+        t.start();
+
+        //Test starting Sync again to check if more to be sent ..
+        //There should not be any more
         UMSyncResult syncAgainResult =
                 UMSyncEndpoint.startSync(testingUser, testingNode, context);
         Assert.assertNotNull(syncAgainResult);
 
+        allUsersHere = userManager.getAllEntities(context);
+        allUsersthere = userManager.getAllEntities(endpointContext);
+        allStatementsHere = statementManager.getAllEntities(context);
+        allStatementsThere  = statementManager.getAllEntities(endpointContext);
+        List ucfh = ucfManager.getAllEntities(context);
+        List ucft = ucfManager.getAllEntities(endpointContext);
 
-        //TODO: Check the entities on endpoint side.
+        ssh = ssManager.getAllEntities(context);
+        sst = ssManager.getAllEntities(endpointContext);
 
         //Test same user createion
         //Lets create another user for syncing purposes
@@ -287,18 +381,43 @@ public class TestUMSync {
         map.put(76, username);
         map.put(77, password);
 
-        //userCustomFields.
-        userCustomFieldsManager.createUserCustom(map,user6, context);
-        List allCustomFields = userCustomFieldsManager.getAllEntities(context);
-
         userCustomFieldsManager.createUserCustom(map,testingUser, context);
+        List relUCFs = userCustomFieldsManager.findByUser(testingUser,context);
+
+        allUsersHere = userManager.getAllEntities(context);
+        allUsersthere = userManager.getAllEntities(endpointContext);
 
         //Start Sync - should have user custom fields (8 of them for this user):
+        //Client should get back 2 created - total of 10 here
+        //Endpoint should have those 2 + should also get the 8 in initial sync.
         UMSyncResult resultucf =
                 UMSyncEndpoint.startSync(testingUser, testingNode, context);
         Assert.assertNotNull(resultucf);
 
-        httpd.stop();
+        allUsersHere = userManager.getAllEntities(context);
+        allUsersthere = userManager.getAllEntities(endpointContext);
 
+        allStatementsHere = statementManager.getAllEntities(context);
+        allStatementsThere  = statementManager.getAllEntities(endpointContext);
+
+        ucfh = ucfManager.getAllEntities(context);
+        ucft = ucfManager.getAllEntities(endpointContext);
+
+        ssh = ssManager.getAllEntities(context);
+        sst = ssManager.getAllEntities(endpointContext);
+
+
+        TimeUnit.SECONDS.sleep(10);
+
+        allUsersHere = userManager.getAllEntities(context);
+        allUsersthere = userManager.getAllEntities(endpointContext);
+        allStatementsHere = statementManager.getAllEntities(context);
+        allStatementsThere  = statementManager.getAllEntities(endpointContext);
+        List allUCFHere = ucfManager.getAllEntities(context);
+        List allUCFThere = ucfManager.getAllEntities(endpointContext);
+
+        //Assert.assertEquals(allStatementsThere.size(), 1);
+        Assert.assertEquals(allUCFThere.size(),allUCFHere.size());
+        httpd.stop();
     }
 }

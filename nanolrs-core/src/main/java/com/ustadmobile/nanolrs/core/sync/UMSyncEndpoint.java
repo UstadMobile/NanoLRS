@@ -17,11 +17,11 @@ import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.Node;
+import com.ustadmobile.nanolrs.core.model.SyncStatus;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.UserCustomFields;
 import com.ustadmobile.nanolrs.core.model.XapiActivity;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
-import com.ustadmobile.nanolrs.core.model.XapiDocument;
 import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
 import com.ustadmobile.nanolrs.core.model.XapiState;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
@@ -63,13 +63,37 @@ public class UMSyncEndpoint {
      * Map of entity names to the proxy class
      */
     private static HashMap<String, Class> proxyNameToClassMap = new HashMap<>();
-
     private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();
 
-    /*
-        User.class, XapiStatement.class, XapiActivity.class, XapiAgent.class, XapiDocument.class,
-        XapiForwardingStatement.class, XapiState.class, XapiVerb.class
-     */
+    public static final String HEADER_NODE_NAME = "nodename";
+    public static final String HEADER_NODE_HOST = "nodehost";
+    public static final String HEADER_NODE_URL = "nodeurl";
+    public static final String HEADER_NODE_UUID = "nodeuuid";
+    public static final String HEADER_NODE_ROLE = "noderole";
+    public static final String HEADER_NODE_ISMASTER = "nodeismaster";
+    public static final String HEADER_NODE_ISPROXY = "nodeisproxy";
+
+    public static final String HEADER_USER_USERNAME = "username";
+    public static final String HEADER_USER_PASSWORD = "password";
+    public static final String HEADER_USER_UUID = "useruuid";
+    public static final String HEADER_USER_IS_NEW = "isnewuser";
+
+    public static final String ENTITY_INFO_CLASS_NAME = "pCls";
+    public static final String ENTITY_INFO_TABLE_NAME = "tableName";
+    public static final String ENTITY_INFO_COUNT = "count";
+    public static final String ENTITY_INFO_PRIMARY_KEY = "pk";
+
+    public static final String RESPONSE_ENTITIES_DATA = "data";
+    public static final String RESPONSE_ENTITIES_INFO = "info";
+    public static final String RESPONSE_CONFLICT = "conflict";
+
+    public static final String JSON_MIMETYPE = "application/json";
+
+    public static final String REQUEST_CONTENT_LENGTH = "Content-Length";
+    public static final String REQUEST_CONTENT_TYPE = "Content-Type";
+    public static final String REQUEST_ACCEPT = "Accept";
+
+    public static final String UTF_ENCODING = "UTF-8";
 
     //TODO: Find a central place for this and other mappings..
     static {
@@ -99,6 +123,70 @@ public class UMSyncEndpoint {
 
         proxyNameToClassMap.put(XapiVerb.class.getName(), XapiVerb.class);
         proxyClassToManagerMap.put(XapiVerb.class, XapiVerbManager.class);
+    }
+
+    /**
+     * Common method to return primary key when supplied a class entity
+     *
+     * @param syncableEntity eg: User.class
+     * @return primary key field
+     */
+    public static String getPrimaryKeyFromClass(Class syncableEntity){
+        Method[] allEntityMethods = syncableEntity.getMethods();
+        String pkMethod = null;
+        String pkField = null;
+        for(Method method : allEntityMethods) {
+            if(method.isAnnotationPresent(PrimaryKeyAnnotationClass.class)) {
+                pkMethod = method.getName();
+                break;
+            }
+        }
+        int prefixLen = 0;
+        if(pkMethod.startsWith("is"))
+            prefixLen = 2;
+        else if(pkMethod.startsWith("get"))
+            prefixLen = 3;
+        pkField = Character.toLowerCase(pkMethod.charAt(3)) +
+                pkMethod.substring(prefixLen+1);
+        return pkField;
+    }
+
+    /**
+     * Common method to return manager from a class
+     * @param syncableEntity eg: User.class
+     * @return
+     */
+    public static NanoLrsManagerSyncable getManagerFromClass(Class syncableEntity){
+        Class managerClass = proxyClassToManagerMap.get(syncableEntity);
+        NanoLrsManagerSyncable syncableEntityManager = (NanoLrsManagerSyncable)
+                PersistenceManager.getInstance().getManager(managerClass);
+        return syncableEntityManager;
+    }
+
+    /**
+     * Common method to return Info JSON about the entity for a given class
+     * @param syncableEntity eg: User.class
+     * @return
+     */
+    public static JSONObject createJSONFromClass(Class syncableEntity){
+        JSONObject jsonInfo = new JSONObject();
+        jsonInfo.put(ENTITY_INFO_CLASS_NAME, syncableEntity.getName());
+        jsonInfo.put(ENTITY_INFO_TABLE_NAME, getTableNameFromClass(syncableEntity));
+        jsonInfo.put(ENTITY_INFO_COUNT, 0);
+        jsonInfo.put(ENTITY_INFO_PRIMARY_KEY, getPrimaryKeyFromClass(syncableEntity));
+
+        return jsonInfo;
+    }
+
+    /**
+     * Common method to return the table name from Proxy Class
+     * @param syncableEntity eg: User.class
+     * @return
+     */
+    public static String getTableNameFromClass(Class syncableEntity){
+        return convertCamelCaseNameToUnderscored(
+                Character.toLowerCase(syncableEntity.getSimpleName().charAt(0)) +
+                        syncableEntity.getSimpleName().substring(1));
     }
 
     public static String convertStreamToString(InputStream is, String encoding) {
@@ -139,40 +227,87 @@ public class UMSyncEndpoint {
         4. convert to entities
         5. get number
         6. add to db (persist)
-        7. Send response
+        7. Resolve conflicts (if any)
+        7. Get updates for senderNode
+        8. Send back any updates, conflicts, in the response body
+        9. Update SyncStatus table
         */
 
+        //The return result and status of the incoming request's sync on this node
+        UMSyncResult resultResponse = null;
         int resultStatus;
 
         //Managers
-        UMSyncResult resultResponse = null;
         ChangeSeqManager changeSeqManager =
                 PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
+        SyncStatusManager syncStatusManager =
+                PersistenceManager.getInstance().getManager(SyncStatusManager.class);
+        UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
 
-        //Map of <entity object,entity class name>
-        Map<NanoLrsModelSyncable, String> allNewEntitiesMap =
-                new HashMap<NanoLrsModelSyncable, String>();
-        //Map of <entity class name, current Seq number before sync>
+        JSONObject responseJSON = new JSONObject();
+        JSONArray sendTheseEntitiesBack = new JSONArray();
+        JSONArray sendTheseInfoBack = new JSONArray();
+        JSONArray conflictEntitiesJSON = new JSONArray();
+        boolean emptyResponse = true;
+
+        //Map of <Entity object,entity proxy class name>
+        //Makes it easier to determine what type of entity object this is
+        // and easier to get its manager.
+        Map<NanoLrsModelSyncable, String> allNewEntitiesMap = new HashMap<>();
+        Map<NanoLrsModelSyncable, String> allReturnEntitiesMap = new HashMap<>();
+
+        //Map of <Entity Proxy Name, Pre-Sync ChangeSeq No.>
+        //We store this such that we can get back to it while
+        // updating the entity's sync entities and we can then
+        //  give it a +1.
         Map<String, Long> preSyncEntitySeqNumMap = new HashMap<>();
 
-        //List of entities that are conflicts - Added to this array so we can return it, etc
+        //Pre sync change seq for ALL syncable entities
+        Map<String, Long> preSyncAllEntitiesSeqMap = new HashMap<>();
+
+        //Post sync change seq for ALL syncable entities
+        Map<String, Long> postSyncAllEntitiesSeqMap = new HashMap<>();
+
+        //List of entities that are conflicts
+        // Added to this array so we can return it if cannot be resolved.
         List<NanoLrsModelSyncable> conflictEntries = new ArrayList<NanoLrsModelSyncable>();
 
+        //Get this device/node
+        Node thisNode = null;
+        thisNode = nodeManager.getThisNode(dbContext);
+
+        //Get this user
+        String userUuid = headers.get(HEADER_USER_UUID).toString();
+        User thisUser = null;
+        thisUser = userManager.findById(dbContext,userUuid);
+
+        //Get all syncable entities pre sync seq and put it in preSyncSeqMap
+        for(Class thisEntity:SYNCABLE_ENTITIES){
+            //Pre-Sync : Add existing ChangeSeq value to preSyncAllEntitiesSeqMap
+            String proxyClassName = thisEntity.getName();
+            String tableName = getTableNameFromClass(thisEntity);
+            long preSyncEntitySeqNum =
+                    changeSeqManager.getNextChangeByTableName(tableName, dbContext);
+            preSyncAllEntitiesSeqMap.put(proxyClassName, preSyncEntitySeqNum);
+        }
+
+        //Convert Inputstream to JSONObjects
         //Convert inputstream->string->entities json array
-        //String streamString = convertStreamToString(inputStream, "UTF-8");
         String streamString = null;
         try {
-            streamString = convertStreamToString2(inputStream, "UTF-8");
+            streamString = convertStreamToString2(inputStream, UTF_ENCODING);
         } catch (IOException e) {
             e.printStackTrace();
+            //Cannot proceed. Stream is fauly. Skip?
         }
-        JSONObject entitiesWithInfoJSON = new JSONObject(streamString);
-        JSONArray entitiesJSON = entitiesWithInfoJSON.getJSONArray("data");
-        JSONArray entitiesInfoJSON = entitiesWithInfoJSON.getJSONArray("info");
 
-        //Create Entity Object, Proxy Class Name Map for easier manager lookup
-        //Loop over JSON Array to put every JSON and its name in a MAP
+        //Get data and info separately
+        JSONObject entitiesWithInfoJSON = new JSONObject(streamString);
+        JSONArray entitiesJSON = entitiesWithInfoJSON.getJSONArray(RESPONSE_ENTITIES_DATA);
+        JSONArray entitiesInfoJSON = entitiesWithInfoJSON.getJSONArray(RESPONSE_ENTITIES_INFO);
+
+        //Create Entity Map of <Entity Object, Proxy Class Name>
         for(int i=0; i < entitiesJSON.length(); i++){
             JSONObject entityJSON = entitiesJSON.getJSONObject(i);
             NanoLrsModel thisEntity = ProxyJsonSerializer.toEntity(entityJSON, dbContext);
@@ -182,79 +317,58 @@ public class UMSyncEndpoint {
         }
 
         //Reserve set of ChangeSeq numbers for every entity type
-        //Store previous changeseq in a map that we can +1
-        if (entitiesInfoJSON.length() > 0 ){
-            //for every entity type ..
-            for(int j=0;j<entitiesInfoJSON.length();j++){
-                JSONObject thisEntityInfoJSON = entitiesInfoJSON.getJSONObject(j);
-                String proxyClassName = thisEntityInfoJSON.getString("pCls");
-                String tableName = thisEntityInfoJSON.getString("tableName");
-                int count = thisEntityInfoJSON.getInt("count");
-                //get current change seq number locally..
-                long preSyncEntitySeqNum =
-                        changeSeqManager.getNextChangeByTableName(tableName, dbContext);
-                //Add this to a map to be used later
-                preSyncEntitySeqNumMap.put(proxyClassName, preSyncEntitySeqNum);
-                //Increment the table with the count of new, updated entities so newer ones
-                //get added after this increment.
-                changeSeqManager.getNextChangeAddSeqByTableName(tableName, count, dbContext);
-            }
+        //Increment every Entity's ChangeSeq by count of new updates
+        for(int j=0;j<entitiesInfoJSON.length();j++){
+            JSONObject thisEntityInfoJSON = entitiesInfoJSON.getJSONObject(j);
+            String proxyClassName = thisEntityInfoJSON.getString(ENTITY_INFO_CLASS_NAME);
+            String tableName = thisEntityInfoJSON.getString(ENTITY_INFO_TABLE_NAME);
+            int count = thisEntityInfoJSON.getInt(ENTITY_INFO_COUNT);
+
+            //Pre-Sync : Add existing ChangeSeq value to preSyncEntitySeqNumMap
+            long preSyncEntitySeqNum =
+                    changeSeqManager.getNextChangeByTableName(tableName, dbContext);
+            preSyncEntitySeqNumMap.put(proxyClassName, preSyncEntitySeqNum);
+
+            //Increment the ChangeSeq by count of new & update entities
+            changeSeqManager.getNextChangeAddSeqByTableName(tableName, count, dbContext);
         }
 
-        //Get this device/node
-        //Needs to get created if not set by the device itself. Name can be a combination
-        // of device name, location, random uuid.toString(), etc.
-        //Primary key needs to be set to "this_device"
-        //We use that to check if this device is the master server or not..
-        //Also needs some form of authentication, else - anyone can  be master
-        Node thisNode = null;
-        thisNode = nodeManager.getThisNode(dbContext);
-
-        //Loop over the <Entities, pCls> to add them to this node's DB and persist
+        //Loop over the <Entities, Proxy Name> to add them to this DB
+        //Persist without auto increment. We persist them in the gap between
+        // Pre-Sync ChangeSeq and Post-Sync ChangeSeq(the one thats incremented)
         Iterator<Map.Entry<NanoLrsModelSyncable, String>> allNewEntitiesMapIterator =
                 allNewEntitiesMap.entrySet().iterator();
         while(allNewEntitiesMapIterator.hasNext()){
-            Map.Entry<NanoLrsModelSyncable, String> thisNewEntityMap = (Map.Entry)
-                    allNewEntitiesMapIterator.next();
+            Map.Entry<NanoLrsModelSyncable, String> thisNewEntityMap =
+                    (Map.Entry) allNewEntitiesMapIterator.next();
+            //Get entity and its manager
             NanoLrsModelSyncable thisNewEntity = thisNewEntityMap.getKey();
             String thisProxyClassName = thisNewEntityMap.getValue();
-
-            //Get manager
             Class thisProxyClass = proxyNameToClassMap.get(thisProxyClassName);
             Class thisManagerClass = proxyClassToManagerMap.get(thisProxyClass);
             NanoLrsManagerSyncable thisManager = (NanoLrsManagerSyncable)
                     PersistenceManager.getInstance().getManager(thisManagerClass);
 
-            //Get entity's change seq before increment
+            //Set entity's change seq from available pool (preSyncEntitySeqNumMap)
             long thisEntityChangeSeq = preSyncEntitySeqNumMap.get(thisProxyClassName);
-            long thisNewEntitySeq = thisEntityChangeSeq + 1;
-            preSyncEntitySeqNumMap.put(thisProxyClassName, thisNewEntitySeq);
-            thisNewEntity.setLocalSequence(thisNewEntitySeq);
+            long thisNewEntityNewSeq = thisEntityChangeSeq + 1; //this is the new seq num
+            preSyncEntitySeqNumMap.put(thisProxyClassName, thisNewEntityNewSeq); //set the next one
+            thisNewEntity.setLocalSequence(thisNewEntityNewSeq);
 
             //If master, update master sequence as well..
             if (thisNode != null) {
                 if (thisNode.isMaster()) {
-                    thisNewEntity.setMasterSequence(thisNewEntitySeq);
+                    thisNewEntity.setMasterSequence(thisNewEntityNewSeq);
+                    //TODO: Store this info and send it back somehow
                 }
             }
 
-            /* Conflict resolution:
-            Check if thisNewEntity if present (by pk) is an update ie:
-                a. Has a new Master Seq
-                b. Has a Master Seq > Current Master Seq
-                c. Has the same master seq, different local seq but
-                is modified later
-                d. .. (can you think of any more cases?)
-
-             If conflict: array them which will be sent back in response
-             */
-            //Get local version of the update
-            //Update: Using reflection
+            //Get primary key field of this entity:
             String pkField = null;
             for(int k=0;k<entitiesInfoJSON.length();k++){
                 JSONObject eInfoJSON = entitiesInfoJSON.getJSONObject(k);
-                if(eInfoJSON.getString("pCls").equals(thisProxyClassName)){
-                    pkField = eInfoJSON.getString("pk");
+                if(eInfoJSON.getString(ENTITY_INFO_CLASS_NAME).equals(thisProxyClassName)){
+                    pkField = eInfoJSON.getString(ENTITY_INFO_PRIMARY_KEY);
                     if (!pkField.isEmpty()){
                         pkField = "get" + Character.toUpperCase(pkField.charAt(0))
                                 + pkField.substring(1);
@@ -262,6 +376,8 @@ public class UMSyncEndpoint {
                     break;
                 }
             }
+
+            //Get local version and check if its new or an update : Using reflection
             NanoLrsModelSyncable existingEntityToBeUpdated = null;
             try {
                 Method pkMethod = thisProxyClass.getMethod(pkField);
@@ -275,67 +391,337 @@ public class UMSyncEndpoint {
                 e.printStackTrace();
             }
 
+            ////////////////////////////////////
+            ///  UPDATE/CONFLICT RESOLUTION  ///
+            ////////////////////////////////////
+            /* Accept if:
+                a. Has a new Master Seq >  Current Master Seq
+                b. Is a new entry
+                c. Has the same master seq, but modified later
+             If conflict: array them which will be sent back in response
+             */
+
+            //If it is an update, check for conflicts
+            boolean doIPersist = true;
+            int wePutConflictsHere = conflictEntries.size();
+
+            //Get sync status for this host and entity and its latest sent sync seq
+            SyncStatus ss = (SyncStatus)
+                    syncStatusManager.getSyncStatus(node.getHost(),thisProxyClass, dbContext);
+            Long lastSyncSeq = syncStatusManager.getSentStatus(node.getHost(),
+                    thisProxyClass, dbContext);
+
+            boolean newEntry = false;
             if(existingEntityToBeUpdated != null){
                 //Its an update
                 long currentLatestMaster = existingEntityToBeUpdated.getMasterSequence();
                 long thisNewEntityMaster = thisNewEntity.getMasterSequence();
+
+                long currentStoredDate = existingEntityToBeUpdated.getStoredDate();
+                long newStoredDate = thisNewEntity.getStoredDate();
+
+                //Both have synced with master with no local changes.
+                // Solution: get the latest master one
                 if(currentLatestMaster > 0 && thisNewEntityMaster > 0){
                     if(thisNewEntityMaster < currentLatestMaster){
-                        //Already have this update
-                        //skip
+                        //Skip: Already have a newer update from master
+                        System.out.println("Already have this update from master. Skipping.");
                         break;
                     }else if(thisNewEntityMaster == currentLatestMaster){
+                        //We have an update that is from master and so is ours
+                        //We also have both out masters the same. Which cannot be possible
                         //TODO: Change this 0 to the the existing entity's stored Date
-                        //You may need to have a method in manager to return PK object and
-                        //user thisNewEntity's pk object to search via manager.GetviaPK..
-                        // and compare stored date here to resolve
-                        if(thisNewEntity.getStoredDate() < 0){
-                            //Have a newer update. Lets keep what we have
+                        System.out.println("Sync Conflict. Both entities have the same master.\n" +
+                                "We cannot keep the update. We ignore this.\n");
+                        break;
+                    }
+                }
+                //One of them has synced with master, the other has not : get the master
+                //the other one has a more recent update but hasn't synced with master : favor master
+                else if(currentLatestMaster > 0 || thisNewEntityMaster > 0){
+                    //One of them has an update and the other one is up to date with master
+                    //Possible rule : Master could always win
+                    if(currentLatestMaster > thisNewEntityMaster ){
+                        System.out.println("Sync conflict resolution: " +
+                                "Current Master is valid (not 0) and new master isn't.\n");
+
+                        //Check dates between them
+                        if(currentStoredDate > newStoredDate){
+                            System.out.println(" .. but current is newer. skipping");
+                            break;
+                        }else{
+                            System.out.println(" .. but incoming is newer. Allowing..");
+                        }
+
+                    }else{
+                        //Accept the new entity because it has a higher master..
+                    }
+                }
+                else{
+                    //neither of them have been synced with master.
+                    //Check if thisNewEntity's node is a proxy
+
+                    if(node.isProxy()){
+                        //The sender is a proxy and its got an update for an entry
+                        //that has never been synced with master
+                        //We gotta check if proxy's update is more recent than ours
+
+                        if(thisNewEntity.getLocalSequence() > lastSyncSeq){
+                            //WAIT the sync wont come unless its greater than.
+                            //Maybe we don't really even need this check..
+                            //TODO: check
+                            System.out.println("\nIncoming Sync Resolution: From proxy\n" +
+                                    "Request from proxy: is higher. Accepting..\n");
+                        }else{
+                            System.out.println("\nIncoming Sync resolution:" +
+                                    "Sender is proxy.\n" +
+                                    "Sender's are already in the system. They shouldn't have been sent.\n" +
+                                    "Not updating this entry.\n");
+                            break;
+                        }
+                    }else{
+                        //The node sending this is not master or a proxy.
+                        // We ideally don't take in entities from non master/proxy
+                        // Suppose we do, if can accept the ones that are newer
+                        if(newStoredDate > currentStoredDate){
+                            System.out.println("\nIncoming Sync conflict:" +
+                                    "Sender is not master or proxy.\n" +
+                                    "Sender's entries are more recent than what I have.\n" +
+                                    "Not updating it since not a proxy or master..\n");
+                            break;
+                        }else{
+                            System.out.println("\nIncoming Sync resultion:" +
+                            "Sender is not master or proxy.\n" +
+                                    "Senders entries are not more recent. " +
+                                            "\nNot updating it since Not a proxy or master.\n"
+                            );
                             break;
                         }
                     }
                 }
             }else{
                 //Its a new entry, let it create it, there should be no conflicts
+                //since this primary key does not exist on this node.
+                newEntry = true;
             }
 
-            thisManager.persist(dbContext, thisNewEntity, false);
+            //persist (update/create the entity without doing a +1 to its change seq)
+            //because we have already set it above (from pool)
+            if(doIPersist) {
+                thisManager.persist(dbContext, thisNewEntity, false);
+            }
+
+            ////////////////////////////////////
+            ///     UPDATE SYNC STATUS       ///
+            ////////////////////////////////////
+            long currentSent = ss.getSentSeq();
+            if(thisNewEntityNewSeq > currentSent){
+                ss.setSentSeq(thisNewEntityNewSeq);
+                syncStatusManager.persist(dbContext, ss);
+            }
+
+            //TODO: DO we need to update received? Or is that only for proxy?
+            /*
+            long currentRec = ss.getReceivedSeq();
+            if(thisNewEntityNewSeq > currentRec) {
+                ss.setReceivedSeq(thisNewEntityNewSeq);
+                syncStatusManager.persist(dbContext, ss);
+            }
+            */
+
+
         }
-        JSONObject responseJSON;
+
+        //Get all syncable entities post sync seq and put it in postSyncSeqMap
+        for(Class thisEntity:SYNCABLE_ENTITIES){
+            //Pre-Sync : Add existing ChangeSeq value to preSyncEntitySeqNumMap
+            String proxyClassName = thisEntity.getName();
+            String tableName = getTableNameFromClass(thisEntity);
+            long preSyncEntitySeqNum =
+                    changeSeqManager.getNextChangeByTableName(tableName, dbContext);
+            postSyncAllEntitiesSeqMap.put(proxyClassName, preSyncEntitySeqNum);
+        }
+
+
+        ////////////////////////////////
+        // CONSTRUCT RETURN ENTITIES  //
+        ////////////////////////////////
+
+        /* Create a request result of whats stored, and give back what need to be given..
+            The request response should contain :
+            a. Any conflict
+            b. Any data meant for the user to be sent back
+            c. Any more ??
+         */
+
+        ///UNDER CONSTRUCTION
+
+        //Map of Entity and latestSeq got so we can update sync status upon sync success
+        Map<Class, Long> entityToLatestSeqReturn = new HashMap<>();
+
+        for(Class syncableEntity : SYNCABLE_ENTITIES) {
+            //Get its manager
+            NanoLrsManagerSyncable syncableEntityManager = getManagerFromClass(syncableEntity);
+
+            //Get the primary key
+            String pkField = getPrimaryKeyFromClass(syncableEntity);
+
+            //Get table name
+            String tableName = getTableNameFromClass(syncableEntity);
+
+            //Create JSON of this Entity's info used for syncing
+            JSONObject jsonInfo = createJSONFromClass(syncableEntity);
+
+            //Add this entity to an array list of entity info for this sync
+            sendTheseInfoBack.put(jsonInfo);
+
+            //Get sync status for this entity and host
+            SyncStatus ss = (SyncStatus) syncStatusManager.getSyncStatus(
+                    node.getHost(), syncableEntity, dbContext);
+
+            //Get the last sync status for this host
+            long preSyncChangeSeq = preSyncAllEntitiesSeqMap.get(syncableEntity.getName());
+
+            long lastSyncStatusSent = ss.getSentSeq();
+
+            //We need to get entities between lastSyncStatusSent <---> preSyncChangeSeq
+            //Get pendingEntities between those two for this entity and this host:
+            List<NanoLrsModel> pendingEntitiesToReturn =
+                    syncableEntityManager.getAllSinceTwoSequenceNumber(thisUser, node.getHost(),
+                            lastSyncStatusSent, preSyncChangeSeq, dbContext);
+
+            //Get pendingEntities since the last sync status for this host
+            //List<NanoLrsModel> pendingEntitiesToReturn =
+            //        syncableEntityManager.getAllSinceSequenceNumber(
+            //                thisUser, dbContext, node.getHost(), lastSyncStatusSent);
+
+            long latestSeqNumReturned = -1;
+            long latestMSeqNumReturned = -1;
+
+            //Populate Entities and Info JSONArrays
+            if(pendingEntitiesToReturn != null && !pendingEntitiesToReturn.isEmpty()){
+                Iterator<NanoLrsModel> pendingEntitesIterator = pendingEntitiesToReturn.iterator();
+                while(pendingEntitesIterator.hasNext()){
+                    NanoLrsModelSyncable thisEntity =
+                            (NanoLrsModelSyncable)pendingEntitesIterator.next();
+
+                    //Update latestSeqNum given back:
+                    if(latestSeqNumReturned == -1){
+                        latestSeqNumReturned = thisEntity.getLocalSequence();
+                    }else{
+                        if(latestSeqNumReturned < thisEntity.getLocalSequence()){
+                            latestSeqNumReturned = thisEntity.getLocalSequence();
+                        }
+                    }
+                    JSONObject thisEntityInJSON =
+                            ProxyJsonSerializer.toJson(thisEntity, syncableEntity);
+
+                    //TODO: Probably better than digging count, use a variable: Mike
+                    //Increment count for every entity's type in info
+                    for(int i=0;i<sendTheseInfoBack.length();i++){
+                        if (sendTheseInfoBack.getJSONObject(i).getString(ENTITY_INFO_CLASS_NAME).equals(syncableEntity.getName())) {
+                            int currentCount = sendTheseInfoBack.getJSONObject(i).getInt(ENTITY_INFO_COUNT) + 1;
+                            sendTheseInfoBack.getJSONObject(i).put(ENTITY_INFO_COUNT, currentCount);
+                        }
+                    }
+                    if(thisEntityInJSON != null){
+                        sendTheseEntitiesBack.put(thisEntityInJSON);
+                    }
+
+                    ////////////////////////////////////
+                    ///     UPDATE SYNC STATUS       ///
+                    ////////////////////////////////////
+                    long currentSentSeq = ss.getSentSeq();
+                    //update only the latest
+                    if(latestSeqNumReturned > currentSentSeq){
+                        ss.setSentSeq(latestSeqNumReturned);
+                        syncStatusManager.persist(dbContext, ss);
+                    }
+                }
+            }
+
+            //Add the latestSeqNum to this class in a map so upon sync success
+            // we can update SyncStatus
+            if(latestSeqNumReturned > 0) {
+                entityToLatestSeqReturn.put(syncableEntity, latestSeqNumReturned);
+                //TODO: Can we get rid of this ?
+            }
+
+            //TODO: fix this, remove this, but take into account MasterSeqNum
+            //TODO: Can we get rid of this?
+            // Update: Might not need this after all since Master is only on master
+            // and any update locally nulls/0s master seq
+            if(latestMSeqNumReturned > 0) {
+                //entityToLatestMasterSeqNum.put(syncableEntity, latestMasterSeqNumToUpdateSyncStatus);
+            }
+        }
+        //////END OF CONSTRUCTION
+
+        ////////////////////////////////
+        //   CONSTRUCT THE RESPONSE   //
+        ////////////////////////////////
         resultStatus = 200; //regardless of conflicts, its gonna be 200
-        Map<String, String> responseHeaders = null;
+        Map<String, String> responseHeaders = new HashMap<>();
+
+        String isNodeMaster, isNodeProxy;
+        if(node.isMaster()){
+            isNodeMaster = "true";
+        }else{
+            isNodeMaster = "false";
+        }
+        if(node.isProxy()){
+            isNodeProxy = "true";
+        }else{
+            isNodeProxy = "false;";
+        }
+        responseHeaders.put(HEADER_USER_USERNAME, thisUser.getUsername());
+        responseHeaders.put(HEADER_USER_PASSWORD, thisUser.getPassword());
+        responseHeaders.put(HEADER_USER_IS_NEW, "false");
+        responseHeaders.put(HEADER_USER_UUID, thisUser.getUuid());
+
+        responseHeaders.put(HEADER_NODE_ROLE, node.getRole());
+        responseHeaders.put(HEADER_NODE_HOST, node.getHost());
+        responseHeaders.put(HEADER_NODE_URL, node.getUrl());
+        responseHeaders.put(HEADER_NODE_NAME, node.getName());
+        responseHeaders.put(HEADER_NODE_UUID, node.getUUID());
+        responseHeaders.put(HEADER_NODE_ISMASTER, isNodeMaster);
+        responseHeaders.put(HEADER_NODE_ISPROXY, isNodeProxy);
+
         String resultForClient = null;
         InputStream responseData = null;
         long responseLength = 0;
+
         if(conflictEntries != null && conflictEntries.size() > 0){
-            /*
-            Add conflictEntries to response below
-             */
-            responseJSON = new JSONObject();
-            JSONArray conflictEntitiesJSON = new JSONArray();
+            //Add conflictEntries to response below
             for(NanoLrsModel thisConflictEntry:conflictEntries){
                 JSONObject thisConflictEntryJSON =
                         ProxyJsonSerializer.toJson(thisConflictEntry, thisConflictEntry.getClass());
                 conflictEntitiesJSON.put(thisConflictEntryJSON);
             }
-            responseJSON.put("conflict", conflictEntitiesJSON);
-
-            resultForClient = responseJSON.toString();
-            responseData =
-                    new ByteArrayInputStream(resultForClient.getBytes("UTF-8"));
-            responseLength = resultForClient.length();
-        }else{
-            //responseData = null;
-            String emptyResponse = "";
-            responseData = new ByteArrayInputStream(emptyResponse.getBytes("UTF-8"));
-            responseLength = 0;
+        }
+        if(conflictEntitiesJSON != null && conflictEntitiesJSON.length() > 0 ){
+            responseJSON.put(RESPONSE_CONFLICT, conflictEntitiesJSON);
+            emptyResponse = false;
+        }
+        if(sendTheseEntitiesBack != null && sendTheseEntitiesBack.length() > 0
+                && sendTheseInfoBack != null && sendTheseInfoBack.length() >0){
+            responseJSON.put(RESPONSE_ENTITIES_DATA, sendTheseEntitiesBack);
+            responseJSON.put(RESPONSE_ENTITIES_INFO, sendTheseInfoBack);
+            emptyResponse=false;
         }
 
-        /* Create a request result of whats stored, and give back what need to be given..
-            The request response should contain :
-            a. Any conflict
-            b. ?? (anything you can think of ?)
-         */
+
+        if(emptyResponse){
+            String emptyResponseString = "";
+            responseData = new ByteArrayInputStream(emptyResponseString.getBytes(UTF_ENCODING));
+            responseLength = 0;
+        }else{
+            resultForClient = responseJSON.toString();
+            responseData =
+                    new ByteArrayInputStream(resultForClient.getBytes(UTF_ENCODING));
+            responseLength = resultForClient.length();
+        }
+
         resultResponse = new UMSyncResult(resultStatus,responseHeaders,
                 responseData, responseLength);
 
@@ -389,6 +775,16 @@ public class UMSyncEndpoint {
         //NodeManager
         NodeManager nodeManager =
                 PersistenceManager.getInstance().getManager(NodeManager.class);
+        XapiStateManager stateManager=
+                PersistenceManager.getInstance().getManager(XapiStateManager.class);
+        ChangeSeqManager changeSeqManager =
+                PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
+
+        //TODO: Remove this. For debugging purposes only.
+        List allStates = stateManager.getAllEntities(dbContext);
+        if(allStates != null && !allStates.isEmpty()){
+            System.out.println("State is not empty..");
+        }
 
         //Get this device/node
         //Needs to get created if not set by the device itself. Name can be a combination
@@ -442,27 +838,26 @@ public class UMSyncEndpoint {
 
             //Create JSON of this Entity's info used for syncing
             JSONObject thisEntityInfo = new JSONObject();
-            thisEntityInfo.put("pCls", syncableEntity.getName());
-            thisEntityInfo.put("tableName", tableName);
-            thisEntityInfo.put("count", 0);
-            thisEntityInfo.put("pk", pkField);
+            thisEntityInfo.put(ENTITY_INFO_CLASS_NAME, syncableEntity.getName());
+            thisEntityInfo.put(ENTITY_INFO_TABLE_NAME, tableName);
+            thisEntityInfo.put(ENTITY_INFO_COUNT, 0);
+            thisEntityInfo.put(ENTITY_INFO_PRIMARY_KEY, pkField);
 
             //Add this entity to an array list of entity info for this sync
             pendingJSONInfo.put(thisEntityInfo);
 
             //Get the last sync status for this host
-            long getSyncableEntitySeqForThisHost =
+            long lastSyncSeq =
                     syncStatusManager.getSentStatus(node.getHost(), syncableEntity, dbContext);
             
             //Get pendingEntities since the last sync status for this host
             List<NanoLrsModel> pendingEntitesToBeSynced =
                     syncableEntityManager.getAllSinceSequenceNumber(
-                    thisUser, dbContext, node.getHost(), getSyncableEntitySeqForThisHost);
+                    thisUser, dbContext, node.getHost(), lastSyncSeq);
 
             long latestSeqNumToUpdateSyncStatus = -1;
             long latestMasterSeqNumToUpdateSyncStatus = -1;
 
-            //TODO: Remove If statement. (Not needed)
             //Populate Entities and Info JSONArrays
             if(pendingEntitesToBeSynced != null && !pendingEntitesToBeSynced.isEmpty()){
                 Iterator<NanoLrsModel> pendingEntitesIterator = pendingEntitesToBeSynced.iterator();
@@ -483,9 +878,9 @@ public class UMSyncEndpoint {
                     //TODO: Probably better than digging count, use a variable: Mike
                     //Increment count for every entity's type in info
                     for(int i=0;i<pendingJSONInfo.length();i++){
-                        if (pendingJSONInfo.getJSONObject(i).getString("pCls").equals(syncableEntity.getName())) {
-                            int currentCount = pendingJSONInfo.getJSONObject(i).getInt("count") + 1;
-                            pendingJSONInfo.getJSONObject(i).put("count", currentCount);
+                        if (pendingJSONInfo.getJSONObject(i).getString(ENTITY_INFO_CLASS_NAME).equals(syncableEntity.getName())) {
+                            int currentCount = pendingJSONInfo.getJSONObject(i).getInt(ENTITY_INFO_COUNT) + 1;
+                            pendingJSONInfo.getJSONObject(i).put(ENTITY_INFO_COUNT, currentCount);
                         }
                     }
                     if(thisEntityInJSON != null){
@@ -512,6 +907,7 @@ public class UMSyncEndpoint {
         String userUuid = thisUser.getUuid();
         String thisNodeHost = thisNode.getHost();
         String thisNodeURL = thisNode.getUrl();
+        String thisNodeRole = thisNode.getRole();
         String isNewUser = "false";
         if(thisUser.getMasterSequence() <1 ) {
             isNewUser = "true";
@@ -519,15 +915,19 @@ public class UMSyncEndpoint {
 
         //Headers if any..
         Map <String, String> headers = new HashMap<String, String>();
-        headers.put("someheader", "somevalue");
-        headers.put("username", username);
-        headers.put("password", password);
-        headers.put("useruuid", userUuid);
-        headers.put("isnewuser", isNewUser);
+        headers.put(HEADER_USER_USERNAME, username);
+        headers.put(HEADER_USER_PASSWORD, password);
+        headers.put(HEADER_USER_UUID, userUuid);
+        headers.put(HEADER_USER_IS_NEW, isNewUser);
 
-        headers.put("nodeuuid", thisNodeUuid);
-        headers.put("hostname", thisNodeHost);
-        headers.put("hosturl", thisNodeURL);
+        headers.put(HEADER_NODE_UUID, thisNodeUuid);
+        headers.put(HEADER_NODE_HOST, thisNodeHost);
+        headers.put(HEADER_NODE_URL, thisNodeURL);
+        //mostly its "client" as they are the ones that start sync.
+        //However that could change, so sending role.
+        //TODO: we need to validate these roles somehow
+        //mayb: tokens that get authorised like certificates.
+        headers.put(HEADER_NODE_ROLE, thisNodeRole);
 
         //Parameters if any..
         Map<String, String> parameters = new HashMap<String, String>();
@@ -535,14 +935,14 @@ public class UMSyncEndpoint {
 
         //Create a JSONObject with entities JSONArray and info JSONArray
         //to be sent in request body
-        pendingEntitiesWithInfo.put("data", pendingJSONEntites);
-        pendingEntitiesWithInfo.put("info", pendingJSONInfo);
+        pendingEntitiesWithInfo.put(RESPONSE_ENTITIES_DATA, pendingJSONEntites);
+        pendingEntitiesWithInfo.put(RESPONSE_ENTITIES_INFO, pendingJSONInfo);
 
 
         //Make a request with the JOSN in POST body and return the
         //UMSyncResult
         UMSyncResult syncResult = makeSyncRequest(node.getUrl(), "POST", headers, parameters,
-                pendingEntitiesWithInfo, "application/json", null );
+                pendingEntitiesWithInfo, JSON_MIMETYPE, null );
 
         //Update the SyncStatus with latest value of seq num for
         // this host and every entity
@@ -550,7 +950,8 @@ public class UMSyncEndpoint {
             Iterator<Map.Entry<Class, Long>> entityToLatestLocalSeqNumIterator =
                     entityToLatestLocalSeqNum.entrySet().iterator();
             while(entityToLatestLocalSeqNumIterator.hasNext()){
-                Map.Entry<Class, Long> thisEntityToLatestLocalSeqNumEntry = entityToLatestLocalSeqNumIterator.next();
+                Map.Entry<Class, Long> thisEntityToLatestLocalSeqNumEntry =
+                        entityToLatestLocalSeqNumIterator.next();
                 syncStatusManager.updateSyncStatusSeqNum(node.getHost(),
                         thisEntityToLatestLocalSeqNumEntry.getKey(),
                         thisEntityToLatestLocalSeqNumEntry.getValue(),
@@ -576,8 +977,7 @@ public class UMSyncEndpoint {
 
         //Check if response has conflicts
         InputStream syncResultResponseStream = syncResult.getResponseData();
-        String syncResultResponse = convertStreamToString2(syncResultResponseStream, "UTF-8");
-        //String syncResultResponse = convertStreamToString(syncResultResponseStream, "UTF-8");
+        String syncResultResponse = convertStreamToString2(syncResultResponseStream, UTF_ENCODING);
         if(!syncResultResponse.isEmpty()){
 
             JSONObject syncResultAllResponseJSON = new JSONObject(syncResultResponse);
@@ -585,23 +985,23 @@ public class UMSyncEndpoint {
             syncResultConflictJSON = null;
             if(syncResultAllResponseJSON.optJSONObject("data") != null){
                 if(syncResultAllResponseJSON.optJSONObject("data").optJSONObject("data") != null){
-                    if(syncResultAllResponseJSON.getJSONObject("data").getJSONObject("data").has("conflict")){
-                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("data").getJSONObject("data").getJSONObject("conflict");
+                    if(syncResultAllResponseJSON.getJSONObject("data").getJSONObject("data").has(RESPONSE_CONFLICT)){
+                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("data").getJSONObject("data").getJSONObject(RESPONSE_CONFLICT);
                     }
                 }else{
-                    if(syncResultAllResponseJSON.optJSONObject("data").has("conflict")){
-                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("data").getJSONObject("conflict");
+                    if(syncResultAllResponseJSON.optJSONObject("data").has(RESPONSE_CONFLICT)){
+                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("data").getJSONObject(RESPONSE_CONFLICT);
                     }
                 }
             }
             if(syncResultAllResponseJSON.optJSONObject("json")!=null){
                 if(syncResultAllResponseJSON.getJSONObject("json").optJSONObject("data") != null){
-                    if(syncResultAllResponseJSON.getJSONObject("json").getJSONObject("data").has("conflict")){
-                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("json").getJSONObject("data").getJSONObject("conflict");
+                    if(syncResultAllResponseJSON.getJSONObject("json").getJSONObject("data").has(RESPONSE_CONFLICT)){
+                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("json").getJSONObject("data").getJSONObject(RESPONSE_CONFLICT);
                     }
                 }
-                if(syncResultAllResponseJSON.getJSONObject("json").has("conflict")){
-                    syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("json").getJSONObject("conflict");
+                if(syncResultAllResponseJSON.getJSONObject("json").has(RESPONSE_CONFLICT)){
+                    syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("json").getJSONObject(RESPONSE_CONFLICT);
                 }
             }
 
@@ -618,7 +1018,74 @@ public class UMSyncEndpoint {
                     the changeSeq above and ++ that for the next one.
                 Step 4: Persist with changesEq boolean to false
                  */
-                //TODO: Handle Conflict entities as they come back.
+                //TODO: Handle Conflict and/or entities as they come back.
+
+            }
+            JSONArray responseData = new JSONArray();
+            JSONArray responseInfo = new JSONArray();
+            Map<NanoLrsModelSyncable, String> allNewEntitiesMap = new HashMap<>();
+
+            if(syncResultAllResponseJSON != null){
+                if(syncResultAllResponseJSON.optJSONArray(RESPONSE_ENTITIES_DATA) != null){
+                    responseData = syncResultAllResponseJSON.getJSONArray(RESPONSE_ENTITIES_DATA);
+                }
+                if(syncResultAllResponseJSON.optJSONArray(RESPONSE_ENTITIES_INFO) != null){
+                    responseInfo = syncResultAllResponseJSON.getJSONArray(RESPONSE_ENTITIES_INFO);
+                }
+            }
+
+            Map<String, Long> preSyncEntitySeqNumMap = new HashMap<>();
+            //Reserve set of ChangeSeq numbers for every entity type
+            //Increment every Entity's ChangeSeq by count of new updates
+            for(int j=0;j<responseInfo.length();j++){
+                JSONObject thisEntityInfoJSON = responseInfo.getJSONObject(j);
+                String proxyClassName = thisEntityInfoJSON.getString(ENTITY_INFO_CLASS_NAME);
+                String tableName = thisEntityInfoJSON.getString(ENTITY_INFO_TABLE_NAME);
+                int count = thisEntityInfoJSON.getInt(ENTITY_INFO_COUNT);
+
+                //Pre-Sync : Add existing ChangeSeq value to preSyncEntitySeqNumMap
+                long preSyncEntitySeqNum =
+                        changeSeqManager.getNextChangeByTableName(tableName, dbContext);
+                preSyncEntitySeqNumMap.put(proxyClassName, preSyncEntitySeqNum);
+
+                //Increment the ChangeSeq by count of new & update entities
+                changeSeqManager.getNextChangeAddSeqByTableName(tableName, count, dbContext);
+            }
+
+            if(!responseData.isNull(0)){
+                for(int i=0;i<responseData.length();i++){
+                    JSONObject entityJSON = responseData.getJSONObject(i);
+                    NanoLrsModel thisEntity = ProxyJsonSerializer.toEntity(entityJSON, dbContext);
+                    String thisProxyClassName =
+                            entityJSON.getString(ProxyJsonSerializer.PROXY_CLASS_JSON_FIELD);
+                    allNewEntitiesMap.put((NanoLrsModelSyncable)thisEntity, thisProxyClassName);
+
+                    Class thisProxyClass = proxyNameToClassMap.get(thisProxyClassName);
+                    Class thisManagerClass = proxyClassToManagerMap.get(thisProxyClass);
+                    NanoLrsManagerSyncable thisManager = (NanoLrsManagerSyncable)
+                            PersistenceManager.getInstance().getManager(thisManagerClass);
+
+                    SyncStatus ss = (SyncStatus)syncStatusManager.getSyncStatus(node.getHost(),
+                            thisProxyClass, dbContext);
+
+                    //Set entity's change seq from available pool (preSyncEntitySeqNumMap)
+                    long thisEntityChangeSeq = preSyncEntitySeqNumMap.get(thisProxyClassName);
+                    long thisNewEntityNewSeq = thisEntityChangeSeq + 1; //this is the new seq num
+                    preSyncEntitySeqNumMap.put(thisProxyClassName, thisNewEntityNewSeq); //set the next one
+                    ((NanoLrsModelSyncable) thisEntity).setLocalSequence(thisNewEntityNewSeq);
+
+                    thisManager.persist(dbContext, thisEntity);
+
+                    //Update SS's sent if thisEntity's value is greater
+                    if(thisNewEntityNewSeq > ss.getSentSeq()){
+                        ss.setSentSeq(thisNewEntityNewSeq);
+                        syncStatusManager.persist(dbContext, ss);
+                    }
+                }
+            }
+
+            if(!responseInfo.isNull(0)){
+
             }
         }
 
@@ -681,14 +1148,14 @@ public class UMSyncEndpoint {
             }
 
             if(contentType != null) {
-                //For JSON it is: application/json
-                con.setRequestProperty("Content-Type", contentType);
-                con.setRequestProperty("Accept", contentType);
-
+                con.setRequestProperty(REQUEST_CONTENT_TYPE, contentType);
+                con.setRequestProperty(REQUEST_ACCEPT, contentType);
             }
 
             if(!dataJSON.equals(null) && dataJSON.length()>0 && content == null){
-                con.setFixedLengthStreamingMode(dataJSON.toString().length());
+                int cl = dataJSON.toString().getBytes().length;
+                con.setFixedLengthStreamingMode(cl);
+                //con.setFixedLengthStreamingMode(dataJSON.toString().getBytes().length());
 
                 outw = new OutputStreamWriter(con.getOutputStream());
                 outw.write(dataJSON.toString());
@@ -713,9 +1180,9 @@ public class UMSyncEndpoint {
                     paramString = paramString + amp + thisParameter.getKey() + "=" +
                             thisParameter.getValue();
                 }
-                byte[] postData = paramString.getBytes("UTF-8");
+                byte[] postData = paramString.getBytes(UTF_ENCODING);
                 int postDataLength = postData.length;
-                con.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
+                con.setRequestProperty( REQUEST_CONTENT_LENGTH, Integer.toString( postDataLength ));
                 //con.setUseCaches( false );
 
                 outw = new OutputStreamWriter(con.getOutputStream());

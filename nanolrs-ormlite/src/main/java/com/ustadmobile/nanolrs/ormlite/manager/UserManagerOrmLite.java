@@ -46,11 +46,25 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             //Likely a new user creation not an update
             List<User> usersWithSameUsername = findByUsername(dbContext, givenUsername);
             if(usersWithSameUsername != null && !usersWithSameUsername.isEmpty()){
-                newUsername = givenUsername + (int)Math.random()*99;
+                newUsername = givenUsername + (int)Math.floor(Math.random() * 101);
+                ((User) data).setUsername(newUsername);
+
+                //Since we changed the username. we persist again to bump local seq
+                //That way it goes back to other nodes.
+                super.persist(dbContext, data);
+            }
+        }else{
+            //If an update, it is probably a mistake. We should ignore this push
+            //TODO: Tick off this edge case .
+            //Scenario: Maybe the username in agent changed by mistake
+            /*
+            List<User> usersWithSameUsername = findByUsername(dbContext, givenUsername);
+            if(usersWithSameUsername != null && !usersWithSameUsername.isEmpty()){
+                newUsername = givenUsername + (int)Math.floor(Math.random() * 101);
                 ((User) data).setUsername(newUsername);
                 //Since we changed the username. we persist again to bump local seq
                 super.persist(dbContext, data);
-            }
+            */
         }
 
         super.persist(dbContext, data);
