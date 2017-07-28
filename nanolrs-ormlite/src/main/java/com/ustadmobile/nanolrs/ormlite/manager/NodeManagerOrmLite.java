@@ -120,7 +120,8 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
     @Override
     public boolean doesThisMainNodeExist(String host_name, Object dbContext) throws SQLException {
         Node mainNode = getMainNode(host_name, dbContext);
-        if(mainNode.isMaster()){
+        if(mainNode!= null){
+            if(mainNode.isMaster()){
             return true;
         }
         return false;
