@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 public class TestEntitiesToJsonArray {
     @Test
@@ -28,8 +29,17 @@ public class TestEntitiesToJsonArray {
 
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
+        User testingUser=null;
         List<User> testingUsers = userManager.findByUsername(context, "testinguser");
-        User testingUser = testingUsers.get(0);
+        if(testingUsers == null || testingUsers.isEmpty()){
+            testingUser = (User)userManager.makeNew();
+            testingUser.setUsername("testinguser");
+            testingUser.setPassword("secret");
+            testingUser.setUuid(UUID.randomUUID().toString());
+            userManager.persist(context, testingUser);
+        }else {
+            testingUser = testingUsers.get(0);
+        }
         String host = "testing_host";
 
         /* Test that our list is not null and includes every entity */
