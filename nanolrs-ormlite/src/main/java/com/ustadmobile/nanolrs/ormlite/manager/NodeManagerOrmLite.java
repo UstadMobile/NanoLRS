@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.ormlite.manager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.Node;
@@ -107,10 +108,12 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
     @Override
     public Node getMainNode(String host_name, Object dbContext) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
-        QueryBuilder<NodeEntity, String> qb = thisDao.queryBuilder();
-        List<Node> allMainNodes = thisDao.query(qb.where().eq(
-                NodeEntity.COLNAME_MASTER, true).and().eq(
-                        NodeEntity.COLNAME_NAME, host_name).prepare());
+        QueryBuilder<NodeEntity, String> qb3 = thisDao.queryBuilder();
+        Where where3 = qb3.where();
+        where3.eq(NodeEntity.COLNAME_MASTER, true).and().eq(NodeEntity.COLNAME_HOST, host_name);
+        PreparedQuery pq3 = qb3.prepare();
+
+        List<Node> allMainNodes = thisDao.query(pq3);
         if(allMainNodes!=null && !allMainNodes.isEmpty()){
             return allMainNodes.get(0);
         }else{

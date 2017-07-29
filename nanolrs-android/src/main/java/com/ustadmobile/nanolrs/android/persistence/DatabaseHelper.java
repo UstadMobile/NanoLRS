@@ -8,6 +8,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.ustadmobile.nanolrs.android.service.UMSyncService;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
@@ -38,9 +39,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * Database Name to be used: nanolrs.db was used by previous versions.  From DATABASE_VERSION 11
      */
-    private static final String DATABASE_NAME="nanolrs12.db";
+    private static final String DATABASE_NAME="nanolrs15.db";
 
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
 
     private Context context;
 
@@ -107,10 +108,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     private void checkAndCreateMainNode() throws SQLException {
-        String mainNodeName = "umcloud1 servlet";
-        String mainNodeHostName = "umcloud1svlt";
-        String mainNodeEndpointUrl = "http://umcloud1.ustadmobile.com:8545/syncendpoint/";
-        String mainNodeRole = "main";
+        String mainNodeName = UMSyncService.DEFAULT_MAIN_SERVER_NAME;
+        String mainNodeHostName = UMSyncService.DEFAULT_MAIN_SERVER_HOST_NAME;
+        String mainNodeEndpointUrl = UMSyncService.DEFAULT_MAIN_SERVER_URL;
+        String mainNodeRole = UMSyncService.DEFAULT_MAIN_SERVER_ROLE;
         String mainNodeUUID = UUID.randomUUID().toString();
 
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
@@ -125,7 +126,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             mainNode.setHost(mainNodeHostName);
             mainNode.setStoredDate(System.currentTimeMillis());
             nodeManager.persist(context,mainNode);
-            //getDao(NodeEntity.class).createOrUpdate(mainNode);
         }
     }
 

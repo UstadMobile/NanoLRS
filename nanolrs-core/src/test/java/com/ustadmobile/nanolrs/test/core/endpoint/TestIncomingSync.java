@@ -19,7 +19,6 @@ import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.UserCustomFields;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
-import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 import com.ustadmobile.nanolrs.core.sync.UMSyncResult;
@@ -32,19 +31,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class TestUMSync {
+public class TestIncomingSync {
 
     public static Object context;
 
@@ -117,7 +116,6 @@ public class TestUMSync {
         String thisNodeUUID = UUID.randomUUID().toString();
         thisNode = nodeManager.createThisDeviceNode(UUID.randomUUID().toString(), "node:"+thisNodeUUID,
                 "http://localhost:4242/syncendpoint/", false, false, context);
-
 
         ///Create a node for testing
         Node testingNode = (Node) nodeManager.makeNew();
@@ -215,8 +213,6 @@ public class TestUMSync {
             }
         }
 
-        XapiStatementManager manager =
-                PersistenceManager.getInstance().getManager(XapiStatementManager.class);
         XapiAgent agent = PersistenceManager.getInstance().getManager(XapiAgentManager.class).findAgentByParams(
                 context, null, "newtestinguser", "http://umcloud1.ustadmobile.com/umlrs").get(0);
 
@@ -229,7 +225,6 @@ public class TestUMSync {
         List allVerbs = verbManager.getAllEntities(context);
         List allStatements = statementManager.getAllEntities(context);
         List allStates = stateManager.getAllEntities(context);
-
 
         List allUsersHere = userManager.getAllEntities(context);
         List allUsersthere = userManager.getAllEntities(endpointContext);
@@ -245,6 +240,170 @@ public class TestUMSync {
 
         ssh = ssManager.getAllEntities(context);
         sst = ssManager.getAllEntities(endpointContext);
+
+        allUsersHere = userManager.getAllEntities(context);
+        allUsersthere = userManager.getAllEntities(endpointContext);
+
+        allStatementsHere = statementManager.getAllEntities(context);
+        allStatementsThere  = statementManager.getAllEntities(endpointContext);
+
+
+
+        String handleThisString = "{\n" +
+                "    \"data\": [{\n" +
+                "        \"dateCreated\": 1501284886194,\n" +
+                "        \"dateModifiedAtMaster\": 0,\n" +
+                "        \"localSequence\": 7,\n" +
+                "        \"masterSequence\": 0,\n" +
+                "        \"notes\": \"User Created via Registration Page\",\n" +
+                "        \"password\": \"hh\",\n" +
+                "        \"storedDate\": 1501284886225,\n" +
+                "        \"username\": \"varunas3\",\n" +
+                "        \"uuid\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.User\"\n" +
+                "    }, {\n" +
+                "        \"accountHomepage\": \"https:\\/\\/umcloud1.ustadmobile.com\\/umlrs\\/\",\n" +
+                "        \"accountName\": \"varunas3\",\n" +
+                "        \"dateCreated\": 1501284886311,\n" +
+                "        \"dateModifiedAtMaster\": 0,\n" +
+                "        \"localSequence\": 3,\n" +
+                "        \"masterSequence\": 0,\n" +
+                "        \"storedDate\": 1501284886320,\n" +
+                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"uuid\": \"7df83cdd-8cc5-47c1-9b60-d69caec89b87\",\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiAgent\"\n" +
+                "    }, {\n" +
+                "        \"dateCreated\": 1501284886271,\n" +
+                "        \"dateModifiedAtMaster\": 0,\n" +
+                "        \"fieldName\": 116,\n" +
+                "        \"fieldValue\": \"Varuna.singh@gmail.com \",\n" +
+                "        \"localSequence\": 16,\n" +
+                "        \"masterSequence\": 0,\n" +
+                "        \"storedDate\": 1501284886277,\n" +
+                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"uuid\": \"454c8b62-af53-4ba1-b4f3-4740af498ddb\",\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
+                "    }, {\n" +
+                "        \"dateCreated\": 1501284886262,\n" +
+                "        \"dateModifiedAtMaster\": 0,\n" +
+                "        \"fieldName\": 115,\n" +
+                "        \"fieldValue\": \"H\",\n" +
+                "        \"localSequence\": 15,\n" +
+                "        \"masterSequence\": 0,\n" +
+                "        \"storedDate\": 1501284886267,\n" +
+                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"uuid\": \"47d1719e-4e8f-4631-8212-71cf7177e117\",\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
+                "    }, {\n" +
+                "        \"dateCreated\": 1501284886281,\n" +
+                "        \"dateModifiedAtMaster\": 0,\n" +
+                "        \"fieldName\": 114,\n" +
+                "        \"fieldValue\": \"H\",\n" +
+                "        \"localSequence\": 17,\n" +
+                "        \"masterSequence\": 0,\n" +
+                "        \"storedDate\": 1501284886287,\n" +
+                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"uuid\": \"7e777297-d66f-40f0-85ee-4c8d22fcf785\",\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
+                "    }, {\n" +
+                "        \"dateCreated\": 1501284886253,\n" +
+                "        \"dateModifiedAtMaster\": 0,\n" +
+                "        \"fieldName\": 117,\n" +
+                "        \"fieldValue\": \"M\",\n" +
+                "        \"localSequence\": 14,\n" +
+                "        \"masterSequence\": 0,\n" +
+                "        \"storedDate\": 1501284886258,\n" +
+                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"uuid\": \"a5b17531-3bc3-4eea-8313-826caa342c7d\",\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
+                "    }, {\n" +
+                "        \"dateCreated\": 1501284886232,\n" +
+                "        \"dateModifiedAtMaster\": 0,\n" +
+                "        \"fieldName\": 118,\n" +
+                "        \"fieldValue\": \"5\",\n" +
+                "        \"localSequence\": 13,\n" +
+                "        \"masterSequence\": 0,\n" +
+                "        \"storedDate\": 1501284886247,\n" +
+                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"uuid\": \"c1d50ff3-3c64-468b-98f1-a3b1d8db8b2f\",\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
+                "    }, {\n" +
+                "        \"dateCreated\": 1501284886290,\n" +
+                "        \"dateModifiedAtMaster\": 0,\n" +
+                "        \"fieldName\": 119,\n" +
+                "        \"fieldValue\": \"G\",\n" +
+                "        \"localSequence\": 18,\n" +
+                "        \"masterSequence\": 0,\n" +
+                "        \"storedDate\": 1501284886295,\n" +
+                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"uuid\": \"df9fa627-9f8c-463d-9b38-d0ed8711df08\",\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
+                "    }],\n" +
+                "    \"info\": [{\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.User\",\n" +
+                "        \"tableName\": \"user\",\n" +
+                "        \"count\": 1,\n" +
+                "        \"pk\": \"uuid\"\n" +
+                "    }, {\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiStatement\",\n" +
+                "        \"tableName\": \"xapi_statement\",\n" +
+                "        \"count\": 0,\n" +
+                "        \"pk\": \"uuid\"\n" +
+                "    }, {\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiActivity\",\n" +
+                "        \"tableName\": \"xapi_activity\",\n" +
+                "        \"count\": 0,\n" +
+                "        \"pk\": \"activityId\"\n" +
+                "    }, {\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiAgent\",\n" +
+                "        \"tableName\": \"xapi_agent\",\n" +
+                "        \"count\": 1,\n" +
+                "        \"pk\": \"uuid\"\n" +
+                "    }, {\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiState\",\n" +
+                "        \"tableName\": \"xapi_state\",\n" +
+                "        \"count\": 0,\n" +
+                "        \"pk\": \"uuid\"\n" +
+                "    }, {\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiVerb\",\n" +
+                "        \"tableName\": \"xapi_verb\",\n" +
+                "        \"count\": 0,\n" +
+                "        \"pk\": \"verbId\"\n" +
+                "    }, {\n" +
+                "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\",\n" +
+                "        \"tableName\": \"user_custom_fields\",\n" +
+                "        \"count\": 6,\n" +
+                "        \"pk\": \"uuid\"\n" +
+                "    }]\n" +
+                "}";
+
+
+
+        String encoding = "UTF-8";
+        String contentType="application/json";
+        InputStream entitiesAsStream =
+                new ByteArrayInputStream(handleThisString.getBytes(encoding));
+
+        Map<String, String> headers = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
+
+        headers.put(UMSyncEndpoint.REQUEST_CONTENT_TYPE, URLEncoder.encode(contentType, UMSyncEndpoint.UTF_ENCODING));
+
+        headers.put(UMSyncEndpoint.HEADER_USER_UUID, testingUser.getUuid());
+        headers.put(UMSyncEndpoint.HEADER_USER_USERNAME, testingUser.getUsername());
+        headers.put(UMSyncEndpoint.HEADER_USER_PASSWORD, testingUser.getPassword());
+        headers.put(UMSyncEndpoint.HEADER_USER_IS_NEW, "true");
+        headers.put(UMSyncEndpoint.HEADER_NODE_UUID, testingNode.getUUID());
+        headers.put(UMSyncEndpoint.HEADER_NODE_NAME, testingNode.getName());
+        headers.put(UMSyncEndpoint.HEADER_NODE_ROLE, testingNode.getRole());
+        headers.put(UMSyncEndpoint.HEADER_NODE_HOST, testingNode.getHost());
+        headers.put(UMSyncEndpoint.HEADER_NODE_URL, testingNode.getUrl());
+
+        UMSyncResult incomingSyncResult = UMSyncEndpoint.handleIncomingSync(
+                entitiesAsStream, thisNode, headers, parameters, endpointContext);
+
+        Assert.assertNotNull(incomingSyncResult);
+
 
         //Create a user update on endpoint
         User userOnEndpoint = (User)userManager.findByPrimaryKey(
@@ -263,159 +422,9 @@ public class TestUMSync {
         newUserCustomFieldOnEndpoint2.setFieldValue("The next room");
         ucfManager.persist(endpointContext, newUserCustomFieldOnEndpoint2);
 
-        //Start Sync
-        Thread t  = new Thread(new Runnable() {
-            User testingUser;
-            Node testingNode;
-            Object context;
-            Object endpointContext;
-            NanoLrsHttpd httpd;
-            UserManager userManager =
-                    PersistenceManager.getInstance().getManager(UserManager.class);
-            XapiStatementManager statementManager =
-                    PersistenceManager.getInstance().getManager(XapiStatementManager.class);
-            UserCustomFieldsManager ucfManager =
-                    PersistenceManager.getInstance().getManager(UserCustomFieldsManager.class);
-
-            public Runnable startSyncThread(User testingUser, Node testingNode,
-                                            Object context, Object endpointContext,
-                                            NanoLrsHttpd httpd) {
-                // store parameter for later user
-                this.testingNode = testingNode;
-                this.testingUser = testingUser;
-                this.context = context;
-                this.endpointContext = endpointContext;
-                this.httpd = httpd;
-                return this;
-            }
-
-            public void run() {
-                // code goes here.
-                UMSyncResult result =
-                        null;
-                try {
-                    result = UMSyncEndpoint.startSync(testingUser, testingNode, context);
-                    //TimeUnit.SECONDS.sleep(10);
-                    Thread.sleep(10000);
-                    List allUsersHere = userManager.getAllEntities(context);
-                    List allUsersthere = userManager.getAllEntities(endpointContext);
-
-                    List allStatementsHere = statementManager.getAllEntities(context);
-                    List allStatementsThere  = statementManager.getAllEntities(endpointContext);
-                    List allUCFHere = ucfManager.getAllEntities(context);
-                    List allUCFThere = ucfManager.getAllEntities(endpointContext);
-
-                    int x = 0;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Assert.assertNotNull(result);
-
-                //httpd.stop();
-
-            }
-        }.startSyncThread(testingUser, testingNode, context, endpointContext, httpd));
-        t.start();
-
-        //Test starting Sync again to check if more to be sent ..
-        //There should not be any more
-        UMSyncResult syncAgainResult =
-                UMSyncEndpoint.startSync(testingUser, testingNode, context);
-        Assert.assertNotNull(syncAgainResult);
-
-        allUsersHere = userManager.getAllEntities(context);
-        allUsersthere = userManager.getAllEntities(endpointContext);
-        allStatementsHere = statementManager.getAllEntities(context);
-        allStatementsThere  = statementManager.getAllEntities(endpointContext);
-        List ucfh = ucfManager.getAllEntities(context);
-        List ucft = ucfManager.getAllEntities(endpointContext);
-
-        ssh = ssManager.getAllEntities(context);
-        sst = ssManager.getAllEntities(endpointContext);
-
-        //Test same user createion
-        //Lets create another user for syncing purposes
-        User user5 = (User)userManager.makeNew();
-        String user5uuid = UUID.randomUUID().toString();
-        user5.setUuid(user5uuid);
-        user5.setUsername("varunasingh");
-        userManager.persist(context, user5);
-
-        List<User> allUsers = userManager.getAllEntities(context);
-
-        User user6 = (User)userManager.makeNew();
-        String user6uuid = UUID.randomUUID().toString();
-        user6.setUuid(user6uuid);
-        user6.setUsername("varunasingh");
-        userManager.persist(context, user6);
-
-        allUsers = userManager.getAllEntities(context);
-
-        Assert.assertNotNull(allUsers);
-
-        // Testing UserCustomFields
-        UserCustomFieldsManager userCustomFieldsManager =
-                PersistenceManager.getInstance().getManager(UserCustomFieldsManager.class);
-        UserCustomFields userCustomFields = (UserCustomFields)userCustomFieldsManager.makeNew();
-
-        String universityName = "Web University";
-        String name = "Bob Burger";
-        String gender = "M";
-        String email = "bob@bobsburgers.com";
-        String phoneNumber = "+0123456789";
-        String faculty = "A faculty";
-        String username = "autocustomreguser";
-        String password = "secret";
-
-        Map<Integer, String> map = new HashMap<>();
-        map.put(980, universityName);
-        map.put(981, name);
-        map.put(982, gender);
-        map.put(983, email);
-        map.put(984, phoneNumber);
-        map.put(985, faculty);
-
-        userCustomFieldsManager.createUserCustom(map,testingUser, context);
-        List relUCFs = userCustomFieldsManager.findByUser(testingUser,context);
-
-        allUsersHere = userManager.getAllEntities(context);
-        allUsersthere = userManager.getAllEntities(endpointContext);
-
-        //Start Sync - should have user custom fields (8 of them for this user):
-        //Client should get back 2 created - total of 10 here
-        //Endpoint should have those 2 + should also get the 8 in initial sync.
-        UMSyncResult resultucf =
-                UMSyncEndpoint.startSync(testingUser, testingNode, context);
-        Assert.assertNotNull(resultucf);
-
-        allUsersHere = userManager.getAllEntities(context);
-        allUsersthere = userManager.getAllEntities(endpointContext);
-
-        allStatementsHere = statementManager.getAllEntities(context);
-        allStatementsThere  = statementManager.getAllEntities(endpointContext);
-
-        ucfh = ucfManager.getAllEntities(context);
-        ucft = ucfManager.getAllEntities(endpointContext);
-
-        ssh = ssManager.getAllEntities(context);
-        sst = ssManager.getAllEntities(endpointContext);
 
 
-        TimeUnit.SECONDS.sleep(10);
 
-        allUsersHere = userManager.getAllEntities(context);
-        allUsersthere = userManager.getAllEntities(endpointContext);
-        allStatementsHere = statementManager.getAllEntities(context);
-        allStatementsThere  = statementManager.getAllEntities(endpointContext);
-        List allUCFHere = ucfManager.getAllEntities(context);
-        List allUCFThere = ucfManager.getAllEntities(endpointContext);
-
-        //Assert.assertEquals(allStatementsThere.size(), 1);
-        //Assert.assertEquals(allUCFThere.size(),allUCFHere.size());
         httpd.stop();
     }
 }

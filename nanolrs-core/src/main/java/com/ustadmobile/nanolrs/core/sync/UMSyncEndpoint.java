@@ -280,7 +280,7 @@ public class UMSyncEndpoint {
         //Get this user
         String userUuid = headers.get(HEADER_USER_UUID).toString();
         User thisUser = null;
-        thisUser = userManager.findById(dbContext,userUuid);
+
 
         //Get all syncable entities pre sync seq and put it in preSyncSeqMap
         for(Class thisEntity:SYNCABLE_ENTITIES){
@@ -559,6 +559,9 @@ public class UMSyncEndpoint {
         //Map of Entity and latestSeq got so we can update sync status upon sync success
         Map<Class, Long> entityToLatestSeqReturn = new HashMap<>();
 
+        //Get the user(it might have synced now)
+        thisUser = userManager.findById(dbContext,userUuid);
+
         for(Class syncableEntity : SYNCABLE_ENTITIES) {
             //Get its manager
             NanoLrsManagerSyncable syncableEntityManager = getManagerFromClass(syncableEntity);
@@ -590,10 +593,6 @@ public class UMSyncEndpoint {
                     syncableEntityManager.getAllSinceTwoSequenceNumber(thisUser, node.getHost(),
                             lastSyncStatusSent, preSyncChangeSeq, dbContext);
 
-            //Get pendingEntities since the last sync status for this host
-            //List<NanoLrsModel> pendingEntitiesToReturn =
-            //        syncableEntityManager.getAllSinceSequenceNumber(
-            //                thisUser, dbContext, node.getHost(), lastSyncStatusSent);
 
             long latestSeqNumReturned = -1;
             long latestMSeqNumReturned = -1;

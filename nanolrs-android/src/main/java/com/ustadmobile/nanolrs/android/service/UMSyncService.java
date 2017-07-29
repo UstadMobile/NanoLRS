@@ -35,7 +35,12 @@ public class UMSyncService extends Service {
     private Node endNode;
 
     //Frequency of forwarding statements ( in ms ?) [ 60k = 1 minute ]
-    public static int FORWARD_INTERVAL = 30000;
+    public static int FORWARD_INTERVAL = 600000;
+
+    public static String DEFAULT_MAIN_SERVER_HOST_NAME = "umcloud1svlt";
+    public static String DEFAULT_MAIN_SERVER_NAME = "umcloud1 servlet";
+    public static String DEFAULT_MAIN_SERVER_ROLE = "main";
+    public static String DEFAULT_MAIN_SERVER_URL = "http://umcloud1.ustadmobile.com:8545/syncendpoint/";
 
     public UMSyncService() {
     }
@@ -78,7 +83,13 @@ public class UMSyncService extends Service {
         public void run() {
             try {
                 System.out.println("starting sync UMSyncTimerTask ..");
-                UMSyncEndpoint.startSync(loggedInUser, endNode, context);
+                if(loggedInUser != null && endNode != null && context != null){
+                    System.out.println("\nUMSYNC: All valid: Starting Sync.");
+                    UMSyncEndpoint.startSync(loggedInUser, endNode, context);
+                }else{
+                    System.out.println("\nUMSYNC: Cannot start sync. User and Node not set.\n");
+                }
+
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
