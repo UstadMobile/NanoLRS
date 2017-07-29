@@ -35,7 +35,7 @@ public class UMSyncService extends Service {
     private Node endNode;
 
     //Frequency of forwarding statements ( in ms ?) [ 60k = 1 minute ]
-    public static int FORWARD_INTERVAL = 600000;
+    public static int FORWARD_INTERVAL = 120000;
 
     public static String DEFAULT_MAIN_SERVER_HOST_NAME = "umcloud1svlt";
     public static String DEFAULT_MAIN_SERVER_NAME = "umcloud1 servlet";
