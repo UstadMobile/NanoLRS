@@ -55,9 +55,10 @@ public class TestUMSync {
     public void setUp() throws Exception{
         endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
         context = NanoLrsPlatformTestUtil.getContext();
-        PersistenceManager.getInstance().forceInit(endpointContext);
+
+        //PersistenceManager.getInstance().forceInit(endpointContext);
         //TODO: Check if we need to remove below or keep it :
-        PersistenceManager.getInstance().forceInit(context);
+        //PersistenceManager.getInstance().forceInit(context);
     }
 
 
