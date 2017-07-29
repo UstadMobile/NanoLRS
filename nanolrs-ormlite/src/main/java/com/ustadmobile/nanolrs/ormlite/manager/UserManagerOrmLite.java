@@ -141,7 +141,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             return false;
         }
         User user = users.get(0);
-        if(user.getPassword() == password){
+        if(user.getPassword().equals(password)){
             return true;
         }else{
             return false;
