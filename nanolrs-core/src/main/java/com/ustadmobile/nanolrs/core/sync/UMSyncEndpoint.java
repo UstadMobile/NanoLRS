@@ -233,6 +233,7 @@ public class UMSyncEndpoint {
         9. Update SyncStatus table
         */
 
+        System.out.println("Incoming sync..");
         //The return result and status of the incoming request's sync on this node
         UMSyncResult resultResponse = null;
         int resultStatus;
@@ -291,6 +292,7 @@ public class UMSyncEndpoint {
                     changeSeqManager.getNextChangeByTableName(tableName, dbContext);
             preSyncAllEntitiesSeqMap.put(proxyClassName, preSyncEntitySeqNum);
         }
+        System.out.println("Created preSyncAllEntitiesSeqMap..");
 
         //Convert Inputstream to JSONObjects
         //Convert inputstream->string->entities json array
@@ -301,6 +303,7 @@ public class UMSyncEndpoint {
             e.printStackTrace();
             //Cannot proceed. Stream is fauly. Skip?
         }
+        System.out.println("Got incoming stream..");
 
         //Get data and info separately
         JSONObject entitiesWithInfoJSON = new JSONObject(streamString);
@@ -309,12 +312,15 @@ public class UMSyncEndpoint {
 
         //Create Entity Map of <Entity Object, Proxy Class Name>
         for(int i=0; i < entitiesJSON.length(); i++){
+            System.out.println(" -->JSON->Object");
             JSONObject entityJSON = entitiesJSON.getJSONObject(i);
             NanoLrsModel thisEntity = ProxyJsonSerializer.toEntity(entityJSON, dbContext);
             String thisProxyClass =
                     entityJSON.getString(ProxyJsonSerializer.PROXY_CLASS_JSON_FIELD);
             allNewEntitiesMap.put((NanoLrsModelSyncable)thisEntity, thisProxyClass);
+            System.out.println("   ->OK.");
         }
+        System.out.println("Created allNewEntitiesMap..");
 
         //Reserve set of ChangeSeq numbers for every entity type
         //Increment every Entity's ChangeSeq by count of new updates
@@ -332,6 +338,7 @@ public class UMSyncEndpoint {
             //Increment the ChangeSeq by count of new & update entities
             changeSeqManager.getNextChangeAddSeqByTableName(tableName, count, dbContext);
         }
+        System.out.println("Updated changeSeq with increment..");
 
         //Loop over the <Entities, Proxy Name> to add them to this DB
         //Persist without auto increment. We persist them in the gap between
@@ -339,6 +346,7 @@ public class UMSyncEndpoint {
         Iterator<Map.Entry<NanoLrsModelSyncable, String>> allNewEntitiesMapIterator =
                 allNewEntitiesMap.entrySet().iterator();
         while(allNewEntitiesMapIterator.hasNext()){
+            System.out.println(" -> In Entity..");
             Map.Entry<NanoLrsModelSyncable, String> thisNewEntityMap =
                     (Map.Entry) allNewEntitiesMapIterator.next();
             //Get entity and its manager
@@ -354,6 +362,7 @@ public class UMSyncEndpoint {
             long thisNewEntityNewSeq = thisEntityChangeSeq + 1; //this is the new seq num
             preSyncEntitySeqNumMap.put(thisProxyClassName, thisNewEntityNewSeq); //set the next one
             thisNewEntity.setLocalSequence(thisNewEntityNewSeq);
+            System.out.println("Set new local Seq Num OK..");
 
             //If master, update master sequence as well..
             if (thisNode != null) {
@@ -383,6 +392,7 @@ public class UMSyncEndpoint {
                 Method pkMethod = thisProxyClass.getMethod(pkField);
                 existingEntityToBeUpdated = (NanoLrsModelSyncable)
                         thisManager.findByPrimaryKey(dbContext, pkMethod.invoke(thisNewEntity));
+                System.out.println("ENTITY UPDATE: " + pkMethod.invoke(thisNewEntity));
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
@@ -439,6 +449,7 @@ public class UMSyncEndpoint {
                 //One of them has synced with master, the other has not : get the master
                 //the other one has a more recent update but hasn't synced with master : favor master
                 else if(currentLatestMaster > 0 || thisNewEntityMaster > 0){
+
                     //One of them has an update and the other one is up to date with master
                     //Possible rule : Master could always win
                     if(currentLatestMaster > thisNewEntityMaster ){
@@ -457,48 +468,77 @@ public class UMSyncEndpoint {
                         //Accept the new entity because it has a higher master..
                     }
                 }
-                else{
+                else{ //None of them have a master sequence
                     //neither of them have been synced with master.
-                    //Check if thisNewEntity's node is a proxy
+                    //Me and the sender could be clients or proxys
 
+                    //Case a: Sender is Proxy
                     if(node.isProxy()){
                         //The sender is a proxy and its got an update for an entry
                         //that has never been synced with master
                         //We gotta check if proxy's update is more recent than ours
 
-                        if(thisNewEntity.getLocalSequence() > lastSyncSeq){
+                        //What if I am a proxy too:
+                        if(thisNode.isProxy()){
+                            //Proxys cannot talk right now.
+                            System.out.println("\nIncoming Sync Conflict:" +
+                                    "Sender is Proxy and I am a proxy too.\n" +
+                                    "Not updating this entry.\n" +
+                                    "Two Proxy's cannot talk.");
+                            break;
+                        }
+                        //What if I am master:
+                        //If i was master, id have a master seq num
+
+                        //What if I am a client:
+                        //If I am a client:
+                        if(thisNewEntity.getLocalSequence() < lastSyncSeq){
+                            System.out.println("\nIncoming Sync conflict:" +
+                                    "Sender is proxy.\n" +
+                                    "Sender's are already in the system. \n" +
+                                    "They shouldn't have been sent.\n" +
+                                    "Not updating this entry.\n");
+                            break;
+
+                        }else{
                             //WAIT the sync wont come unless its greater than.
                             //Maybe we don't really even need this check..
                             //TODO: check
-                            System.out.println("\nIncoming Sync Resolution: From proxy\n" +
+                            System.out.println("\nIncoming Sync Resolution: " +
+                                    "Sender is From proxy\n" +
                                     "Request from proxy: is higher. Accepting..\n");
-                        }else{
-                            System.out.println("\nIncoming Sync resolution:" +
-                                    "Sender is proxy.\n" +
-                                    "Sender's are already in the system. They shouldn't have been sent.\n" +
-                                    "Not updating this entry.\n");
+                        }
+                    }
+                    //Case b: Sender is Master
+                    //If sender was master, it would have had a master sequence.
+                    //Rest is Case c:
+                    //Case c: Sender is Client
+                    else{
+                        //Case c.1 : I am Master: INVALID
+                        //Cannot be master as I don't have a master sequence.
+
+                        //Case c.2 : I am Client: REJECT
+                        if(!thisNode.isProxy() && !thisNode.isMaster()){
+                            System.out.println("\nIncoming Sync conflict:" +
+                                    "Sender and I are both clients.\n" +
+                                    "Rejecting this.\n");
                             break;
                         }
-                    }else{
-                        //The node sending this is not master or a proxy.
-                        // We ideally don't take in entities from non master/proxy
-                        // Suppose we do, if can accept the ones that are newer
-                        if(newStoredDate > currentStoredDate){
-                            System.out.println("\nIncoming Sync conflict:" +
-                                    "Sender is not master or proxy.\n" +
-                                    "Sender's entries are more recent than what I have.\n" +
-                                    "Not updating it since not a proxy or master..\n");
-                            break;
-                        }else{
+
+                        //Case c.3 : I am Proxy:
+                        //Sender is client, I am a proxy"
+                        // We can accept the ones that are newer
+                        if(newStoredDate < currentStoredDate){
                             System.out.println("\nIncoming Sync resultion:" +
-                            "Sender is not master or proxy.\n" +
-                                    "Senders entries are not more recent. " +
-                                            "\nNot updating it since Not a proxy or master.\n"
+                            "Sender is a client\n" +
+                            "Senders entries are not more recent.\n " +
+                            "Not updating it (I have a newer version).\n"
                             );
                             break;
                         }
                     }
                 }
+
             }else{
                 //Its a new entry, let it create it, there should be no conflicts
                 //since this primary key does not exist on this node.
@@ -509,6 +549,7 @@ public class UMSyncEndpoint {
             //because we have already set it above (from pool)
             if(doIPersist) {
                 thisManager.persist(dbContext, thisNewEntity, false);
+                System.out.println(" -> Persisting OK..");
             }
 
             ////////////////////////////////////
@@ -519,6 +560,7 @@ public class UMSyncEndpoint {
                 ss.setSentSeq(thisNewEntityNewSeq);
                 syncStatusManager.persist(dbContext, ss);
             }
+            System.out.println("Sync Status updated OK..");
 
             //TODO: DO we need to update received? Or is that only for proxy?
             /*
@@ -906,7 +948,14 @@ public class UMSyncEndpoint {
         String userUuid = thisUser.getUuid();
         String thisNodeHost = thisNode.getHost();
         String thisNodeURL = thisNode.getUrl();
-        String thisNodeRole = thisNode.getRole();
+        String thisNodeRole="client";
+        if(thisNode.isMaster()){
+            thisNodeRole = "master";
+        }
+        if(thisNode.isProxy()){
+            thisNodeRole = "proxy";
+        }
+
         String isNewUser = "false";
         if(thisUser.getMasterSequence() <1 ) {
             isNewUser = "true";
@@ -976,7 +1025,10 @@ public class UMSyncEndpoint {
 
         //Check if response has conflicts
         InputStream syncResultResponseStream = syncResult.getResponseData();
-        String syncResultResponse = convertStreamToString2(syncResultResponseStream, UTF_ENCODING);
+        String syncResultResponse = "";
+        if(syncResultResponseStream != null) { //it will be null on a 404, etc
+            syncResultResponse = convertStreamToString2(syncResultResponseStream, UTF_ENCODING);
+        }
         if(!syncResultResponse.isEmpty()){
 
             JSONObject syncResultAllResponseJSON = new JSONObject(syncResultResponse);

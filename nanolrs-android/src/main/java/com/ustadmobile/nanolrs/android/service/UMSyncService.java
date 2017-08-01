@@ -79,11 +79,14 @@ public class UMSyncService extends Service {
         setContext();
     }
 
+
     public class UMSyncTimerTask extends TimerTask {
         public void run() {
             try {
                 System.out.println("starting sync UMSyncTimerTask ..");
                 if(loggedInUser != null && endNode != null && context != null){
+                    //Attempt to set the user and node
+
                     System.out.println("\nUMSYNC: All valid: Starting Sync.");
                     UMSyncEndpoint.startSync(loggedInUser, endNode, context);
                 }else{

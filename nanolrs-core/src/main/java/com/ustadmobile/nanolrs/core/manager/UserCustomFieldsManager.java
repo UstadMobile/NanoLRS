@@ -15,4 +15,5 @@ public interface UserCustomFieldsManager extends NanoLrsManagerSyncable {
 
     public void createUserCustom(Map<Integer, String> map, User user, Object dbContext) throws SQLException;
     public List<UserCustomFields> findByUser(User user, Object dbContext) throws SQLException;
+    public String getUserField(User user, int field, Object dbContext) throws SQLException;
 }

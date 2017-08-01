@@ -79,7 +79,7 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
             thisNode.setUUID(uuid);
             thisNode.setName(thisNodeName);
             thisNode.setStoredDate(System.currentTimeMillis());
-            thisNode.setHost("this_node");
+            thisNode.setHost("host:" + uuid);
             thisNode.setNotes("this_node");
             //*Role is always local.*
             thisNode.setRole("this_node");

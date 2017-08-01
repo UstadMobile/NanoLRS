@@ -2,6 +2,9 @@ package com.ustadmobile.nanolrs.servlet;
 
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.ustadmobile.nanolrs.core.manager.NodeManager;
+import com.ustadmobile.nanolrs.core.model.Node;
+import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 
 import org.junit.Before;
@@ -111,6 +114,10 @@ public class TestUMSyncResponder  extends Mockito {
         UMSyncServlet umSyncServlet = new UMSyncServlet();
         umSyncServlet.init(servletConfig);
 
+        ConnectionSource dbContext = new JdbcPooledConnectionSource(TestUtilis.getJDBCUrl());
+
+        NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
+        Node servletNode = nodeManager.createThisDeviceNode("test","test","/test/",true, false, dbContext);
 
         ServletOutputStream mockOutput = mock(ServletOutputStream.class);
 

@@ -16,8 +16,14 @@ public interface SyncStatus extends NanoLrsModel{
 
     void setUUID(String uuid);
 
+
     String getHost();
     void setHost(String host);
+
+    /*
+    Node getNode();
+    void setNode(Node node);
+    */
 
     String getTable();
     void setTable(String table);

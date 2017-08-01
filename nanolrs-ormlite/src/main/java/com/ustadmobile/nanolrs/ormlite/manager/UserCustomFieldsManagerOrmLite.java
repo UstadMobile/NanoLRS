@@ -89,4 +89,24 @@ public class UserCustomFieldsManagerOrmLite extends BaseManagerOrmLiteSyncable
         List<UserCustomFields> ucfs = thisDao.query(qb.prepare());
         return ucfs;
     }
+
+    @Override
+    public String getUserField(User user, int field, Object dbContext) throws SQLException {
+        Dao thisDao = persistenceManager.getDao(UserCustomFieldsEntity.class, dbContext);
+        QueryBuilder qb = thisDao.queryBuilder();
+        Where where = qb.where();
+        where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUuid())
+        .and()
+        .eq(UserCustomFieldsEntity.COLNAME_FIELD_NAME, field);
+        List<UserCustomFields> ucfs = thisDao.query(qb.prepare());
+        if(ucfs != null && !ucfs.isEmpty()){
+            UserCustomFields ucf = ucfs.get(0);
+            return ucf.getFieldValue();
+        }else{
+            return "";
+        }
+
+    }
+
+
 }

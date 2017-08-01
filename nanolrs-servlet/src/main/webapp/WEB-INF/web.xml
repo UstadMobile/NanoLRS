@@ -24,8 +24,109 @@
         <servlet-class>com.ustadmobile.nanolrs.servlet.UMSyncServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>HomeViewServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.HomeViewServlet</servlet-class>
+    </servlet>
+	
+	<servlet>
+        <servlet-name>ReportsViewServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.ReportsViewServlet</servlet-class>
+    </servlet>
+	<servlet>
+        <servlet-name>ScoreReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.ScoreReportServlet</servlet-class>
+    </servlet>
+	<servlet>
+        <servlet-name>EnrollmentReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.EnrollmentReportServlet</servlet-class>
+    </servlet>
+	<servlet>
+        <servlet-name>DurationReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.DurationReportServlet</servlet-class>
+    </servlet>
+	<servlet>
+        <servlet-name>DiversityReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.DiversityReportServlet</servlet-class>
+    </servlet>
+	<servlet>
+        <servlet-name>CompletionReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.CompletionReportServlet</servlet-class>
+    </servlet>
+
+    <!--UMSYNC-->
     <servlet-mapping>
         <servlet-name>UMSyncServlet</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern></url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>HomeViewServlet</servlet-name>
+        <url-pattern>/home/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ReportsViewServlet</servlet-name>
+        <url-pattern>/reports/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EnrollmentReportServlet</servlet-name>
+        <url-pattern>/reports/enrollment/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ScoreReportServlet</servlet-name>
+        <url-pattern>/reports/score/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DurationReportServlet</servlet-name>
+        <url-pattern>/reports/duration/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CompletionReportServlet</servlet-name>
+        <url-pattern>/reports/completion/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DiversityReportServlet</servlet-name>
+        <url-pattern>/reports/diversity/</url-pattern>
+    </servlet-mapping>
+
+    <!--static files mapping-->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.html</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.jpg</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.png</url-pattern>
+    </servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.gif</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.css</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.js</url-pattern>
+    </servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.svg</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.*</url-pattern>
+    </servlet-mapping>
+
 </web-app>

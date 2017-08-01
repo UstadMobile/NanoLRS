@@ -8,14 +8,10 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 import com.ustadmobile.nanolrs.core.sync.UMSyncResult;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.sql.SQLException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +23,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.ustadmobile.nanolrs.util.ServletUtil.*;
 
 /**
  * Created by varuna on 7/25/2017.
@@ -44,67 +42,22 @@ public class UMSyncServlet extends HttpServlet {
         super.init(config);
     }
 
-    public String getHeaderVal(HttpServletRequest request, String headerName){
-        return request.getHeader(headerName);
-    }
-
-    public String getParamVal(HttpServletRequest request, String paramName){
-        return request.getParameter(paramName);
-    }
-
-    public static String convertStreamToString(InputStream is, String encoding) throws IOException {
-        final int bufferSize = 1024;
-        final char[] buffer = new char[bufferSize];
-        final StringBuilder out = new StringBuilder();
-        Reader in = new InputStreamReader(is, encoding);
-        for (; ; ) {
-            int rsz = in.read(buffer, 0, buffer.length);
-            if (rsz < 0)
-                break;
-            out.append(buffer, 0, rsz);
-        }
-        return out.toString();
-    }
-
-    public Map<String, String> getHeadersFromRequest(HttpServletRequest request){
-        Map<String, String> requestHeaders = new HashMap<>();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while(headerNames != null && headerNames.hasMoreElements()){
-            String headerName = headerNames.nextElement();
-            requestHeaders.put(headerName, getHeaderVal(request, headerName));
-        }
-        if(headerNames == null){
-            return null;
-        }
-        return requestHeaders;
-    }
-
-    public Map<String, String> getParamsFromRequest(HttpServletRequest request){
-        Map<String, String> requestParameters = new HashMap<>();
-        Enumeration<String> parameterNames = request.getHeaderNames();
-        while(parameterNames != null && parameterNames.hasMoreElements()){
-            String paramName = parameterNames.nextElement();
-            requestParameters.put(paramName, getHeaderVal(request, paramName));
-        }
-        if(parameterNames == null){
-            return null;
-        }
-        return requestParameters;
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("In UMSyncServlet.doGet()..");
-        //super.doGet(request, response);
+
+        response.sendRedirect("Home.jsp");
+
+        /*
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-
         String name = request.getParameter("name");
-
         out.println(
                 "<html><body>" +
                         "<h1>" + "Hi, " + name + "</h1>" +
                         "</body></html>");
+        */
+        //super.doGet(request, response);
 
     }
 
@@ -175,6 +128,7 @@ public class UMSyncServlet extends HttpServlet {
                 if(nodeRole.equals("main")){
                     node.setMaster(true);
                 }
+
 
                 nodeManager.persist(dbContext, node);
             }
