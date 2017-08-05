@@ -25,4 +25,6 @@ public interface ChangeSeqManager extends NanoLrsManager {
      */
     long getNextChangeAddSeqByTableName(String tableName, int increment, Object dbContext)
             throws SQLException;
+
+    boolean setNextChangeSeqNumByTableName(String tableName, long nextChangeSeq, Object dbContext) throws SQLException;
 }

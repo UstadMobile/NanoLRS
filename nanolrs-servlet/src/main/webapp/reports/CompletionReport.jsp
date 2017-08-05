@@ -83,23 +83,38 @@
 				console.log("On Ready..");
 				$('#university').multiselect();
 				var return_json;
-				$('#report_form').on('submit', function(e) {
 
-					universityids = [];
-					university_ids = $('#univresity').val();
-					/*
-					for (var i = 0; i < university_ids.length; i++) {
-						universityids.push(university_ids[i]);
-					}
-					*/
-					university_ids=[23,24];
+                var university_names = [];
+                var university_names = $('#university').val();
+                var universitynames = [];
+                if(!university_names){
+                        university_names=[];
+                }
+
+                for (var i = 0; i < university_names.length; i++) {
+                        universitynames.push(university_names[i]);
+                }
+
+
+				$('#report_form').on('submit', function(e) {
+                    var university_names = [];
+                    var university_names = $('#university').val();
+                    var universitynames = [];
+                    if(!university_names){
+                            university_names=[];
+                    }
+
+                    for (var i = 0; i < university_names.length; i++) {
+                            universitynames.push(university_names[i]);
+                    }
+					university_names=universitynames;
 					console.log("Getting DATA from API..");
 					$('#ajaxSpinnerImage').show();
 					$.ajax( {
 								type: 'post',
 								dataType: 'json',
 								data: {
-									'university_ids' : universityids
+									university_names : universitynames
 								},
 								url:  'completion/',
 								complete: function(response){
@@ -192,10 +207,10 @@
 					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
 
 						<select multiple="multiple" name="university" id="university" required>
-							<option selected value="Z" required>All Universities</option>
-								<option value=22>Kabul University</option>
-								<option value=23>Kabul Polytechnic University</option>
-								<option value=24>Kabul Education University</option>
+							<option selected value="ALL" required>All Universities</option>
+								<option value="Kabul University">Kabul University</option>
+								<option value="Kabul Polytechnic University">Kabul Polytechnic University</option>
+								<option value="Kabul Education University">Kabul Education University</option>
 						</select>
 
 						<button id="report_submit" type="submit"

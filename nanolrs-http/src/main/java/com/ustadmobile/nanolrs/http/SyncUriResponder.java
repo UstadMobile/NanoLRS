@@ -181,6 +181,8 @@ public class SyncUriResponder extends NanoLrsResponder{
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         NanoHTTPD.Response.IStatus status = null;

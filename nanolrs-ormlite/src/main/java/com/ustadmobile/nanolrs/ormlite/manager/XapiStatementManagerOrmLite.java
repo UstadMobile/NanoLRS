@@ -201,7 +201,11 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
     }
 
     @Override
-    public List<? extends XapiStatement> findByParams(Object dbContext, String statementid, String voidedStatemendid, XapiAgent agent, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
+    public List<? extends XapiStatement> findByParams(Object dbContext, String statementid,
+                                                  String voidedStatemendid, XapiAgent agent,
+                                                  String verb, String activity, String registration,
+                                                  boolean relatedActivities, boolean relatedAgents,
+                                                  long since, long until, int limit) {
         try {
             Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
             QueryBuilder<XapiStatementEntity, String> queryBuilder = dao.queryBuilder();

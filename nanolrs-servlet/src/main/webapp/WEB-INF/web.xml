@@ -28,6 +28,11 @@
         <servlet-name>HomeViewServlet</servlet-name>
         <servlet-class>com.ustadmobile.nanolrs.servlet.HomeViewServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>LoginViewServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.LoginViewServlet</servlet-class>
+    </servlet>
 	
 	<servlet>
         <servlet-name>ReportsViewServlet</servlet-name>
@@ -63,6 +68,11 @@
     <servlet-mapping>
         <servlet-name>HomeViewServlet</servlet-name>
         <url-pattern>/home/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>LoginViewServlet</servlet-name>
+        <url-pattern>/login/</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

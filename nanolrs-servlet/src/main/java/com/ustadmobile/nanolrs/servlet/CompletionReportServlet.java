@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -82,6 +83,10 @@ public class CompletionReportServlet extends HttpServlet {
         XapiAgentManager agentManager = pm.getManager(XapiAgentManager.class);
         UserCustomFieldsManager ucfManager = pm.getManager(UserCustomFieldsManager.class);
 
+        if(agent == null){
+            return false;
+        }
+
         /*
         Object dbContext, String statementid, String voidedStatemendid,
         XapiAgent agent, String verb, String activity, String registration,
@@ -116,6 +121,8 @@ public class CompletionReportServlet extends HttpServlet {
         XapiAgentManager agentManager = pm.getManager(XapiAgentManager.class);
         UserCustomFieldsManager ucfManager = pm.getManager(UserCustomFieldsManager.class);
 
+        String[] uni_names = req.getParameterValues("university_names[]");
+
         List<String> module1 = new ArrayList<String>();
         module1.add("epub:202b10fe-b028-4b84-9b84-852aa123456a");
         module1.add("epub:202b10fe-b028-4b84-9b84-852aa123456b");
@@ -146,10 +153,10 @@ public class CompletionReportServlet extends HttpServlet {
         try {
             allUsers = userManager.getAllEntities(dbContext);
 
-            Map<String, Integer> uni_map = new HashMap<>();
-            uni_map.put("Kabul University", 23);
-            uni_map.put("Kabul Polytechnic University", 24);
-            uni_map.put("Kabul Education University", 25);
+            Map<String, String> uni_map = new HashMap<>();
+            uni_map.put("Kabul University", "KU");
+            uni_map.put("Kabul Polytechnic University", "KPU");
+            uni_map.put("Kabul Education University", "KEU");
 
             Map<String, Integer> custom_fields_map = new HashMap<>();
             custom_fields_map.put("university", 980);
@@ -160,18 +167,50 @@ public class CompletionReportServlet extends HttpServlet {
             custom_fields_map.put("faculty",985);
 
 
-            for(User user:allUsers){
+            ArrayList allChoosenUniNames = new ArrayList();
+            if(uni_names != null) {
+                if(uni_names.length > 0){
+                    for (int k = 0; k < uni_names.length; k++) {
+                        String choosenUniName = uni_names[k];
+                        allChoosenUniNames.add(choosenUniName);
+                    }
+                }
+            }
+
+            for(User user:allUsers) {
                 JSONObject userInfoJSON = new JSONObject();
-                userInfoJSON.put("username", user.getUsername() );
-                userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext) ); //TODO: Put these somewhere
+                userInfoJSON.put("username", user.getUsername());
+                userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext)); //TODO: Put these somewhere
                 String uni_name = ucfManager.getUserField(user, custom_fields_map.get("university"), dbContext);
+
+                System.out.println("Should I skip?");
+                boolean iWantToBreakFree = false;
+                boolean showAll = false;
+                System.out.println("Checking if: " + uni_name + " is in: " + uni_names);
+                if (allChoosenUniNames.isEmpty()) {
+                    //Let it go.. Let it go..
+                }else if(allChoosenUniNames.contains("ALL")){
+                    //Let it go, Let it go..
+                }else if(!allChoosenUniNames.contains(uni_name)){
+                    iWantToBreakFree = true;
+                    System.out.println("YES");
+                    continue;
+                }
+                System.out.println("NO");
+
                 userInfoJSON.put("university_name", uni_name);
                 if(uni_map.containsKey(uni_name)){
                     userInfoJSON.put("university", uni_map.get(uni_name));
+                }else{
+                    userInfoJSON.put("university", "");
                 }
 
-                //XapiAgent agent, String verb, List<String> activities, Object dbContext
-
+                List<XapiAgent> agents = agentManager.findByUser(dbContext, user);
+                if(agents != null && !agents.isEmpty()){
+                    agent = agents.get(0);
+                }else{
+                    agent = null;
+                }
 
                 String m1result= "";
                 String m2result = "";
@@ -187,6 +226,7 @@ public class CompletionReportServlet extends HttpServlet {
                 }else if(m1resultfail){
                     m1result = "false";
                 }
+
 
                 boolean m2resultpass = agentModulePresentInStatement(agent,
                         "http://adlnet.gov/expapi/verbs/passed", module2, dbContext);
@@ -234,6 +274,7 @@ public class CompletionReportServlet extends HttpServlet {
             System.out.println("EXCEPTION!");
         }
 
+        /*
         if(userEnrollmentJSONArray.length() < 1){
             jsonToReturn = "[\n" +
                     "        {\"username\": \"user1\", \"fullname\": \"Chai Zakir\", \"university\" : 23, \"university_name\": \"Kabul University\", \"m1\": \"true\", \"m2\": \"true\", \"m3\": \"true\", \"m4\": \"true\"},\n" +
@@ -243,6 +284,7 @@ public class CompletionReportServlet extends HttpServlet {
                     "        {\"username\": \"user5\", \"fullname\": \"Kafi Ismail\", \"university\" : 24, \"university_name\": \"AFG University\", \"m1\": \"false\", \"m2\": \"false\", \"m3\": \"false\", \"m4\": \"false\"}\n" +
                     "    ]";
         }
+        */
 
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

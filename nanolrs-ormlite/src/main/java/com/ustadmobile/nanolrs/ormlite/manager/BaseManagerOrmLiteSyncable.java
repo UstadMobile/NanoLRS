@@ -152,6 +152,11 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
     public void persist(Object dbContext, NanoLrsModel data, boolean incrementChangeSeq)
             throws SQLException {
         NanoLrsModelSyncable dataS = (NanoLrsModelSyncable)data;
+        ChangeSeqManager changeSeqManager =
+                PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+        String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
+        tableName = tableName.toUpperCase(); //always uppercase
 
         //set date created if does not exist
         Long dateCreated = dataS.getDateCreated();
@@ -162,12 +167,13 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         NodeManager nodeManager =
                 PersistenceManager.getInstance().getManager(NodeManager.class);
         Node thisNode = nodeManager.getThisNode(dbContext);
+        long setLocalSeq = dataS.getLocalSequence();
+        long nextChangeSeq = -1;
+        if(Long.valueOf(setLocalSeq) != null && setLocalSeq > -1){
+            nextChangeSeq = setLocalSeq + 1;
+        }
 
-        if(incrementChangeSeq == true) {
-            Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
-            String tableName = ((BaseDaoImpl) thisDao).getTableInfo().getTableName();
-            ChangeSeqManager changeSeqManager =
-                    PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
+        if(incrementChangeSeq) {
             long setThis = changeSeqManager.getNextChangeAddSeqByTableName(tableName, 1, dbContext);
             dataS.setLocalSequence(setThis);
 
@@ -181,6 +187,9 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
                     dataS.setMasterSequence(0);
                 }
             }
+        }else if(nextChangeSeq > 0){
+            //Update the next change seq num in Change Seq by the local seq  + 1
+            changeSeqManager.setNextChangeSeqNumByTableName(tableName, nextChangeSeq, dbContext);
         }
 
         super.persist(dbContext, dataS);

@@ -1,5 +1,6 @@
 package com.ustadmobile.nanolrs.core.util;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +39,37 @@ public class JsonUtil {
             throw new IllegalArgumentException(e);
         }
 
+    }
+
+    /**
+     * Checks if a given string can be serializable to JSON
+     * @param jsonString
+     * @return
+     */
+    public static boolean isThisStringJSON(String jsonString){
+        try {
+            new JSONObject(jsonString);
+        } catch (JSONException ex) {
+            try {
+                new JSONArray(jsonString);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Add two JSON Arrays and return it
+     * @param ja1
+     * @param ja2
+     * @return
+     */
+    public static JSONArray addTheseTwoJSONArrays(JSONArray ja1, JSONArray ja2){
+        for(int i=0;i<ja2.length();i++){
+            ja1.put(ja2.get(i));
+        }
+        return ja1;
     }
 
 }

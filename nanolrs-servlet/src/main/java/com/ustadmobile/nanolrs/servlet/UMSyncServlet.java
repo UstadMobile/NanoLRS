@@ -46,7 +46,7 @@ public class UMSyncServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("In UMSyncServlet.doGet()..");
 
-        response.sendRedirect("Home.jsp");
+        response.sendRedirect("home/");
 
         /*
         response.setContentType("text/html");

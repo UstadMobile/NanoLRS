@@ -122,15 +122,45 @@ public class EnrollmentReportServlet extends HttpServlet {
             custom_fields_map.put("phonenumber",984);
             custom_fields_map.put("faculty",985);
 
+            String[] uni_names = req.getParameterValues("university_names[]");
+            ArrayList allChoosenUniNames = new ArrayList();
+            if(uni_names != null) {
+                if(uni_names.length > 0){
+                    for (int k = 0; k < uni_names.length; k++) {
+                        String choosenUniName = uni_names[k];
+                        allChoosenUniNames.add(choosenUniName);
+                    }
+                }
+            }
+
 
             for(User user:allUsers){
                 JSONObject userInfoJSON = new JSONObject();
                 userInfoJSON.put("username", user.getUsername() );
                 userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext) ); //TODO: Put these somewhere
                 String uni_name = ucfManager.getUserField(user, custom_fields_map.get("university"), dbContext);
+
+                System.out.println("Should I skip?");
+                boolean iWantToBreakFree = false;
+                boolean showAll = false;
+                System.out.println("Checking if: " + uni_name + " is in: " + uni_names);
+                if (allChoosenUniNames.isEmpty()) {
+                    //Let it go.. Let it go..
+                }else if(allChoosenUniNames.contains("ALL")){
+                    //Let it go, Let it go..
+                }else if(!allChoosenUniNames.contains(uni_name)){
+                    iWantToBreakFree = true;
+                    System.out.println("YES");
+                    continue;
+                }
+                System.out.println("NO");
+
+
                 userInfoJSON.put("university_name", uni_name);
                 if(uni_map.containsKey(uni_name)){
                     userInfoJSON.put("university", uni_map.get(uni_name));
+                }else{
+                    userInfoJSON.put("university", "");
                 }
 
 

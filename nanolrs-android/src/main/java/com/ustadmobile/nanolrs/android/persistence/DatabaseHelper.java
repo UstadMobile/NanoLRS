@@ -39,9 +39,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * Database Name to be used: nanolrs.db was used by previous versions.  From DATABASE_VERSION 11
      */
-    private static final String DATABASE_NAME="nanolrs18.db";
+    private static final String DATABASE_NAME="nanolrs19.db";
 
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
 
     private Context context;
 

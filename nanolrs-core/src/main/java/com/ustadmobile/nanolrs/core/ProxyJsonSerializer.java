@@ -5,6 +5,7 @@ package com.ustadmobile.nanolrs.core;
  */
 
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
+import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.manager.UserCustomFieldsManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
@@ -168,7 +169,8 @@ public class ProxyJsonSerializer {
                 String getterMethodName = (value instanceof Boolean ? "is" : "get") + methodPropName;
                 Method getterMethod = proxyClass.getMethod(getterMethodName);
 
-                if(!(getterMethod.getReturnType().isPrimitive() || getterMethod.getReturnType().equals(String.class)))
+                if(!(getterMethod.getReturnType().isPrimitive() ||
+                        getterMethod.getReturnType().equals(String.class)))
                 {
                     System.out.println("RELATIONSHIP!");
 
@@ -228,14 +230,20 @@ public class ProxyJsonSerializer {
                                     + primaryKeyGetterName.substring(prefixLen +1);
 
                             //relatedObjEntityPKSetter = relatedObj.getClass().getMethod(primaryKeySetterName, entity_id.getClass());
-                            relatedObj.getClass().getMethod(primaryKeySetterName, entity_id.getClass());
+                            Method relatedObjPKMethod = relatedObj.getClass().getMethod(primaryKeySetterName, entity_id.getClass());
+                            //((NanoLrsManagerSyncable)relatedManager).persist(context, relatedObj, false);
+                            relatedObjPKMethod.invoke(relatedObj, value);
                             valueType = relatedObjProxy;
                         }
                     }
+                    //((NanoLrsManagerSyncable)relatedManager).persist(context, relatedObj, false);
+                    //relatedManager.persist(context, relatedObj);
                     value = relatedObj;
 
 
                     //*/
+
+
                 }
 
                 //gets the setter Method on the current methodName with argument of
@@ -259,12 +267,25 @@ public class ProxyJsonSerializer {
                 }
                 if (methodReturnType == null){
                     continue;
-            }
+                }
 
+                //Cast primitive
                 if(methodReturnClass.getName().equals("long")){
                     valueCasted = Long.parseLong(value.toString());
-                    //valueCasted = new Long((int)value);
-                }else{
+                }else if(methodReturnClass.getName().equals("float")){
+                    valueCasted = Float.parseFloat(value.toString());
+                }else if(methodReturnClass.getName().equals("int")){
+                    valueCasted = Integer.parseInt(value.toString());
+                }else if(methodReturnClass.getName().equals("double")){
+                    valueCasted = Double.parseDouble(value.toString());
+                }else if(methodReturnClass.getName().equals("short")){
+                    valueCasted = Short.parseShort(value.toString());
+                }else if(methodReturnClass.getName().equals("char")){
+                    valueCasted = value.toString().charAt(0);
+                }else if(methodReturnClass.getName().equals("boolean")){
+                    valueCasted = Boolean.parseBoolean(value.toString());
+                }
+                else{
                     valueCasted=value;
                 }
                 //Cannot cast long to int, etc
@@ -275,6 +296,7 @@ public class ProxyJsonSerializer {
                 //Invokes the setter Method that we got and gives it the value to pass
                 //to its argument
                 //setterMethod.invoke(newObj, value);
+                String setterMethodName = setterMethod.getName();
                 setterMethod.invoke(newObj, valueCasted);
             }
         }catch(Exception e) {

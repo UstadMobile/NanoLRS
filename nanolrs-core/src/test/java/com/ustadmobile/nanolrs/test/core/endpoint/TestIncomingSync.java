@@ -26,6 +26,7 @@ import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
 import com.ustadmobile.nanolrs.http.NanoLrsHttpd;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -100,7 +101,7 @@ public class TestIncomingSync {
         //Get initial seq number for user table - for debugging purposes
         String tableName = "USER";
         long initialSeqNum =
-                changeSeqManager.getNextChangeByTableName(tableName, context) -1;
+                changeSeqManager.getNextChangeByTableName(tableName, context);
 
         ///Create this testing user: testinguser
         //Use it for Sync purposes. Assign it roles and
@@ -407,25 +408,301 @@ public class TestIncomingSync {
 
 
         //Create a user update on endpoint
+        String value1 = "The next room";
+        String value2 = "The Matrix has you";
         User userOnEndpoint = (User)userManager.findByPrimaryKey(
                 endpointContext, testingUser.getUuid());
         UserCustomFields newUserCustomFieldOnEndpoint = (UserCustomFields)ucfManager.makeNew();
         newUserCustomFieldOnEndpoint.setUuid(UUID.randomUUID().toString());
         newUserCustomFieldOnEndpoint.setUser(userOnEndpoint);
         newUserCustomFieldOnEndpoint.setFieldName(101);
-        newUserCustomFieldOnEndpoint.setFieldValue("The Matrix has you.");
+        newUserCustomFieldOnEndpoint.setFieldValue(value2);
         ucfManager.persist(endpointContext, newUserCustomFieldOnEndpoint);
 
         UserCustomFields newUserCustomFieldOnEndpoint2 = (UserCustomFields)ucfManager.makeNew();
         newUserCustomFieldOnEndpoint2.setUuid(UUID.randomUUID().toString());
         newUserCustomFieldOnEndpoint2.setUser(userOnEndpoint);
         newUserCustomFieldOnEndpoint2.setFieldName(100);
-        newUserCustomFieldOnEndpoint2.setFieldValue("The next room");
+        newUserCustomFieldOnEndpoint2.setFieldValue(value1);
         ucfManager.persist(endpointContext, newUserCustomFieldOnEndpoint2);
 
+        //Test that another incoming sync gives back the user updates back to that node
+        String emptyValidJSONString = "{\n" +
+                "    \"data\": [],\n" +
+                "    \"info\": []\n" +
+                "}";
+
+        InputStream emptyValidStream =
+                new ByteArrayInputStream(emptyValidJSONString.getBytes(encoding));
+        UMSyncResult incomingSyncResultNullButShouldHaveResponseEntities =
+                UMSyncEndpoint.handleIncomingSync(
+                        emptyValidStream, thisNode, headers, parameters, endpointContext);
+
+        String responseString =
+                UMSyncEndpoint.convertStreamToString2(
+                        incomingSyncResultNullButShouldHaveResponseEntities.getResponseData(),
+                        "UTF-8");
+
+        JSONObject responseJSON = new JSONObject(responseString);
+        JSONArray responseDataJSON = responseJSON.getJSONArray(UMSyncEndpoint.RESPONSE_ENTITIES_DATA);
+
+        String custom_field_back2 = (String)responseDataJSON.getJSONObject(1).get("fieldValue");
+        String custom_field_back1 = (String)responseDataJSON.getJSONObject(0).get("fieldValue");
+        Assert.assertNotNull(custom_field_back1);
+        Assert.assertNotNull(custom_field_back2);
+
+        boolean result;
+        if(custom_field_back1.equals(value1) || custom_field_back1.equals(value2)){
+            result = true;
+        }else{
+            result = false;
+        }
+        Assert.assertTrue(result);
+
+        if(custom_field_back2.equals(value1) || custom_field_back2.equals(value2)){
+            result = true;
+        }else{
+            result = false;
+        }
+        Assert.assertTrue(result);
 
 
+        String newBugtest = "{  \n" +
+                "   \"data\":[  \n" +
+                "      {  \n" +
+                "         \"activity\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\/q6\",\n" +
+                "         \"agent\":\"67d9aefb-45ed-44e3-9b83-2624272e724e\",\n" +
+                "         \"dateCreated\":1501877476178,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"fullStatement\":\"{\\\"id\\\":\\\"0b260a70-8bf7-46db-83c8-4ffa09349625\\\",\\\"timestamp\\\":\\\"2017-08-04T20:11:16.110Z\\\",\\\"actor\\\":{\\\"objectType\\\":\\\"Agent\\\",\\\"account\\\":{\\\"name\\\":\\\"varunas2\\\",\\\"homePage\\\":\\\"https:\\\\\\/\\\\\\/umcloud1.ustadmobile.com\\\\\\/umlrs\\\\\\/\\\"}},\\\"verb\\\":{\\\"id\\\":\\\"http:\\\\\\/\\\\\\/adlnet.gov\\\\\\/expapi\\\\\\/verbs\\\\\\/answered\\\",\\\"display\\\":{\\\"und\\\":\\\"answered\\\"}},\\\"result\\\":{\\\"extensions\\\":{\\\"https:\\\\\\/\\\\\\/w3id.org\\\\\\/xapi\\\\\\/cmi5\\\\\\/result\\\\\\/extensions\\\\\\/progress\\\":75}},\\\"object\\\":{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\\\\/q6\\\",\\\"objectType\\\":\\\"Activity\\\"}}\",\n" +
+                "         \"localSequence\":7,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"resultProgress\":75,\n" +
+                "         \"resultScoreMax\":0,\n" +
+                "         \"resultScoreMin\":0,\n" +
+                "         \"resultScoreRaw\":0,\n" +
+                "         \"resultScoreScaled\":0,\n" +
+                "         \"stored\":0,\n" +
+                "         \"storedDate\":1501877476188,\n" +
+                "         \"timestamp\":1501877476143,\n" +
+                "         \"uuid\":\"0b260a70-8bf7-46db-83c8-4ffa09349625\",\n" +
+                "         \"verb\":\"http:\\/\\/adlnet.gov\\/expapi\\/verbs\\/answered\",\n" +
+                "         \"resultComplete\":false,\n" +
+                "         \"resultSuccess\":false,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiStatement\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activity\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\/q5\",\n" +
+                "         \"agent\":\"67d9aefb-45ed-44e3-9b83-2624272e724e\",\n" +
+                "         \"dateCreated\":1501877470371,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"fullStatement\":\"{\\\"id\\\":\\\"1990b4ff-2fba-463a-847f-5d48158f9891\\\",\\\"timestamp\\\":\\\"2017-08-04T20:11:10.292Z\\\",\\\"actor\\\":{\\\"objectType\\\":\\\"Agent\\\",\\\"account\\\":{\\\"name\\\":\\\"varunas2\\\",\\\"homePage\\\":\\\"https:\\\\\\/\\\\\\/umcloud1.ustadmobile.com\\\\\\/umlrs\\\\\\/\\\"}},\\\"verb\\\":{\\\"id\\\":\\\"http:\\\\\\/\\\\\\/adlnet.gov\\\\\\/expapi\\\\\\/verbs\\\\\\/answered\\\",\\\"display\\\":{\\\"und\\\":\\\"answered\\\"}},\\\"result\\\":{\\\"extensions\\\":{\\\"https:\\\\\\/\\\\\\/w3id.org\\\\\\/xapi\\\\\\/cmi5\\\\\\/result\\\\\\/extensions\\\\\\/progress\\\":63}},\\\"object\\\":{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\\\\/q5\\\",\\\"objectType\\\":\\\"Activity\\\"}}\",\n" +
+                "         \"localSequence\":6,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"resultProgress\":63,\n" +
+                "         \"resultScoreMax\":0,\n" +
+                "         \"resultScoreMin\":0,\n" +
+                "         \"resultScoreRaw\":0,\n" +
+                "         \"resultScoreScaled\":0,\n" +
+                "         \"stored\":0,\n" +
+                "         \"storedDate\":1501877470376,\n" +
+                "         \"timestamp\":1501877470326,\n" +
+                "         \"uuid\":\"1990b4ff-2fba-463a-847f-5d48158f9891\",\n" +
+                "         \"verb\":\"http:\\/\\/adlnet.gov\\/expapi\\/verbs\\/answered\",\n" +
+                "         \"resultComplete\":false,\n" +
+                "         \"resultSuccess\":false,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiStatement\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activity\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\",\n" +
+                "         \"agent\":\"67d9aefb-45ed-44e3-9b83-2624272e724e\",\n" +
+                "         \"dateCreated\":1501877512874,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"fullStatement\":\"{\\\"id\\\":\\\"9c3fa42e-221a-4480-92bf-39f9ac8c7ab1\\\",\\\"timestamp\\\":\\\"2017-08-04T20:11:52.796Z\\\",\\\"actor\\\":{\\\"objectType\\\":\\\"Agent\\\",\\\"account\\\":{\\\"name\\\":\\\"varunas2\\\",\\\"homePage\\\":\\\"https:\\\\\\/\\\\\\/umcloud1.ustadmobile.com\\\\\\/umlrs\\\\\\/\\\"}},\\\"verb\\\":{\\\"id\\\":\\\"http:\\\\\\/\\\\\\/adlnet.gov\\\\\\/expapi\\\\\\/verbs\\\\\\/passed\\\",\\\"display\\\":{\\\"und\\\":\\\"passed\\\"}},\\\"result\\\":{\\\"success\\\":true,\\\"extensions\\\":{\\\"https:\\\\\\/\\\\\\/w3id.org\\\\\\/xapi\\\\\\/cmi5\\\\\\/result\\\\\\/extensions\\\\\\/progress\\\":100},\\\"score\\\":{\\\"scaled\\\":0.96875,\\\"raw\\\":15.5,\\\"min\\\":0,\\\"max\\\":16},\\\"completion\\\":true},\\\"object\\\":{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\",\\\"objectType\\\":\\\"Activity\\\"}}\",\n" +
+                "         \"localSequence\":10,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"resultProgress\":100,\n" +
+                "         \"resultScoreMax\":16,\n" +
+                "         \"resultScoreMin\":0,\n" +
+                "         \"resultScoreRaw\":15.5,\n" +
+                "         \"resultScoreScaled\":0.96875,\n" +
+                "         \"stored\":0,\n" +
+                "         \"storedDate\":1501877512878,\n" +
+                "         \"timestamp\":1501877512826,\n" +
+                "         \"uuid\":\"9c3fa42e-221a-4480-92bf-39f9ac8c7ab1\",\n" +
+                "         \"verb\":\"http:\\/\\/adlnet.gov\\/expapi\\/verbs\\/passed\",\n" +
+                "         \"resultComplete\":true,\n" +
+                "         \"resultSuccess\":true,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiStatement\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activity\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\/q7\",\n" +
+                "         \"agent\":\"67d9aefb-45ed-44e3-9b83-2624272e724e\",\n" +
+                "         \"dateCreated\":1501877494726,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"fullStatement\":\"{\\\"id\\\":\\\"a1dff5b9-7727-4c4b-aff3-695242ad7a8c\\\",\\\"timestamp\\\":\\\"2017-08-04T20:11:34.646Z\\\",\\\"actor\\\":{\\\"objectType\\\":\\\"Agent\\\",\\\"account\\\":{\\\"name\\\":\\\"varunas2\\\",\\\"homePage\\\":\\\"https:\\\\\\/\\\\\\/umcloud1.ustadmobile.com\\\\\\/umlrs\\\\\\/\\\"}},\\\"verb\\\":{\\\"id\\\":\\\"http:\\\\\\/\\\\\\/adlnet.gov\\\\\\/expapi\\\\\\/verbs\\\\\\/answered\\\",\\\"display\\\":{\\\"und\\\":\\\"answered\\\"}},\\\"result\\\":{\\\"extensions\\\":{\\\"https:\\\\\\/\\\\\\/w3id.org\\\\\\/xapi\\\\\\/cmi5\\\\\\/result\\\\\\/extensions\\\\\\/progress\\\":88}},\\\"object\\\":{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\\\\/q7\\\",\\\"objectType\\\":\\\"Activity\\\"}}\",\n" +
+                "         \"localSequence\":8,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"resultProgress\":88,\n" +
+                "         \"resultScoreMax\":0,\n" +
+                "         \"resultScoreMin\":0,\n" +
+                "         \"resultScoreRaw\":0,\n" +
+                "         \"resultScoreScaled\":0,\n" +
+                "         \"stored\":0,\n" +
+                "         \"storedDate\":1501877494736,\n" +
+                "         \"timestamp\":1501877494680,\n" +
+                "         \"uuid\":\"a1dff5b9-7727-4c4b-aff3-695242ad7a8c\",\n" +
+                "         \"verb\":\"http:\\/\\/adlnet.gov\\/expapi\\/verbs\\/answered\",\n" +
+                "         \"resultComplete\":false,\n" +
+                "         \"resultSuccess\":false,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiStatement\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activity\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\/q8\",\n" +
+                "         \"agent\":\"67d9aefb-45ed-44e3-9b83-2624272e724e\",\n" +
+                "         \"dateCreated\":1501877505212,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"fullStatement\":\"{\\\"id\\\":\\\"be4612e9-631c-42e7-804b-af9a6f8a764b\\\",\\\"timestamp\\\":\\\"2017-08-04T20:11:45.128Z\\\",\\\"actor\\\":{\\\"objectType\\\":\\\"Agent\\\",\\\"account\\\":{\\\"name\\\":\\\"varunas2\\\",\\\"homePage\\\":\\\"https:\\\\\\/\\\\\\/umcloud1.ustadmobile.com\\\\\\/umlrs\\\\\\/\\\"}},\\\"verb\\\":{\\\"id\\\":\\\"http:\\\\\\/\\\\\\/adlnet.gov\\\\\\/expapi\\\\\\/verbs\\\\\\/answered\\\",\\\"display\\\":{\\\"und\\\":\\\"answered\\\"}},\\\"result\\\":{\\\"extensions\\\":{\\\"https:\\\\\\/\\\\\\/w3id.org\\\\\\/xapi\\\\\\/cmi5\\\\\\/result\\\\\\/extensions\\\\\\/progress\\\":100}},\\\"object\\\":{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\\\\/q8\\\",\\\"objectType\\\":\\\"Activity\\\"}}\",\n" +
+                "         \"localSequence\":9,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"resultProgress\":100,\n" +
+                "         \"resultScoreMax\":0,\n" +
+                "         \"resultScoreMin\":0,\n" +
+                "         \"resultScoreRaw\":0,\n" +
+                "         \"resultScoreScaled\":0,\n" +
+                "         \"stored\":0,\n" +
+                "         \"storedDate\":1501877505219,\n" +
+                "         \"timestamp\":1501877505162,\n" +
+                "         \"uuid\":\"be4612e9-631c-42e7-804b-af9a6f8a764b\",\n" +
+                "         \"verb\":\"http:\\/\\/adlnet.gov\\/expapi\\/verbs\\/answered\",\n" +
+                "         \"resultComplete\":false,\n" +
+                "         \"resultSuccess\":false,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiStatement\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activityId\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\",\n" +
+                "         \"canonicalData\":\"{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\",\\\"objectType\\\":\\\"Activity\\\"}\",\n" +
+                "         \"dateCreated\":1501877402795,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"localSequence\":15,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"storedDate\":1501877512872,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiActivity\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activityId\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\/q5\",\n" +
+                "         \"canonicalData\":\"{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\\\\/q5\\\",\\\"objectType\\\":\\\"Activity\\\"}\",\n" +
+                "         \"dateCreated\":1501877449439,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"localSequence\":9,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"storedDate\":1501877470369,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiActivity\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activityId\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\/q6\",\n" +
+                "         \"canonicalData\":\"{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\\\\/q6\\\",\\\"objectType\\\":\\\"Activity\\\"}\",\n" +
+                "         \"dateCreated\":1501877476160,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"localSequence\":10,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"storedDate\":1501877476173,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiActivity\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activityId\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\/q7\",\n" +
+                "         \"canonicalData\":\"{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\\\\/q7\\\",\\\"objectType\\\":\\\"Activity\\\"}\",\n" +
+                "         \"dateCreated\":1501877486284,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"localSequence\":13,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"storedDate\":1501877494723,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiActivity\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"activityId\":\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\/q8\",\n" +
+                "         \"canonicalData\":\"{\\\"id\\\":\\\"epub:202b10fe-b028-4b84-9b84-852aa123456a\\\\\\/q8\\\",\\\"objectType\\\":\\\"Activity\\\"}\",\n" +
+                "         \"dateCreated\":1501877505192,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"localSequence\":14,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"storedDate\":1501877505203,\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiActivity\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"canonicalData\":\"{\\\"id\\\":\\\"http:\\\\\\/\\\\\\/adlnet.gov\\\\\\/expapi\\\\\\/verbs\\\\\\/answered\\\",\\\"display\\\":{\\\"und\\\":\\\"answered\\\"}}\",\n" +
+                "         \"dateCreated\":1501877412845,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"localSequence\":13,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"storedDate\":1501877505188,\n" +
+                "         \"verbId\":\"http:\\/\\/adlnet.gov\\/expapi\\/verbs\\/answered\",\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiVerb\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"canonicalData\":\"{\\\"id\\\":\\\"http:\\\\\\/\\\\\\/adlnet.gov\\\\\\/expapi\\\\\\/verbs\\\\\\/passed\\\",\\\"display\\\":{\\\"und\\\":\\\"passed\\\"}}\",\n" +
+                "         \"dateCreated\":1501877512829,\n" +
+                "         \"dateModifiedAtMaster\":0,\n" +
+                "         \"localSequence\":14,\n" +
+                "         \"masterSequence\":0,\n" +
+                "         \"storedDate\":1501877512856,\n" +
+                "         \"verbId\":\"http:\\/\\/adlnet.gov\\/expapi\\/verbs\\/passed\",\n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiVerb\"\n" +
+                "      }\n" +
+                "   ],\n" +
+                "   \"info\":[  \n" +
+                "      {  \n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\n" +
+                "         \"tableName\":\"USER\",\n" +
+                "         \"count\":0,\n" +
+                "         \"pk\":\"uuid\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiStatement\",\n" +
+                "         \"tableName\":\"XAPI_STATEMENT\",\n" +
+                "         \"count\":5,\n" +
+                "         \"pk\":\"uuid\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiActivity\",\n" +
+                "         \"tableName\":\"XAPI_ACTIVITY\",\n" +
+                "         \"count\":5,\n" +
+                "         \"pk\":\"activityId\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiAgent\",\n" +
+                "         \"tableName\":\"XAPI_AGENT\",\n" +
+                "         \"count\":0,\n" +
+                "         \"pk\":\"uuid\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiState\",\n" +
+                "         \"tableName\":\"XAPI_STATE\",\n" +
+                "         \"count\":0,\n" +
+                "         \"pk\":\"uuid\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.XapiVerb\",\n" +
+                "         \"tableName\":\"XAPI_VERB\",\n" +
+                "         \"count\":2,\n" +
+                "         \"pk\":\"verbId\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"pCls\":\"com.ustadmobile.nanolrs.core.model.UserCustomFields\",\n" +
+                "         \"tableName\":\"USER_CUSTOM_FIELDS\",\n" +
+                "         \"count\":0,\n" +
+                "         \"pk\":\"uuid\"\n" +
+                "      }\n" +
+                "   ]\n" +
+                "}";
 
+        InputStream entitiesAsStream2 =
+                new ByteArrayInputStream(newBugtest.getBytes(encoding));
+
+        UMSyncResult incomingSyncResult2 = UMSyncEndpoint.handleIncomingSync(
+                entitiesAsStream2, thisNode, headers, parameters, endpointContext);
+
+        Assert.assertNotNull(incomingSyncResult);
         httpd.stop();
     }
 }

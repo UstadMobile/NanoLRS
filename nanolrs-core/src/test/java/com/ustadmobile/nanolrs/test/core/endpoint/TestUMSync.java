@@ -19,7 +19,6 @@ import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.UserCustomFields;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
-import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 import com.ustadmobile.nanolrs.core.sync.UMSyncResult;
@@ -35,13 +34,11 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class TestUMSync {

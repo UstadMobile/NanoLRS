@@ -61,6 +61,7 @@ public class SyncStatusManagerOrmLite extends BaseManagerOrmLite implements Sync
         String table_name = convertCamelCaseNameToUnderscored(
                 Character.toLowerCase(entity.getSimpleName().charAt(0)) +
                         entity.getSimpleName().substring(1));
+        table_name = table_name.toUpperCase();
 
         QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
         Where whereHostTableIs = qb.where();
@@ -114,6 +115,7 @@ public class SyncStatusManagerOrmLite extends BaseManagerOrmLite implements Sync
         String table_name = convertCamelCaseNameToUnderscored(
                 Character.toLowerCase(entity.getSimpleName().charAt(0)) +
                         entity.getSimpleName().substring(1));
+        table_name = table_name.toUpperCase();
         QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
         Where whereHostTableIs = qb.where();
         whereHostTableIs.eq(SyncStatusEntity.COLNAME_HOST, host)

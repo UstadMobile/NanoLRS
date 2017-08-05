@@ -1,12 +1,16 @@
 package com.ustadmobile.nanolrs.servlet;
 
 import com.ustadmobile.nanolrs.core.manager.UserManager;
+import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 import com.ustadmobile.nanolrs.util.ServletUtil;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -20,9 +24,9 @@ import javax.servlet.http.HttpSession;
  * Created by varuna on 7/25/2017.
  */
 
-public class HomeViewServlet extends HttpServlet {
+public class LoginViewServlet extends HttpServlet {
 
-    public HomeViewServlet() {
+    public LoginViewServlet() {
         super();
         System.out.println("In HomeViewServlet()..");
     }
@@ -35,17 +39,8 @@ public class HomeViewServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("In HomeViewServlet.doGet()..");
-        HttpSession session=request.getSession();
-        String sessionAdmin = (String)session.getAttribute("admin");
-        if(sessionAdmin != null){
-            if(sessionAdmin.equals("admin")){
-                response.sendRedirect("../Home.jsp");
-            }else{
-                response.sendRedirect("../Login.jsp");
-            }
-        }else {
-            response.sendRedirect("../Login.jsp");
-        }
+
+        response.sendRedirect("../Login.jsp");
     }
 
     @Override
@@ -67,19 +62,36 @@ public class HomeViewServlet extends HttpServlet {
         PersistenceManager pm = PersistenceManager.getInstance();
         UserManager userManager = pm.getManager(UserManager.class);
 
-        //Get headers if any
-        String userUuid = ServletUtil.getHeaderVal(req, UMSyncEndpoint.HEADER_USER_UUID);
-        String username = ServletUtil.getHeaderVal(req, UMSyncEndpoint.HEADER_USER_USERNAME);
-        String password = ServletUtil.getHeaderVal(req, UMSyncEndpoint.HEADER_USER_PASSWORD);
-        String isNewUser = ServletUtil.getHeaderVal(req, UMSyncEndpoint.HEADER_USER_IS_NEW);
-        String nodeUuid = ServletUtil.getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_UUID);
-        String nodetHostName = ServletUtil.getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_HOST);
-        String nodeHostUrl = ServletUtil.getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_URL);
-        String nodeRole = ServletUtil.getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_ROLE);
+        resp.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = resp.getWriter();
+
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
 
 
-        //Disable it like so:
-        super.doPost(req, resp);
+        if(userManager.authenticate(dbContext, username, password)){
+            if(!username.equals("admin")){
+
+                //RequestDispatcher rs = req.getRequestDispatcher("/login/");
+                //rs.include(req, resp);
+                out.println("Sorry, only admins can use this portal.");
+            }else {
+                List<User> users = userManager.findByUsername(dbContext, username);
+                User user = users.get(0);
+                HttpSession session = req.getSession();
+                session.setAttribute("admin", username);
+                //RequestDispatcher rs = getServletContext().getRequestDispatcher("/home/");
+                //rs.forward(req, resp);
+                //resp.sendRedirect("home/");
+                resp.sendRedirect("../Home.jsp");
+            }
+        }
+        else
+        {
+            out.println("Username or Password incorrect");
+            //RequestDispatcher rs = getServletContext().getRequestDispatcher("/login/");
+            //rs.include(req, resp);
+        }
 
     }
 
