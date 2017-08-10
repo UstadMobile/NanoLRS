@@ -56,6 +56,7 @@ public class XapiAgentEndpoint {
         //I think its okay, since the agent's user will get set when its created
         //which is before the sync. The sync will change the user's username
         // not the user assigned. So it should be okay.
+        //User's persist should change itself and all its associated entries in db.
         //Add user to agent
         UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
         /*
@@ -67,10 +68,13 @@ public class XapiAgentEndpoint {
             }
         }
         */
-        User agentUser = userManager.findById(dbContext, accountName);
-        if(agentUser != null){
-            agent.setUser(agentUser);
+        if(accountName != null){
+            User agentUser = userManager.findById(dbContext, accountName);
+            if(agentUser != null){
+                agent.setUser(agentUser);
+            }
         }
+
 
         manager.createOrUpdate(dbContext, agent);
         return agent;
