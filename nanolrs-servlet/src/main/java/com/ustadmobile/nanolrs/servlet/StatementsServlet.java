@@ -1,97 +1,133 @@
 package com.ustadmobile.nanolrs.servlet;
 
-import com.j256.ormlite.jdbc.DataSourceConnectionSource;
-import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
-import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
+import com.ustadmobile.nanolrs.core.manager.UserManager;
+import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Scanner;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
+
+import static com.ustadmobile.nanolrs.util.ServletUtil.*;
 
 /**
  * Created by Varuna on 4/6/2017.
  */
 public class StatementsServlet extends HttpServlet {
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        //ToDo
+    public StatementsServlet() {
+        super();
+        System.out.println("In StatementsServlet()..");
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException{
-        //ToDo
-    }
+    public static final String XAPI_HEADER_AUTH="Authorization";
+    public static final String XAPI_HEADER_VER="X-Experience-API-Version";
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException{
-        response.setContentType("text/plain");
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
+        System.out.println("Statements doGet()..");
+        Object dbContext = getServletContext().getAttribute(NanoLrsContextListener.ATTR_CONNECTION_SOURCE);
+        UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
 
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException{
-        String stmtId = request.getParameter("id");
-        FileInputStream fin = null;
-
-        try{
-            byte[] requestContent = extractPostRequestBody(request).getBytes();
-            JSONObject stmtObj = new JSONObject(new String(requestContent, "UTF-8"));
-            ConnectionSource dbContext2 =
-                    (ConnectionSource)request.getServletContext().getAttribute(
-                            NanoLrsContextListener.ATTR_CONNECTION_SOURCE);
-
-            String storeId = XapiStatementsEndpoint.putStatement(stmtObj, dbContext2);
-            response.setContentType("application/json");
-            response.setStatus(200);
-            /* TODO: Return ID as json */
-            //response.
-
-        }catch(IOException e){
+        //So, we authenticate..
+        System.out.println("StatementsServlet: Authentication started..");
+        String authString = getHeaderVal(request, XAPI_HEADER_AUTH);
+        String xapiVersionString = getHeaderVal(request, XAPI_HEADER_VER);
+        boolean badRequest = false;
+        boolean forbiddenRequest = false;
+        if(authString == null || authString.isEmpty()){
+            System.out.println("StatementsServlet: Null Auth String..");
+            badRequest = true;
+        }
+        if(xapiVersionString == null || xapiVersionString.isEmpty()){
+            System.out.println("StatementsServlet: Null Headers..");
+            badRequest = true;
+        }
+        if(getCredentialStringFromBasicAuth(request) == null){
+            System.out.println("StatementsServlet: Null Credential String..");
+            badRequest = true;
+        }
+        if(badRequest){
+            //SEND BAD REQUEST
+            System.out.println("StatementServlet: BAD request");
             response.setContentType("text/plain");
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }else {
+            String username = getUsernameFromBasicAuth(request);
+            String password = getPasswordFromBasicAuth(request);
 
-        }catch(JSONException j) {
-            response.setContentType("text/plain");
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "JSON Parse exception: " + j.getMessage());
-        }finally {
-            LrsIoUtils.closeQuietly(fin);
+            boolean correctLogin = userManager.authenticate(dbContext, username, password);
+
+            if (correctLogin) {
+                //Authorized OK
+                System.out.println("StatementsServlet: Login OK");
+                response.setContentType("text/plain");
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                //Unauthorized
+                System.out.println("StatementsServlet: Login FAIL");
+                response.setContentType("text/plain");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
         }
     }
 
+
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        getServletContext().log("service() called");
-        //response.getWriter().write("Incrementing the count: count = " + count);
-        if (request.getMethod() == "GET"){
-
-        }else if(request.getMethod() == "PUT"){
-
-        }else if(request.getMethod() == "POST"){
-
-        }else{
-            //Do nothing
-        }
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
     }
 
     @Override
-    public void destroy() {
-        getServletContext().log("destroy() called");
+    protected long getLastModified(HttpServletRequest req) {
+        return super.getLastModified(req);
+    }
+
+    @Override
+    protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doHead(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doPost(req, resp);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doPut(req, resp);
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doDelete(req, resp);
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doOptions(req, resp);
+    }
+
+    @Override
+    protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doTrace(req, resp);
+    }
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.service(req, resp);
+    }
+
+    @Override
+    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+        super.service(req, res);
     }
 
     /* Do this */

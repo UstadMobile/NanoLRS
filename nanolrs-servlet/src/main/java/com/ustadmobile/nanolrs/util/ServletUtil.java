@@ -16,6 +16,28 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ServletUtil {
 
+    public static String getUsernameFromBasicAuth(HttpServletRequest request){
+        String[] credentials = getCredentialStringFromBasicAuth(request);
+        return credentials[0];
+    }
+
+    public static String getPasswordFromBasicAuth(HttpServletRequest request){
+        String[] credentials = getCredentialStringFromBasicAuth(request);
+        return credentials[1];
+    }
+    public static String[] getCredentialStringFromBasicAuth(HttpServletRequest request) {
+        final String authorization = request.getHeader("Authorization");
+        if (authorization != null && authorization.startsWith("Basic")) {
+            // Authorization: Basic base64credentials
+            String base64Credentials = authorization.substring("Basic".length()).trim();
+            String credentials = Base64Coder.decodeString(base64Credentials);
+            // credentials = username:password
+            final String[] values = credentials.split(":", 2);
+            return values;
+        }
+        return null;
+    }
+
     public static String getHeaderVal(HttpServletRequest request, String headerName){
         return request.getHeader(headerName);
     }
@@ -62,5 +84,10 @@ public class ServletUtil {
             out.append(buffer, 0, rsz);
         }
         return out.toString();
+    }
+
+    public static String encodeBasicAuth(String username, String password) {
+        return "Basic " + Base64Coder.encodeString(username +
+                ':' + password);
     }
 }

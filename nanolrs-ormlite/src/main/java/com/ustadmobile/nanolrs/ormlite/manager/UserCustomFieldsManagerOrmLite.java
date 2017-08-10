@@ -47,7 +47,8 @@ public class UserCustomFieldsManagerOrmLite extends BaseManagerOrmLiteSyncable
         QueryBuilder qb = thisDao.queryBuilder();
         QueryBuilder qbSelect = qb.selectColumns(UserCustomFieldsEntity.COLNAME_UUID);
         Where where = qbSelect.where();
-        where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUuid());
+        //where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUuid());
+        where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUsername());
         PreparedQuery pq = qbSelect.prepare();
         List<UserCustomFields> ucfs = thisDao.query(qbSelect.prepare());
 
@@ -85,7 +86,8 @@ public class UserCustomFieldsManagerOrmLite extends BaseManagerOrmLiteSyncable
         Dao thisDao = persistenceManager.getDao(UserCustomFieldsEntity.class, dbContext);
         QueryBuilder qb = thisDao.queryBuilder();
         Where where = qb.where();
-        where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUuid());
+        //where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUuid());
+        where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUsername());
         List<UserCustomFields> ucfs = thisDao.query(qb.prepare());
         return ucfs;
     }
@@ -95,7 +97,8 @@ public class UserCustomFieldsManagerOrmLite extends BaseManagerOrmLiteSyncable
         Dao thisDao = persistenceManager.getDao(UserCustomFieldsEntity.class, dbContext);
         QueryBuilder qb = thisDao.queryBuilder();
         Where where = qb.where();
-        where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUuid())
+        //where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUuid())
+        where.eq(UserCustomFieldsEntity.COLNAME_USER, user.getUsername())
         .and()
         .eq(UserCustomFieldsEntity.COLNAME_FIELD_NAME, field);
         List<UserCustomFields> ucfs = thisDao.query(qb.prepare());

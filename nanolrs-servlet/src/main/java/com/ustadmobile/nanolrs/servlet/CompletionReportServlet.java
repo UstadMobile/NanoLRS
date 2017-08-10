@@ -29,6 +29,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by varuna on 7/25/2017.
@@ -59,10 +60,27 @@ public class CompletionReportServlet extends HttpServlet {
         table_headers_html.put("university_name", "University");
         table_headers_html.put("enrolled", "Status");
 
+        HttpSession session=request.getSession();
+        String sessionAdmin = (String)session.getAttribute("admin");
+        if(sessionAdmin != null){
+            if(sessionAdmin.equals("admin")){
+                request.setAttribute("table_headers_html",table_headers_html);
+                request.setAttribute("static","/syncendpoint/");
+                response.sendRedirect("../CompletionReport.jsp");
+            }else{
+                response.sendRedirect("../../Login.jsp");
+            }
+        }else {
+            response.sendRedirect("../../Login.jsp");
+        }
+
+
+
+        /*
         request.setAttribute("table_headers_html",table_headers_html);
         request.setAttribute("static","/syncendpoint/");
         request.getRequestDispatcher("/reports/CompletionReport.jsp").forward(request, response);
-
+        */
     }
 
     @Override
@@ -178,8 +196,13 @@ public class CompletionReportServlet extends HttpServlet {
             }
 
             for(User user:allUsers) {
+                String username = user.getUsername();
+                if(username.equals("admin")){
+                    //Don't show admins stuff
+                    continue;
+                }
                 JSONObject userInfoJSON = new JSONObject();
-                userInfoJSON.put("username", user.getUsername());
+                userInfoJSON.put("username", username);
                 userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext)); //TODO: Put these somewhere
                 String uni_name = ucfManager.getUserField(user, custom_fields_map.get("university"), dbContext);
 

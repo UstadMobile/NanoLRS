@@ -8,16 +8,17 @@ import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 
 public interface User extends NanoLrsModelSyncable {
 
+
+    String getUuid();
+
+    void setUuid(String id);
+
     /**
      * @nanolrs.primarykey
      *
      * @return
      */
     @PrimaryKeyAnnotationClass(str="pk")
-    String getUuid();
-
-    void setUuid(String id);
-
     public String getUsername();
 
     public void setUsername(String username);

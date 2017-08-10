@@ -39,17 +39,21 @@
 			<!-- Main Content -->
             <div id="content">
 
-                <h2>Welcome, please login:</h2>
+                <h2>Welcome! Please login to view your reports.</h2>
 
                 <div id="toolbarbottom" class="toolbar" >
                 </div>
                 <form method="post" action="login/">
                     <h3>Username:<input id="username" name="username" type="text" name="email" /></h3>
                     <h3>Password:<input id="password" name="password" type="password" name="pass" /><br/><p/>
-                    <input id="submit" name="submit" type="submit" value=" Login " />
+                    <!-- <input id="submit" name="submit" type="submit" value=" Login " /> -->
+					<button id="submit" name="submit" type="submit" >Login</button>
                 </form>
+				
+				<!-- Footer -->
+				<%@include  file="footer.html" %>
             </div>
-    </div>
+		</div>
 
 		
     </body>

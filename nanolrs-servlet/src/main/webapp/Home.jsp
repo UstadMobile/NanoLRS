@@ -44,6 +44,9 @@
 						<!-- <a href="management/"><button id="home2" type="button"style="width:200px;height:100px">Management</button></a> -->
 					</ul>
 				</div>
+				
+				<!-- Footer -->
+				<%@include  file="footer.html" %>
 			</div>
 		</div>
 		

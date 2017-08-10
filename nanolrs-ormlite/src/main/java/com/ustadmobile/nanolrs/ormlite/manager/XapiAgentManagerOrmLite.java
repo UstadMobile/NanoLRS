@@ -102,7 +102,8 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLiteSyncable  impleme
         QueryBuilder<XapiAgentEntity, String> qb = dao.queryBuilder();
         QueryBuilder<XapiAgentEntity, String> qbSelect = qb.selectColumns(XapiAgentEntity.COLNAME_UUID);
         Where where = qbSelect.where();
-        where.eq(XapiAgentEntity.COLNAME_USER, user.getUuid());
+        //where.eq(XapiAgentEntity.COLNAME_USER, user.getUuid());
+        where.eq(XapiAgentEntity.COLNAME_USER, user.getUsername());
         PreparedQuery pq = qbSelect.prepare();
 
         return pq;
@@ -133,7 +134,8 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLiteSyncable  impleme
                 persistenceManager.getDao(XapiAgentEntity.class, dbContext);
         QueryBuilder<XapiAgentEntity, String> qb = dao.queryBuilder();
         Where where = qb.where();
-        where.eq(XapiAgentEntity.COLNAME_USER, user.getUuid());
+        //where.eq(XapiAgentEntity.COLNAME_USER, user.getUuid());
+        where.eq(XapiAgentEntity.COLNAME_USER, user.getUsername());
         PreparedQuery pq = qb.prepare();
         List<XapiAgent> agents = dao.query(pq);
 

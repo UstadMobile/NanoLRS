@@ -26,6 +26,7 @@ import fi.iki.elonen.router.RouterNanoHTTPD;
 
 /**
  * Created by varuna on 7/20/2017.
+ * Were just using this for tests.. This is not complete code for sync handling !
  */
 
 public class SyncUriResponder extends NanoLrsResponder{
@@ -120,9 +121,13 @@ public class SyncUriResponder extends NanoLrsResponder{
 
         UserManager userManager = pm.getManager(UserManager.class);
 
+        /*//Update: Lets not create a new user, let sync handle it..
         if (userManager.authenticate(dbContext, username, password) == false){
-            if(userManager.findByUsername(dbContext, username) == null ||
-                    userManager.findByUsername(dbContext, username).isEmpty()){
+            User user = userManager.findByUsername(dbContext, username);
+            if(user == null){
+            //if(userManager.findByUsername(dbContext, username) == null ||
+            //        userManager.findByUsername(dbContext, username).isEmpty()){
+            //
                 if(isNewUser.equals("true")){
                     //Create the new user
                     try {
@@ -137,6 +142,7 @@ public class SyncUriResponder extends NanoLrsResponder{
                 }
             }
         }
+        */
 
         NodeManager nodeManager = pm.getManager(NodeManager.class);
         Node node = null;

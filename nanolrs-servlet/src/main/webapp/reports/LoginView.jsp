@@ -48,6 +48,8 @@
 				<h2>Login</h2>
 				<h2>Please enter your username and password.</h2>
 				
+				<!-- Footer -->
+				<%@include  file="footer.html" %>
 			</div>
 		</div>
 		

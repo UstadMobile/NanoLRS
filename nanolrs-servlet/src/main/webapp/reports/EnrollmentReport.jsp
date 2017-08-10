@@ -43,7 +43,7 @@
 			//Show result table:
 			function showTable(jsonData) { 
 				console.log("Show Table..");
-				$('#{{report_result}}').dynatable({
+				$('#report_result').dynatable({
 				features: {
 						paginate: true,
 						search: true,
@@ -54,9 +54,10 @@
 				dataset: {records : jsonData}
 				})
 			}
-			
+
+
 			//Dynatable change color
-			function changeColor() {
+			function changeColorOld() {
 				$('#report_result tr td').each(function() {
 					if ($(this).text() == 'false') {
 						$(this).closest('tr').css('background-color', '#f45f42');
@@ -66,11 +67,39 @@
 				});
 			}
 
+			//Dynatable change color
+			function changeColor() {
+				$('#report_result tr td').each(function() {
+					if ($(this).text() == 'false') {
+						//$(this).closest('td').css('background-color', '#f45f42');
+						$(this).closest('td').css('background-image', 'url(cross.svg)');
+						$(this).closest('td').css('background-repeat', 'no-repeat');
+						$(this).closest('td').css('background-position', 'center');
+						$(this).closest('td').css('font-size', '0');
+
+					}
+					if ($(this).text() == 'true'){
+						//$(this).closest('td').css('background-color', '#bbff00');
+						$(this).closest('td').css('background-image', 'url(tick.svg)');
+						$(this).closest('td').css('background-repeat', 'no-repeat');
+						$(this).closest('td').css('background-position', 'center');
+						$(this).closest('td').css('font-size', '0');
+
+					}
+				});
+			}
+
 			var success;
 
 			//ready (jQuery) called before. In Between HTML documents loaded and bbefore all content(images) have been loaded.
 			$(document).ready(function(){
 					console.log("On Ready..");
+					var table = $('#report_result');
+					table.bind('dynatable:afterUpdate', function(e, dynatable){
+						console.log("Fired") ;
+						changeColor();
+					});
+					
                     $('#university').multiselect();
                     var return_json;
 
@@ -159,7 +188,7 @@
 		<!-- Overriding dynatables' row css -->
 		<style>
 			th a{
-				color: black;
+				color: white;
 				padding: 10px;
 				background: none;
 			}
@@ -190,21 +219,22 @@
 				<form id="report_form" name="report_form" action="enrollment/" method="POST">
 					
 					<center>
-						<h2>Enrollment Report</h2>
+						<h2>Enrollment Reports</h2>
 					</center>				
 					
 					<div style="" id="selection" name="selection">
+					 
 					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
-												
+						
 						<select multiple="multiple" name="university" id="university" required>
-							<option selected value="ALL" required>All Universities</option>
-								<option value="Kabul University">Kabul University</option>
-								<option value="Kabul Polytechnic University">Kabul Polytechnic University</option>
-								<option value="Kabul Education University">Kabul Education University</option>
+							<option selected value="ALL" required>All universities</option>
+							<option value="Kabul University">Kabul University</option>
+							<option value="Kabul Polytechnic University">Kabul Polytechnic University</option>
+							<option value="Kabul Education University">Kabul Education University</option>
 						</select>
 						
 						<button id="report_submit" type="submit" 
-							name="report_submit" value="submit-value">Submit</button>
+							name="report_submit" value="submit-value" style="padding: 4.6px 12px;">Filter</button>
 						<p></p>
 						
 					 </div> <!--Alignment div-->
@@ -218,7 +248,7 @@
 					<th data-dynatable-column="username">Username</th>
 					<th data-dynatable-column="university" style="display:none;">Uni id</th>
 					<th data-dynatable-column="university_name">University</th>
-					<th data-dynatable-column="enrolled">Enrolled</th>
+					<th data-dynatable-column="enrolled">Started</th>
 					
 				  </thead>
 				  <tbody></tbody>
@@ -230,6 +260,8 @@
 				</div>
 				<br></br>
 				
+				<!-- Footer -->
+				<%@include  file="footer.html" %>
 			</div> <!--Content div-->
 		</div> <!--Page div-->
 		

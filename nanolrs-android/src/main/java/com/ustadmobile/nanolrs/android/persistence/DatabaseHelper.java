@@ -37,11 +37,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public static final String LOGTAG = "NanoLRS/DatabaseHelper";
 
     /**
-     * Database Name to be used: nanolrs.db was used by previous versions.  From DATABASE_VERSION 11
+     * Database Name to be used: nanolrs.db was used by previous versons.  From DATABASE_VERSION 11
      */
-    private static final String DATABASE_NAME="nanolrs19.db";
+    private static final String DATABASE_NAME="nanolrs21.db";
 
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 21;
 
     private Context context;
 
@@ -64,6 +64,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.i(DatabaseHelper.class.getName(), "onCreate");
 
             for(Class clazz : TABLE_CLASSES) {
+                //TableUtils.createTableIfNotExists(connectionSource, clazz);
                 TableUtils.createTable(connectionSource, clazz);
             }
 

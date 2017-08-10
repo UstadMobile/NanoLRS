@@ -90,8 +90,8 @@ public class UMSyncServlet extends HttpServlet {
         UserManager userManager = pm.getManager(UserManager.class);
 
         if (userManager.authenticate(dbContext, username, password) == false){
-            if(userManager.findByUsername(dbContext, username) == null ||
-                    userManager.findByUsername(dbContext, username).isEmpty()){
+            User existingUser = userManager.findByUsername(dbContext, username);
+            if(existingUser == null){
                 if(isNewUser.equals("true")){
                     //Create the new user
                     try {

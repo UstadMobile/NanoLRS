@@ -23,11 +23,15 @@ public class TestUser {
         User newUser = userManager.createSync(context, UUID.randomUUID().toString());
         newUser.setUsername("testuser");
         userManager.persist(context, newUser);
+        /*
         List<User> usernameList = userManager.findByUsername(context, "testuser");
         Assert.assertEquals(usernameList.size(), 1);
-        Assert.assertEquals(usernameList.get(0).getUsername(), "testuser");
+        */
+        User userGotten = userManager.findByUsername(context, "testuser");
+        Assert.assertNotNull(userGotten);
+        Assert.assertEquals(userGotten.getUsername(), "testuser");
         userManager.delete(context, newUser);
-        usernameList = userManager.findByUsername(context, "testuser");
-        Assert.assertEquals(usernameList.size(), 0);
+        User userGotten2 = userManager.findByUsername(context, "testuser");
+        Assert.assertNull(userGotten2);
     }
 }

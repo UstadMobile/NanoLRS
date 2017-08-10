@@ -45,11 +45,10 @@
 				console.log("Show Table..");
 				$('#{{report_result}}').dynatable({
 				features: {
-						paginate: true,
-						search: true,
-						recordCount: true,
+					paginate: true,
+					search: true,
+					recordCount: true,
 					sorting: true,
-
 					},
 				dataset: {records : jsonData}
 				})
@@ -62,6 +61,7 @@
                         //$(this).closest('td').css('background-color', '#f45f42');
                         $(this).closest('td').css('background-image', 'url(cross.svg)');
                         $(this).closest('td').css('background-repeat', 'no-repeat');
+						$(this).closest('td').css('background-position', 'center');
                         $(this).closest('td').css('font-size', '0');
 
                     }
@@ -69,6 +69,7 @@
                         //$(this).closest('td').css('background-color', '#bbff00');
                         $(this).closest('td').css('background-image', 'url(tick.svg)');
                         $(this).closest('td').css('background-repeat', 'no-repeat');
+						$(this).closest('td').css('background-position', 'center');
                         $(this).closest('td').css('font-size', '0');
 
                     }
@@ -81,6 +82,12 @@
 			//ready (jQuery) called before. In Between HTML documents loaded and bbefore all content(images) have been loaded.
 			$(document).ready(function(){
 				console.log("On Ready..");
+				console.log("On Ready..");
+					var table = $('#report_result');
+					table.bind('dynatable:afterUpdate', function(e, dynatable){
+						console.log("Fired") ;
+						changeColor();
+					});
 				$('#university').multiselect();
 				var return_json;
 
@@ -162,6 +169,9 @@
 			}
 
 
+			$('#report_result').change( function(){
+				changeColor();
+			} );
 
 
 		</script>
@@ -200,21 +210,21 @@
 				<form id="report_form" name="report_form" action="completion/" method="POST">
 
 					<center>
-						<h2>Completion Report</h2>
+						<h2>Completion Reports</h2>
 					</center>
 
 					<div style="" id="selection" name="selection">
 					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
 
 						<select multiple="multiple" name="university" id="university" required>
-							<option selected value="ALL" required>All Universities</option>
-								<option value="Kabul University">Kabul University</option>
-								<option value="Kabul Polytechnic University">Kabul Polytechnic University</option>
-								<option value="Kabul Education University">Kabul Education University</option>
+							<option selected value="ALL" required>All universities</option>
+							<option value="Kabul University">Kabul University</option>
+							<option value="Kabul Polytechnic University">Kabul Polytechnic University</option>
+							<option value="Kabul Education University">Kabul Education University</option>
 						</select>
 
 						<button id="report_submit" type="submit"
-							name="report_submit" value="submit-value">Submit</button>
+							name="report_submit" value="submit-value" style="padding: 4.6px 12px;">Filter</button>
 						<p></p>
 
 					 </div> <!--Alignment div-->
@@ -228,10 +238,10 @@
 					<th data-dynatable-column="username">Username</th>
 					<th data-dynatable-column="university" style="display:none;">Uni id</th>
 					<th data-dynatable-column="university_name">University</th>
-					<th data-dynatable-column="m1">CV Writing</th>
-					<th data-dynatable-column="m2">Cover Letter</th>
-					<th data-dynatable-column="m3">Job Search Skills</th>
-					<th data-dynatable-column="m4">Interview</th>
+					<th data-dynatable-column="m1" style="width:15%;" >CV Writing</th>
+					<th data-dynatable-column="m2" style="width:15%;" >Cover Letter Writing</th>
+					<th data-dynatable-column="m3" style="width:15%;" >Job Search Skills</th>
+					<th data-dynatable-column="m4" style="width:15%;" >Job Interview Skills</th>
 
 				  </thead>
 				  <tbody></tbody>
@@ -243,8 +253,12 @@
 				</div>
 				<br></br>
 
+				<!-- Footer -->
+				<%@include  file="footer.html" %>
 			</div> <!--Content div-->
 		</div> <!--Page div-->
+		
+		
 		
     </body>
 </html>

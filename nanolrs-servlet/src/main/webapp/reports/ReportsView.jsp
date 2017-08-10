@@ -22,6 +22,18 @@
 			);
 			
 		</script>
+		
+		<style>
+		.buttonstyle{
+			width:200px;
+			height:100px;
+			background:none;
+			background-color:#2196f3;
+			color: white;
+			box-shadow: none;
+			font-weight: normal;
+		}
+		</style>
 	</head>
 	
     <body>
@@ -43,8 +55,8 @@
 				
 				<div id="toolbarbottom" class="toolbar" >
 					<ul>
-					    <a href="EnrollmentReport.jsp"><button id="report3" type="button"style="width:200px;height:100px;">Enrollment Report</button></a>
-                        <a href="CompletionReport.jsp"><button id="report4" type="button"style="width:200px;height:100px;">Completion Report</button></a>
+					    <a href="EnrollmentReport.jsp"><button id="report3" type="button" style="width:200px;height:100px" >ENROLLMENT REPORTS</button></a>
+                        <a href="CompletionReport.jsp"><button id="report4" type="button" style="width:200px;height:100px" >COMPLETION REPORTS</button></a>
 
 						<!--
 						<a href="DurationReport.jsp"><button id="report1" type="button"style="width:200px;height:100px">Duration Report</button></a>
@@ -54,6 +66,9 @@
 
 					</ul>
 				</div>
+				
+				<!-- Footer -->
+				<%@include  file="footer.html" %>
 			</div>
 		</div>
 		

@@ -53,6 +53,7 @@ public class TestUMSync {
         endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
         context = NanoLrsPlatformTestUtil.getContext();
 
+        //comment all before commit:
         //PersistenceManager.getInstance().forceInit(endpointContext);
         //TODO: Check if we need to remove below or keep it :
         //PersistenceManager.getInstance().forceInit(context);
@@ -131,13 +132,15 @@ public class TestUMSync {
 
         //Create a user: thebestuser
         String newUserId1 = UUID.randomUUID().toString();
+        String newUserUsername = "thebestuser";
         User newUser = (User)userManager.makeNew();
         newUser.setUuid(newUserId1);
-        newUser.setUsername("thebestuser");
+        newUser.setUsername(newUserUsername);
         userManager.persist(context, newUser);
 
         //Test that the user's local sequence number got created and set.
-        User theUser = (User)userManager.findByPrimaryKey(context, newUserId1);
+        //User theUser = (User)userManager.findByPrimaryKey(context, newUserId1);
+        User theUser = (User)userManager.findByPrimaryKey(context, newUserUsername);
         long seqNumber = theUser.getLocalSequence();
         long newUserId1DateCreated = theUser.getDateCreated();
         Assert.assertNotNull(seqNumber);
@@ -146,7 +149,8 @@ public class TestUMSync {
         theUser.setNotes("Update01");
         userManager.persist(context, theUser);
         //You need to get the user object again from the manager
-        User updatedUser = (User) userManager.findByPrimaryKey(context, newUserId1);
+        //User updatedUser = (User) userManager.findByPrimaryKey(context, newUserId1);
+        User updatedUser = (User) userManager.findByPrimaryKey(context, newUserUsername);
         long updatedSeqNumber = updatedUser.getLocalSequence();
         Assert.assertEquals(updatedSeqNumber, seqNumber + 1);
 
@@ -245,8 +249,10 @@ public class TestUMSync {
         sst = ssManager.getAllEntities(endpointContext);
 
         //Create a user update on endpoint
+        //User userOnEndpoint = (User)userManager.findByPrimaryKey(
+        //        endpointContext, testingUser.getUuid());
         User userOnEndpoint = (User)userManager.findByPrimaryKey(
-                endpointContext, testingUser.getUuid());
+                endpointContext, testingUser.getUsername());
         UserCustomFields newUserCustomFieldOnEndpoint = (UserCustomFields)ucfManager.makeNew();
         newUserCustomFieldOnEndpoint.setUuid(UUID.randomUUID().toString());
         newUserCustomFieldOnEndpoint.setUser(userOnEndpoint);

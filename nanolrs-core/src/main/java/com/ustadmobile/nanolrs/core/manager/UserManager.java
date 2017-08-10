@@ -15,7 +15,7 @@ public interface UserManager extends NanoLrsManagerSyncable {
 
     User findById(Object dbContext, String id);
 
-    List<User> findByUsername(Object dbContext, String username);
+    User findByUsername(Object dbContext, String username);
 
     void delete(Object dbContext, User data);
 

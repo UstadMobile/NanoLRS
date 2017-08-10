@@ -39,7 +39,15 @@ public class LoginViewServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("In HomeViewServlet.doGet()..");
-
+        HttpSession session = request.getSession();
+        Object loggedInUsernameObj = session.getAttribute("username");
+        String loggedInUsername="";
+        if(loggedInUsernameObj != null){
+            loggedInUsername = loggedInUsernameObj.toString();
+        }
+        if (loggedInUsername.equals("admin")) {
+            response.sendRedirect("../reports/ReportsView.jsp");
+        }
         response.sendRedirect("../Login.jsp");
     }
 
@@ -76,14 +84,15 @@ public class LoginViewServlet extends HttpServlet {
                 //rs.include(req, resp);
                 out.println("Sorry, only admins can use this portal.");
             }else {
-                List<User> users = userManager.findByUsername(dbContext, username);
-                User user = users.get(0);
+                //List<User> users = userManager.findByUsername(dbContext, username);
+                //User user = users.get(0);
+                User user = userManager.findByUsername(dbContext, username);
                 HttpSession session = req.getSession();
                 session.setAttribute("admin", username);
                 //RequestDispatcher rs = getServletContext().getRequestDispatcher("/home/");
                 //rs.forward(req, resp);
                 //resp.sendRedirect("home/");
-                resp.sendRedirect("../Home.jsp");
+                resp.sendRedirect("../reports/ReportsView.jsp");
             }
         }
         else

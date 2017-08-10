@@ -47,6 +47,8 @@
 				<h2>Score Report</h2>
 				<h2>Select your parameters</h2>
 				
+				<!-- Footer -->
+				<%@include  file="footer.html" %>
 			</div>
 		</div>
 		

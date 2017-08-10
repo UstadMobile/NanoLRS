@@ -59,6 +59,12 @@
         <servlet-class>com.ustadmobile.nanolrs.servlet.CompletionReportServlet</servlet-class>
     </servlet>
 
+    <!--STATEMENTS-->
+    <servlet-mapping>
+        <servlet-name>StatementsServlet</servlet-name>
+        <url-pattern>/statements/</url-pattern>
+    </servlet-mapping>
+
     <!--UMSYNC-->
     <servlet-mapping>
         <servlet-name>UMSyncServlet</servlet-name>
@@ -109,6 +115,10 @@
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>*.html</url-pattern>
+    </servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.ico</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name>

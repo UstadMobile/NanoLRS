@@ -86,6 +86,9 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         //Get user speific uuids
         List<String> uuidList = new ArrayList<>();
         List<NanoLrsModel> blank = new ArrayList<>();
+        if(user == null){
+            return blank;
+        }
         //Get user's specific subQuery:
         PreparedQuery<NanoLrsModel> subQueryPQ = findAllRelatedToUserQuery(dbContext, user);
         if(subQueryPQ == null){
@@ -110,14 +113,17 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         QueryBuilder<NanoLrsModel, String> qbIfMasterSeqNull = thisDao.queryBuilder();
         Where whereMasterSeqNullAndCSGTSN = qbIfMasterSeqNull.where();
         Long to = toSeqNum;
+        //whereMasterSeqNullAndCSGTSN.eq("master_sequence", 0);
+        //Updated to reflect master seq as -1 for new user registrations
+        whereMasterSeqNullAndCSGTSN.lt("master_sequence", 1);
         if(toSeqNum == 0 && fromSeqNum ==0){
-            whereMasterSeqNullAndCSGTSN.eq("master_sequence", 0).and()
+            whereMasterSeqNullAndCSGTSN.and()
                     .gt("local_sequence", fromSeqNum);
         }else if(to != -1){
-            whereMasterSeqNullAndCSGTSN.eq("master_sequence", 0).and()
+            whereMasterSeqNullAndCSGTSN.and()
                     .gt("local_sequence", fromSeqNum).and().lt("local_sequence", toSeqNum);
         }else{
-            whereMasterSeqNullAndCSGTSN.eq("master_sequence", 0).and()
+            whereMasterSeqNullAndCSGTSN.and()
                     .gt("local_sequence", fromSeqNum);
         }
 
@@ -184,6 +190,14 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
                 if (thisNode.isMaster()) {
                     dataS.setMasterSequence(setThis);
                 }else{
+                    //only for users, but if not synced yet, we maintain master as -1
+                    //this ensures that is new header is set to true.
+                    //Its the syncs responsibiliy to change this.
+                    //we just maintain its value here while user is updated but still not
+                    //synced with master/created.
+                    if (dataS.getMasterSequence() == -1) {
+                        dataS.setMasterSequence(0);
+                    }
                     dataS.setMasterSequence(0);
                 }
             }

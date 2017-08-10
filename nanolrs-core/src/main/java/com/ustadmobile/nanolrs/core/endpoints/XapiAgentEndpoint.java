@@ -58,6 +58,7 @@ public class XapiAgentEndpoint {
         // not the user assigned. So it should be okay.
         //Add user to agent
         UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
+        /*
         List<User> usersWithAgentName = userManager.findByUsername(dbContext, accountName);
         User agentUser = null;
         if(usersWithAgentName != null && !usersWithAgentName.isEmpty()){
@@ -65,6 +66,8 @@ public class XapiAgentEndpoint {
                 agentUser = usersWithAgentName.get(0);
             }
         }
+        */
+        User agentUser = userManager.findById(dbContext, accountName);
         if(agentUser != null){
             agent.setUser(agentUser);
         }

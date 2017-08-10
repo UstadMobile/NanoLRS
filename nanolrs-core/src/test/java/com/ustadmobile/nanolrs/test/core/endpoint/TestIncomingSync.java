@@ -33,16 +33,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class TestIncomingSync {
 
@@ -56,9 +53,10 @@ public class TestIncomingSync {
         endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
         context = NanoLrsPlatformTestUtil.getContext();
 
-        PersistenceManager.getInstance().forceInit(endpointContext);
+        //PersistenceManager.getInstance().forceInit(endpointContext);
         //TODO: Check if we need to remove below or keep it :
-        PersistenceManager.getInstance().forceInit(context);
+        //uncomment before commit
+        //PersistenceManager.getInstance().forceInit(context);
     }
 
 
@@ -111,7 +109,11 @@ public class TestIncomingSync {
         testingUser.setUuid(newTestingUserID);
         testingUser.setUsername("newtestinguser");
         testingUser.setPassword("secret");
-        userManager.persist(context, testingUser);
+        //Because its a new registration/user:
+        testingUser.setMasterSequence(-1);
+        Long setThis = changeSeqManager.getNextChangeAddSeqByTableName(tableName, 1, context);
+        testingUser.setLocalSequence(setThis);
+        userManager.persist(context, testingUser, false);
 
         //Create this node
         Node thisNode = (Node) nodeManager.makeNew();
@@ -132,14 +134,16 @@ public class TestIncomingSync {
         int initialUserCount = userManager.getAllEntities(context).size();
 
         //Create a user: thebestuser
+        String bestUsername = "thebestuser";
         String newUserId1 = UUID.randomUUID().toString();
         User newUser = (User)userManager.makeNew();
         newUser.setUuid(newUserId1);
-        newUser.setUsername("thebestuser");
+        newUser.setUsername(bestUsername);
         userManager.persist(context, newUser);
 
         //Test that the user's local sequence number got created and set.
-        User theUser = (User)userManager.findByPrimaryKey(context, newUserId1);
+        //User theUser = (User)userManager.findByPrimaryKey(context, newUserId1);
+        User theUser = (User)userManager.findByPrimaryKey(context, bestUsername);
         long seqNumber = theUser.getLocalSequence();
         long newUserId1DateCreated = theUser.getDateCreated();
         Assert.assertNotNull(seqNumber);
@@ -148,7 +152,8 @@ public class TestIncomingSync {
         theUser.setNotes("Update01");
         userManager.persist(context, theUser);
         //You need to get the user object again from the manager
-        User updatedUser = (User) userManager.findByPrimaryKey(context, newUserId1);
+        //User updatedUser = (User) userManager.findByPrimaryKey(context, newUserId1);
+        User updatedUser = (User) userManager.findByPrimaryKey(context, bestUsername);
         long updatedSeqNumber = updatedUser.getLocalSequence();
         Assert.assertEquals(updatedSeqNumber, seqNumber + 1);
 
@@ -271,7 +276,7 @@ public class TestIncomingSync {
                 "        \"localSequence\": 3,\n" +
                 "        \"masterSequence\": 0,\n" +
                 "        \"storedDate\": 1501284886320,\n" +
-                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"user\": \"varunas3\",\n" +
                 "        \"uuid\": \"7df83cdd-8cc5-47c1-9b60-d69caec89b87\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiAgent\"\n" +
                 "    }, {\n" +
@@ -282,7 +287,7 @@ public class TestIncomingSync {
                 "        \"localSequence\": 16,\n" +
                 "        \"masterSequence\": 0,\n" +
                 "        \"storedDate\": 1501284886277,\n" +
-                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"user\": \"varunas3\",\n" +
                 "        \"uuid\": \"454c8b62-af53-4ba1-b4f3-4740af498ddb\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
@@ -293,7 +298,7 @@ public class TestIncomingSync {
                 "        \"localSequence\": 15,\n" +
                 "        \"masterSequence\": 0,\n" +
                 "        \"storedDate\": 1501284886267,\n" +
-                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"user\": \"varunas3\",\n" +
                 "        \"uuid\": \"47d1719e-4e8f-4631-8212-71cf7177e117\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
@@ -304,7 +309,7 @@ public class TestIncomingSync {
                 "        \"localSequence\": 17,\n" +
                 "        \"masterSequence\": 0,\n" +
                 "        \"storedDate\": 1501284886287,\n" +
-                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"user\": \"varunas3\",\n" +
                 "        \"uuid\": \"7e777297-d66f-40f0-85ee-4c8d22fcf785\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
@@ -315,7 +320,7 @@ public class TestIncomingSync {
                 "        \"localSequence\": 14,\n" +
                 "        \"masterSequence\": 0,\n" +
                 "        \"storedDate\": 1501284886258,\n" +
-                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"user\": \"varunas3\",\n" +
                 "        \"uuid\": \"a5b17531-3bc3-4eea-8313-826caa342c7d\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
@@ -326,7 +331,7 @@ public class TestIncomingSync {
                 "        \"localSequence\": 13,\n" +
                 "        \"masterSequence\": 0,\n" +
                 "        \"storedDate\": 1501284886247,\n" +
-                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"user\": \"varunas3\",\n" +
                 "        \"uuid\": \"c1d50ff3-3c64-468b-98f1-a3b1d8db8b2f\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
@@ -337,7 +342,7 @@ public class TestIncomingSync {
                 "        \"localSequence\": 18,\n" +
                 "        \"masterSequence\": 0,\n" +
                 "        \"storedDate\": 1501284886295,\n" +
-                "        \"user\": \"4cc15a2e-f040-4be9-9bcd-34bf7949c376\",\n" +
+                "        \"user\": \"varunas3\",\n" +
                 "        \"uuid\": \"df9fa627-9f8c-463d-9b38-d0ed8711df08\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }],\n" +
@@ -345,7 +350,7 @@ public class TestIncomingSync {
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.User\",\n" +
                 "        \"tableName\": \"user\",\n" +
                 "        \"count\": 1,\n" +
-                "        \"pk\": \"uuid\"\n" +
+                "        \"pk\": \"username\"\n" +
                 "    }, {\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiStatement\",\n" +
                 "        \"tableName\": \"xapi_statement\",\n" +
@@ -410,8 +415,11 @@ public class TestIncomingSync {
         //Create a user update on endpoint
         String value1 = "The next room";
         String value2 = "The Matrix has you";
-        User userOnEndpoint = (User)userManager.findByPrimaryKey(
-                endpointContext, testingUser.getUuid());
+
+        //User userOnEndpoint = (User)userManager.findByPrimaryKey(
+        //        endpointContext, testingUser.getUuid());
+        User userOnEndpoint =
+                (User)userManager.findByPrimaryKey(endpointContext, testingUser.getUsername());
         UserCustomFields newUserCustomFieldOnEndpoint = (UserCustomFields)ucfManager.makeNew();
         newUserCustomFieldOnEndpoint.setUuid(UUID.randomUUID().toString());
         newUserCustomFieldOnEndpoint.setUser(userOnEndpoint);
@@ -432,6 +440,8 @@ public class TestIncomingSync {
                 "    \"info\": []\n" +
                 "}";
 
+        //Update headers, not new anymore:
+        headers.put(UMSyncEndpoint.HEADER_USER_IS_NEW, "false");
         InputStream emptyValidStream =
                 new ByteArrayInputStream(emptyValidJSONString.getBytes(encoding));
         UMSyncResult incomingSyncResultNullButShouldHaveResponseEntities =

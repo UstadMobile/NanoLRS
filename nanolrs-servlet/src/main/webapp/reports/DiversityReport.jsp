@@ -47,6 +47,8 @@
 				<h2>Diversity Report</h2>
 				<h2>Select your parameters</h2>
 				
+				<!-- Footer -->
+				<%@include  file="footer.html" %>
 			</div>
 		</div>
 		

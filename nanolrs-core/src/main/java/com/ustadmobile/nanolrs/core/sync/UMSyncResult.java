@@ -55,6 +55,9 @@ public class UMSyncResult {
     }
 
     public Object getHeader(String headerName){
+        if(headers == null){
+            return null;
+        }
         if(headers.containsKey(headerName)){
             return this.headers.get(headerName);
         }else{

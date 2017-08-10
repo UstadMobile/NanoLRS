@@ -44,23 +44,6 @@ public class TestUMSyncResponder  extends Mockito {
 
         final ServletConfig servletConfig = mock(ServletConfig.class);
 
-        String entitiesAsJSONString =
-                "{    \"data\" : " +
-                        "[" +
-                        //New Entry
-                        "{\"localSequence\":5,\"storedDate\":\"" + "0" + "\",\"dateCreated\":\"" + "0" + "\",\"masterSequence\":0,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" +  "test1" + "\",\"username\":\"test\"}" +
-
-                        "]" +
-                        ", \"info\" :" + "" +
-                        " [" +
-                        "{\"pCls\" : \"com.ustadmobile.nanolrs.core.model.User\",\"tableName\" : \"User\",\"count\" : " + "1" + ", \"pk\":\"uuid\"}" +
-                        //"{\"pCls\" : \"com.ustadmobile.nanolrs.core.model.AnotherEntity\",\"tableName\" : \"AnotherEntity\",\"count\" : 0, \"pk\":\"uuid\"}" +
-                        "]" +
-                        "}"
-                ;
-        final byte[] jsonRequestBytes = entitiesAsJSONString.getBytes();
-
-
         String method = "POST";
         String httpUsername = "username";
         String httpPassword = "password";
@@ -68,6 +51,23 @@ public class TestUMSyncResponder  extends Mockito {
         String registration=null;
         String stateId="test_state_id";
         String contentType="application/json";
+
+        String entitiesAsJSONString =
+                "{    \"data\" : " +
+                        "[" +
+                        //New Entry
+                        "{\"localSequence\":5,\"storedDate\":\"" + "0" + "\",\"dateCreated\":\"" + "0" + "\",\"masterSequence\":0,\"dateModifiedAtMaster\":0,\"pCls\":\"com.ustadmobile.nanolrs.core.model.User\",\"uuid\":\"" +  "test1" + "\",\"username\":\"test\",\"password\":\"secret\"}" +
+
+                        "]" +
+                        ", \"info\" :" + "" +
+                        " [" +
+                        "{\"pCls\" : \"com.ustadmobile.nanolrs.core.model.User\",\"tableName\" : \"User\",\"count\" : " + "1" + ", \"pk\":\"username\"}" +
+                        //"{\"pCls\" : \"com.ustadmobile.nanolrs.core.model.AnotherEntity\",\"tableName\" : \"AnotherEntity\",\"count\" : 0, \"pk\":\"uuid\"}" +
+                        "]" +
+                        "}"
+                ;
+        final byte[] jsonRequestBytes = entitiesAsJSONString.getBytes();
+
 
         Hashtable parameters = new Hashtable();
         parameters.clear();
@@ -80,7 +80,7 @@ public class TestUMSyncResponder  extends Mockito {
         headers.put(UMSyncEndpoint.HEADER_USER_UUID,"test1");
         headers.put(UMSyncEndpoint.HEADER_USER_USERNAME,"test");
         headers.put(UMSyncEndpoint.HEADER_USER_PASSWORD,"secret");
-        headers.put(UMSyncEndpoint.HEADER_USER_IS_NEW,"true");
+        headers.put(UMSyncEndpoint.HEADER_USER_IS_NEW,"false"); //Not new anymore..
         headers.put(UMSyncEndpoint.HEADER_NODE_UUID,"client1");
         headers.put(UMSyncEndpoint.HEADER_NODE_NAME,"client1");
         headers.put(UMSyncEndpoint.HEADER_NODE_ROLE, "client");
