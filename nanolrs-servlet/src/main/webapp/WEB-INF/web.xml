@@ -62,7 +62,7 @@
     <!--STATEMENTS-->
     <servlet-mapping>
         <servlet-name>StatementsServlet</servlet-name>
-        <url-pattern>/statements/</url-pattern>
+        <url-pattern>/statements</url-pattern>
     </servlet-mapping>
 
     <!--UMSYNC-->
