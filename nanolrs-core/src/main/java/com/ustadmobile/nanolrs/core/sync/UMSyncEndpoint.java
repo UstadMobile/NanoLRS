@@ -68,6 +68,7 @@ public class UMSyncEndpoint {
     private static HashMap<String, Class> proxyNameToClassMap = new HashMap<>();
     private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();
 
+    //TODO: Change all our headers to X-UM-<name>
     public static final String HEADER_NODE_NAME = "nodename";
     public static final String HEADER_NODE_HOST = "nodehost";
     public static final String HEADER_NODE_URL = "nodeurl";
@@ -607,6 +608,7 @@ public class UMSyncEndpoint {
             }
 
             //Get pendingEntities since the last sync status for this host
+            //TODO: lingo of method name
             List<NanoLrsModel> pendingEntitesToBeSynced=
                     syncableEntityManager.getAllSinceTwoSequenceNumber(thisUser, node.getHost(),
                             fromSyncSeq, toSyncSeq, dbContext);
@@ -661,7 +663,7 @@ public class UMSyncEndpoint {
 
         HttpURLConnection con = null;
         OutputStream out = null;
-        OutputStreamWriter outw = null;
+//        OutputStreamWriter outw = null;
         try {
             URL url = new URL(destURL);
             con = (HttpURLConnection) url.openConnection();
@@ -677,23 +679,12 @@ public class UMSyncEndpoint {
                 con.setRequestProperty(REQUEST_ACCEPT, contentType);
             }
 
-            if(!dataJSON.equals(null) && dataJSON.length()>0 && content == null){
-                int cl = dataJSON.toString().getBytes().length;
-                con.setFixedLengthStreamingMode(cl);
-                //con.setFixedLengthStreamingMode(dataJSON.toString().getBytes().length());
-
-                outw = new OutputStreamWriter(con.getOutputStream());
-                outw.write(dataJSON.toString());
-                outw.flush();
+            byte[] payload;
+            if(dataJSON != null && dataJSON.length() > 0) {
+                payload = dataJSON.toString().getBytes("UTF-8");
             }else if(content != null){
-                con.setFixedLengthStreamingMode(content.length);
-                out = con.getOutputStream();
-                out.write(content);
-                out.flush();
-                out.close();
-                out = null;
+                payload = content;
             }else if(parameters != null && method.equalsIgnoreCase("POST")){
-                //Build String from param map
                 String paramString = "";
                 Iterator paramIterator = parameters.entrySet().iterator();
                 while(paramIterator.hasNext()){
@@ -705,15 +696,56 @@ public class UMSyncEndpoint {
                     paramString = paramString + amp + thisParameter.getKey() + "=" +
                             thisParameter.getValue();
                 }
-                byte[] postData = paramString.getBytes(UTF_ENCODING);
-                int postDataLength = postData.length;
-                con.setRequestProperty( REQUEST_CONTENT_LENGTH, Integer.toString( postDataLength ));
-                //con.setUseCaches( false );
-
-                outw = new OutputStreamWriter(con.getOutputStream());
-                outw.write(paramString);
-                outw.flush();
+                payload = paramString.getBytes(UTF_ENCODING);
+            }else {
+                throw new IllegalArgumentException("Invalid arguments to makeSyncRequest");
             }
+
+            con.setFixedLengthStreamingMode(payload.length);
+            out = con.getOutputStream();
+            out.write(payload);
+            out.flush();
+
+
+//            if(dataJSON != null && dataJSON.length()>0 && content == null){
+//                byte[] jsonPayload = dataJSON.toString().getBytes("UTF-8");
+//                int cl = jsonPayload.length;
+//                con.setFixedLengthStreamingMode(cl);
+//                //con.setFixedLengthStreamingMode(dataJSON.toString().getBytes().length());
+//
+////                outw = new OutputStreamWriter(con.getOutputStream());
+//                out = con.getOutputStream();
+//                out.write(jsonPayload);
+//                out.flush();
+//            }else if(content != null){
+//                con.setFixedLengthStreamingMode(content.length);
+//                out = con.getOutputStream();
+//                out.write(content);
+//                out.flush();
+//                out.close();
+//                out = null;
+//            }else if(parameters != null && method.equalsIgnoreCase("POST")){
+//                //Build String from param map
+//                String paramString = "";
+//                Iterator paramIterator = parameters.entrySet().iterator();
+//                while(paramIterator.hasNext()){
+//                    Map.Entry thisParameter = (Map.Entry)paramIterator.next();
+//                    String amp = "";
+//                    if(paramString != ""){
+//                        amp = "&";
+//                    }
+//                    paramString = paramString + amp + thisParameter.getKey() + "=" +
+//                            thisParameter.getValue();
+//                }
+//                byte[] postData = paramString.getBytes(UTF_ENCODING);
+//                int postDataLength = postData.length;
+//                con.setRequestProperty( REQUEST_CONTENT_LENGTH, Integer.toString( postDataLength ));
+//                //con.setUseCaches( false );
+//
+//                //outw = new OutputStreamWriter(con.getOutputStream());
+//                //outw.write(paramString);
+//                //outw.flush();
+//            }
 
             int statusCode = con.getResponseCode();
             response.setStatus(statusCode);
@@ -727,14 +759,6 @@ public class UMSyncEndpoint {
             if(out != null) {
                 try { out.close(); }
                 catch(IOException e) {}
-            }
-            if(outw != null){
-                try{ outw.close();}
-                catch(IOException ioe){}
-            }
-            if(con != null) {
-                //con.disconnect();
-                //TODO: Check, disabled because it makes InputStream invalid
             }
         }
 
@@ -1075,7 +1099,6 @@ public class UMSyncEndpoint {
                             thisUser.setUuid(UUID.randomUUID().toString());
                         }
                         thisUser.setPassword(userPassword);
-                        //TODO: If the user statement is coming, do we need to set a local seq? Check this logic
                         /*
                         long newUserLocalSeq =
                                 changeSeqManager.getNextChangeAddSeqByTableName(tableName,
@@ -1107,6 +1130,7 @@ public class UMSyncEndpoint {
                 }
                 if(thisNode.isProxy()){
                     //Proxy. Create it here? or we wait till syncs with master ?
+                    //TODO: Yes. Let this allow.
                     System.out.println("\nProxy here. I don't have the new user syncing with me.\n" +
                             "Don't think I'm going to accept user from client. I'll wait till I sync with master instead.\n");
                 }
@@ -1245,6 +1269,7 @@ public class UMSyncEndpoint {
      * Handles sync process : gets all entites to be synced from syncstatus seqnum and
      * builds entities list to convert to json array to send in a request to host's
      * syncURL endpoint
+     * TODO: sync entities as object
      * @param node : The server, client, proxy, etc
      * @return
      */
@@ -1294,7 +1319,6 @@ public class UMSyncEndpoint {
             thisUser.setMasterSequence(0);
             userManager.persist(dbContext, thisUser, false);
         }
-
 
         //The JSON to send back
         JSONObject pendingEntitiesWithInfo;
@@ -1373,6 +1397,8 @@ public class UMSyncEndpoint {
                     thisUser.setUsername(newUsername);
                     userManager.persist(dbContext, thisUser);
                     //TODO: Update all statements as well. (either here or in usermanager's persist)
+
+                    //TODO: Delete the old User (since it will still exist)
                 }
             }
         }
@@ -1398,6 +1424,7 @@ public class UMSyncEndpoint {
                 }
             }
             //Get sync conflict data
+            //TODO: remove extra layers
             JSONObject syncResultConflictJSON = null;
             if(syncResultAllResponseJSON.optJSONObject("data") != null){
                 if(syncResultAllResponseJSON.optJSONObject("data").optJSONObject("data") != null){

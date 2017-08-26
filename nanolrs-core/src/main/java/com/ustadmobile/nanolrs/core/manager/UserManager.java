@@ -2,6 +2,8 @@ package com.ustadmobile.nanolrs.core.manager;
 
 import com.ustadmobile.nanolrs.core.model.User;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -11,15 +13,53 @@ import java.util.List;
 
 public interface UserManager extends NanoLrsManagerSyncable {
 
+    /**
+     *
+     * @param dbContext
+     * @param id
+     * @return
+     */
     User createSync(Object dbContext, String id);
 
+    /**
+     * Find users by id .
+     * @param dbContext Databse context
+     * @param id ID field
+     * @return
+     */
     User findById(Object dbContext, String id);
 
+    /**
+     * Find users by username (pk)
+     * @param dbContext Database context
+     * @param username  Username (pk)
+     * @return
+     */
     User findByUsername(Object dbContext, String username);
 
+    /**
+     * Deletes the user. Not finished.
+     * @param dbContext
+     * @param data
+     */
     void delete(Object dbContext, User data);
 
+    /**
+     * Authenticate locally the user with given username, password
+     * @param dbContext Database Context
+     * @param username  User's username (pk)
+     * @param password  User's password to check against.
+     * @return true if success, false if fail
+     */
     boolean authenticate(Object dbContext, String username, String password);
 
+    /**
+     * Save password in user table as a hash
+     * @param password  User's password in plain text
+     * @param dbContext Database context
+     * @return  true if password update a success, fail if not.
+     */
+    boolean updatePassword(String password, User user, Object dbContext)
+            throws UnsupportedEncodingException, NoSuchAlgorithmException, SQLException ;
 
 }

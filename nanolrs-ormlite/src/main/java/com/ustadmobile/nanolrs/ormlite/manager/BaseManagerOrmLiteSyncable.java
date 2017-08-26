@@ -195,10 +195,11 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
                     //Its the syncs responsibiliy to change this.
                     //we just maintain its value here while user is updated but still not
                     //synced with master/created.
-                    if (dataS.getMasterSequence() == -1) {
+                    //TODO Check this. Might be redundant
+                    if (dataS.getMasterSequence() != -1) {
                         dataS.setMasterSequence(0);
                     }
-                    dataS.setMasterSequence(0);
+                    //dataS.setMasterSequence(0);
                 }
             }
         }else if(nextChangeSeq > 0){

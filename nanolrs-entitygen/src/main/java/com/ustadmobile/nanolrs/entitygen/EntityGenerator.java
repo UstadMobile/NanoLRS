@@ -62,6 +62,18 @@ public abstract class EntityGenerator {
         return primaryKeyJavaDocTags != null && primaryKeyJavaDocTags.size() > 0;
     }
 
+    /**
+     * Returns true is this getter method represents a password key - look for the @nanolrs.password
+     * javadoc tag.
+     *
+     * @param method Getter method to check
+     * @return true if mehtod javadoc contains the nanolrs.password tag, else false.
+     */
+    protected boolean isPasswordField(MethodSource method){
+        List<JavaDocTag> passwordKeyJavaDocTags = method.getJavaDoc().getTags("@nanolrs.password");
+        return passwordKeyJavaDocTags != null && passwordKeyJavaDocTags.size() > 0;
+    }
+
 
     /**
      * Converts a property name from e.g. from fullName to full_name

@@ -45,7 +45,7 @@ public class TestIncomingSync {
 
     public static Object context;
 
-    public static Object endpointContext;
+    public Object endpointContext;
 
 
     @Before
@@ -62,11 +62,6 @@ public class TestIncomingSync {
 
     @Test
     public void testLifecycle() throws Exception {
-        //Get the endpoint connectionSource from platform db pool
-        if(endpointContext == null) {
-            Object endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
-        }
-
         //Create an endpoint server
         NanoLrsHttpd httpd = new NanoLrsHttpd(0, endpointContext);
 

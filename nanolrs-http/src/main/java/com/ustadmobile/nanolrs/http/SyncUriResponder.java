@@ -121,28 +121,6 @@ public class SyncUriResponder extends NanoLrsResponder{
 
         UserManager userManager = pm.getManager(UserManager.class);
 
-        /*//Update: Lets not create a new user, let sync handle it..
-        if (userManager.authenticate(dbContext, username, password) == false){
-            User user = userManager.findByUsername(dbContext, username);
-            if(user == null){
-            //if(userManager.findByUsername(dbContext, username) == null ||
-            //        userManager.findByUsername(dbContext, username).isEmpty()){
-            //
-                if(isNewUser.equals("true")){
-                    //Create the new user
-                    try {
-                        User newUser = (User)userManager.makeNew();
-                        newUser.setUuid(userUuid);
-                        newUser.setUsername(username);
-                        newUser.setPassword(password);
-                        userManager.persist(dbContext, newUser);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        */
 
         NodeManager nodeManager = pm.getManager(NodeManager.class);
         Node node = null;

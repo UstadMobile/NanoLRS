@@ -23,6 +23,10 @@ public interface User extends NanoLrsModelSyncable {
 
     public void setUsername(String username);
 
+    /**
+     * @nanolrs.password
+     * @return
+     */
     public String getPassword();
 
     public void setPassword(String password);

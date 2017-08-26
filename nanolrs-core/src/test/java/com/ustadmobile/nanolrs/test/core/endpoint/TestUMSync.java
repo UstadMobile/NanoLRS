@@ -43,9 +43,9 @@ import java.util.concurrent.TimeUnit;
 
 public class TestUMSync {
 
-    public static Object context;
+    public Object context;
 
-    public static Object endpointContext;
+    public Object endpointContext;
 
 
     @Before
