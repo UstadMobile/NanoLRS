@@ -13,6 +13,7 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
 
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -79,16 +80,21 @@ public class XapiAgentManagerOrmLite extends BaseManagerOrmLiteSyncable  impleme
     public List<NanoLrsModelSyncable> findAllRelatedToUser(Object dbContext, User user)
             throws SQLException{
 
-        //TODO: fix this (althought not used right now)
+        //TODODone: fix this (althought not used right now)
+        //Update: Made another list of NanoLrsModelSyncable and returning it.
         XapiAgentManager agentManager =
                 PersistenceManager.getInstance().getManager(XapiAgentManager.class);
 
         List<XapiAgent> usersCorrespondingAgents = agentManager.findByUser(dbContext, user);
+        List<NanoLrsModelSyncable> usersCorrespondingAgentsSyncable = null;
+        Iterator<XapiAgent> agentIterator = usersCorrespondingAgents.iterator();
+        while(agentIterator.hasNext()){
+            usersCorrespondingAgentsSyncable.add((XapiAgent)agentIterator.next());
+        }
         XapiAgent userCorrespondingAgent;
         if(usersCorrespondingAgents != null &&
-                !usersCorrespondingAgents.isEmpty() ){
-            //return usersCorrespondingAgents;
-            return null;
+                !usersCorrespondingAgents.isEmpty() && usersCorrespondingAgentsSyncable != null ){
+            return usersCorrespondingAgentsSyncable;
         }else{
             return null;
         }

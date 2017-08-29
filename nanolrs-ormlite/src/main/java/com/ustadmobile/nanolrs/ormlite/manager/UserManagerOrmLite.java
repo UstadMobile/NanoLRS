@@ -112,9 +112,6 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
     }
 
     /**
-     * TODO: Only delete users if superuser/admin or someone who is authorized
-     * TODO: Only delete users if everything related to it doesnt depend on this entry
-     * TODO: Only delete users if everything that does depend has exist with this gone;
      * TODO: Don't delete, set active=False
      * @param dbContext
      * @param data

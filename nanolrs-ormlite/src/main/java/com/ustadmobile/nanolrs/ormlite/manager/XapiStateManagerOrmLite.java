@@ -42,7 +42,7 @@ public class XapiStateManagerOrmLite extends BaseManagerOrmLiteSyncable implemen
     @Override
     public List<NanoLrsModelSyncable> findAllRelatedToUser(Object dbContext, User user)
             throws SQLException {
-        //TODO: (although not used right now..)
+        //Not Used right now.
         return null;
     }
 
@@ -72,7 +72,8 @@ public class XapiStateManagerOrmLite extends BaseManagerOrmLiteSyncable implemen
         PreparedQuery pq = xapiStateSelectQB.prepare();
 
 
-        //TODO: maybe we need to do more like get all state from statement's activity?
+        //TODODone: maybe we need to do more like get all state from statement's activity?
+        //Update: Ignoring, as we get it from
         //XapiStatement's dao, qb and where:
         Dao<XapiStatementEntity, String> xapiStatementDao =
                 persistenceManager.getDao(XapiStatementEntity.class, dbContext);

@@ -203,7 +203,7 @@ public class CompletionReportServlet extends HttpServlet {
                 }
                 JSONObject userInfoJSON = new JSONObject();
                 userInfoJSON.put("username", username);
-                userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext)); //TODO: Put these somewhere
+                userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext));
                 String uni_name = ucfManager.getUserField(user, custom_fields_map.get("university"), dbContext);
 
                 System.out.println("Should I skip?");

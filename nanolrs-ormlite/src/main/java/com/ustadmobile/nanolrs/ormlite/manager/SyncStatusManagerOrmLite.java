@@ -56,7 +56,8 @@ public class SyncStatusManagerOrmLite extends BaseManagerOrmLite implements Sync
 
     @Override
     public long getSentStatus(String host, Class entity, Object dbContext) throws SQLException {
-        //TODO: Can this go in core?
+        //TODODone: Can this go in core?
+        //Update: This stays here.
         Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
         String table_name = convertCamelCaseNameToUnderscored(
                 Character.toLowerCase(entity.getSimpleName().charAt(0)) +

@@ -15,7 +15,7 @@ public class SimpleTest {
         //Get the connectionSource from platform db pool (from NanoLrsPlatformTestUtil)
         Object context = NanoLrsPlatformTestUtil.getContext();
 
-        //TODO: Write tests here..
+        //Write tests here..
         Assert.assertEquals(1,1);
     }
 }

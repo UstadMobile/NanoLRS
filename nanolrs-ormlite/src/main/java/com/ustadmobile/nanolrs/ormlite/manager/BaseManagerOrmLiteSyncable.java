@@ -195,7 +195,8 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
                     //Its the syncs responsibiliy to change this.
                     //we just maintain its value here while user is updated but still not
                     //synced with master/created.
-                    //TODO Check this. Might be redundant
+                    //TODODone Check this. Might be redundant
+                    //Update: keeping this
                     if (dataS.getMasterSequence() != -1) {
                         dataS.setMasterSequence(0);
                     }
@@ -210,21 +211,18 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         super.persist(dbContext, dataS);
     }
 
-
     @Override
     public long getLatestMasterSequence(Object dbContext) throws SQLException {
-        //TODO:
+        //TODO: Figure out master seq bit esp for Proxy
         return 42;
     }
 
-    //TODO: Think of adding these in
-    /*
+    /*We may need to implement the following to make getting related entries easier. Consider.
     public abstract List<T> findAllViewableByUser(Object dbContext, User user);
 
     public abstract List<T> findAllViewableByUserSinceSeq(Object dbContext, User user, long sinceSeq);
 
     public abstract List<T> findAllEditableByUser(Object dbContext, User user);
-
     */
 
     public abstract List<NanoLrsModel> findAllRelatedToUser(Object dbContext, User user) throws SQLException;

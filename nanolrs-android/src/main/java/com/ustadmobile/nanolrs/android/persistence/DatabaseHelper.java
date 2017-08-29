@@ -135,7 +135,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 PersistenceManager.getInstance().getManager(NodeManager.class);
         String thisNodeUUID = UUID.randomUUID().toString();
         String thisNodeUrl = "set-my-url";
-        //TODO: Check if we want to get device's name & info
+        //TODODone: Check if we want to get device's name & info
+        //Update: Sticking with UUID for now
         String thisNodeName = "node:" + thisNodeUUID;
 
         nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName,

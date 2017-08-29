@@ -82,13 +82,13 @@ public class TestStatementsUriResponder extends Mockito {
         String stmtStr = LrsIoUtils.inputStreamToString(stmtIn);
 
 
-        /* TODO: contiue this
+        /*  contiue this
         //create POST body here
         ByteArrayInputStream statementByteArrayInputStream =
                 new ByteArrayInputStream(stmtStr.getBytes());
         ServletInputStream servletInputStream = new ServletInputStream(){
             public int read() throws IOException {
-                //TODO: fix this
+                // fix this
                 //return statementByteArrayInputStream.read();
                 return 0;
             }
@@ -107,7 +107,7 @@ public class TestStatementsUriResponder extends Mockito {
         verify(response).setStatus(200);
 
         */
-        /* TODO: Return Check ID as json */
+        /* Return Check ID as json */
     }
 
 }

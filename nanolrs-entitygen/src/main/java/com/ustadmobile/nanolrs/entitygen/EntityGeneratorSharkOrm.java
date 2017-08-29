@@ -45,7 +45,8 @@ public class EntityGeneratorSharkOrm extends EntityGenerator{
 
         Iterator<MethodSource<JavaInterfaceSource>> iterator = proxyInterface.getMethods().iterator();
         while(iterator.hasNext()) {
-            //TODO: make a method that does the getter finding to share
+            //TODODone: make a method that does the getter finding to share
+            //Update: Leaving it here as its only used once here
             MethodSource<JavaInterfaceSource> method = iterator.next();
             String methodPrefix = null;
             if(method.getName().startsWith("is"))

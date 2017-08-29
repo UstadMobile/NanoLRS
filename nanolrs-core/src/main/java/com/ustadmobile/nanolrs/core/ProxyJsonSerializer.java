@@ -46,7 +46,9 @@ public class ProxyJsonSerializer {
 
     private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();
 
-    //TODO: Find a central place for this and other mappings..
+    //TODO: Find a central place for this and other mappings.
+    //Better to have these in a central place that get auto generated.
+
     static {
         proxyNameToClassMap.put(User.class.getName(), User.class);
         proxyClassToManagerMap.put(User.class, UserManager.class);
@@ -189,8 +191,9 @@ public class ProxyJsonSerializer {
                     Object entity_id = value;
                     Class relatedObjProxy = getterMethod.getReturnType();
 
-                    //TODO:
-                    // Don't look up Just set it. (DB Managers will do an insert)
+                    //TODODone: Don't look up Just set it. (DB Managers will do an insert)
+                    //Update: Looking up works out better.
+
                     //look up entity by this id
                     NanoLrsModel relatedObj = relatedManager.findByPrimaryKey(context, value);
                     // if doesn't exist, create a blank one.
