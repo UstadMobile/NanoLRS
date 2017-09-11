@@ -175,7 +175,7 @@ public class ProxyJsonSerializer {
                 if(!(getterMethod.getReturnType().isPrimitive() ||
                         getterMethod.getReturnType().equals(String.class)))
                 {
-                    System.out.println("RELATIONSHIP!");
+                    //System.out.println("RELATIONSHIP!");
 
                     Class relatedProxyClass = ModelManagerMapping.proxyNameToClassMap.get(getterMethod.getReturnType().getName());
                     Class realtedManagerClass = ModelManagerMapping.proxyClassToManagerMap.get(relatedProxyClass);

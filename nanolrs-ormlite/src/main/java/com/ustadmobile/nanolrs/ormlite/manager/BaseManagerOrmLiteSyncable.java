@@ -139,7 +139,9 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
         if(foundAllWhereMSNullAndCSGTSN.isEmpty()) {
             QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
             Where whereNotSent = qb.where();
-            whereNotSent.gt("master_sequence", fromSeqNum);
+            //whereNotSent.gt("master_sequence", fromSeqNum);
+            //Update Sep 11th: Since updates, master will be 0 or -1 so we compare with local_seq
+            whereNotSent.gt("local_sequence", fromSeqNum);
             //added this to only check for this user !
             whereNotSent.and().in(pkField, uuidList);
             PreparedQuery<NanoLrsModel> getAllNewPreparedQuery = qb.prepare();

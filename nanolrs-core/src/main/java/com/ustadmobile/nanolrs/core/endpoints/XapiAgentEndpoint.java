@@ -38,10 +38,21 @@ public class XapiAgentEndpoint {
 
     public static XapiAgent createOrUpdate(Object dbContext, String mbox, String accountName, String accountHomepage){
         XapiAgentManager manager = PersistenceManager.getInstance().getManager(XapiAgentManager.class);
+        //Add user to agent
+        UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
         List<XapiAgent> matchingAgents = manager.findAgentByParams(
                 dbContext, mbox, accountName, accountHomepage);
 
         if(matchingAgents != null && matchingAgents.size() > 0) {
+            //Map user to agent if not already done.
+            XapiAgent mappedAgent = matchingAgents.get(0);
+            if(mappedAgent.getUser() == null){
+                User agentUser = userManager.findById(dbContext, accountName);
+                if(agentUser != null){
+                    mappedAgent.setUser(agentUser);
+                    manager.createOrUpdate(dbContext, mappedAgent);
+                }
+            }
             return matchingAgents.get(0);
         }
 
@@ -60,8 +71,7 @@ public class XapiAgentEndpoint {
         //Update: Sync cannot proceed without valid User and username.
         //If username gets changed, userManager.updateUsername(..) changes agent mapping
 
-        //Add user to agent
-        UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
+
         /*
         List<User> usersWithAgentName = userManager.findByUsername(dbContext, accountName);
         User agentUser = null;

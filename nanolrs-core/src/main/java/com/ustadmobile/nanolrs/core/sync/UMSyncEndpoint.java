@@ -505,6 +505,8 @@ public class UMSyncEndpoint {
                 thisNodeRole = "proxy";
             }
             headers.put(HEADER_NODE_ROLE, thisNodeRole);
+
+            headers.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
         }
 
         return headers;
@@ -712,6 +714,22 @@ public class UMSyncEndpoint {
     }
 
     /**
+     * Get response headers from connection
+     * @param conn  HttpURLConnection object
+     * @return  Map of response headers
+     */
+    public static Map<String, String> getHeadersFromRequest(HttpURLConnection conn){
+        Map<String, String> headers = new HashMap<>();
+        for (Map.Entry<String, List<String>> entries : conn.getHeaderFields().entrySet()) {
+            String values = "";
+            for (String value : entries.getValue()) {
+                values += value + ",";
+                headers.put(entries.getKey(), value);
+            }
+        }
+        return headers;
+    }
+    /**
      * Makes Sync Request with given JSON, headers, etc. Returns a UMSyncResult object
      * @param destURL
      * @param method
@@ -772,6 +790,7 @@ public class UMSyncEndpoint {
             out.flush();
 
             int statusCode = con.getResponseCode();
+            response.setHeaders(getHeadersFromRequest(con));
             response.setStatus(statusCode);
             response.setResponseData(con.getInputStream());
             response.setResponseLength(con.getContentLength());
