@@ -135,10 +135,13 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
 
 
         //If no new entities that have updates
+        //TODO: Problem here. FIX IT! DONT SEND ALL!
         if(foundAllWhereMSNullAndCSGTSN.isEmpty()) {
             QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
             Where whereNotSent = qb.where();
             whereNotSent.gt("master_sequence", fromSeqNum);
+            //added this to only check for this user !
+            whereNotSent.and().in(pkField, uuidList);
             PreparedQuery<NanoLrsModel> getAllNewPreparedQuery = qb.prepare();
             List<NanoLrsModel> foundNewEntriesListModel = thisDao.query(getAllNewPreparedQuery);
 
@@ -213,7 +216,7 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
 
     @Override
     public long getLatestMasterSequence(Object dbContext) throws SQLException {
-        //TODO: Figure out master seq bit esp for Proxy
+        //TODO: PROXY: Figure out master seq bit esp for Proxy
         return 42;
     }
 

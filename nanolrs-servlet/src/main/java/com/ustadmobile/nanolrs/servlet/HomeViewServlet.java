@@ -39,7 +39,8 @@ public class HomeViewServlet extends HttpServlet {
         String sessionAdmin = (String)session.getAttribute("admin");
         if(sessionAdmin != null){
             if(sessionAdmin.equals("admin")){
-                response.sendRedirect("../reports/ReportsView.jsp");
+                //response.sendRedirect("../reports/ReportsView.jsp");
+                request.getRequestDispatcher("../reports/").forward(request, response);
             }else{
                 response.sendRedirect("../Login.jsp");
             }

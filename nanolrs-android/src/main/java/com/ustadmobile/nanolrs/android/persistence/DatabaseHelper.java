@@ -3,27 +3,19 @@ package com.ustadmobile.nanolrs.android.persistence;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.ustadmobile.nanolrs.android.service.UMSyncService;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
-import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.NodeEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.SyncStatusEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.UserCustomFieldsEntity;
+import com.ustadmobile.nanolrs.ormlite.generated.EntitiesToTable;
 import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.XapiActivityEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.XapiAgentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiDocumentEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.XapiForwardingStatementEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStateEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStatementEntity;
-import com.ustadmobile.nanolrs.ormlite.generated.model.XapiVerbEntity;
+
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -47,25 +39,35 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private Dao<XapiStatementEntity, Integer> mXapiStatementDao;
 
+    //TODO: Get these from build properties
+    public static String DEFAULT_MAIN_SERVER_HOST_NAME = "umcloud1svlt";
+    public static String DEFAULT_MAIN_SERVER_NAME = "umcloud1 servlet";
+    public static String DEFAULT_MAIN_SERVER_ROLE = "main";
+    //public static String DEFAULT_MAIN_SERVER_URL = "https://umcloud1.ustadmobile.com:8545/syncendpoint/";
+    public static String DEFAULT_MAIN_SERVER_URL =
+            "https://umcloud1.ustadmobile.com:8086/syncendpoint/";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
         this.context = context;
     }
 
+    /*
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
             XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
             UserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class, ChangeSeqEntity.class,
             SyncStatusEntity.class, NodeEntity.class, UserCustomFieldsEntity.class
     };
+    */
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             Log.i(DatabaseHelper.class.getName(), "onCreate");
 
-            for(Class clazz : TABLE_CLASSES) {
-                //TableUtils.createTableIfNotExists(connectionSource, clazz);
-                TableUtils.createTable(connectionSource, clazz);
+            for(Class clazz : EntitiesToTable.TABLE_CLASSES) {
+                TableUtils.createTableIfNotExists(connectionSource, clazz);
+                //TableUtils.createTable(connectionSource, clazz);
             }
 
             try {
@@ -81,8 +83,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
     }
-
-
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
@@ -109,10 +109,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     private void checkAndCreateMainNode() throws SQLException {
-        String mainNodeName = UMSyncService.DEFAULT_MAIN_SERVER_NAME;
-        String mainNodeHostName = UMSyncService.DEFAULT_MAIN_SERVER_HOST_NAME;
-        String mainNodeEndpointUrl = UMSyncService.DEFAULT_MAIN_SERVER_URL;
-        String mainNodeRole = UMSyncService.DEFAULT_MAIN_SERVER_ROLE;
+        String mainNodeName = DEFAULT_MAIN_SERVER_NAME;
+        String mainNodeHostName = DEFAULT_MAIN_SERVER_HOST_NAME;
+        String mainNodeEndpointUrl = DEFAULT_MAIN_SERVER_URL;
+        String mainNodeRole = DEFAULT_MAIN_SERVER_ROLE;
         String mainNodeUUID = UUID.randomUUID().toString();
 
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
@@ -127,6 +127,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             mainNode.setHost(mainNodeHostName);
             mainNode.setStoredDate(System.currentTimeMillis());
             nodeManager.persist(context,mainNode);
+        }else{
+            //Check if URL is up to date (eg: http -> https)
+            Node mainNode = nodeManager.getMainNode(mainNodeHostName, context);
+            if(!mainNode.getUrl().equals(mainNodeEndpointUrl)){
+                //update url
+                mainNode.setUUID(mainNodeEndpointUrl);
+                nodeManager.persist(context,mainNode);
+            }
         }
     }
 

@@ -62,4 +62,15 @@ public interface UserManager extends NanoLrsManagerSyncable {
     boolean updatePassword(String password, User user, Object dbContext)
             throws UnsupportedEncodingException, NoSuchAlgorithmException, SQLException ;
 
+    /**
+     * Updates the username for an existing user and updates the Xapi_Agent mapping as well.
+     * @param username
+     * @param user
+     * @param dbContext
+     * @return
+     * @throws SQLException
+     */
+    boolean updateUsername(String username, User user, Object dbContext)
+        throws SQLException;
+
 }

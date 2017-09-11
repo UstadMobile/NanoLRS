@@ -85,6 +85,8 @@ public class UMSyncServlet extends HttpServlet {
         String nodeHostUrl = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_URL);
         String nodeRole = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_ROLE);
 
+        String syncStatus = getHeaderVal(req, UMSyncEndpoint.RESPONSE_SYNCED_STATUS);
+
         PersistenceManager pm = PersistenceManager.getInstance();
 
         UserManager userManager = pm.getManager(UserManager.class);
@@ -148,6 +150,8 @@ public class UMSyncServlet extends HttpServlet {
         reqHeaders.put(UMSyncEndpoint.HEADER_NODE_URL, nodeHostUrl);
         reqHeaders.put(UMSyncEndpoint.HEADER_NODE_ROLE, nodeRole);
 
+        reqHeaders.put(UMSyncEndpoint.RESPONSE_SYNCED_STATUS, UMSyncEndpoint.RESPONSE_SYNC_OK);
+
         Map<String, String> reqParams = new HashMap<>();
 
         //reqHeaders = getHeadersFromRequest(req);
@@ -170,6 +174,15 @@ public class UMSyncServlet extends HttpServlet {
         String statusMessage="";
         switch(result.getStatus()) {
             case 200:
+                //Update only if sync OK
+                if(result.getHeader(UMSyncEndpoint.RESPONSE_SYNCED_STATUS).equals(UMSyncEndpoint.RESPONSE_SYNC_OK)){
+                    //Update sync status
+                    try {
+                        UMSyncEndpoint.updateSyncStatus(result, node, dbContext);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
                 statusMessage.equals("OK");
                 break;
             default:
@@ -183,7 +196,8 @@ public class UMSyncServlet extends HttpServlet {
         resp.setContentLength((int)result.getResponseLength());
 
         ServletOutputStream sos = resp.getOutputStream();
-        //TODO: this Check this
+        //TODODone: this Check this
+        //Update: Been working OK. passing..
         String responseDataString = convertStreamToString(result.getResponseData(), UMSyncEndpoint.UTF_ENCODING);
         byte[] responseDataBytes = responseDataString.getBytes();
         sos.write(responseDataBytes);

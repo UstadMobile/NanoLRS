@@ -3,6 +3,7 @@ package com.ustadmobile.nanolrs.test.core.endpoint;
  * Created by varuna on 7/20/2017.
  */
 
+import com.j256.ormlite.table.TableUtils;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsEndpoint;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
@@ -26,13 +27,16 @@ import com.ustadmobile.nanolrs.core.util.LrsIoUtils;
 import com.ustadmobile.nanolrs.http.NanoLrsHttpd;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,21 +51,35 @@ public class TestUMSync {
 
     public Object endpointContext;
 
+    private static boolean setUpIsDone = false;
 
     @Before
     public void setUp() throws Exception{
+        //making sure setup is only called once in this test instance
+
         endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
         context = NanoLrsPlatformTestUtil.getContext();
 
-        //comment all before commit:
-        //PersistenceManager.getInstance().forceInit(endpointContext);
-        //TODO: Check if we need to remove below or keep it :
-        //PersistenceManager.getInstance().forceInit(context);
+        if (!setUpIsDone) {
+            //comment ALL before commit:
+            //TODODone: Check if we need to remove below or keep it :
+            //Update: Problem is If exists isn't there on JDBC. Added check.
+            //          Also not throwing exception in init..
+            try {
+                PersistenceManager.getInstance().forceInit(endpointContext);
+                PersistenceManager.getInstance().forceInit(context);
+            }catch (Exception s){
+                System.out.println("Ignoring DB Create Exception in tests");
+            }
+            setUpIsDone = true;
+        }
+        setUpIsDone = true;
+
     }
 
 
     @Test
-    public void testLifecycle() throws Exception {
+    public void testSync() throws Exception {
         //Get the endpoint connectionSource from platform db pool
         if(endpointContext == null) {
             Object endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();

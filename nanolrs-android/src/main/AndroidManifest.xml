@@ -9,12 +9,15 @@
     <application
         android:allowBackup="true"
         android:supportsRtl="true">
+        <!-- Disabling Statemetn Forwarding Service. Taken over by SyncJob
         <service
             android:name=".service.XapiStatementForwardingService"
             android:enabled="true"
             android:exported="true">
         </service>
+        -->
 
+        <!-- Disabling Sync Service. Taken over by SyncJob. Slowing it down before removing it completely -->
         <service
             android:name=".service.UMSyncService"
             android:enabled="true"

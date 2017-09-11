@@ -40,10 +40,27 @@ public class SyncUriResponder extends NanoLrsResponder{
     }
 
     private String getHeaderVal(NanoHTTPD.IHTTPSession session, String headerName){
+
+        //Enabling support for old header names.
+        String oldHeaderName = null;
+        if(headerName.startsWith("X-UM-")){
+            oldHeaderName = headerName.substring("X-UM-".length(), headerName.length());
+        }
+        if(session.getHeaders().get(headerName) == null){
+            String value = session.getHeaders().get(oldHeaderName);
+            if(value!= null){
+                System.out.println("OLD HEADER VALUE");
+            }
+            return value;
+        }
+        return session.getHeaders().get(headerName);
+
+        /*
         if(session.getHeaders().containsKey(headerName)) {
             return session.getHeaders().get(headerName);
         }
         return null;
+        */
     }
 
     public static String convertStreamToString2(InputStream is, String encoding) throws IOException {

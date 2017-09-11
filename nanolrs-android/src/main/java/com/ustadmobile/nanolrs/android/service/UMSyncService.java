@@ -18,6 +18,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
+ *
  * Created by varuna on 7/23/2017.
  */
 
@@ -35,12 +36,12 @@ public class UMSyncService extends Service {
     private Node endNode;
 
     //Frequency of forwarding statements ( in ms ?) [ 60k = 1 minute ]
-    public static int FORWARD_INTERVAL = 120000;
+    public static int FORWARD_INTERVAL = 300000; //5 minutes slowed down
 
     public static String DEFAULT_MAIN_SERVER_HOST_NAME = "umcloud1svlt";
     public static String DEFAULT_MAIN_SERVER_NAME = "umcloud1 servlet";
     public static String DEFAULT_MAIN_SERVER_ROLE = "main";
-    public static String DEFAULT_MAIN_SERVER_URL = "http://umcloud1.ustadmobile.com:8545/syncendpoint/";
+    public static String DEFAULT_MAIN_SERVER_URL = "https://umcloud1.ustadmobile.com:8545/syncendpoint/";
 
     public UMSyncService() {
     }
@@ -73,7 +74,7 @@ public class UMSyncService extends Service {
 
     @Override
     public void onCreate() {
-        System.out.println("onCreate UMSyncService..");
+        System.out.println("UMSyncService: onCreate ");
         mTimer = new Timer();
         mTimer.scheduleAtFixedRate(new UMSyncTimerTask(), FORWARD_INTERVAL, FORWARD_INTERVAL);
         setContext();
@@ -83,14 +84,14 @@ public class UMSyncService extends Service {
     public class UMSyncTimerTask extends TimerTask {
         public void run() {
             try {
-                System.out.println("starting sync UMSyncTimerTask ..");
+                System.out.println("  UMSyncService: UMSyncTimerTask ..");
                 if(loggedInUser != null && endNode != null && context != null){
                     //Attempt to set the user and node
 
-                    System.out.println("\nUMSYNC: All valid: Starting Sync.");
+                    System.out.println("\n  UMSyncService: All valid: Starting Sync for user: " + loggedInUser.getUsername());
                     UMSyncEndpoint.startSync(loggedInUser, endNode, context);
                 }else{
-                    System.out.println("\nUMSYNC: Cannot start sync. User and Node not set.\n");
+                    System.out.println("\n  UMSyncService: Cannot start sync. User and Node not set.\n");
                 }
 
             } catch (SQLException e) {

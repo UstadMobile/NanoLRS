@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.ustadmobile.nanolrs.core.model.UserCustomFields;
+import com.ustadmobile.nanolrs.ormlite.generated.EntitiesToTable;
 import com.ustadmobile.nanolrs.ormlite.generated.model.ChangeSeqEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.NodeEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.SyncStatusEntity;
@@ -47,7 +48,7 @@ public class PersistenceManagerJDBC extends PersistenceManagerORMLite {
     public void init(ConnectionSource connectionSource) {
         try {
             System.out.println("onCreate");
-            for(Class clazz : TABLE_CLASSES) {
+            for(Class clazz : EntitiesToTable.TABLE_CLASSES) {
                 TableUtils.createTableIfNotExists(connectionSource, clazz);
             }
             initRan = true;
@@ -57,12 +58,14 @@ public class PersistenceManagerJDBC extends PersistenceManagerORMLite {
         }
     }
 
+    /*
     public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class,
             XapiAgentEntity.class, XapiStatementEntity.class, XapiVerbEntity.class,
             XapiForwardingStatementEntity.class, UserEntity.class, XapiDocumentEntity.class,
             XapiStateEntity.class, ChangeSeqEntity.class, SyncStatusEntity.class,
             NodeEntity.class, UserCustomFieldsEntity.class
     };
+    */
 
 
 }

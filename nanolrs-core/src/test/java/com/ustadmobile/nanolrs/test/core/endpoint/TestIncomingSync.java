@@ -47,21 +47,33 @@ public class TestIncomingSync {
 
     public Object endpointContext;
 
+    private static boolean setUpIsDone = false;
 
     @Before
     public void setUp() throws Exception{
+        //making sure setup is only called once in this test instance
+
         endpointContext = NanoLrsPlatformTestUtil.getSyncEndpointContext();
         context = NanoLrsPlatformTestUtil.getContext();
 
-        PersistenceManager.getInstance().forceInit(endpointContext);
-        //TODO: Check if we need to remove below or keep it :
-        //uncomment before commit
-        PersistenceManager.getInstance().forceInit(context);
+        if (!setUpIsDone) {
+            //comment ALL before commit:
+            //TODODone: Check if we need to remove below or keep it :
+            //Update: Problem is If exists isn't there on JDBC. Added check.
+            //          Also not throwing exception in init..
+            try {
+                PersistenceManager.getInstance().forceInit(endpointContext);
+                PersistenceManager.getInstance().forceInit(context);
+            }catch (Exception s){
+                System.out.println("Ignoring DB Create Exception in tests");
+            }
+            setUpIsDone = true;
+        }
+        setUpIsDone = true;
     }
 
-
     @Test
-    public void testLifecycle() throws Exception {
+    public void testIncomingSync() throws Exception {
         //Create an endpoint server
         NanoLrsHttpd httpd = new NanoLrsHttpd(0, endpointContext);
 
@@ -710,4 +722,6 @@ public class TestIncomingSync {
         Assert.assertNotNull(incomingSyncResult);
         httpd.stop();
     }
+
+
 }

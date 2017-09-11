@@ -14,6 +14,9 @@ public class UMSyncResult {
 
     int status;
     Map headers;
+    //Post sync when we send back return entities,
+    // its sync status would need updating on success sync
+    Map<Class, Long> postSyncChangeSeqMap;
 
     private InputStream responseData;
     private long responseLength;
@@ -38,12 +41,29 @@ public class UMSyncResult {
         this.responseLength = responseLength;
     }
 
+    public UMSyncResult(int status, Map headers, InputStream responseData,
+                        long responseLength, Map<Class,Long> postSyncChangeSeqMap) {
+        this.status = status;
+        this.headers = headers;
+        this.responseData = responseData;
+        this.responseLength = responseLength;
+        this.postSyncChangeSeqMap = postSyncChangeSeqMap;
+    }
+
     public int getStatus() {
         return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public Map<Class, Long> getPostSyncChangeSeqMap() {
+        return postSyncChangeSeqMap;
+    }
+
+    public void setPostSyncChangeSeqMap(Map<Class, Long> postSyncChangeSeqMap) {
+        this.postSyncChangeSeqMap = postSyncChangeSeqMap;
     }
 
     public Map getHeaders() {
@@ -54,7 +74,28 @@ public class UMSyncResult {
         this.headers = headers;
     }
 
-    public Object getHeader(String headerName){
+    public String getHeader(String headerName){
+        //Enabling support for old header names.
+        String oldHeaderName = null;
+        if(headerName.startsWith("X-UM-")){
+            oldHeaderName = headerName.substring("X-UM-".length(), headerName.length());
+        }
+        if(getHeaderObj(headerName) == null){
+            if(getHeaderObj(oldHeaderName) != null) {
+                String value = getHeaderObj(oldHeaderName).toString();
+                //if (value != null) {
+                //    System.out.println("OLD HEADER VALUE");
+                //}
+                return value;
+            }else{
+                return "";
+            }
+        }
+        return getHeaderObj(headerName).toString();
+    }
+
+    public Object getHeaderObj(String headerName){
+
         if(headers == null){
             return null;
         }

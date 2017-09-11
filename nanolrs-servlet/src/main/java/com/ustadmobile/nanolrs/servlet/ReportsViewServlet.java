@@ -33,8 +33,9 @@ public class ReportsViewServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("In ReportsViewServlet.doGet()..");
-
-        response.sendRedirect("ReportsView.jsp");
+        request.setAttribute("test", "test");
+        //response.sendRedirect("ReportsView.jsp");
+        request.getRequestDispatcher("ReportsView.jsp").forward(request, response);
     }
 
     @Override

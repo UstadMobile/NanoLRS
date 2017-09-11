@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by mike on 1/15/17.
@@ -157,6 +158,22 @@ public class EntityGeneratorSharkOrm extends EntityGenerator{
         FileUtils.write(outputHeaderFile, headerFileSb, "UTF-8");
         FileUtils.write(outputModuleFile, moduleFileSb, "UTF-8");
     }
+
+    @Override
+    public void generateMapping(Map<File, File> proxiesWithManagers, File mappingFile,
+                                String mappingDirPackage, String modelPackage,
+                                String managerPackage) throws IOException {
+        //TODO: this
+        System.out.println("IMPLEMENT THIS!");
+    }
+
+    @Override
+    public void generateTableList(File[] proxyInterfaceFiles, File entityDir, File tableListFile,
+                                  String tableListPackage) throws IOException {
+        //TODO: this
+        System.out.println("NOT IMPLEMENTED. PLEASE IMPLEMENT THIS!");
+    }
+
 
     /**
      * For a given java source object (which has a name and a package) convert the name to the

@@ -5,9 +5,12 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
+import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.User;
+import com.ustadmobile.nanolrs.core.model.XapiAgent;
+import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.AeSimpleSHA1;
 import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
 
@@ -58,6 +61,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             }
         }else{
             //If an update, it is probably a mistake. We should ignore this push
+            System.out.println("\nUser getting an update.\n\n");
         }
 
         super.persist(dbContext, data);
@@ -112,7 +116,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
     }
 
     /**
-     * TODO: Don't delete, set active=False
+     * TODO: Don't delete, set active=False.
      * @param dbContext
      * @param data
      */
@@ -162,6 +166,26 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean updateUsername(String newUsername, User user, Object dbContext) throws SQLException {
+
+        XapiAgentManager agentManager = PersistenceManager.getInstance().getManager(XapiAgentManager.class);
+        user.setUsername(newUsername);
+        persist(dbContext, user);
+
+        //The updated user.
+        User newUser = findByUsername(dbContext, newUsername);
+
+        //Update the agent (All xapi tables depend on this)
+        List<XapiAgent> usersAgents = agentManager.findByUser(dbContext, user);
+        XapiAgent usersAgent = usersAgents.get(0);
+
+        usersAgent.setUser(newUser);
+        agentManager.persist(dbContext, usersAgent); //We should +1 LS since its an update.
+
+        return true;
     }
 
 

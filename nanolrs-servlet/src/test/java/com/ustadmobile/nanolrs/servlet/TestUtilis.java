@@ -21,11 +21,34 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.ustadmobile.nanolrs.buildconfig.TestConstantsServlet;
+import com.ustadmobile.nanolrs.util.ServletUtil;
 
 /**
  * Created by Varuna on 4/18/2017.
  */
 public class TestUtilis {
+
+    /**
+     * Get header with oldHeader check.
+     * @param headers
+     * @param headerName
+     * @return
+     */
+    public static String getHeader(Hashtable headers, String headerName){
+        //Enabling support for old header names.
+        String oldHeaderName = null;
+        if(headerName.startsWith("X-UM-")){
+            oldHeaderName = headerName.substring("X-UM-".length(), headerName.length());
+        }
+        if(headers.get(headerName) == null){
+            String value = headers.get(oldHeaderName).toString();
+            if(value!= null){
+                System.out.println("OLD HEADER VALUE");
+            }
+            return value;
+        }
+        return headers.get(headerName).toString();
+    }
     public static HttpServletRequest mockMe(HttpServletRequest request, Hashtable parameters,
                                      Hashtable headers, String method ) throws SQLException {
         String param;
@@ -44,8 +67,9 @@ public class TestUtilis {
         when(request.getMethod()).thenReturn(method);
         while(headernames.hasMoreElements()){
             header = (String) headernames.nextElement();
-            value = (String)headers.get(header);
-            when(request.getHeader(header)).thenReturn(value);
+            //value = (String)headers.get(header);
+            value = getHeader(headers,header);
+            when(ServletUtil.getHeaderVal(request, header)).thenReturn(value);
         }
 
         /* setting the connection source to servlet context's attribute */

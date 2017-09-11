@@ -45,6 +45,18 @@ public interface NanoLrsManagerSyncable<T extends NanoLrsModelSyncable, P> exten
     List<NanoLrsModel> getAllSinceSequenceNumber(
             User user, Object dbContext, String host, long seqNum) throws SQLException;
 
+    /**
+     * Get all entities in a list between two seq numbers. For full documentation refer to :
+     * getAllSinceSequenceNumber()
+     *
+     * @param user
+     * @param host
+     * @param fromSeqNum
+     * @param toSeqNum
+     * @param dbContext
+     * @return
+     * @throws SQLException
+     */
     List<NanoLrsModel> getAllSinceTwoSequenceNumber(User user, String host,
         long fromSeqNum, long toSeqNum, Object dbContext) throws SQLException;
 

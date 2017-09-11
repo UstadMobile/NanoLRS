@@ -46,7 +46,8 @@ public class LoginViewServlet extends HttpServlet {
             loggedInUsername = loggedInUsernameObj.toString();
         }
         if (loggedInUsername.equals("admin")) {
-            response.sendRedirect("../reports/ReportsView.jsp");
+            //response.sendRedirect("../reports/ReportsView.jsp");
+            request.getRequestDispatcher("../reports/").forward(request, response);
         }
         response.sendRedirect("../Login.jsp");
     }

@@ -3,30 +3,16 @@ package com.ustadmobile.nanolrs.core.sync;
 import com.ustadmobile.nanolrs.core.PrimaryKeyAnnotationClass;
 import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
-import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
-import com.ustadmobile.nanolrs.core.manager.UserCustomFieldsManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
-import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
-import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
-import com.ustadmobile.nanolrs.core.manager.XapiForwardingStatementManager;
-import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
-import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
-import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
+import com.ustadmobile.nanolrs.core.mapping.ModelManagerMapping;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.SyncStatus;
 import com.ustadmobile.nanolrs.core.model.User;
-import com.ustadmobile.nanolrs.core.model.UserCustomFields;
-import com.ustadmobile.nanolrs.core.model.XapiActivity;
-import com.ustadmobile.nanolrs.core.model.XapiAgent;
-import com.ustadmobile.nanolrs.core.model.XapiForwardingStatement;
-import com.ustadmobile.nanolrs.core.model.XapiState;
-import com.ustadmobile.nanolrs.core.model.XapiStatement;
-import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.JsonUtil;
 
@@ -39,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -62,25 +47,20 @@ import java.util.UUID;
  */
 public class UMSyncEndpoint {
 
-    /**
-     * Map of entity names to the proxy class
-     */
-    private static HashMap<String, Class> proxyNameToClassMap = new HashMap<>();
-    private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();
+    //TODODone: Change all our headers to X-UM-<name>
+    //TODODone: Add support for old header naming convention for old devices
+    public static final String HEADER_NODE_NAME = "X-UM-nodename";
+    public static final String HEADER_NODE_HOST = "X-UM-nodehost";
+    public static final String HEADER_NODE_URL = "X-UM-nodeurl";
+    public static final String HEADER_NODE_UUID = "X-UM-nodeuuid";
+    public static final String HEADER_NODE_ROLE = "X-UM-noderole";
+    public static final String HEADER_NODE_ISMASTER = "X-UM-nodeismaster";
+    public static final String HEADER_NODE_ISPROXY = "X-UM-nodeisproxy";
 
-    //TODO: Change all our headers to X-UM-<name>
-    public static final String HEADER_NODE_NAME = "nodename";
-    public static final String HEADER_NODE_HOST = "nodehost";
-    public static final String HEADER_NODE_URL = "nodeurl";
-    public static final String HEADER_NODE_UUID = "nodeuuid";
-    public static final String HEADER_NODE_ROLE = "noderole";
-    public static final String HEADER_NODE_ISMASTER = "nodeismaster";
-    public static final String HEADER_NODE_ISPROXY = "nodeisproxy";
-
-    public static final String HEADER_USER_USERNAME = "username";
-    public static final String HEADER_USER_PASSWORD = "password";
-    public static final String HEADER_USER_UUID = "useruuid";
-    public static final String HEADER_USER_IS_NEW = "isnewuser";
+    public static final String HEADER_USER_USERNAME = "X-UM-username";
+    public static final String HEADER_USER_PASSWORD = "X-UM-password";
+    public static final String HEADER_USER_UUID = "X-UM-useruuid";
+    public static final String HEADER_USER_IS_NEW = "X-UM-isnewuser";
 
     public static final String ENTITY_INFO_CLASS_NAME = "pCls";
     public static final String ENTITY_INFO_TABLE_NAME = "tableName";
@@ -91,7 +71,11 @@ public class UMSyncEndpoint {
     public static final String RESPONSE_ENTITIES_INFO = "info";
     public static final String RESPONSE_CONFLICT = "conflict";
 
-    public static final String RESPONSE_CHANGE_USERNAME = "changeusernameto";
+    public static final String RESPONSE_CHANGE_USERNAME = "X-UM-changeusernameto";
+    public static final String RESPONSE_SEND_USER_AGAIN = "X-UM-senduseragain";
+    public static final String RESPONSE_SYNCED_STATUS = "X-UM-syncstatus";
+    public static final String RESPONSE_SYNC_OK = "OK";
+    public static final String RESPONSE_SYNC_FAIL = "FAIL";
 
     public static final String JSON_MIMETYPE = "application/json";
 
@@ -101,7 +85,11 @@ public class UMSyncEndpoint {
 
     public static final String UTF_ENCODING = "UTF-8";
 
-    //TODO: Find a central place for this and other mappings..
+    /*
+    //TODODone: Find a central place for this and other mappings..
+    //Map of entity names to the proxy class
+    private static HashMap<String, Class> proxyNameToClassMap = new HashMap<>();
+    private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();
     static {
         proxyNameToClassMap.put(User.class.getName(), User.class);
         proxyClassToManagerMap.put(User.class, UserManager.class);
@@ -130,6 +118,7 @@ public class UMSyncEndpoint {
         proxyNameToClassMap.put(XapiVerb.class.getName(), XapiVerb.class);
         proxyClassToManagerMap.put(XapiVerb.class, XapiVerbManager.class);
     }
+    */
 
     /**
      * Common method to return primary key when supplied a class entity
@@ -154,7 +143,7 @@ public class UMSyncEndpoint {
             prefixLen = 3;
         pkField = Character.toLowerCase(pkMethod.charAt(3)) +
                 pkMethod.substring(prefixLen+1);
-        System.out.println("!!!!DEBUG: pkField: " + pkField + " and pkMethod: " + pkMethod + "!!!!!");
+        //System.out.println("!!!!DEBUG: pkField: " + pkField + " and pkMethod: " + pkMethod + "!!!!!");
         return pkField;
     }
 
@@ -181,7 +170,7 @@ public class UMSyncEndpoint {
             prefixLen = 3;
         pkField = Character.toLowerCase(pkMethod.charAt(3)) +
                 pkMethod.substring(prefixLen+1);
-        System.out.println("!!!!DEBUG: pkField: " + pkField + " and pkMethod: " + pkMethod + "!!!!!");
+        //System.out.println("!!!!DEBUG: pkField: " + pkField + " and pkMethod: " + pkMethod + "!!!!!");
         return pkMethod;
     }
 
@@ -191,7 +180,7 @@ public class UMSyncEndpoint {
      * @return
      */
     public static NanoLrsManagerSyncable getManagerFromProxyClass(Class syncableEntity){
-        Class managerClass = proxyClassToManagerMap.get(syncableEntity);
+        Class managerClass = ModelManagerMapping.proxyClassToManagerMap.get(syncableEntity);
         NanoLrsManagerSyncable syncableEntityManager = (NanoLrsManagerSyncable)
                 PersistenceManager.getInstance().getManager(managerClass);
         return syncableEntityManager;
@@ -203,7 +192,7 @@ public class UMSyncEndpoint {
      * @return
      */
     public static NanoLrsManagerSyncable getManagerFromProxyName(String thisProxyClassName){
-        Class thisProxyClass = proxyNameToClassMap.get(thisProxyClassName);
+        Class thisProxyClass = ModelManagerMapping.proxyNameToClassMap.get(thisProxyClassName);
         return getManagerFromProxyClass(thisProxyClass);
     }
 
@@ -262,7 +251,7 @@ public class UMSyncEndpoint {
         ChangeSeqManager changeSeqManager =
                 PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
 
-        for(Class thisEntity:SYNCABLE_ENTITIES){
+        for(Class thisEntity:ModelManagerMapping.SYNCABLE_ENTITIES){
             //Pre-Sync : Add existing ChangeSeq value to preSyncAllEntitiesSeqMap
             String proxyClassName = thisEntity.getName();
             String tableName = getTableNameFromClass(thisEntity);
@@ -286,13 +275,13 @@ public class UMSyncEndpoint {
         Map<NanoLrsModelSyncable, String> allNewEntitiesMap = new HashMap<>();
         //Create Entity Map of <Entity Object, Proxy Class Name>
         for(int i=0; i < entitiesJSON.length(); i++){
-            System.out.println(" -->JSON->Object");
+            //System.out.println(" -->JSON->Object");
             JSONObject entityJSON = entitiesJSON.getJSONObject(i);
             NanoLrsModel thisEntity = ProxyJsonSerializer.toEntity(entityJSON, dbContext);
             String thisProxyClass =
                     entityJSON.getString(ProxyJsonSerializer.PROXY_CLASS_JSON_FIELD);
             allNewEntitiesMap.put((NanoLrsModelSyncable)thisEntity, thisProxyClass);
-            System.out.println("   ->OK.");
+            //System.out.println("   ->OK.");
         }
         return allNewEntitiesMap;
     }
@@ -505,7 +494,8 @@ public class UMSyncEndpoint {
             headers.put(HEADER_NODE_URL, node.getUrl());
             //mostly its "client" as they are the ones that start sync.
             //However that could change, so sending role.
-            //TODO: we need to validate these roles somehow
+            //TODODone: we need to validate these roles somehow
+            //Update: Validate on other side receiving not sending..
             //mayb: tokens that get authorised like certificates.
             String thisNodeRole = "client";
             if (node.isMaster()) {
@@ -535,14 +525,15 @@ public class UMSyncEndpoint {
 
     /**
      * Store syncable entities.
-     * TODO: Put this in one common place , OR
-     * TODO: Find a way to get all from NanoLrsModelSyncable extentsion.
+     * TODODone: Put this in one common place
      */
+    /*
     public static Class[] SYNCABLE_ENTITIES = new Class[]{
             User.class, XapiStatement.class, XapiActivity.class, XapiAgent.class,
             //XapiDocument.class, XapiForwardingState.class  //Disabled: not needed?
             XapiState.class, XapiVerb.class, UserCustomFields.class
     };
+    */
 
     /**
      * Sets headers to the connection from a given header Map
@@ -554,10 +545,87 @@ public class UMSyncEndpoint {
         Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            System.out.println(pair.getKey() + " = " + pair.getValue());
             connection.setRequestProperty(pair.getKey().toString(), pair.getValue().toString());
             it.remove(); // avoids a ConcurrentModificationException
         }
+    }
+
+
+    /**
+     * Find all pending entities needed to be synced for all entities at this moment, or since the
+     * given changeSeq numbers map. Also give back the latest changeseq mapping
+     * The reason in returning two objects as entry is if we seperate it out, we may have an edge
+     * case between methods of new entities.
+     * @param thisUser
+     * @param node
+     * @param dbContext
+     * @return
+     * @throws SQLException
+     * @throws IOException
+     */
+    public static  Map.Entry<UMSyncData, Map<Class, Long>> getSyncInfo (User thisUser,
+                     Node node, Map<Class, Long> fromSeq, Map<Class, Long> toSeq, Object dbContext)
+            throws SQLException, IOException {
+
+        //Get managers
+        SyncStatusManager syncStatusManager=
+                PersistenceManager.getInstance().getManager(SyncStatusManager.class);
+
+        //Map of Entity and latestSeq got so we can update sync status upon sync success
+        Map<Class, Long> latestChangeSeqMap = new HashMap<>();
+
+        List<NanoLrsModel> entities = new ArrayList<>();
+
+        //Scan through every Syncable entity..
+        for(Class syncableEntity : ModelManagerMapping.SYNCABLE_ENTITIES) {
+            //Get its manager
+            NanoLrsManagerSyncable syncableEntityManager = getManagerFromProxyClass(syncableEntity);
+
+            //Get changeSeq from given map or find the latest one right now..
+            long fromSyncSeq;
+            long toSyncSeq;
+            if(fromSeq != null && !fromSeq.isEmpty()){
+                fromSyncSeq = fromSeq.get(syncableEntity);
+            }else{
+                fromSyncSeq =
+                        syncStatusManager.getSentStatus(node.getHost(), syncableEntity, dbContext);
+            }
+            if(toSeq != null && !toSeq.isEmpty()){
+                toSyncSeq = toSeq.get(syncableEntity);
+            }else{
+                toSyncSeq = -1;
+
+            }
+
+            //Get pendingEntities since the last sync status for this host.
+            List<NanoLrsModel> pendingEntitesToBeSynced =
+                    syncableEntityManager.getAllSinceTwoSequenceNumber(thisUser, node.getHost(),
+                            fromSyncSeq, toSyncSeq, dbContext);
+
+            //Latest changeseqNum for this Entity
+            long latestSeqNumToUpdateSyncStatus = getLatestSeqNumFromEntityArray(pendingEntitesToBeSynced);
+
+            //Add the latestSeqNum to this class in a map so upon sync success
+            // we can update SyncStatus
+            if(latestSeqNumToUpdateSyncStatus > 0) {
+                latestChangeSeqMap.put(syncableEntity, latestSeqNumToUpdateSyncStatus);
+            }
+
+            //Update entities
+            Iterator<NanoLrsModel> pendingIterator = pendingEntitesToBeSynced.iterator();
+            while(pendingIterator.hasNext()){
+                entities.add(pendingIterator.next());
+            }
+        }
+
+        UMSyncData syncData = new UMSyncData(entities);
+        //Return only one set value.
+        Map<UMSyncData, Map<Class, Long>> syncInfoMap = new HashMap<>();
+        syncInfoMap.put(syncData, latestChangeSeqMap);
+        Map.Entry<UMSyncData, Map<Class, Long>> syncInfo =
+                syncInfoMap.entrySet().iterator().next();
+
+        return syncInfo;
     }
 
     /**
@@ -570,7 +638,7 @@ public class UMSyncEndpoint {
      * @throws SQLException
      * @throws IOException
      */
-    public static  Map.Entry<JSONObject, Map<Class, Long>>getNewEntriesJSON (User thisUser,
+    public static  Map.Entry<JSONObject, Map<Class, Long>> getNewEntriesJSON (User thisUser,
                          Node node, Map<Class, Long> fromSeq, Map<Class, Long> toSeq, Object dbContext)
             throws SQLException, IOException {
 
@@ -587,7 +655,7 @@ public class UMSyncEndpoint {
         JSONObject pendingEntitiesWithInfo = new JSONObject(); //entities with entities info
 
         //Scan through every Syncable entity..
-        for(Class syncableEntity : SYNCABLE_ENTITIES) {
+        for(Class syncableEntity : ModelManagerMapping.SYNCABLE_ENTITIES) {
             //Get its manager
             NanoLrsManagerSyncable syncableEntityManager = getManagerFromProxyClass(syncableEntity);
 
@@ -608,14 +676,11 @@ public class UMSyncEndpoint {
             }
 
             //Get pendingEntities since the last sync status for this host
-            //TODO: lingo of method name
-            List<NanoLrsModel> pendingEntitesToBeSynced=
+            //TODODone: lingo of method name
+            //Update: Ignoring..
+            List<NanoLrsModel> pendingEntitesToBeSynced =
                     syncableEntityManager.getAllSinceTwoSequenceNumber(thisUser, node.getHost(),
                             fromSyncSeq, toSyncSeq, dbContext);
-
-            /*List<NanoLrsModel> pendingEntitesToBeSynced =
-                    syncableEntityManager.getAllSinceSequenceNumber(
-                            thisUser, dbContext, node.getHost(), lastSyncSeq);*/
 
             Map.Entry<JSONArray, JSONObject> entityEntriesAndInfo =
                     createJSONDataFromEntityArray(pendingEntitesToBeSynced, syncableEntity);
@@ -706,47 +771,6 @@ public class UMSyncEndpoint {
             out.write(payload);
             out.flush();
 
-
-//            if(dataJSON != null && dataJSON.length()>0 && content == null){
-//                byte[] jsonPayload = dataJSON.toString().getBytes("UTF-8");
-//                int cl = jsonPayload.length;
-//                con.setFixedLengthStreamingMode(cl);
-//                //con.setFixedLengthStreamingMode(dataJSON.toString().getBytes().length());
-//
-////                outw = new OutputStreamWriter(con.getOutputStream());
-//                out = con.getOutputStream();
-//                out.write(jsonPayload);
-//                out.flush();
-//            }else if(content != null){
-//                con.setFixedLengthStreamingMode(content.length);
-//                out = con.getOutputStream();
-//                out.write(content);
-//                out.flush();
-//                out.close();
-//                out = null;
-//            }else if(parameters != null && method.equalsIgnoreCase("POST")){
-//                //Build String from param map
-//                String paramString = "";
-//                Iterator paramIterator = parameters.entrySet().iterator();
-//                while(paramIterator.hasNext()){
-//                    Map.Entry thisParameter = (Map.Entry)paramIterator.next();
-//                    String amp = "";
-//                    if(paramString != ""){
-//                        amp = "&";
-//                    }
-//                    paramString = paramString + amp + thisParameter.getKey() + "=" +
-//                            thisParameter.getValue();
-//                }
-//                byte[] postData = paramString.getBytes(UTF_ENCODING);
-//                int postDataLength = postData.length;
-//                con.setRequestProperty( REQUEST_CONTENT_LENGTH, Integer.toString( postDataLength ));
-//                //con.setUseCaches( false );
-//
-//                //outw = new OutputStreamWriter(con.getOutputStream());
-//                //outw.write(paramString);
-//                //outw.flush();
-//            }
-
             int statusCode = con.getResponseCode();
             response.setStatus(statusCode);
             response.setResponseData(con.getInputStream());
@@ -773,8 +797,10 @@ public class UMSyncEndpoint {
      * @param dbContext
      * @throws SQLException
      */
-    public static void jsonToDB(JSONObject entitiesWithInfoJSON, Node senderNode, Node thisNode, Object dbContext)
+    public static boolean jsonToDB(JSONObject entitiesWithInfoJSON, Node senderNode, Node thisNode,
+                                   User thisUser, Object dbContext)
             throws SQLException {
+        boolean allgoood = false;
         SyncStatusManager syncStatusManager =
                 PersistenceManager.getInstance().getManager(SyncStatusManager.class);
 
@@ -785,6 +811,7 @@ public class UMSyncEndpoint {
 
         //Get data and info separately
         JSONArray entitiesJSON = entitiesWithInfoJSON.getJSONArray(RESPONSE_ENTITIES_DATA);
+        //System.out.println("UMSync: Incoming: Converting : " + entitiesJSON.toString() + " to entity.");
         JSONArray entitiesInfoJSON = entitiesWithInfoJSON.getJSONArray(RESPONSE_ENTITIES_INFO);
 
         //Create Entity Map of <Entity Object, Proxy Class Name>
@@ -805,9 +832,27 @@ public class UMSyncEndpoint {
             Map.Entry<NanoLrsModelSyncable, String> thisNewEntityMap =
                     (Map.Entry) allNewEntitiesMapIterator.next();
             //Get entity and its manager
+            //TODO: You can get thisProxyClassName without the Map. :
+            //thisNewEntity.getClass().getInterfaces()[0].getName()
             NanoLrsModelSyncable thisNewEntity = thisNewEntityMap.getKey();
             String thisProxyClassName = thisNewEntityMap.getValue();
-            Class thisProxyClass = proxyNameToClassMap.get(thisProxyClassName);
+            Class thisProxyClass = ModelManagerMapping.proxyNameToClassMap.get(thisProxyClassName);
+
+            //Skipping non thisUser user table
+            //Update: We may need related users for something esp if you are a non student.
+            //          So we should not do this. Instead we should do checks on
+            //          client side.
+            //TODO: Remove this when all other devices are up to date
+            if(thisProxyClass == User.class){
+                User thisNewEntityUser = (User)thisNewEntity;
+                if(!thisNewEntityUser.getUsername().equals(thisUser.getUsername())){
+                    System.out.println("UMSync: jsonToDB: Skipping non User username. " +
+                            "Remove me when all devices are up to date.");
+                    continue;
+                }
+            }
+
+
             NanoLrsManagerSyncable thisManager = getManagerFromProxyClass(thisProxyClass);
 
             //Set entity's change seq from available pool (preSyncEntitySeqNumMap)
@@ -838,7 +883,7 @@ public class UMSyncEndpoint {
             //because we have already set it above (from pool)
             if(doIPersist) {
                 thisManager.persist(dbContext, thisNewEntity, false);
-                System.out.println(" -> Persisting OK..");
+                //System.out.println(" -> Persisting OK..");
                 //+1 on the map
                 preSyncEntitySeqNumMap.put(thisProxyClassName, thisNewEntityNewSeq+1);
             }
@@ -855,7 +900,7 @@ public class UMSyncEndpoint {
                 System.out.println("Sync Status updated OK..");
             }
 
-            //TODO: For Proxy: Update received?
+            //TODO: PROXY: For Proxy: Update received?
             /*
             long currentRec = ss.getReceivedSeq();
             if(thisNewEntityNewSeq > currentRec) {
@@ -864,6 +909,8 @@ public class UMSyncEndpoint {
             }
             */
         }
+        allgoood = true;
+        return allgoood;
     }
 
     /**
@@ -942,13 +989,13 @@ public class UMSyncEndpoint {
     }
 
     /**
-     *
-     * @param username
-     * @param dbContext
-     * @return
+     * Gets next available username
+     * @param username  The username that is already taken
+     * @param dbContext The database context
+     * @return  String new username value
      */
     public static String getNextAvailableUsername(String username, Object dbContext){
-        UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
+
         if(isThisUsernameAvailable(username, dbContext)){
             return username;
         }
@@ -964,31 +1011,58 @@ public class UMSyncEndpoint {
         return null;
     }
 
+    /**
+     * Get header with oldHeader check.
+     * @param headers
+     * @param headerName
+     * @return
+     */
+    public static String getHeader(Map headers, String headerName){
+        //Enabling support for old header names.
+        String oldHeaderName = null;
+        if(headerName.startsWith("X-UM-")){
+            oldHeaderName = headerName.substring("X-UM-".length(), headerName.length());
+        }
+        if(headers.get(headerName) == null){
+            String value = headers.get(oldHeaderName).toString();
+            if(value!= null){
+               //System.out.println("OLD HEADER VALUE");
+            }
+            return value;
+        }
+        return headers.get(headerName).toString();
+    }
+
 
     /**
      * Handles incoming sync requests. Essentially an endpoint to process request and
      * update database and handle it
-     * @param inputStream
+     * REMEMBER TO CALL updateSyncStatus() AFTER THIS METHOD !
+     * @param inputStream   The request inputStream.
      * @param node This is the node that sent the sync request
-     * @param headers
-     * @return
+     * @param headers   The request headers
+     * @param parameters   The request parameters if any
+     * @param dbContext     The database context
+     * @return  SyncResult with status and any postSyncChangeSeq Map we need SyncStatus to update.
      */
     public static UMSyncResult handleIncomingSync(InputStream inputStream, Node node, Map headers,
                                                   Map parameters, Object dbContext)
             throws SQLException, IOException {
 
         /*
-        Steps:
-        1. Validate headers and param and input stream
-        2. Get the json array from input stream
-        3. Reserve a set of change sequence numbers for the incoming update from client
-        4. convert to entities
-        5. get number
-        6. add to db (persist)
-        7. Resolve conflicts (if any)
-        7. Get updates for senderNode
-        8. Send back any updates, conflicts, in the response body
-        9. Update SyncStatus table
+        /////////////////////
+        //     STEPS       //
+        /////////////////////
+            1. Validate headers and param and input stream
+            2. Get the json array from input stream
+            3. Reserve a set of change sequence numbers for the incoming update from client
+            4. convert to entities
+            5. get number
+            6. add to db (persist)
+            7. Resolve conflicts (if any)
+            7. Get updates for senderNode
+            8. Send back any updates, conflicts, in the response body
+            9. Add mapping to request so we can update sync status if result is OK
         */
 
         //The return result and status of the incoming request's sync on this node
@@ -996,11 +1070,7 @@ public class UMSyncEndpoint {
         int resultStatus;
 
         //Managers
-        ChangeSeqManager changeSeqManager =
-                PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
-        SyncStatusManager syncStatusManager =
-                PersistenceManager.getInstance().getManager(SyncStatusManager.class);
         UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
 
         JSONObject responseJSON = new JSONObject();
@@ -1025,10 +1095,18 @@ public class UMSyncEndpoint {
         Node thisNode = nodeManager.getThisNode(dbContext);
 
         //Get this user details
+        /*
         String userUsername = headers.get(HEADER_USER_USERNAME).toString();
         String userPassword = headers.get(HEADER_USER_PASSWORD).toString();
         String userUUID = headers.get(HEADER_USER_UUID).toString();
         String isNew = headers.get(HEADER_USER_IS_NEW).toString();
+        */
+
+        String userUsername = getHeader(headers, HEADER_USER_USERNAME);
+        String userPassword = getHeader(headers, HEADER_USER_PASSWORD);
+        String userUUID = getHeader(headers, HEADER_USER_UUID);
+        String isNew = getHeader(headers, HEADER_USER_IS_NEW);
+
         User thisUser = null;
 
         //Get all syncable entities pre sync seq and put it in preSyncSeqMap
@@ -1049,7 +1127,7 @@ public class UMSyncEndpoint {
                 //Not a valid JSON. What do we do ?
                 return returnEmptyUMSyncResult(HttpURLConnection.HTTP_BAD_REQUEST);
             }
-
+            //TODO: Use UMSyncData here
             entitiesWithInfoJSON = new JSONObject(streamString);
 
             if(entitiesWithInfoJSON.optJSONArray(RESPONSE_ENTITIES_DATA) == null){
@@ -1070,10 +1148,12 @@ public class UMSyncEndpoint {
         ////////////////////////////////
         //       VALIDATE USER        //
         ////////////////////////////////
-        //TODO: Test this
-        //TODO: Also authenticate before proceeding..
+        //TODODone: Test this
+        //Tested and more tests coming..
+        //TODODone: Also authenticate before proceeding..
+        //Update: WE are authenticating it below
         //thisUser = userManager.findById(dbContext,userUuid); //Get the user(it might have synced now)
-        String tableName = UMSyncEndpoint.getTableNameFromClass(User.class);
+        String userTableName = UMSyncEndpoint.getTableNameFromClass(User.class);
         if(isNew.equals("true")){
             //Check if username given
             if(userUsername != null && !userUsername.isEmpty()){
@@ -1083,14 +1163,15 @@ public class UMSyncEndpoint {
                     System.out.println("\nUsername already exists for new user.\n" +
                             "Changing it rejecting incoming sync with new username header.\n");
                     String newAvailableUsername = getNextAvailableUsername(userUsername, dbContext);
-                    Map changeYourUsernameHeader = new HashMap();
+                    Map<String, String> changeYourUsernameHeader = new HashMap<>();
                     changeYourUsernameHeader.put(RESPONSE_CHANGE_USERNAME, newAvailableUsername);
                     return returnEmptyUMSyncResultWithHeader(
                             HttpURLConnection.HTTP_CONFLICT, changeYourUsernameHeader);
                 }else {
                     //Username is new and valid, is available. Its a new user . So we make it..
                     if(userPassword != null && !userPassword.isEmpty()){
-                        //TODO: Add password rules
+                        //TODODone: Add password and username rules
+                        //Update: Restricting on registration front.
                         thisUser = (User)userManager.makeNew();
                         thisUser.setUsername(userUsername);
                         if(userUUID != null && !userUUID.isEmpty()){
@@ -1101,7 +1182,7 @@ public class UMSyncEndpoint {
                         thisUser.setPassword(userPassword);
                         /*
                         long newUserLocalSeq =
-                                changeSeqManager.getNextChangeAddSeqByTableName(tableName,
+                                changeSeqManager.getNextChangeAddSeqByTableName(userTableName,
                                         1, dbContext);
                         thisUser.setLocalSequence(newUserLocalSeq);
                         */
@@ -1130,7 +1211,8 @@ public class UMSyncEndpoint {
                 }
                 if(thisNode.isProxy()){
                     //Proxy. Create it here? or we wait till syncs with master ?
-                    //TODO: Yes. Let this allow.
+                    //TODODone: Yes. Let this allow.
+                    //Update: Allowing..
                     System.out.println("\nProxy here. I don't have the new user syncing with me.\n" +
                             "Don't think I'm going to accept user from client. I'll wait till I sync with master instead.\n");
                 }
@@ -1139,24 +1221,32 @@ public class UMSyncEndpoint {
                     // and isNewUser is not true, it shouldn't even get to here.
                     // Maybe master deleted it (got refreshed).
                     //We should create it.
-                    System.out.println("\nMaster here. I have a new user thats supposed to be with me,\n" +
+                    System.out.println("\nMaster here. I have a new user that's supposed to be with me,\n" +
                             " but i dont have it. I'll create it anyway.. \n");
                     if(userPassword != null && !userPassword.isEmpty()) {
                         thisUser = (User) userManager.makeNew();
                         thisUser.setUsername(userUsername);
+                        thisUser.setPassword(userPassword);
                         if(userUUID != null && !userUUID.isEmpty()){
                             thisUser.setUuid(userUUID);
                         }else{
                             thisUser.setUuid(UUID.randomUUID().toString());
                         }
-                        //TODO: If the user statement is coming, do we need to set a local seq? Check this logic
-                        /*
-                        long newUserLocalSeq =
-                                changeSeqManager.getNextChangeAddSeqByTableName(tableName,
-                                        1, dbContext);
-                        thisUser.setLocalSequence(newUserLocalSeq);
-                        */
+
                         userManager.persist(dbContext, thisUser, false);
+                        //TODODone: If the user statement is coming, do we need to set a local seq? Check this logic
+                        //Update: Very edge case. Can't put a breakpoint.Unlikely. However, if it doesn't exist, it will
+                        // get created. However extra fields will not get synced unless there is an update on client.
+                        // One way is to send back sendUserAgain request .. This will blank persist on User and UserField
+                        // table so its an update over here..but it will update else where too.
+                        // Or figure out to, force User and User fields in syncData upon next sync. Ignoring for now..
+                        /*
+                        Map<String, String> sendUserAgainHeader = new HashMap<>();
+                        sendUserAgainHeader.put(RESPONSE_CHANGE_USERNAME, userUsername);
+                        System.out.println("\n\nREQUESTING USER INFO AGAIN.GOT REMOVED HERE..\n\n");
+                        return returnEmptyUMSyncResultWithHeader(
+                                HttpURLConnection.HTTP_CONFLICT, sendUserAgainHeader);
+                        */
                     }
                 }
             }else{
@@ -1169,10 +1259,21 @@ public class UMSyncEndpoint {
             }
         }
 
+        String thisNodeHost;
+        try {
+            thisNodeHost = thisNode.getHost();
+        }catch (Exception e){
+            thisNodeHost = "Not set";
+        }
+
+        System.out.println("UMSYNC: Incoming: Getting sync for user: " + thisUser.getUsername()
+                + " isNew?: " + isNew + " from Node:" + node.getHost()
+                + " . I am Node: " + thisNodeHost);
+
         ////////////////////////////////
         //    INCOMING JSON TO DB     //
         ////////////////////////////////
-        jsonToDB(entitiesWithInfoJSON, node, thisNode, dbContext);
+        boolean allgood = jsonToDB(entitiesWithInfoJSON, node, thisNode, thisUser, dbContext);
 
         //Update thisUser if it was new, we set master to normal
         // so that we don't consider this as new no more.
@@ -1187,20 +1288,23 @@ public class UMSyncEndpoint {
             userManager.persist(dbContext, thisUser, false);
         }
 
-
         ////////////////////////////////
         // CONSTRUCT RETURN ENTITIES  //
         ////////////////////////////////
+        //TODO: Use UMSyncData
         Map.Entry<JSONObject, Map<Class, Long>> returnEntitiesMap =
                 getNewEntriesJSON(thisUser, node, null, preSyncAllEntitiesSeqMap, dbContext);
         sendTheseEntitiesBack = returnEntitiesMap.getKey().getJSONArray(RESPONSE_ENTITIES_DATA);
         sendTheseInfoBack = returnEntitiesMap.getKey().getJSONArray(RESPONSE_ENTITIES_INFO);
 
+        Map<Class, Long> returnEntitiesChangeSeq = returnEntitiesMap.getValue(); //update sync status
         ////////////////////////////////////
         ///     UPDATE SYNC STATUS       ///
         ////////////////////////////////////
+        /*
         Map<Class, Long> returnEntitiesChangeSeq = returnEntitiesMap.getValue(); //update sync status
-        //TODO: WE MAY NEED TO CHECK RESPONSE HEADERS IF ALL OKAY AND THEN UPDATE SS
+        //TODODone: WE MAY NEED TO CHECK RESPONSE HEADERS IF ALL OKAY AND THEN UPDATE SS
+        //Update: Moved to method and calling it in UMSyncServlet
         for (Map.Entry<Class, Long> thisEntityToLatestLocalSeqNumEntry : returnEntitiesChangeSeq.entrySet()) {
             SyncStatus ss = (SyncStatus)syncStatusManager.getSyncStatus(node.getHost(),
                     thisEntityToLatestLocalSeqNumEntry.getKey(), dbContext);
@@ -1212,12 +1316,23 @@ public class UMSyncEndpoint {
                 syncStatusManager.persist(dbContext, ss);
             }
         }
+        */
 
         ////////////////////////////////
         //   CONSTRUCT THE RESPONSE   //
         ////////////////////////////////
-        resultStatus = 200; //regardless of conflicts, its gonna be 200
         Map<String, String> responseHeaders = createSyncHeader(thisUser, node);
+        if(allgood){
+            System.out.println("UMSync: Incoming: jsonToDB all good (for user:" +
+                    thisUser.getUsername() + ").");
+            resultStatus = HttpURLConnection.HTTP_OK;
+            responseHeaders.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
+        }else{
+            resultStatus = HttpURLConnection.HTTP_INTERNAL_ERROR;
+            responseHeaders.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_FAIL);
+        }
+        //resultStatus = HttpURLConnection.HTTP_OK; //regardless of conflicts, its gonna be 200
+        //responseHeaders.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
         String resultForClient;
         InputStream responseData;
         long responseLength;
@@ -1246,9 +1361,6 @@ public class UMSyncEndpoint {
         }
 
         if(emptyResponse){
-            //String emptyResponseString = "";
-            //responseData = new ByteArrayInputStream(emptyResponseString.getBytes(UTF_ENCODING));
-            //responseLength = 0;
             responseData = new ByteArrayInputStream(emptyValidJSONString.getBytes(UTF_ENCODING));
             responseLength = emptyValidJSONString.length();
 
@@ -1260,33 +1372,59 @@ public class UMSyncEndpoint {
         }
 
         resultResponse = new UMSyncResult(resultStatus,responseHeaders,
-                responseData, responseLength);
+                responseData, responseLength, returnEntitiesChangeSeq);
 
         return resultResponse;
     }
 
     /**
-     * Handles sync process : gets all entites to be synced from syncstatus seqnum and
+     * Method to update the sync status
+     *   eg: upon successful incoming sync on returned entities
+     * @param syncResult    The previous sync's result that has the entity<->ChangeSeq map
+     * @param node          The node where the sync was made to
+     * @param dbContext     Database context
+     * @return              true if all good, false if not
+     * @throws SQLException Since we are doing SQL stuff.
+     */
+    public static boolean updateSyncStatus(UMSyncResult syncResult, Node node, Object dbContext)
+            throws SQLException {
+
+        SyncStatusManager syncStatusManager =
+                PersistenceManager.getInstance().getManager(SyncStatusManager.class);
+        Map<Class, Long> returnEntitiesChangeSeq = syncResult.getPostSyncChangeSeqMap();
+        boolean allgood = false;
+
+        ////////////////////////////////////
+        ///     UPDATE SYNC STATUS       ///
+        ////////////////////////////////////
+        for (Map.Entry<Class, Long> thisEntityToLatestLocalSeqNumEntry : returnEntitiesChangeSeq.entrySet()) {
+            SyncStatus ss = (SyncStatus)syncStatusManager.getSyncStatus(node.getHost(),
+                    thisEntityToLatestLocalSeqNumEntry.getKey(), dbContext);
+            long currentSentSeq = ss.getSentSeq();
+            long latestSeqNumReturned = thisEntityToLatestLocalSeqNumEntry.getValue();
+            //update only the latest
+            if(latestSeqNumReturned > currentSentSeq){
+                ss.setSentSeq(latestSeqNumReturned);
+                syncStatusManager.persist(dbContext, ss);
+            }
+        }
+        allgood = true;
+        return allgood;
+    }
+
+    /**
+     * Handles sync process : gets all entities to be synced from syncstatus seqnum and
      * builds entities list to convert to json array to send in a request to host's
-     * syncURL endpoint
-     * TODO: sync entities as object
-     * @param node : The server, client, proxy, etc
-     * @return
+     * syncURL endpoint. This should only be run if current node is set (thisNode).
+     * @param thisUser      The user starting the sync request
+     * @param node          The node to with which we wish to sync
+     * @param dbContext     The databse context
+     * @return              SyncResult Object
+     * @throws SQLException because we are doing sql updates
+     * @throws IOException  because of i/o exceptions
      */
     public static UMSyncResult startSync(User thisUser, Node node, Object dbContext)
             throws SQLException, IOException {
-        /*
-        Steps:
-        1. We check the syncURL < make sure its a valid url
-        2. We check the host and see if we have it stored in SyncStatus table
-        3. If we don't have the host, we assume this is first time sync
-        4. We get all Syncable entites
-        5. Loop over every entity: For this entity get seq number from SyncStatus
-        6. Get all entities list for that entity that remain to be synced
-        7. Convert those entities list to JSON array
-        8. Make a request
-        9. Send >>
-         */
 
         //Get managers
         SyncStatusManager syncStatusManager=
@@ -1295,8 +1433,6 @@ public class UMSyncEndpoint {
                 PersistenceManager.getInstance().getManager(NodeManager.class);
         UserManager userManager =
                 PersistenceManager.getInstance().getManager(UserManager.class);
-        ChangeSeqManager changeSeqManager =
-                PersistenceManager.getInstance().getManager(ChangeSeqManager.class);
 
         //Get this device/node
         Node thisNode = nodeManager.getThisNode(dbContext);
@@ -1309,7 +1445,7 @@ public class UMSyncEndpoint {
         Map<String, String> headers = createSyncHeader(thisUser, thisNode);
         Map<String, String> parameters = createSyncParameters(thisUser, thisNode);
 
-        //Set thisUser master to 0 if its -1
+        //Set thisUser master to 0 if its -1 (ie: its a new user (never synced with master)
         // so that we don't send that over
         boolean userWasNew = false;
         //Set not new for user so when we send the
@@ -1317,55 +1453,76 @@ public class UMSyncEndpoint {
         if(thisUser.getMasterSequence() < 0){
             userWasNew = true;
             thisUser.setMasterSequence(0);
+            //persist without updating its seq num
             userManager.persist(dbContext, thisUser, false);
         }
 
-        //The JSON to send back
+        //The sync JSON to send to node
         JSONObject pendingEntitiesWithInfo;
 
-        //Get all entities since now into a JSON and get every entity type's
-        // last change seq number
+        /*
+        TODO: Remove after testing
+        //Get all entities since now into a JSON and
+        // get every entity type's last change seq number
         Map.Entry<JSONObject, Map<Class, Long>> entitiesJSONAndChangeSeqMap =
                 getNewEntriesJSON(thisUser, node, null, null, dbContext);
-        entityToLatestLocalSeqNum = entitiesJSONAndChangeSeqMap.getValue();
         pendingEntitiesWithInfo = entitiesJSONAndChangeSeqMap.getKey();
+        entityToLatestLocalSeqNum = entitiesJSONAndChangeSeqMap.getValue();
+        */
 
-        //Make a request with the JOSN in POST body and return the
-        //UMSyncResult
+        Map.Entry<UMSyncData, Map<Class,Long>> syncInfo =
+                getSyncInfo(thisUser, node, null, null, dbContext);
+        pendingEntitiesWithInfo = syncInfo.getKey().toSyncJSON();
+        entityToLatestLocalSeqNum = syncInfo.getValue();
+
+        headers.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
+
+        //Make a request with the JSON in POST body and return the UMSyncResult
         UMSyncResult syncResult = makeSyncRequest(node.getUrl(), "POST", headers, parameters,
-                pendingEntitiesWithInfo, JSON_MIMETYPE, null );
-
-        //Update the SyncStatus with latest value of seq num for
-        // this host and every entity
+                pendingEntitiesWithInfo, JSON_MIMETYPE, null);
+        Map responseHeaders = syncResult.getHeaders();
         if(syncResult.getStatus() == 200){
 
-            Map responseHeaders = syncResult.getHeaders();
-            //TODO: Read response headers and check that all synced OK and that
-            //this is not a 200 for any random page.
+            //Check that its actually a request sent to a sync endpoint..
+            //Maybe we want to enable trust esp against main node. TODO
+            if (syncResult.getHeader(RESPONSE_SYNCED_STATUS).equals(RESPONSE_SYNC_OK)) {
+                //Update the SyncStatus with latest value of seq num for this host and every entity
+                Iterator<Map.Entry<Class, Long>> latestChangeSeqIterator =
+                        entityToLatestLocalSeqNum.entrySet().iterator();
+                while (latestChangeSeqIterator.hasNext()) {
+                    Map.Entry<Class, Long> entityLatestChangeSeq =
+                            latestChangeSeqIterator.next();
 
-            Iterator<Map.Entry<Class, Long>> entityToLatestLocalSeqNumIterator =
-                    entityToLatestLocalSeqNum.entrySet().iterator();
-            while(entityToLatestLocalSeqNumIterator.hasNext()){
-                Map.Entry<Class, Long> thisEntityToLatestLocalSeqNumEntry =
-                        entityToLatestLocalSeqNumIterator.next();
-                syncStatusManager.updateSyncStatusSeqNum(node.getHost(),
-                        thisEntityToLatestLocalSeqNumEntry.getKey(),
-                        thisEntityToLatestLocalSeqNumEntry.getValue(),
-                        -1,
-                        dbContext);
+                    syncStatusManager.updateSyncStatusSeqNum(node.getHost(),
+                            entityLatestChangeSeq.getKey(),
+                            entityLatestChangeSeq.getValue(),
+                            -1,
+                            dbContext);
+                }
+
+                //TODO: PROXY: Implement PROXY LOGIC/Code: make entityToLatestMasterSeqNum & work with it.
+                //This doesnt do anything right now..
+                Iterator<Map.Entry<Class, Long>> latestMasterSeqIterator =
+                        entityToLatestMasterSeqNum.entrySet().iterator();
+                while(latestMasterSeqIterator.hasNext()){
+                    Map.Entry<Class, Long> entityMasterSeqMap = latestMasterSeqIterator.next();
+                    syncStatusManager.updateSyncStatusSeqNum(
+                            node.getHost(),
+                            entityMasterSeqMap.getKey(),
+                            -1,
+                            entityMasterSeqMap.getValue(),
+                            dbContext);
+                }
+            }else{
+                //sync didn't happen, lets set is new back to true..
+                if(userWasNew){
+                    thisUser.setMasterSequence(-1);
+                    //persist without updating its seq num
+                    userManager.persist(dbContext, thisUser, false);
+                    //TODO: Check testing
+                }
             }
 
-            //TODO: Check for proxy
-            Iterator<Map.Entry<Class, Long>> entityToLatestMasterSeqNumIterator =
-                    entityToLatestMasterSeqNum.entrySet().iterator();
-            while(entityToLatestMasterSeqNumIterator.hasNext()){
-                Map.Entry<Class, Long> thisEntityToLatestMasterSeqNum = entityToLatestMasterSeqNumIterator.next();
-                syncStatusManager.updateSyncStatusSeqNum(node.getHost(),
-                        thisEntityToLatestMasterSeqNum.getKey(),
-                        -1,
-                        thisEntityToLatestMasterSeqNum.getValue(),
-                        dbContext);
-            }
         }else if(syncResult.getStatus() == 500){
             //Server busy, Something is up. If you want the endpoint
             // to do something here in addition to returning the object
@@ -1374,31 +1531,36 @@ public class UMSyncEndpoint {
             //sync didn't happen, lets set is new back to true..
             if(userWasNew){
                 thisUser.setMasterSequence(-1);
-                //userManager.persist(dbContext, thisUser ,false);
-                //temporary disabled since TODO: check
+                //persist without updating its seq num
+                userManager.persist(dbContext, thisUser, false);
+                //TODO: check testing
             }
         }else if(syncResult.getStatus() == HttpURLConnection.HTTP_CONFLICT){
 
-            Map responseHeaders = syncResult.getHeaders();
             if(responseHeaders == null){
                 //fail.
                 System.out.println("Username update for existence failed.");
-            }else {
-                System.out.println(responseHeaders);
+            }else{
+                System.out.println("\nstartSync HTTP CONFLICT : RESPONSE HEADERS:\n" + responseHeaders);
                 String newUsername = syncResult.getHeader(RESPONSE_CHANGE_USERNAME).toString();
+
+                //Check: Conflict of username exists
                 if (newUsername != null && !newUsername.isEmpty()) {
-                    //Since its going to be a new one, set back to -1 so that
-                    // is new header will be set to true.
+                    //Since its going to be a new one, set MS back to -1
+                    // so that "is new" header will be set to true.
                     if(userWasNew){
                         thisUser.setMasterSequence(-1);
                         userManager.persist(dbContext, thisUser ,false);
                     }
                     //Update username
+                    /*
                     thisUser.setUsername(newUsername);
                     userManager.persist(dbContext, thisUser);
-                    //TODO: Update all statements as well. (either here or in usermanager's persist)
-
-                    //TODO: Delete the old User (since it will still exist)
+                    */
+                    //TODODone: Update all statements as well.
+                    userManager.updateUsername(newUsername, thisUser, dbContext);
+                    //TODODone: Delete the old User (since it will still exist)
+                    //Update: We just changed the user's username, thats all. Ignoring..
                 }
             }
         }
@@ -1406,6 +1568,7 @@ public class UMSyncEndpoint {
         //Check if response has conflicts, entities for us to process, etc
         JSONArray responseData = new JSONArray(); //response entities data
         JSONArray responseInfo = new JSONArray(); //response entities data info
+        JSONArray conflictData = new JSONArray(); //response conflict data
 
         InputStream syncResultResponseStream = syncResult.getResponseData();
         String syncResultResponse = "";
@@ -1422,37 +1585,17 @@ public class UMSyncEndpoint {
                 if(syncResultAllResponseJSON.optJSONArray(RESPONSE_ENTITIES_INFO) != null){
                     responseInfo = syncResultAllResponseJSON.getJSONArray(RESPONSE_ENTITIES_INFO);
                 }
-            }
-            //Get sync conflict data
-            //TODO: remove extra layers
-            JSONObject syncResultConflictJSON = null;
-            if(syncResultAllResponseJSON.optJSONObject("data") != null){
-                if(syncResultAllResponseJSON.optJSONObject("data").optJSONObject("data") != null){
-                    if(syncResultAllResponseJSON.getJSONObject("data").getJSONObject("data").has(RESPONSE_CONFLICT)){
-                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("data").getJSONObject("data").getJSONObject(RESPONSE_CONFLICT);
-                    }
-                }else{
-                    if(syncResultAllResponseJSON.optJSONObject("data").has(RESPONSE_CONFLICT)){
-                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("data").getJSONObject(RESPONSE_CONFLICT);
-                    }
-                }
-            }
-            if(syncResultAllResponseJSON.optJSONObject("json")!=null){
-                if(syncResultAllResponseJSON.getJSONObject("json").optJSONObject("data") != null){
-                    if(syncResultAllResponseJSON.getJSONObject("json").getJSONObject("data").has(RESPONSE_CONFLICT)){
-                        syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("json").getJSONObject("data").getJSONObject(RESPONSE_CONFLICT);
-                    }
-                }
-                if(syncResultAllResponseJSON.getJSONObject("json").has(RESPONSE_CONFLICT)){
-                    syncResultConflictJSON = syncResultAllResponseJSON.getJSONObject("json").getJSONObject(RESPONSE_CONFLICT);
+                if(syncResultAllResponseJSON.optJSONArray(RESPONSE_CONFLICT) != null){
+                    conflictData = syncResultAllResponseJSON.getJSONArray(RESPONSE_CONFLICT);
                 }
             }
 
             ////////////////////////////////////
             ///      HANDLE CONFLICTS        ///
             ////////////////////////////////////
-            if(syncResultConflictJSON != null){
-                //TODO: Handle Conflict and/or entities as they come back.
+            if(conflictData != null){
+                //TODODone: Handle Conflict and/or entities as they come back.
+                //Update: We are handling conflicts on reception side.
                 /*
                 Handle Conflict:
                 Step 1: Get JSON of conflict's data and info
@@ -1466,6 +1609,8 @@ public class UMSyncEndpoint {
                 Step 4: Persist with changesEq boolean to false
                  */
                 //...
+                System.out.println("\n!!THERE WEERE CONFLICTS AFTER SERVER CHECK EVEN> " +
+                        "\nPLEASE HANDLE THEM!\n");
             }
 
             ////////////////////////////////////
@@ -1474,7 +1619,7 @@ public class UMSyncEndpoint {
             JSONObject responseDataInfo = new JSONObject();
             responseDataInfo.put(RESPONSE_ENTITIES_DATA, responseData);
             responseDataInfo.put(RESPONSE_ENTITIES_INFO, responseInfo);
-            jsonToDB(responseDataInfo, node, thisNode, dbContext);
+            jsonToDB(responseDataInfo, node, thisNode, thisUser, dbContext);
 
         } //if response stream has something..end.
 
@@ -1509,12 +1654,12 @@ public class UMSyncEndpoint {
         //Get local version and check if its new or an update : Using reflection
         NanoLrsModelSyncable existingEntityToBeUpdated = null;
         try {
-            System.out.println("!!!!!DEBUG:GETTING PK METHOD!!!!!");
+            //System.out.println("!!!!!DEBUG:GETTING PK METHOD!!!!!");
             Method pkMethod = thisProxyClass.getMethod(pkMethodName);
-            System.out.println("!!!!DEBUG: PK METHOD:" + pkMethod +"!!!!!");
+            //System.out.println("!!!!DEBUG: PK METHOD:" + pkMethod +"!!!!!");
             existingEntityToBeUpdated = (NanoLrsModelSyncable)
                     thisManager.findByPrimaryKey(dbContext, pkMethod.invoke(thisNewEntity));
-            System.out.println("ENTITY UPDATE: " + pkMethod.invoke(thisNewEntity));
+            System.out.println("ENTITY UPDATE: " + pkMethod.invoke(thisNewEntity) + " (" + thisProxyClass.getSimpleName()+ ")");
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -1570,7 +1715,8 @@ public class UMSyncEndpoint {
                 }else if(thisNewEntityMaster == currentLatestMaster){
                     //We have an update that is from master and so is ours
                     //We also have both out masters the same. Which cannot be possible
-                    //TODO: Change this 0 to the the existing entity's stored Date
+                    //TODODone: Change this 0 to the the existing entity's stored Date
+                    //Update: This was an old tudu. all good here..
                     System.out.println("Sync Conflict. Both entities have the same master.\n" +
                             "We cannot keep the update. We ignore this.\n");
                     doIPersist =false;
@@ -1634,10 +1780,12 @@ public class UMSyncEndpoint {
                     }else if(thisNewEntity.getLocalSequence() > lastSyncSeq){
                         //WAIT the sync wont come unless its greater than.
                         //Maybe we don't really even need this check..
-                        //TODO: check
+                        //TODODone: check
+                        //Update: Nope, not gonna come here.
                         System.out.println("\nIncoming Sync Resolution: " +
                                 "Sender is From proxy\n" +
-                                "Request from proxy: is higher. Accepting..\n");
+                                "Request from proxy: is higher. Accepting..\n" +
+                                "\n\n!!!!THIS SHOULD NOT HAPPEN!!\n\n");
                         doIPersist = true;
                     }
                 }

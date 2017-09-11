@@ -13,6 +13,7 @@ import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.manager.XapiStateManager;
 import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
+import com.ustadmobile.nanolrs.core.mapping.ModelManagerMapping;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.UserCustomFields;
@@ -39,15 +40,13 @@ public class ProxyJsonSerializer {
      */
     public static final String PROXY_CLASS_JSON_FIELD = "pCls";
 
-    /**
-     * Map of entity names to the proxy class
-     */
+    /*
+    //Map of entity names to the proxy class
     private static HashMap<String, Class> proxyNameToClassMap = new HashMap<>();
-
     private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();
 
-    //TODO: Find a central place for this and other mappings.
-    //Better to have these in a central place that get auto generated.
+    //TODODone: Find a central place for this and other mappings.
+    //Better to have these in a central place that get auto-
 
     static {
         proxyNameToClassMap.put(User.class.getName(), User.class);
@@ -72,6 +71,7 @@ public class ProxyJsonSerializer {
         proxyClassToManagerMap.put(XapiStatement.class, XapiStatementManager.class);
 
     }
+    */
 
     /**
      * Converts an Entity Proxy Object to JSON. Serialises the Object.
@@ -145,8 +145,9 @@ public class ProxyJsonSerializer {
      */
     public static NanoLrsModel toEntity(JSONObject entityJSON, Object context ){
         String proxyClassName = entityJSON.getString(PROXY_CLASS_JSON_FIELD);
-        Class proxyClass = proxyNameToClassMap.get(proxyClassName);
-        Class managerClass = proxyClassToManagerMap.get(proxyClass);
+
+        Class proxyClass = ModelManagerMapping.proxyNameToClassMap.get(proxyClassName);
+        Class managerClass = ModelManagerMapping.proxyClassToManagerMap.get(proxyClass);
         NanoLrsManager manager = PersistenceManager.getInstance().getManager(managerClass);
         //Object context = PlatformTestUtil.getContext();
         NanoLrsModel newObj = null;
@@ -176,8 +177,8 @@ public class ProxyJsonSerializer {
                 {
                     System.out.println("RELATIONSHIP!");
 
-                    Class relatedProxyClass = proxyNameToClassMap.get(getterMethod.getReturnType().getName());
-                    Class realtedManagerClass = proxyClassToManagerMap.get(relatedProxyClass);
+                    Class relatedProxyClass = ModelManagerMapping.proxyNameToClassMap.get(getterMethod.getReturnType().getName());
+                    Class realtedManagerClass = ModelManagerMapping.proxyClassToManagerMap.get(relatedProxyClass);
 
                     //Get the manager of the related type
                     NanoLrsManager relatedManager =

@@ -55,6 +55,18 @@ import java.util.Set;
 
 public class EntityGeneratorOrmLite extends EntityGenerator {
 
+    public static final String NANOLRS_MODEL_SYNCABLE_CLASS_NAME = "NanoLrsModelSyncable";
+    public static final String NANOLRS_MODEL_NONSYNCABLE_CLASS_NAME = "NanoLrsModel";
+
+    /**
+     *
+     * @param baseName eg: XapiStatement.java
+     * @param proxyInterfaceFile    eg: File<XapiStatement.java>
+     * @param outDir output directory to save generated interface to eg: .../generated/model/
+     * @param outPackage package declaration to use for generated interface     eg: ....generated.model
+     *
+     * @throws IOException
+     */
     public void generate(String baseName, File proxyInterfaceFile,
                          File outDir, String outPackage) throws IOException{
         String ormLiteClassName = baseName + "Entity";
@@ -69,6 +81,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         //(ie: no more changes)
         //This is also checking if there is any change to EntityGen itself.
         //If Entitygen is newer than the proxy, this will be processed.
+        //Update: this might not be needed, as we delete everything every time this is run..
         if(outFile.lastModified() > proxyInterfaceFile.lastModified())
             if(thisGeneratorFile.lastModified() < outFile.lastModified())
                 return;
@@ -156,6 +169,135 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
         generateFromIterator(iterator, ormLiteObj, proxyInterface);
 
         FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
+    }
+
+    @Override
+    public void generateMapping(Map<File, File> proxiesWithManagers, File outFile,
+                                String outPackage, String modelPackage, String managerPackage)
+            throws IOException {
+        /*
+        Not using JavaClassSource because it cant do static inline blocks / can't figure that out.
+         */
+
+        JavaClassSource ormLiteObj = Roaster.create(JavaClassSource.class);
+        ormLiteObj.setPackage(outPackage).setName(EntityGenerator.MODEL_MANAGER_MAPPING_FILE);
+
+        ormLiteObj.addImport(HashMap.class);
+
+        ormLiteObj.addField("private static HashMap<String, Class> proxyNameToClassMap = new HashMap<>();");
+        ormLiteObj.addField("private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();");
+
+        String top = "package com.ustadmobile.nanolrs.core.mapping;\n" +
+                "\n" +
+                "import java.util.HashMap;\n";
+
+        String classStart = "\npublic class ModelManagerMapping {\n";
+        String classEnd = "\n}";
+        String importBit = "\n";
+        String initBit = "\n\tpublic static HashMap<String, Class> proxyNameToClassMap = new HashMap<>();\n" +
+                "\tpublic static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();\n";
+        String bodyBit = "";
+        String syncableEntitiesBit = "\n\tpublic static Class[] SYNCABLE_ENTITIES = new Class[]{\n";
+        String syncableEntitiesEndBit = "\n\t};";
+        boolean first = true;
+        Iterator<Map.Entry<File, File>> proxiesWithManagersIterator = proxiesWithManagers.entrySet().iterator();
+        while(proxiesWithManagersIterator.hasNext()){
+            Map.Entry<File, File> proxyManagerEntry = proxiesWithManagersIterator.next();
+            File proxy = proxyManagerEntry.getKey();
+            File manager = proxyManagerEntry.getValue();
+            String proxyName = proxy.getName().substring(0,
+                    proxy.getName().length()-".java".length());
+            String managerName = manager.getName().substring(0,
+                    manager.getName().length()-".java".length());
+
+
+            String proxyStr = FileUtils.readFileToString(proxy, "UTF-8");
+            JavaInterfaceSource proxyInterface =
+                    Roaster.parse(JavaInterfaceSource.class, proxyStr);
+
+            String pntcm = "proxyNameToClassMap.put("+ proxyName+".class.getName()" +"," + proxyName+".class" + ");";
+            String pctmp = "proxyClassToManagerMap.put(" +proxyName+".class" + "," + managerName+".class"+ ");";
+            //ormLiteObj.addField(pntcm);
+            //ormLiteObj.addField(pctmp);
+
+            bodyBit = bodyBit + "\n\t\t" + pntcm + "\n";
+            bodyBit = bodyBit + "\n\t\t" + pctmp + "\n";
+
+            importBit = importBit + "import " + modelPackage + "." + proxyName + ";\n";
+            importBit = importBit + "import " + managerPackage + "." + managerName + ";\n";
+
+            if (proxyInterface.hasInterface(NANOLRS_MODEL_SYNCABLE_CLASS_NAME)) {
+                if(first){
+                    first = false;
+                    syncableEntitiesBit = syncableEntitiesBit + "\t\t" + proxyName + ".class";
+                }else {
+                    syncableEntitiesBit = syncableEntitiesBit + ", " + proxyName + ".class";
+                }
+            }
+
+
+
+        }
+        String staticStart = "\tstatic{\n";
+        String staticEnd = "\n\t}";
+        String finalFileString = top + importBit + classStart + initBit + staticStart +
+                bodyBit + staticEnd + syncableEntitiesBit + syncableEntitiesEndBit + classEnd;
+        FileUtils.write(outFile, finalFileString, "UTF-8");
+        //FileUtils.write(outFile, ormLiteObj.toString(), "UTF-8");
+
+    }
+
+    @Override
+    public void generateTableList(File[] proxyInterfaceFiles, File entityDir, File tableListFile,
+                                  String tableListPackage) throws IOException {
+
+
+        JavaClassSource ormLiteObj = Roaster.create(JavaClassSource.class);
+        ormLiteObj.setPackage(tableListPackage).setName(EntityGenerator.ENTITIES_TABLE_FILE);
+
+
+        //Loop through proxy interfaces
+        boolean firstOne = true;
+        String entitiesClassList = "";
+        for(File proxyInterfaceFile: proxyInterfaceFiles) {
+            String proxyStr = FileUtils.readFileToString(proxyInterfaceFile, "UTF-8");
+            JavaInterfaceSource proxyInterface =
+                    Roaster.parse(JavaInterfaceSource.class, proxyStr);
+            Iterator<MethodSource<JavaInterfaceSource>> iterator =
+                    proxyInterface.getMethods().iterator();
+
+            List<String> allInterfaces = proxyInterface.getInterfaces();
+            //System.out.println("All interfaces: " + allInterfaces);
+
+            if(proxyInterface.hasInterface(NANOLRS_MODEL_SYNCABLE_CLASS_NAME) ||
+                    proxyInterface.hasInterface(NANOLRS_MODEL_NONSYNCABLE_CLASS_NAME)){
+                String proxyName = proxyInterface.getName();
+                String proxyClassPath = proxyInterface.getQualifiedName();
+                //System.out.println(proxyName + " has it..");
+                String entityName = proxyName + "Entity";
+                String entityFileName = entityName + ".java";
+                File entityFile = new File(entityDir.getAbsolutePath() + File.separator + entityFileName);
+                if(entityFile.exists() && !proxyName.equals(NANOLRS_MODEL_SYNCABLE_CLASS_NAME)){
+                    String entityStr = FileUtils.readFileToString(entityFile, "UTF-8");
+                    JavaClassSource entityClassSource =
+                            Roaster.parse(JavaClassSource.class, entityStr);
+                    String entityClasspath = entityClassSource.getQualifiedName();
+                    ormLiteObj.addImport(entityClasspath);
+                    if(firstOne){
+                        firstOne = false;
+                        entitiesClassList = entityName + ".class";
+                    }else{
+                        entitiesClassList = entitiesClassList + ", " + entityName + ".class";
+                    }
+                }
+
+            }
+        }
+        String entitiesToTableField = "public static Class[] TABLE_CLASSES = new Class[]{" + entitiesClassList + "};";
+
+        ormLiteObj.addField(entitiesToTableField);
+        FileUtils.write(tableListFile, ormLiteObj.toString(), "UTF-8");
+
     }
 
     protected void generateFromIterator(Iterator<MethodSource<JavaInterfaceSource>> iterator,
@@ -332,6 +474,13 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
 
     }
 
+    /**
+     *
+     * @param proxyInterfaceDir The directory containing proxy interface files ../core/model/
+     * @param outDir ..../generated/model/
+     * @param outPackage ...generated.model
+     * @throws IOException
+     */
     @Override
     public void generateDir(File proxyInterfaceDir, File outDir, String outPackage) throws IOException {
         super.generateDir(proxyInterfaceDir, outDir, outPackage);
@@ -348,7 +497,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
             File proxyInterfaceFile = new File(proxyInterfaceDir, entityFile.getName().substring(0,
                     entityFile.getName().length() - "Entity.java".length()) + ".java");
             if(!proxyInterfaceFile.exists()) {
-                System.out.println("Deleting removed entity : Interface for " + entityFile.getName() + " does not exist at " + proxyInterfaceFile.getAbsolutePath());
+                //System.out.println("Deleting removed entity : Interface for " + entityFile.getName() + " does not exist at " + proxyInterfaceFile.getAbsolutePath());
                 entityFile.delete();
             }
         }
@@ -362,7 +511,7 @@ public class EntityGeneratorOrmLite extends EntityGenerator {
      */
     public static void main(String[] args) throws Exception{
         File proxyInterfaceInDir = new File(args[0]);
-        File outDir = new File(args[1]);
+        File outDir = new File(args[1]); //..generated/model/
 
         if(args.length < 3) {
             System.err.println("Usage: EntityGeneratorOrmLite <input directory> <output directory> <output package name>");

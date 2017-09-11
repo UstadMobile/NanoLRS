@@ -72,7 +72,7 @@
 				$('#report_result tr td').each(function() {
 					if ($(this).text() == 'false') {
 						//$(this).closest('td').css('background-color', '#f45f42');
-						$(this).closest('td').css('background-image', 'url(cross.svg)');
+						$(this).closest('td').css('background-image', 'url(../cross.svg)');
 						$(this).closest('td').css('background-repeat', 'no-repeat');
 						$(this).closest('td').css('background-position', 'center');
 						$(this).closest('td').css('font-size', '0');
@@ -80,7 +80,7 @@
 					}
 					if ($(this).text() == 'true'){
 						//$(this).closest('td').css('background-color', '#bbff00');
-						$(this).closest('td').css('background-image', 'url(tick.svg)');
+						$(this).closest('td').css('background-image', 'url(../tick.svg)');
 						$(this).closest('td').css('background-repeat', 'no-repeat');
 						$(this).closest('td').css('background-position', 'center');
 						$(this).closest('td').css('font-size', '0');
@@ -135,7 +135,7 @@
                                 data: {
                                     university_names : universitynames
                                 },
-								url:  'enrollment/',
+								url:  '',
 								complete: function(response){
 									if (success == true){
 										console.log("OK.");
@@ -211,7 +211,7 @@
 				<!--Loading spinner-->
 				<div id="ajaxSpinnerContainer" class="spinner">
 					<div id="ajaxSpinnerImage" title="Crunching report..">
-						<img src="../media/spinner.gif" title="Working..">
+						<img src="/syncendpoint/media/spinner.gif" title="Working..">
 					</div>
 				</div>
 				

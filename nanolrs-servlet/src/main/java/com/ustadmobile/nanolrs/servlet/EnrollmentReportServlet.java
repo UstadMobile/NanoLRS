@@ -60,19 +60,14 @@ public class EnrollmentReportServlet extends HttpServlet {
             if(sessionAdmin.equals("admin")){
                 request.setAttribute("table_headers_html",table_headers_html);
                 request.setAttribute("static","/syncendpoint/");
-                response.sendRedirect("../EnrollmentReport.jsp");
+                //response.sendRedirect("../EnrollmentReport.jsp");
+                request.getRequestDispatcher("../EnrollmentReport.jsp").forward(request, response);
             }else{
                 response.sendRedirect("../../Login.jsp");
             }
         }else {
             response.sendRedirect("../../Login.jsp");
         }
-
-        /*
-        request.setAttribute("table_headers_html",table_headers_html);
-        request.setAttribute("static","/syncendpoint/");
-        request.getRequestDispatcher("/reports/EnrollmentReport.jsp").forward(request, response);
-        */
     }
 
     @Override
@@ -158,17 +153,27 @@ public class EnrollmentReportServlet extends HttpServlet {
                 JSONObject userInfoJSON = new JSONObject();
                 userInfoJSON.put("username", username );
                 userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext) );
-                String uni_name = ucfManager.getUserField(user, custom_fields_map.get("university"), dbContext);
+                String user_university = ucfManager.getUserField(user,
+                        custom_fields_map.get("university"), dbContext);
 
-                System.out.println("Should I skip?");
+                //Check Uni
                 boolean iWantToBreakFree = false;
-                boolean showAll = false;
-                System.out.println("Checking if: " + uni_name + " is in: " + uni_names);
+                System.out.println("Checking if: " + user_university + " is in: " + uni_names);
                 if (allChoosenUniNames.isEmpty()) {
                     //Let it go.. Let it go..
                 }else if(allChoosenUniNames.contains("ALL")){
                     //Let it go, Let it go..
-                }else if(!allChoosenUniNames.contains(uni_name)){
+                }else if(allChoosenUniNames.contains("Other") ||
+                        allChoosenUniNames.contains("I don't know")){
+                    if(user_university.contains("Other") || user_university.contains("I don't know")){
+                        //Let it go..
+                        System.out.println("Selected Other/I don't know. " +
+                                "User's uni is also that. Allowing..");
+                    }else{
+                        iWantToBreakFree = true;
+                        continue;
+                    }
+                }else if(!allChoosenUniNames.contains(user_university)){
                     iWantToBreakFree = true;
                     System.out.println("YES");
                     continue;
@@ -176,9 +181,9 @@ public class EnrollmentReportServlet extends HttpServlet {
                 System.out.println("NO");
 
 
-                userInfoJSON.put("university_name", uni_name);
-                if(uni_map.containsKey(uni_name)){
-                    userInfoJSON.put("university", uni_map.get(uni_name));
+                userInfoJSON.put("university_name", user_university);
+                if(uni_map.containsKey(user_university)){
+                    userInfoJSON.put("university", uni_map.get(user_university));
                 }else{
                     userInfoJSON.put("university", "");
                 }
@@ -198,20 +203,6 @@ public class EnrollmentReportServlet extends HttpServlet {
             e.printStackTrace();
             System.out.println("EXCEPTION!");
         }
-
-        /*
-        if(userEnrollmentJSONArray.length() < 1){
-            jsonToReturn = "[\n" +
-                    //"    \"data\": [\n" +
-                    "        {\"username\": \"user1\", \"fullname\": \"Chai Zakir\", \"university\" : 23, \"university_name\": \"Kabul University\", \"enrolled\": \"true\"},\n" +
-                    "        {\"username\": \"user2\", \"fullname\": \"Kafi Ismail\", \"university\" : 24, \"university_name\": \"AFG University\", \"enrolled\": \"false\"},\n" +
-                    "        {\"username\": \"user3\", \"fullname\": \"Saeb Salik\", \"university\" : 24, \"university_name\": \"AFG University\", \"enrolled\": \"true\"},\n" +
-                    "        {\"username\": \"user4\", \"fullname\": \"Aam Ali\", \"university\" : 23, \"university_name\": \"Kabul University\", \"enrolled\": \"false\"},\n" +
-                    "        {\"username\": \"user5\", \"fullname\": \"Kafi Ismail\", \"university\" : 24, \"university_name\": \"AFG University\", \"enrolled\": \"false\"}\n" +
-                    //"        ]\n" +
-                    "    ]";
-        }
-        */
 
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

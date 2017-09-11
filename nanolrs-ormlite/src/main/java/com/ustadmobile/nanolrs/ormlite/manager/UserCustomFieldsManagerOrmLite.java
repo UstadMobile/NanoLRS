@@ -111,5 +111,42 @@ public class UserCustomFieldsManagerOrmLite extends BaseManagerOrmLiteSyncable
 
     }
 
+    @Override
+    public void updateUserCustom(Map<Integer, String> map, User user, Object dbContext)
+            throws SQLException {
+
+        Set<Map.Entry<Integer, String>> es = map.entrySet();
+        Iterator<Map.Entry<Integer, String>> it = es.iterator();
+
+        List<UserCustomFields> userFields = findByUser(user, dbContext);
+
+        while(it.hasNext()){
+            Map.Entry<Integer, String> e = it.next();
+            int key = e.getKey();
+            String value = e.getValue(); //new value
+            boolean fieldExists = false;
+            UserCustomFields uce = null;
+            for(UserCustomFields customField : userFields){
+                if(customField.getFieldName() == key){
+                    uce = customField;
+                    fieldExists = true;
+                    uce.setFieldValue(value);
+                    break;
+                }
+            }
+            if(fieldExists == false){
+                uce = (UserCustomFields)makeNew();
+                uce.setUuid(UUID.randomUUID().toString());
+                if(user!=null) {
+                    uce.setUser(user);
+                }
+                uce.setFieldName(key);
+                uce.setFieldValue(value);
+            }
+
+            persist(dbContext, uce);
+        }
+    }
+
 
 }

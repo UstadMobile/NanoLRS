@@ -23,5 +23,11 @@ public interface NanoLrsModel {
     long getStoredDate();
     void setStoredDate(long storedDate);
 
+    //TODO: Add this, but have an upgrade plan in DatabaseHelper for Android.
+    /*
+    boolean getActive();
+    void setActive(Boolean active);
+    */
+
 
 }

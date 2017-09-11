@@ -52,11 +52,14 @@ public class XapiAgentEndpoint {
         agent.setAccountHomepage(accountHomepage);
         agent.setAccountName(accountName);
 
-        //TODO: Check if username gets changed, should we set agent before user ?
+        //TODODone: Check if username gets changed, should we set agent before user ?
         //I think its okay, since the agent's user will get set when its created
         //which is before the sync. The sync will change the user's username
         // not the user assigned. So it should be okay.
         //User's persist should change itself and all its associated entries in db.
+        //Update: Sync cannot proceed without valid User and username.
+        //If username gets changed, userManager.updateUsername(..) changes agent mapping
+
         //Add user to agent
         UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
         /*

@@ -7,11 +7,12 @@ import android.os.IBinder;
 
 import com.ustadmobile.nanolrs.android.persistence.PersistenceManagerAndroid;
 import com.ustadmobile.nanolrs.core.endpoints.XapiStatementsForwardingEndpoint;
-import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * You can remove this. We are not using this anymore..
+ */
 public class XapiStatementForwardingService extends Service {
 
     private XapiStatementForwardingBinder mBinder = new XapiStatementForwardingBinder();
