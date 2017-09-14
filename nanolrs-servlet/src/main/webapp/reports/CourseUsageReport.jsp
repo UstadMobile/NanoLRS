@@ -314,6 +314,16 @@
 					</div><!--Selection div-->
 				 </form><!--Submit Form-->
 
+				 <!-- Export Report data to csv/xls -->
+                <form id="export_report_form" name="export_report_form" method="post" action="../export/">
+                      <input type="hidden" name="return_json" id="return_json" value="Moo">
+                      <input type="hidden" name="table_headers_html" id="table_headers_html" value="Bah">
+                      <button id="export_report_button"
+                          name="export_report_button" style="padding: 4.6px 12px; float:right;">
+                          Export
+                      </button>
+                 </form>
+				 <br></br>
                 <!-- Report Table goes here -->
                 <!-- style="width:15%;" -->
 				<div class="table-outer">
@@ -329,15 +339,7 @@
 					</div>
 				</div>
 				<p></p>
-				<!-- Export Report data to csv/xls -->
-                <form id="export_report_form" name="export_report_form" method="post" action="../export/">
-                      <input type="hidden" name="return_json" id="return_json" value="Moo">
-                      <input type="hidden" name="table_headers_html" id="table_headers_html" value="Bah">
-                      <button id="export_report_button"
-                          name="export_report_button" style="padding: 4.6px 12px; float:right;">
-                          Export
-                      </button>
-                 </form>
+
 				<p></p>
 				<br></br>
 				<br></br>

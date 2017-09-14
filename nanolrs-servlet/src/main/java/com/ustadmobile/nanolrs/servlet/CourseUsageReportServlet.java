@@ -323,7 +323,7 @@ public class CourseUsageReportServlet  extends HttpServlet {
         2. Get registrations
 
          */
-        System.out.println("Checking allRegistrations for moduele: " + module.getName());
+        //System.out.println("Checking allRegistrations for moduele: " + module.getName());
         List<String> allRegistrations = new LinkedList<>();
         Map<String, Long> allRegistrationsMap = new LinkedHashMap<>();
         List<XapiStatement> userStatements = findStatements(agent,MappingValues.XAPI_LAUNCHED_VERB,
@@ -451,8 +451,10 @@ public class CourseUsageReportServlet  extends HttpServlet {
                         String registrationDateString = df.format(registrationDate);
                         Long regTotalDuration = 0L;
                         regIteration = regIteration + 1;
+                        String regTotalScore;
                         JSONObject userRegEntry = new JSONObject();
                         userRegEntry.put("blankspace", "");
+                        userRegEntry.put(MappingValues.USER_COLUMN_USERNAME, "");
                         //Get score for every question:
                         Map<String, String> scoreMap = getScores(agent, everyModule,
                                 registrationId, dbContext);
@@ -466,35 +468,38 @@ public class CourseUsageReportServlet  extends HttpServlet {
                                 regTotalDuration = regTotalDuration + thisDuration;
                             }
 
+                        }
 
+                        List<XapiStatement> regPassed =
+                                findStatements(agent, MappingValues.XAPI_PASSED_VERB,
+                                        everyModule.getIds(), null, registrationId, dbContext);
+                        List<XapiStatement> regFailed =
+                                findStatements(agent, MappingValues.XAPI_FAILED_VERB,
+                                        everyModule.getIds(), null, registrationId, dbContext);
+                        if(!regPassed.isEmpty()){
+                            regTotalScore = String.valueOf(
+                                    regPassed.get(0).getResultScoreScaled() * 100) + "%";
+                        }else if(!regFailed.isEmpty()){
+                            regTotalScore = String.valueOf(
+                                    regFailed.get(0).getResultScoreScaled() * 100) + "%";
+                        }else{
+                            regTotalScore = "-";
                         }
                         userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_ATTEMPT_BIT,
                                 registrationDateString);
                         userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_DURATION_BIT,
                                 String.valueOf(regTotalDuration));
+                        userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_SCORE_BIT,
+                                regTotalScore);
+                        userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_REGISTRATION_BIT,
+                                registrationId);
 
                         userAttempt.put("r"+registrationId, userRegEntry);
 
                         if(!gotLatest){
                             gotLatest = true;
                             moduleDuration = regTotalDuration;
-                            //XapiAgent agent, String verb, List<String> activities,
-                            // String statementId, String registration, Object dbContext
-                            List<XapiStatement> passedStatements =
-                                    findStatements(agent, MappingValues.XAPI_PASSED_VERB,
-                                            everyModule.getIds(), null, registrationId, dbContext);
-                            List<XapiStatement> failedStatements =
-                                    findStatements(agent, MappingValues.XAPI_FAILED_VERB,
-                                            everyModule.getIds(), null, registrationId, dbContext);
-                            if(!passedStatements.isEmpty()){
-                                moduleScore = String.valueOf(
-                                        passedStatements.get(0).getResultScoreScaled() * 100) + "%";
-                            }else if(!failedStatements.isEmpty()){
-                                moduleScore = String.valueOf(
-                                        failedStatements.get(0).getResultScoreScaled() * 100) + "%";
-                            }else{
-                                moduleScore = "-";
-                            }
+                            moduleScore = regTotalScore;
                         }
 
                     }

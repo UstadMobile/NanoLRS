@@ -69,7 +69,7 @@ public class ExportReportServlet extends HttpServlet {
         Iterator<Map.Entry<String, String>> t = table_headers_html_map.entrySet().iterator();
         while(t.hasNext()){
             Map.Entry<String, String> e = t.next();
-            System.out.println("Map entry: " + e.getKey() + "/" + e.getValue());
+            //System.out.println("Map entry: " + e.getKey() + "/" + e.getValue());
         }
 
 

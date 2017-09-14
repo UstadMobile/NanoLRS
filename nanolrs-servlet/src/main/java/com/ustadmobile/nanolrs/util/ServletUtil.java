@@ -215,13 +215,13 @@ public class ServletUtil {
                     userInfo.put(MappingValues.USER_COLUMN_USERNAME,user.getUsername());
                     break;
                 case MappingValues.USER_COLUMN_UNIVERSITY:
-                    System.out.println("Getting university..");
+                    //System.out.println("Getting university..");
                     String university = userCustomFieldsManager.getUserField(
                             user, MappingValues.custom_fields_map.get(MappingValues.USER_COLUMN_UNIVERSITY), dbContext);
                     if(university == null){
                         university = "";
                     }
-                    System.out.println("putting..");
+                    //System.out.println("putting..");
                     userInfo.put(MappingValues.USER_COLUMN_UNIVERSITY, university);
 
                     if(MappingValues.uni_map.containsKey(university)){
@@ -401,7 +401,10 @@ public class ServletUtil {
         excel_file_location = "report_" + unixTime + REPORT_FILE_EXTENSION;
 
         try {
-            File file=new File(excel_file_location);
+            File dir = new File("reports");
+            dir.mkdir();
+            File file=new File(dir, excel_file_location);
+            System.out.println("File path : " + file.getAbsolutePath());
 
             String csv = jsonArrayToStringInOrder(data, table_headers_html_map);
             FileUtils.writeStringToFile(file, csv); //Deprecated, but allowing. TODO: check this
@@ -428,18 +431,18 @@ public class ServletUtil {
         boolean iWantToBreakFree = false;
         if (filters.isEmpty()) {
             //Let it go.. Let it go..
-            System.out.println("No Uni filter selected. Showing all users..");
+            //System.out.println("No Uni filter selected. Showing all users..");
         }else if(filters.contains("ALL")){
             //Let it go, Let it go..
-            System.out.println("All Uni filter selected. Showing all users..");
+            //System.out.println("All Uni filter selected. Showing all users..");
         }else if(filters.contains("Other") ||
                 filters.contains("I don't know")){
             if(user_variable.contains("Other") || user_variable.contains("I don't know") ||
                     user_variable == null || user_variable.isEmpty() ||
                     user_variable.trim().isEmpty()){
                 //Let it go..
-                System.out.println("Selected Other/I don't know. " +
-                        "User's uni is also that. Allowing..");
+                //System.out.println("Selected Other/I don't know. " +
+                //       "User's uni is also that. Allowing..");
             }else{
                 iWantToBreakFree = true;
             }
