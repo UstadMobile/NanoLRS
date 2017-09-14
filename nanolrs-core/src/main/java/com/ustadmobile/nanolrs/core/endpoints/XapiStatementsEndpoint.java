@@ -8,6 +8,8 @@ import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.ParseUtil;
 
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,6 +84,12 @@ public class XapiStatementsEndpoint {
 
                 if(result.has("success")) {
                     stmtProxy.setResultSuccess(result.getBoolean("success"));
+                }
+
+                if(result.has("duration")) {
+                    Period durationPeriod = new Period(result.getString("duration"));
+                    long durationInMs = durationPeriod.toDurationFrom(new DateTime(0)).getMillis();
+                    stmtProxy.setResultDuration(durationInMs);
                 }
 
                 if(result.has("extensions")) {

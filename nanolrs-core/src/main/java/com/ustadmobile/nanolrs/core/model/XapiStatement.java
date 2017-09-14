@@ -60,9 +60,9 @@ public interface XapiStatement extends NanoLrsModelSyncable{
 
     void setResultResponse(String resultResponse);
 
-    String getResultDuration();
+    long getResultDuration();
 
-    void setResultDuration(String resultDuration);
+    void setResultDuration(long resultDuration);
 
     float getResultScoreScaled();
 
