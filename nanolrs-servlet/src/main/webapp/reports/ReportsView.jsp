@@ -17,7 +17,7 @@
 				$('#report3').puibutton();
 				$('#report4').puibutton();
 				$('#report5').puibutton();
-
+                $('#report6').puibutton();
 				}
 			);
 			
@@ -57,6 +57,7 @@
 					<ul>
 					    <a href="../reports/enrollment/"><button id="report3" type="button" style="width:200px;height:100px" >ENROLLMENT REPORTS</button></a>
                         <a href="../reports/completion/"><button id="report4" type="button" style="width:200px;height:100px" >COMPLETION REPORTS</button></a>
+                        <a href="../reports/usagescore/"><button id="report6" type="button" style="width:200px;height:100px" >USAGE/SCORE REPORTS</button></a>
 
 						<!--
 						<a href="DurationReport.jsp"><button id="report1" type="button"style="width:200px;height:100px">Duration Report</button></a>

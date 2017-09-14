@@ -12,6 +12,8 @@ import java.util.Map;
 public class MappingValues {
 
     //TODO: Get from build prop
+    public static final String SUPER_ADMIN_USERNAME = "admin";
+
     public static final String USER_COLUMN_USERNAME = "username";
     public static final String USER_COLUMN_UNIVERSITY = "university";    //, 980);
     public static final String USER_COLUMN_FULLNAME = "fullname";    //, 981);
@@ -36,19 +38,59 @@ public class MappingValues {
     public static final String USER_COLUMN_COMMENTS = "comments";    //,1000);
     public static final String USER_COLUMN_WORK_EXPERIENCE_ELABORATE = "work_experience_elaborate";    //,1001);
 
+    public static final String MODULE_SCORE_BIT = "_score";
+    public static final String MODULE_ATTEMPT_BIT = "_attempt";
+    public static final String MODULE_REGISTRATION_BIT = "_registration";
+    public static final String MODULE_RESULT_BIT = "_result";
+    public static final String MODULE_DURATION_BIT = "_duration";
+    public static final String MODULE_ATTEMPT_STRING = "Attempt";
+    public static final String MODULE_SCORE_STRING = "Score";
+    public static final String MODULE_REGISTRATION_STRING = "Registration";
+    public static final String MODULE_RESULT_STRING = "Result";
+    public static final String MODULE_DURATION_STRING = "Duration";
+
+    public static String[] universities = {"Kabul University", "Kabul Polytechnic University",
+            "Kabul Education University", "Other", "I don't know"};
+    public static String[] gender = {"Female", "Male"};
+    public static String[] faculty = {};
+    public static String[] relationship={"Single", "Married"};
+    public static String[] academic_year={};
+    public static String[] english_proficiency = {"Fluent", "Good", "Fair", "Poor"};
+    public static String[] yes_no_choices = {"Yes", "No"};
+    public static String[] job_type = {"Short-term", "Long-term", "Part-time", "Full-time"};
+
+    public static Map<String, Integer> custom_fields_map = new HashMap<>();
+    public static Map<String, String> uni_map = new HashMap<>();
+    public static Map<String, String> custom_fields_label = new HashMap<>();
+
+    public static String[] USER_COLUMN_FIELDS = {USER_COLUMN_USERNAME, USER_COLUMN_UNIVERSITY,
+            USER_COLUMN_FULLNAME, USER_COLUMN_TAZKIRA_ID, USER_COLUMN_GENDER};
+
+    public static final String XAPI_PASSED_VERB = "http://adlnet.gov/expapi/verbs/passed";
+    public static final String XAPI_FAILED_VERB = "http://adlnet.gov/expapi/verbs/failed";
+    public static final String XAPI_LAUNCHED_VERB = "http://adlnet.gov/expapi/verbs/launched";
+    public static final String XAPI_ANSWERED_VERB = "http://adlnet.gov/expapi/verbs/answered";
+
     public static final String MODULE_1_NAME = "CV Writing";
     public static final String MODULE_2_NAME = "Cover Letter Writing";
     public static final String MODULE_3_NAME = "Job Search Skills";
     public static final String MODULE_4_NAME = "Job Interview Skills";
+    public static final String MODULE_5_NAME = "Module 5";
+    public static final String MODULE_6_NAME = "Module 6";
+    public static final String MODULE_7_NAME = "Module 7";
+    public static final String MODULE_8_NAME = "Module 8";
+    public static final String MODULE_9_NAME = "Module 9";
 
-    public static final String MODULE_1_ID = "m1";
-    public static final String MODULE_2_ID = "m2";
-    public static final String MODULE_3_ID = "m3";
-    public static final String MODULE_4_ID = "m4";
 
-    public static final String SUPER_ADMIN_USERNAME = "admin";
-
-    public static String[] USER_COLUMN_FIELDS = {USER_COLUMN_USERNAME, USER_COLUMN_UNIVERSITY, USER_COLUMN_FULLNAME, USER_COLUMN_TAZKIRA_ID, USER_COLUMN_GENDER};
+    public static final String MODULE_1_SHORTID = "m1";
+    public static final String MODULE_2_SHORTID = "m2";
+    public static final String MODULE_3_SHORTID = "m3";
+    public static final String MODULE_4_SHORTID = "m4";
+    public static final String MODULE_5_SHORTID = "m5";
+    public static final String MODULE_6_SHORTID = "m6";
+    public static final String MODULE_7_SHORTID = "m7";
+    public static final String MODULE_8_SHORTID = "m8";
+    public static final String MODULE_9_SHORTID = "m9";
 
     public static Map<String, String> MODULES = new HashMap<>();
     public static Map<String, List<String>> MODULE_EPUB_ID = new HashMap<>();
@@ -63,34 +105,34 @@ public class MappingValues {
     public static Map<String, String> MODULE_8_QUESTIONS = new HashMap<>();
     public static Map<String, String> MODULE_9_QUESTIONS = new HashMap<>();
 
+    public static List<String> MODULE_1_IDS = new ArrayList<>();
+    public static List<String> MODULE_2_IDS = new ArrayList<>();
+    public static List<String> MODULE_3_IDS = new ArrayList<>();
+    public static List<String> MODULE_4_IDS = new ArrayList<>();
+    public static List<String> MODULE_5_IDS = new ArrayList<>();
+    public static List<String> MODULE_6_IDS = new ArrayList<>();
+    public static List<String> MODULE_7_IDS = new ArrayList<>();
+    public static List<String> MODULE_8_IDS = new ArrayList<>();
+    public static List<String> MODULE_9_IDS = new ArrayList<>();
 
-    //TODO: Get from build properties
+    public static List<List<String>> ALL_MODULE_IDS = new ArrayList<>();
+    public static Map<List<String>, Map<String, String>> ALL_MODULE_IDS_QUESTIONS = new HashMap<>();
 
-    public static Map<String, Integer> custom_fields_map = new HashMap<>();
-    public static Map<String, String> uni_map = new HashMap<>();
-    public static Map<String, String> custom_fields_label = new HashMap<>();
 
-    public static List<String> MODULE_1_IDS = new ArrayList<String>();
-    public static List<String> MODULE_2_IDS = new ArrayList<String>();
-    public static List<String> MODULE_3_IDS = new ArrayList<String>();
-    public static List<String> MODULE_4_IDS = new ArrayList<String>();
-    public static List<String> MODULE_5_IDS = new ArrayList<String>();
-    public static List<String> MODULE_6_IDS = new ArrayList<String>();
-    public static List<String> MODULE_7_IDS = new ArrayList<String>();
-    public static List<String> MODULE_8_IDS = new ArrayList<String>();
-    public static List<String> MODULE_9_IDS = new ArrayList<String>();
+    //Attempt to redo this whole thing with Module object:
 
-    public static final String XAPI_PASSED_VERB = "http://adlnet.gov/expapi/verbs/passed";
+    public static Module MODULE1;
+    public static Module MODULE2;
+    public static Module MODULE3;
+    public static Module MODULE4;
+    public static Module MODULE5;
+    public static Module MODULE6;
+    public static Module MODULE7;
+    public static Module MODULE8;
+    public static Module MODULE9;
 
-    public static String[] universities = {"Kabul University", "Kabul Polytechnic University",
-            "Kabul Education University", "Other", "I don't know"};
-    public static String[] gender = {"Female", "Male"};
-    public static String[] faculty = {};
-    public static String[] relationship={"Single", "Married"};
-    public static String[] academic_year={};
-    public static String[] english_proficiency = {"Fluent", "Good", "Fair", "Poor"};
-    public static String[] yes_no_choices = {"Yes", "No"};
-    public static String[] job_type = {"Short-term", "Long-term", "Part-time", "Full-time"};
+    public static List<Module> ALL_MODULES = new ArrayList<>();
+
 
     static{
         custom_fields_map.put(USER_COLUMN_UNIVERSITY, 980);
@@ -160,15 +202,24 @@ public class MappingValues {
         MODULE_4_IDS.add("epub:e95ec3d7-d56b-4541-8d45-4684dfdf64a6");
         MODULE_4_IDS.add("epub:31e04e55-e29d-422f-9e99-c3f2fd1f6f4a");
 
-        MODULES.put(MODULE_1_ID, MODULE_1_NAME);
-        MODULES.put(MODULE_2_ID, MODULE_2_NAME);
-        MODULES.put(MODULE_3_ID, MODULE_3_NAME);
-        MODULES.put(MODULE_4_ID, MODULE_4_NAME);
+        ALL_MODULE_IDS.add(MODULE_1_IDS);
+        ALL_MODULE_IDS.add(MODULE_2_IDS);
+        ALL_MODULE_IDS.add(MODULE_3_IDS);
+        ALL_MODULE_IDS.add(MODULE_4_IDS);
+        ALL_MODULE_IDS.add(MODULE_5_IDS);
+        ALL_MODULE_IDS.add(MODULE_6_IDS);
+        ALL_MODULE_IDS.add(MODULE_7_IDS);
+        ALL_MODULE_IDS.add(MODULE_8_IDS);
 
-        MODULE_EPUB_ID.put(MODULE_1_ID, MODULE_1_IDS);
-        MODULE_EPUB_ID.put(MODULE_2_ID, MODULE_2_IDS);
-        MODULE_EPUB_ID.put(MODULE_3_ID, MODULE_3_IDS);
-        MODULE_EPUB_ID.put(MODULE_4_ID, MODULE_4_IDS);
+        MODULES.put(MODULE_1_SHORTID, MODULE_1_NAME);
+        MODULES.put(MODULE_2_SHORTID, MODULE_2_NAME);
+        MODULES.put(MODULE_3_SHORTID, MODULE_3_NAME);
+        MODULES.put(MODULE_4_SHORTID, MODULE_4_NAME);
+
+        MODULE_EPUB_ID.put(MODULE_1_SHORTID, MODULE_1_IDS);
+        MODULE_EPUB_ID.put(MODULE_2_SHORTID, MODULE_2_IDS);
+        MODULE_EPUB_ID.put(MODULE_3_SHORTID, MODULE_3_IDS);
+        MODULE_EPUB_ID.put(MODULE_4_SHORTID, MODULE_4_IDS);
 
         MODULE_1_QUESTIONS.put("q1","Anoosha needs to explain what a CV is. What should she say? (Select one");
         MODULE_1_QUESTIONS.put("q2","Which items should Anoosha include on her CV? (Select all that apply");
@@ -266,6 +317,32 @@ public class MappingValues {
         MODULE_9_QUESTIONS.put("q5","Waheed needs to guess which of the following statements about being a services entrepreneur are true. (Select all that apply");
         MODULE_9_QUESTIONS.put("q6","Waheed needs to guess which of the following statements about packaging products are true. (Select all that apply");
         MODULE_9_QUESTIONS.put("q7","Waheed needs to guess which of the following products and services require consultative selling. (Select all that apply");
+
+
+
+        //Attempt to redo this whole module biz with Module classes:
+        //String shortID, List<String> ids, String name, Map<String, String> questionMap
+        MODULE1 = new Module(MODULE_1_SHORTID, MODULE_1_IDS, MODULE_1_NAME, MODULE_1_QUESTIONS);
+        MODULE2 = new Module(MODULE_2_SHORTID, MODULE_2_IDS, MODULE_2_NAME, MODULE_2_QUESTIONS);
+        MODULE3 = new Module(MODULE_3_SHORTID, MODULE_3_IDS, MODULE_3_NAME, MODULE_3_QUESTIONS);
+        MODULE4 = new Module(MODULE_4_SHORTID, MODULE_4_IDS, MODULE_4_NAME, MODULE_4_QUESTIONS);
+        MODULE5 = new Module(MODULE_5_SHORTID, MODULE_5_IDS, MODULE_5_NAME, MODULE_5_QUESTIONS);
+        MODULE6 = new Module(MODULE_6_SHORTID, MODULE_6_IDS, MODULE_6_NAME, MODULE_6_QUESTIONS);
+        MODULE7 = new Module(MODULE_7_SHORTID, MODULE_7_IDS, MODULE_7_NAME, MODULE_7_QUESTIONS);
+        MODULE8 = new Module(MODULE_8_SHORTID, MODULE_8_IDS, MODULE_8_NAME, MODULE_8_QUESTIONS);
+        MODULE9 = new Module(MODULE_9_SHORTID, MODULE_9_IDS, MODULE_9_NAME, MODULE_9_QUESTIONS);
+
+        ALL_MODULES.add(MODULE1);
+        ALL_MODULES.add(MODULE2);
+        ALL_MODULES.add(MODULE3);
+        ALL_MODULES.add(MODULE4);
+        ALL_MODULES.add(MODULE5);
+        ALL_MODULES.add(MODULE6);
+        ALL_MODULES.add(MODULE7);
+        ALL_MODULES.add(MODULE8);
+        ALL_MODULES.add(MODULE9);
+
+
 
     }
 }

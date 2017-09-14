@@ -64,10 +64,10 @@ public class CompletionReportServlet extends HttpServlet {
         table_headers_html.put(MappingValues.USER_COLUMN_UNIVERSITY, "University");
         table_headers_html.put(MappingValues.USER_COLUMN_TAZKIRA_ID, "Tazkira ID");
         table_headers_html.put(MappingValues.USER_COLUMN_GENDER, "Gender");
-        table_headers_html.put(MappingValues.MODULE_1_ID, MappingValues.MODULE_1_NAME);
-        table_headers_html.put(MappingValues.MODULE_2_ID, MappingValues.MODULE_2_NAME);
-        table_headers_html.put(MappingValues.MODULE_3_ID, MappingValues.MODULE_3_NAME);
-        table_headers_html.put(MappingValues.MODULE_4_ID, MappingValues.MODULE_4_NAME);
+        table_headers_html.put(MappingValues.MODULE_1_SHORTID, MappingValues.MODULE_1_NAME);
+        table_headers_html.put(MappingValues.MODULE_2_SHORTID, MappingValues.MODULE_2_NAME);
+        table_headers_html.put(MappingValues.MODULE_3_SHORTID, MappingValues.MODULE_3_NAME);
+        table_headers_html.put(MappingValues.MODULE_4_SHORTID, MappingValues.MODULE_4_NAME);
 
         HttpSession session=request.getSession();
         String sessionAdmin = (String)session.getAttribute(MappingValues.SUPER_ADMIN_USERNAME);

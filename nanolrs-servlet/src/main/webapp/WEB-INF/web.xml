@@ -66,6 +66,10 @@
         <servlet-name>ExportReportServlet</servlet-name>
         <servlet-class>com.ustadmobile.nanolrs.servlet.ExportReportServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CourseUsageReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.CourseUsageReportServlet</servlet-class>
+    </servlet>
 
     <!--STATEMENTS-->
     <servlet-mapping>
@@ -122,6 +126,11 @@
     <servlet-mapping>
         <servlet-name>ExportReportServlet</servlet-name>
         <url-pattern>/reports/export/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CourseUsageReportServlet</servlet-name>
+        <url-pattern>/reports/usagescore/</url-pattern>
     </servlet-mapping>
 
     <!--static files mapping-->
