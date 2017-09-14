@@ -278,7 +278,7 @@ public class TestIncomingSync {
                 "    }, {\n" +
                 "        \"accountHomepage\": \"https:\\/\\/umcloud1.ustadmobile.com\\/umlrs\\/\",\n" +
                 "        \"accountName\": \"varunas3\",\n" +
-                "        \"dateCreated\": 1501284886311,\n" +
+                "        \"dateCreated\": \"1501284886311\",\n" +
                 "        \"dateModifiedAtMaster\": 0,\n" +
                 "        \"localSequence\": 3,\n" +
                 "        \"masterSequence\": 0,\n" +
@@ -287,18 +287,18 @@ public class TestIncomingSync {
                 "        \"uuid\": \"7df83cdd-8cc5-47c1-9b60-d69caec89b87\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.XapiAgent\"\n" +
                 "    }, {\n" +
-                "        \"dateCreated\": 1501284886271,\n" +
+                "        \"dateCreated\": \"1501284886271\",\n" +
                 "        \"dateModifiedAtMaster\": 0,\n" +
                 "        \"fieldName\": 116,\n" +
                 "        \"fieldValue\": \"Varuna.singh@gmail.com \",\n" +
                 "        \"localSequence\": 16,\n" +
                 "        \"masterSequence\": 0,\n" +
-                "        \"storedDate\": 1501284886277,\n" +
+                "        \"storedDate\": \"1501284886277\",\n" +
                 "        \"user\": \"varunas3\",\n" +
                 "        \"uuid\": \"454c8b62-af53-4ba1-b4f3-4740af498ddb\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
-                "        \"dateCreated\": 1501284886262,\n" +
+                "        \"dateCreated\": \"1501284886262\",\n" +
                 "        \"dateModifiedAtMaster\": 0,\n" +
                 "        \"fieldName\": 115,\n" +
                 "        \"fieldValue\": \"H\",\n" +
@@ -309,7 +309,7 @@ public class TestIncomingSync {
                 "        \"uuid\": \"47d1719e-4e8f-4631-8212-71cf7177e117\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
-                "        \"dateCreated\": 1501284886281,\n" +
+                "        \"dateCreated\": \"1501284886281\",\n" +
                 "        \"dateModifiedAtMaster\": 0,\n" +
                 "        \"fieldName\": 114,\n" +
                 "        \"fieldValue\": \"H\",\n" +
@@ -320,7 +320,7 @@ public class TestIncomingSync {
                 "        \"uuid\": \"7e777297-d66f-40f0-85ee-4c8d22fcf785\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
-                "        \"dateCreated\": 1501284886253,\n" +
+                "        \"dateCreated\": \"1501284886253\",\n" +
                 "        \"dateModifiedAtMaster\": 0,\n" +
                 "        \"fieldName\": 117,\n" +
                 "        \"fieldValue\": \"M\",\n" +
@@ -331,7 +331,7 @@ public class TestIncomingSync {
                 "        \"uuid\": \"a5b17531-3bc3-4eea-8313-826caa342c7d\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
-                "        \"dateCreated\": 1501284886232,\n" +
+                "        \"dateCreated\": \"1501284886232\",\n" +
                 "        \"dateModifiedAtMaster\": 0,\n" +
                 "        \"fieldName\": 118,\n" +
                 "        \"fieldValue\": \"5\",\n" +
@@ -342,7 +342,7 @@ public class TestIncomingSync {
                 "        \"uuid\": \"c1d50ff3-3c64-468b-98f1-a3b1d8db8b2f\",\n" +
                 "        \"pCls\": \"com.ustadmobile.nanolrs.core.model.UserCustomFields\"\n" +
                 "    }, {\n" +
-                "        \"dateCreated\": 1501284886290,\n" +
+                "        \"dateCreated\": \"1501284886290\",\n" +
                 "        \"dateModifiedAtMaster\": 0,\n" +
                 "        \"fieldName\": 119,\n" +
                 "        \"fieldValue\": \"G\",\n" +

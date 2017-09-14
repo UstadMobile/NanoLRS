@@ -291,6 +291,7 @@ public class ProxyJsonSerializer {
                 }
                 else{
                     valueCasted=value;
+                    //valueCasted=value.toString();
                 }
                 //Cannot cast long to int, etc
                 //methodReturnClass.cast(valueCasted);
