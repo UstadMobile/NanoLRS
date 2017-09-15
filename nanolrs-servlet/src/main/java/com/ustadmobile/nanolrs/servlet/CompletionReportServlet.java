@@ -177,6 +177,14 @@ public class CompletionReportServlet extends HttpServlet {
                     continue;
                 }
 
+                //Don't show testing users
+                if(user.getNotes() != null){
+                    if(user.getNotes().equals("testing")) {
+                        //Don't show testing users
+                        continue;
+                    }
+                }
+
                 //Get agent:
                 List<XapiAgent> agents = agentManager.findByUser(dbContext, user);
                 if(agents != null && !agents.isEmpty()){

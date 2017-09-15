@@ -331,7 +331,7 @@
 						<table id="report_result">
 						  <thead>
 							<c:forEach items="${table_headers_html}" var="column_map">
-									<th data-dynatable-column="${column_map.key}" >${column_map.value}</th>
+									<th data-dynatable-column="${column_map.key}" style="width:15%;">${column_map.value}</th>
 							</c:forEach>
 						  </thead>
 						  <tbody></tbody>

@@ -48,6 +48,8 @@ public class MappingValues {
     public static final String MODULE_REGISTRATION_STRING = "Registration";
     public static final String MODULE_RESULT_STRING = "Result";
     public static final String MODULE_DURATION_STRING = "Duration";
+    public static final String MODULE_NO_ATTEMPTS_BIT = "_noattempts";
+    public static final String MODULE_NO_ATTEMPTS_STRING = "No. of Attempts";
 
     public static String[] universities = {"Kabul University", "Kabul Polytechnic University",
             "Kabul Education University", "Other", "I don't know"};
@@ -70,6 +72,7 @@ public class MappingValues {
     public static final String XAPI_FAILED_VERB = "http://adlnet.gov/expapi/verbs/failed";
     public static final String XAPI_LAUNCHED_VERB = "http://adlnet.gov/expapi/verbs/launched";
     public static final String XAPI_ANSWERED_VERB = "http://adlnet.gov/expapi/verbs/answered";
+    public static final String XAPI_INITIALIZED_VERB = "http://adlnet.gov/expapi/verbs/initialized";
 
     public static final String MODULE_1_NAME = "CV Writing";
     public static final String MODULE_2_NAME = "Cover Letter Writing";

@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -49,6 +50,10 @@ public class CourseUsageReportServlet  extends HttpServlet {
 
 
     public static final String UNIVERSITY_FILTER_NAME = "universities_filter_names[]";
+    public static final String LEGACY_MODE_FILTER_NAME = "legacy_mode";
+    public static final String PASSED_STRING = "PASSED";
+    public static final String FAILED_STRING = "FAILED";
+    public static final String NA_STRING = "N/A";
 
     public CourseUsageReportServlet() {
         super();
@@ -73,8 +78,12 @@ public class CourseUsageReportServlet  extends HttpServlet {
             questionWithModuleIDMap.put(moduleID.trim() + '/' + entry.getKey(),
                     ServletUtil.stringToHTMLString("Q: " + entry.getValue())
             );
-            questionWithModuleIDMap.put(moduleID.trim() + '/' + entry.getKey() + MappingValues.MODULE_DURATION_BIT,
+            questionWithModuleIDMap.put(moduleID.trim() + '/' + entry.getKey() +
+                            MappingValues.MODULE_DURATION_BIT,
                     "(" + MappingValues.MODULE_DURATION_STRING + ")");
+            questionWithModuleIDMap.put(moduleID.trim() + '/' +
+                            entry.getKey() + MappingValues.MODULE_NO_ATTEMPTS_BIT,
+                    "(" + MappingValues.MODULE_NO_ATTEMPTS_STRING + ")");
         }
         return questionWithModuleIDMap;
     }
@@ -276,6 +285,52 @@ public class CourseUsageReportServlet  extends HttpServlet {
     }
 
     /**
+     * Get question details for qn id, agent in a particular registration.
+     * @param questionId
+     * @param agent
+     * @param registrationId
+     * @param dbContext
+     * @return
+     */
+    public static Map<String, String> getQuestionResult(String questionId, XapiAgent agent,
+                                                        String registrationId, Object dbContext){
+
+        float score = 0;
+        Long duration = 0L;
+        int noAttempts;
+
+        String agentUUID="";
+        if(agent != null){
+            agentUUID=agent.getUuid();
+        }
+        System.out.println("Qid|agent|regId" + questionId +"|"+ agentUUID +"|"+ registrationId);
+
+        Map<String, String> questionResultMap = new LinkedHashMap<>();
+
+        List<String> questionList = new LinkedList<>();
+        questionList.add(questionId);
+        List<XapiStatement> statements = findStatements(agent, MappingValues.XAPI_ANSWERED_VERB,
+                questionList, null, registrationId, dbContext);
+        Iterator<XapiStatement> statementsIterator = statements.iterator();
+        while(statementsIterator.hasNext()){
+            XapiStatement statement = statementsIterator.next();
+            if(statement.getResultScoreScaled() != 0){
+                score = statement.getResultScoreScaled();
+            }
+            duration = duration + statement.getResultDuration();
+        }
+        noAttempts = statements.size();
+        //System.out.println("score|duration|no. attemtpts : " + score + "|" + duration + "|" + noAttempts);
+        //System.out.println("Duration for " + questionId + MappingValues.MODULE_DURATION_BIT + " is: "  + String.valueOf(duration));
+        questionResultMap.put(questionId, String.valueOf(score));
+        questionResultMap.put(questionId + MappingValues.MODULE_DURATION_BIT, String.valueOf(duration));
+        questionResultMap.put(questionId + MappingValues.MODULE_NO_ATTEMPTS_BIT, String.valueOf(noAttempts));
+
+        return questionResultMap;
+    }
+
+
+    /**
      * Gets score map for particular user and module for that reg ID.
      * @param agent
      * @param module
@@ -287,26 +342,58 @@ public class CourseUsageReportServlet  extends HttpServlet {
                                                 String registrationId, Object dbContext){
         Map<String, String> scoreMap = new HashMap<>();
         Map<String, String> questions = module.getQuestionMap();
-        Map<String, String> questionMap = appendModuleIdtoQuestionMap(module.getIds().get(0),
-                module.getQuestionMap());
-        Iterator<Map.Entry<String, String>> questionIterator = questionMap.entrySet().iterator();
+
+        //Map<String, String> questionMap = appendModuleIdtoQuestionMap(module.getIds().get(0),
+        //        module.getQuestionMap());
+        //Iterator<Map.Entry<String, String>> questionIterator = questionMap.entrySet().iterator();
+        Iterator<Map.Entry<String, String>> questionIterator = questions.entrySet().iterator();
+        //For every question:
         while(questionIterator.hasNext()){
             Map.Entry<String, String> entry = questionIterator.next();
+            String questionID = module.getIds().get(0).trim() + '/' + entry.getKey();
+
+            /*
+            String questionDurationID = questionID + MappingValues.MODULE_DURATION_BIT;
+            String questionNoAttempts = questionID + MappingValues.MODULE_NO_ATTEMPTS_BIT;
+
             String questionScoreID = entry.getKey();
-            String questionDurationID = questionScoreID + MappingValues.MODULE_DURATION_BIT;
             Map.Entry<String, Long> scoreAndDuration =
                     getScoreAndDuration(questionScoreID, agent, MappingValues.XAPI_ANSWERED_VERB,
                             registrationId, dbContext);
+
             String score = scoreAndDuration.getKey();
             Long duration = scoreAndDuration.getValue();
+
             if(duration == null){
                 duration = 0L;
             }
 
             scoreMap.put(questionScoreID, score);
             scoreMap.put(questionDurationID, String.valueOf(duration));
+            //scoreMap.put(questionNoAttempts, String.valueOf(noAttempts));
+            */
+
+            Map<String, String> questionResultMap =
+                    getQuestionResult(questionID, agent, registrationId, dbContext);
+            Iterator<Map.Entry<String, String>> questionResultIterator = questionResultMap.entrySet().iterator();
+            while(questionResultIterator.hasNext()){
+                Map.Entry<String, String> questionResult = questionResultIterator.next();
+                scoreMap.put(questionResult.getKey(), questionResult.getValue());
+            }
+
         }
         return scoreMap;
+    }
+
+    /**
+     * Default legacy mode to false
+     * @param agent
+     * @param module
+     * @param dbContext
+     * @return
+     */
+    public static Map<String, Long> getAllRegistrations(XapiAgent agent, Module module,Object dbContext){
+        return getAllRegistrations(agent, module, false, dbContext);
     }
 
     /**
@@ -316,7 +403,8 @@ public class CourseUsageReportServlet  extends HttpServlet {
      * @param dbContext
      * @return
      */
-    public static Map<String, Long> getAllRegistrations(XapiAgent agent, Module module, Object dbContext){
+    public static Map<String, Long> getAllRegistrations(XapiAgent agent, Module module,
+                                                        boolean legacyMode, Object dbContext){
         /*
         Steps:
         1. Get all launched statements
@@ -325,11 +413,23 @@ public class CourseUsageReportServlet  extends HttpServlet {
          */
         //System.out.println("Checking allRegistrations for moduele: " + module.getName());
         List<String> allRegistrations = new LinkedList<>();
+        List<XapiStatement> userStatements;
         Map<String, Long> allRegistrationsMap = new LinkedHashMap<>();
-        List<XapiStatement> userStatements = findStatements(agent,MappingValues.XAPI_LAUNCHED_VERB,
-                module.getIds(), null, null, dbContext);
+        if(legacyMode) {
+            userStatements = findStatements(agent, MappingValues.XAPI_LAUNCHED_VERB,
+                    module.getIds(), null, null, dbContext);
+        }else {
+            userStatements = findStatements(agent, MappingValues.XAPI_INITIALIZED_VERB,
+                    module.getIds(), null, null, dbContext);
+        }
         if(userStatements == null){
-            //return allRegistrations;
+            /*
+            if(agent == null){
+                System.out.println("No launched statement for  (unknown agent)");
+            }else {
+                System.out.println("No launched statements for: " + agent.getUuid());
+            }
+            */
             return allRegistrationsMap;
         }
         for(XapiStatement statement : userStatements){
@@ -362,6 +462,7 @@ public class CourseUsageReportServlet  extends HttpServlet {
         JSONArray userEnrollmentJSONArray = new JSONArray();
 
         String[] uni_names = req.getParameterValues(UNIVERSITY_FILTER_NAME);
+        String legacyMode = req.getParameter(LEGACY_MODE_FILTER_NAME);
 
         try {
             allUsers = userManager.getAllEntities(dbContext);
@@ -385,11 +486,20 @@ public class CourseUsageReportServlet  extends HttpServlet {
                     continue;
                 }
 
+                //Don't show testing users
+                if(user.getNotes() != null){
+                    if(user.getNotes().equals("testing")) {
+                        //Don't show testing users
+                        continue;
+                    }
+                }
+
                 //Get agent:
                 List<XapiAgent> agents = agentManager.findByUser(dbContext, user);
                 if(agents != null && !agents.isEmpty()){
                     agent = agents.get(0);
                 }else{
+                    //System.out.println("Agent is null for : " + user.getUsername());
                     agent = null;
                 }
 
@@ -407,11 +517,11 @@ public class CourseUsageReportServlet  extends HttpServlet {
                     continue;
                 }
 
-                Map<String, JSONObject> userAttempt = new HashMap<>();
+                Map<String, JSONObject> userAttempt = new LinkedHashMap<>();
 
                 for(Module everyModule:MappingValues.ALL_MODULES){
 
-                    String moduleResult = "N/A";
+                    String moduleResult = NA_STRING;
                     String moduleScore = "";
                     Long moduleDuration = null;
 
@@ -423,9 +533,9 @@ public class CourseUsageReportServlet  extends HttpServlet {
                         modulePassed = agentModulePresentInStatement(agent,
                                 MappingValues.XAPI_PASSED_VERB, everyModule.getIds(), dbContext);
                         if(modulePassed){
-                            moduleResult = "PASSED";
+                            moduleResult = PASSED_STRING;
                         }else{
-                            moduleResult = "FAILED";
+                            moduleResult = FAILED_STRING;
                         }
                     }
                     userInfoJSON.put(everyModule.getShortID() + MappingValues.MODULE_RESULT_BIT,
@@ -436,8 +546,15 @@ public class CourseUsageReportServlet  extends HttpServlet {
                     //Get all registrations and questions for each
                     //List<String> allRegistrations =
                     //        getAllRegistrations(agent, everyModule, dbContext);
+
+                    boolean legacyModeBoolean = false;
+                    if(legacyMode != null && !legacyMode.isEmpty()){
+                        if(legacyMode.equals("true")) {
+                            legacyMode = "true";
+                        }
+                    }
                     Map<String, Long> allRegistrationsMap =
-                            getAllRegistrations(agent, everyModule, dbContext);
+                            getAllRegistrations(agent, everyModule, legacyModeBoolean, dbContext);
 
                     int regIteration = 0;
                     boolean gotLatest = false;
@@ -453,17 +570,22 @@ public class CourseUsageReportServlet  extends HttpServlet {
                         regIteration = regIteration + 1;
                         String regTotalScore;
                         JSONObject userRegEntry = new JSONObject();
-                        userRegEntry.put("blankspace", "");
-                        userRegEntry.put(MappingValues.USER_COLUMN_USERNAME, "");
-                        //Get score for every question:
+                        //userRegEntry.put("blankspace", "");
+                        //userRegEntry.put(MappingValues.USER_COLUMN_USERNAME, "");
+
+                        //Get total duration, score, no. of attempts for every qn in this module
                         Map<String, String> scoreMap = getScores(agent, everyModule,
                                 registrationId, dbContext);
                         Iterator<Map.Entry<String, String>> scoreMapIterator =
                                 scoreMap.entrySet().iterator();
                         while(scoreMapIterator.hasNext()){
                             Map.Entry<String, String> entry = scoreMapIterator.next();
+                            //Add values to this reg entry
                             userRegEntry.put(entry.getKey(), entry.getValue());
+
+                            //Update total duration for this registration
                             if(entry.getKey().endsWith(MappingValues.MODULE_DURATION_BIT)){
+                                //System.out.println("Parsing this: " + entry.getKey() + " " + entry.getValue());
                                 Long thisDuration = Long.parseLong(entry.getValue());
                                 regTotalDuration = regTotalDuration + thisDuration;
                             }
@@ -491,10 +613,23 @@ public class CourseUsageReportServlet  extends HttpServlet {
                                 String.valueOf(regTotalDuration));
                         userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_SCORE_BIT,
                                 regTotalScore);
+
                         userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_REGISTRATION_BIT,
                                 registrationId);
 
-                        userAttempt.put("r"+registrationId, userRegEntry);
+                        if(userAttempt.get("r"+regIteration) != null){
+                            JSONObject existingEntry = userAttempt.get("r" + regIteration);
+                            for(String key:JSONObject.getNames(userRegEntry)){
+                                if(!existingEntry.isNull(key)){
+                                    System.out.println("WARNING > VALUE: " + key + " ALREADY EXIST!");
+                                }
+                                existingEntry.put(key, userRegEntry.get(key));
+                            }
+                            userAttempt.put("r"+regIteration, existingEntry);
+
+                        }else{
+                            userAttempt.put("r"+regIteration, userRegEntry);
+                        }
 
                         if(!gotLatest){
                             gotLatest = true;
@@ -502,7 +637,16 @@ public class CourseUsageReportServlet  extends HttpServlet {
                             moduleScore = regTotalScore;
                         }
 
+                    } //end of reg loop
+
+                    if(allRegistrationsMap.size() > 0 ) {
+                        userInfoJSON.put(everyModule.getShortID() + MappingValues.MODULE_RESULT_BIT,
+                                moduleResult);
+                    }else{
+                        userInfoJSON.put(everyModule.getShortID() + MappingValues.MODULE_RESULT_BIT,
+                                NA_STRING);
                     }
+
 
                     //Get duration`
                     if(moduleDuration == null){
@@ -519,16 +663,21 @@ public class CourseUsageReportServlet  extends HttpServlet {
                     }
                     userInfoJSON.put(everyModule.getShortID() + MappingValues.MODULE_SCORE_BIT,
                             moduleScore);
-                }
+
+                }// end of module loop
 
                 userEnrollmentJSONArray.put(userInfoJSON);
 
-                Iterator<Map.Entry<String, JSONObject>> attemptIteratory =
-                        userAttempt.entrySet().iterator();
+                //userAttempt.put("r"+regIteration, userRegEntry); this is how we added it.
+
+                //String[] userKeys = (String[]) userAttempt.keySet().toArray();
+
+                Iterator<Map.Entry<String, JSONObject>> attemptIteratory = userAttempt.entrySet().iterator();
                 while(attemptIteratory.hasNext()){
                     Map.Entry<String, JSONObject> attemptEntry = attemptIteratory.next();
 
                     userEnrollmentJSONArray.put(attemptEntry.getValue());
+
                 }
 
 

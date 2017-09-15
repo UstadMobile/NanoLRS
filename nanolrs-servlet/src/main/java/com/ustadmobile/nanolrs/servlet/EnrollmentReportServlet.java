@@ -150,6 +150,15 @@ public class EnrollmentReportServlet extends HttpServlet {
                     //Don't show admins stuff
                     continue;
                 }
+
+                //Don't show testing users
+                if(user.getNotes() != null){
+                    if(user.getNotes().equals("testing")) {
+                        //Don't show testing users
+                        continue;
+                    }
+                }
+
                 JSONObject userInfoJSON = new JSONObject();
                 userInfoJSON.put("username", username );
                 userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext) );
