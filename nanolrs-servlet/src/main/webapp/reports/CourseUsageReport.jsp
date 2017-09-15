@@ -299,6 +299,8 @@
 					<div style="" id="selection" name="selection">
 					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
 
+                        <input type="checkbox" id="legacy_mode" name="legacy_mode" value="TRUE">Legacy Mode</>
+
 						<select multiple="multiple" name="universities_filter" id="universities_filter" required>
 						    <option selected value="ALL" required>All universities</option>
 						    <c:forEach items="${universities}" var="uniValue">

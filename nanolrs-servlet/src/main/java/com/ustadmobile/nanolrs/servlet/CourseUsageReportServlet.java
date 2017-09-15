@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -110,11 +111,11 @@ public class CourseUsageReportServlet  extends HttpServlet {
 
         //TODO: automate this.
         Map<String, String> table_headers_html = new LinkedHashMap<>();
-        //table_headers_html.put(MappingValues.USER_COLUMN_FULLNAME, "Name");
+        table_headers_html.put(MappingValues.USER_COLUMN_FULLNAME, "Name");
         table_headers_html.put(MappingValues.USER_COLUMN_USERNAME, "Username");
         //table_headers_html.put(MappingValues.USER_COLUMN_UNIVERSITY, "University");
-        //table_headers_html.put(MappingValues.USER_COLUMN_TAZKIRA_ID, "Tazkira ID");
-        //table_headers_html.put(MappingValues.USER_COLUMN_GENDER, "Gender");
+        table_headers_html.put(MappingValues.USER_COLUMN_TAZKIRA_ID, "Tazkira ID");
+        table_headers_html.put(MappingValues.USER_COLUMN_GENDER, "Gender");
         table_headers_html.put("blankspace", " ");
 
         int moduleIterator = 0;
@@ -285,6 +286,40 @@ public class CourseUsageReportServlet  extends HttpServlet {
     }
 
     /**
+     * Convert a millisecond duration to a string format
+     *
+     * @param millis A duration to convert to a string form
+     * @return A string of the form "X Days Y Hours Z Minutes A Seconds".
+     */
+    public static String getDurationBreakdown(long millis)
+    {
+        if(millis < 0)
+        {
+            throw new IllegalArgumentException("Duration must be greater than zero!");
+        }
+
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+
+        StringBuilder sb = new StringBuilder(64);
+        sb.append(days);
+        sb.append(" d ");
+        sb.append(hours);
+        sb.append(" h ");
+        sb.append(minutes);
+        sb.append(" m ");
+        sb.append(seconds);
+        sb.append(" s");
+
+        return(sb.toString());
+    }
+
+    /**
      * Get question details for qn id, agent in a particular registration.
      * @param questionId
      * @param agent
@@ -303,7 +338,7 @@ public class CourseUsageReportServlet  extends HttpServlet {
         if(agent != null){
             agentUUID=agent.getUuid();
         }
-        System.out.println("Qid|agent|regId" + questionId +"|"+ agentUUID +"|"+ registrationId);
+        //System.out.println("Qid|agent|regId" + questionId +"|"+ agentUUID +"|"+ registrationId);
 
         Map<String, String> questionResultMap = new LinkedHashMap<>();
 
@@ -320,10 +355,12 @@ public class CourseUsageReportServlet  extends HttpServlet {
             duration = duration + statement.getResultDuration();
         }
         noAttempts = statements.size();
-        //System.out.println("score|duration|no. attemtpts : " + score + "|" + duration + "|" + noAttempts);
-        //System.out.println("Duration for " + questionId + MappingValues.MODULE_DURATION_BIT + " is: "  + String.valueOf(duration));
+        //String readableDuration = getDurationBreakdown(duration);
+        Long durationSeconds = duration/1000;
         questionResultMap.put(questionId, String.valueOf(score));
-        questionResultMap.put(questionId + MappingValues.MODULE_DURATION_BIT, String.valueOf(duration));
+        //questionResultMap.put(questionId + MappingValues.MODULE_DURATION_BIT, String.valueOf(duration));
+        //questionResultMap.put(questionId + MappingValues.MODULE_DURATION_BIT, String.valueOf(readableDuration));
+        questionResultMap.put(questionId + MappingValues.MODULE_DURATION_BIT, String.valueOf(durationSeconds));
         questionResultMap.put(questionId + MappingValues.MODULE_NO_ATTEMPTS_BIT, String.valueOf(noAttempts));
 
         return questionResultMap;
@@ -376,6 +413,7 @@ public class CourseUsageReportServlet  extends HttpServlet {
             Map<String, String> questionResultMap =
                     getQuestionResult(questionID, agent, registrationId, dbContext);
             Iterator<Map.Entry<String, String>> questionResultIterator = questionResultMap.entrySet().iterator();
+            String appendThis = "";
             while(questionResultIterator.hasNext()){
                 Map.Entry<String, String> questionResult = questionResultIterator.next();
                 scoreMap.put(questionResult.getKey(), questionResult.getValue());
@@ -578,10 +616,18 @@ public class CourseUsageReportServlet  extends HttpServlet {
                                 registrationId, dbContext);
                         Iterator<Map.Entry<String, String>> scoreMapIterator =
                                 scoreMap.entrySet().iterator();
+                        String appendThis="";
                         while(scoreMapIterator.hasNext()){
                             Map.Entry<String, String> entry = scoreMapIterator.next();
                             //Add values to this reg entry
-                            userRegEntry.put(entry.getKey(), entry.getValue());
+                            appendThis = "";
+                            if(entry.getKey().endsWith(MappingValues.MODULE_DURATION_BIT)){
+                                appendThis = "s";
+                            }
+                            if(entry.getKey().endsWith(MappingValues.MODULE_SCORE_BIT)){
+                                //appendThis = "%";
+                            }
+                            userRegEntry.put(entry.getKey(), entry.getValue() + appendThis);
 
                             //Update total duration for this registration
                             if(entry.getKey().endsWith(MappingValues.MODULE_DURATION_BIT)){
@@ -609,8 +655,12 @@ public class CourseUsageReportServlet  extends HttpServlet {
                         }
                         userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_ATTEMPT_BIT,
                                 registrationDateString);
+                        String regTotalDurationReadable = getDurationBreakdown(regTotalDuration*1000);
+                        //userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_DURATION_BIT,
+                        //        String.valueOf(regTotalDuration));
                         userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_DURATION_BIT,
-                                String.valueOf(regTotalDuration));
+                                String.valueOf(regTotalDurationReadable));
+
                         userRegEntry.put(everyModule.getShortID() + MappingValues.MODULE_SCORE_BIT,
                                 regTotalScore);
 
@@ -653,8 +703,9 @@ public class CourseUsageReportServlet  extends HttpServlet {
                         userInfoJSON.put(everyModule.getShortID() + MappingValues.MODULE_DURATION_BIT,
                                 "");
                     }else{
+                        String regTotalDurationReadable = getDurationBreakdown(moduleDuration*1000);
                         userInfoJSON.put(everyModule.getShortID() + MappingValues.MODULE_DURATION_BIT,
-                                String.valueOf(moduleDuration));
+                                String.valueOf(regTotalDurationReadable));
                     }
 
                     //Get score
