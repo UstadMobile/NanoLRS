@@ -610,6 +610,7 @@ public class CourseUsageReportServlet  extends HttpServlet {
                         JSONObject userRegEntry = new JSONObject();
                         //userRegEntry.put("blankspace", "");
                         //userRegEntry.put(MappingValues.USER_COLUMN_USERNAME, "");
+                        userRegEntry.put("blankspace","blankspace-UM:" + user.getUsername());
 
                         //Get total duration, score, no. of attempts for every qn in this module
                         Map<String, String> scoreMap = getScores(agent, everyModule,

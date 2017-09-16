@@ -79,9 +79,15 @@
 					if ($(this).text() == 'undefined'){
                         //$(this).closest('td').css('background-color', '#bbff00');
                         $(this).text("-");
+                    }
 
+                    //Hide usernames
+                    if($(this).text().indexOf("blankspace-UM:")>=0){
+                        $(this).closest('td').css('font-size', '0');
                     }
                 });
+
+
             }
 
 
@@ -299,7 +305,7 @@
 					<div style="" id="selection" name="selection">
 					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
 
-                        <input type="checkbox" id="legacy_mode" name="legacy_mode" value="TRUE">Legacy Mode</>
+                        <!-- <input type="checkbox" id="legacy_mode" name="legacy_mode" value="TRUE">Legacy Mode</> -->
 
 						<select multiple="multiple" name="universities_filter" id="universities_filter" required>
 						    <option selected value="ALL" required>All universities</option>
