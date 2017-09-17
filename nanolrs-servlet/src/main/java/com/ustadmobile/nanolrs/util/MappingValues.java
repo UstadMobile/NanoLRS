@@ -205,6 +205,13 @@ public class MappingValues {
         MODULE_4_IDS.add("epub:e95ec3d7-d56b-4541-8d45-4684dfdf64a6");
         MODULE_4_IDS.add("epub:31e04e55-e29d-422f-9e99-c3f2fd1f6f4a");
 
+        MODULE_5_IDS.add("epub:66635af1-323c-4e29-aa2d-a5386653a285");
+        MODULE_6_IDS.add("epub:6226481e-47ae-4d03-acf2-010c53ce1ab1");
+        MODULE_7_IDS.add("epub:7ef939f2-f749-41d1-9365-2d0af6a82cd9");
+        MODULE_8_IDS.add("epub:7efd121a-127a-4d62-81c8-017033ad0f64");
+        MODULE_9_IDS.add("epub:3e005d9e-aeaa-4909-bbb0-2ab92620c9e7");
+
+
         ALL_MODULE_IDS.add(MODULE_1_IDS);
         ALL_MODULE_IDS.add(MODULE_2_IDS);
         ALL_MODULE_IDS.add(MODULE_3_IDS);
@@ -213,16 +220,28 @@ public class MappingValues {
         ALL_MODULE_IDS.add(MODULE_6_IDS);
         ALL_MODULE_IDS.add(MODULE_7_IDS);
         ALL_MODULE_IDS.add(MODULE_8_IDS);
+        ALL_MODULE_IDS.add(MODULE_9_IDS);
 
         MODULES.put(MODULE_1_SHORTID, MODULE_1_NAME);
         MODULES.put(MODULE_2_SHORTID, MODULE_2_NAME);
         MODULES.put(MODULE_3_SHORTID, MODULE_3_NAME);
         MODULES.put(MODULE_4_SHORTID, MODULE_4_NAME);
+        MODULES.put(MODULE_5_SHORTID, MODULE_5_NAME);
+        MODULES.put(MODULE_6_SHORTID, MODULE_6_NAME);
+        MODULES.put(MODULE_7_SHORTID, MODULE_7_NAME);
+        MODULES.put(MODULE_8_SHORTID, MODULE_8_NAME);
+        MODULES.put(MODULE_9_SHORTID, MODULE_9_NAME);
+
 
         MODULE_EPUB_ID.put(MODULE_1_SHORTID, MODULE_1_IDS);
         MODULE_EPUB_ID.put(MODULE_2_SHORTID, MODULE_2_IDS);
         MODULE_EPUB_ID.put(MODULE_3_SHORTID, MODULE_3_IDS);
         MODULE_EPUB_ID.put(MODULE_4_SHORTID, MODULE_4_IDS);
+        MODULE_EPUB_ID.put(MODULE_5_SHORTID, MODULE_5_IDS);
+        MODULE_EPUB_ID.put(MODULE_6_SHORTID, MODULE_6_IDS);
+        MODULE_EPUB_ID.put(MODULE_7_SHORTID, MODULE_7_IDS);
+        MODULE_EPUB_ID.put(MODULE_8_SHORTID, MODULE_8_IDS);
+        MODULE_EPUB_ID.put(MODULE_9_SHORTID, MODULE_9_IDS);
 
         MODULE_1_QUESTIONS.put("q1","Anoosha needs to explain what a CV is. What should she say? (Select one");
         MODULE_1_QUESTIONS.put("q2","Which items should Anoosha include on her CV? (Select all that apply");
