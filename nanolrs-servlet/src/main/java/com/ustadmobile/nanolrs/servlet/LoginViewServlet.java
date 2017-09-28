@@ -47,7 +47,7 @@ public class LoginViewServlet extends HttpServlet {
         }
         if (loggedInUsername.equals("admin")) {
             //response.sendRedirect("../reports/ReportsView.jsp");
-            request.getRequestDispatcher("../reports/").forward(request, response);
+            request.getRequestDispatcher("../reports/summary/").forward(request, response);
         }
         response.sendRedirect("../Login.jsp");
     }
@@ -93,7 +93,7 @@ public class LoginViewServlet extends HttpServlet {
                 //RequestDispatcher rs = getServletContext().getRequestDispatcher("/home/");
                 //rs.forward(req, resp);
                 //resp.sendRedirect("home/");
-                resp.sendRedirect("../reports/ReportsView.jsp");
+                resp.sendRedirect("../reports/summary/");
             }
         }
         else

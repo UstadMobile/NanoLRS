@@ -1,9 +1,55 @@
-		<div id="header">
-            <!--
-			<button class="hamburger">&#9776;</button>
-			<button class="cross">&#735;</button>
-			-->
-    		<a href="/syncendpoint/home/"><img src="/syncendpoint/media/images/logoUMlong.png"
-											   alt="Ustad_Mobile_UMCloud_logo" height="45"
-											   align=""/></a><i>(v0.3.68)</i>
-    	</div>
+<script type="text/javascript">
+
+			$(function() {
+				$('#report1').puibutton();
+				$('#report2').puibutton();
+				$('#report3').puibutton();
+				$('#report4').puibutton();
+				$('#report5').puibutton();
+                $('#report6').puibutton();
+                $('#report7').puibutton();
+                $('#report8').puibutton();
+				}
+			);
+
+		</script>
+
+<style>
+		.buttonstyle{
+			width:200px;
+			height:75px;
+			background:none;
+			background-color:#2196f3;
+			color: white;
+			box-shadow: none;
+			font-weight: normal;
+		}
+		</style>
+
+
+<div id="header">
+	<!--
+    <button class="hamburger">&#9776;</button>
+    <button class="cross">&#735;</button>
+    -->
+	<a href="/syncendpoint/reports/summary/"><img src="/syncendpoint/media/images/logoUMlong.png"
+									   alt="Ustad_Mobile_UMCloud_logo" height="45"
+									   align=""/></a><i>(v0.3.68)</i>
+
+
+	<center>
+		<div id="toolbarbottom" class="toolbar" >
+			<ul>
+				<a href="/syncendpoint/reports/enrollment/"><button id="report3" type="button" style="width:200px;height:50px" >ENROLLMENT REPORTS</button></a>
+				<a href="/syncendpoint/reports/completion/"><button id="report4" type="button" style="width:200px;height:50px" >COMPLETION REPORTS</button></a>
+				<a href="/syncendpoint/reports/usagescore/"><button id="report6" type="button" style="width:200px;height:50px" >USAGE/SCORE REPORTS</button></a>
+				<a href="/syncendpoint/reports/summary/"><button id="report7" type="button" style="width:200px;height:50px" >SUMMARY REPORTS</button></a>
+
+			</ul>
+		</div>
+	</center>
+</div>
+
+
+
+

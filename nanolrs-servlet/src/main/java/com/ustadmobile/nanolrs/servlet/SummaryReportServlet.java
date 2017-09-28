@@ -353,6 +353,10 @@ public class SummaryReportServlet extends HttpServlet {
             long totalFemaleTime = 0;
             long totalTime = 0;
             String daysString = req.getParameter("days");
+
+            String from = req.getParameter("from");
+            String to = req.getParameter("to");
+
             int days=0;
             try {
                 days = Integer.parseInt(daysString);
