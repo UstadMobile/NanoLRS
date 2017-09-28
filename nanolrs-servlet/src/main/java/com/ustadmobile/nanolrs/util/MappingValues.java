@@ -14,6 +14,8 @@ public class MappingValues {
     //TODO: Get from build prop
     public static final String SUPER_ADMIN_USERNAME = "admin";
 
+    public static final String STICKY_CLASS_HTML = "sticky";
+
     public static final String USER_COLUMN_USERNAME = "username";
     public static final String USER_COLUMN_UNIVERSITY = "university";    //, 980);
     public static final String USER_COLUMN_FULLNAME = "fullname";    //, 981);
@@ -37,6 +39,19 @@ public class MappingValues {
     public static final String USER_COLUMN_POST_GRADUATE = "post_graduate";    //,999);
     public static final String USER_COLUMN_COMMENTS = "comments";    //,1000);
     public static final String USER_COLUMN_WORK_EXPERIENCE_ELABORATE = "work_experience_elaborate";    //,1001);
+    public static final String USER_COLUMN_ALL_COMPLETED="all_completed";
+    public static final String USER_COLUMN_POST_TEST_COMPLETED="post_test_completed";
+
+    public static final String COLUMN_NO_MALES = "no_males";
+    public static final String COLUMN_NO_FEMALES = "no_females";
+    public static final String COLUMN_TOTAL = "total";
+    public static final String COLUMN_TITLE = "title";
+
+    public static final String ROW_NO_ENROLLMENT = "Number of enrollments";
+    public static final String ROW_NO_ACTIVE_USERS = "Number of active users";
+    public static final String ROW_NO_COMPLETED_USERS = "Number of students who completed all modules";
+    public static final String ROW_TOTAL_TIME = "Total time spent";
+    public static final String ROW_TOTAL = "TOTAL";
 
     public static final String MODULE_SCORE_BIT = "_score";
     public static final String MODULE_ATTEMPT_BIT = "_attempt";
@@ -73,16 +88,17 @@ public class MappingValues {
     public static final String XAPI_LAUNCHED_VERB = "http://adlnet.gov/expapi/verbs/launched";
     public static final String XAPI_ANSWERED_VERB = "http://adlnet.gov/expapi/verbs/answered";
     public static final String XAPI_INITIALIZED_VERB = "http://adlnet.gov/expapi/verbs/initialized";
+    public static final String XAPI_COMPLETED_VERB = "http://adlnet.gov/expapi/verbs/completed";
 
     public static final String MODULE_1_NAME = "CV Writing";
     public static final String MODULE_2_NAME = "Cover Letter Writing";
     public static final String MODULE_3_NAME = "Job Search Skills";
     public static final String MODULE_4_NAME = "Job Interview Skills";
-    public static final String MODULE_5_NAME = "Module 5";
-    public static final String MODULE_6_NAME = "Module 6";
-    public static final String MODULE_7_NAME = "Module 7";
-    public static final String MODULE_8_NAME = "Module 8";
-    public static final String MODULE_9_NAME = "Module 9";
+    public static final String MODULE_5_NAME = "Communication Skills";
+    public static final String MODULE_6_NAME = "Workplace Values and Ethics";
+    public static final String MODULE_7_NAME = "Time Management";
+    public static final String MODULE_8_NAME = "Report Writing";
+    public static final String MODULE_9_NAME = "Entrepreneurship";
 
 
     public static final String MODULE_1_SHORTID = "m1";
@@ -183,6 +199,13 @@ public class MappingValues {
         custom_fields_label.put(USER_COLUMN_POST_GRADUATE, "Plans post Graduation");
         custom_fields_label.put(USER_COLUMN_COMMENTS, "Comments");
         custom_fields_label.put(USER_COLUMN_WORK_EXPERIENCE_ELABORATE, "Work Experience Comments");
+        custom_fields_label.put(USER_COLUMN_ALL_COMPLETED, "All Completed");
+        custom_fields_label.put(USER_COLUMN_POST_TEST_COMPLETED, "Post Test Completed");
+
+        custom_fields_label.put(COLUMN_NO_FEMALES, "# Female");
+        custom_fields_label.put(COLUMN_NO_MALES, "# Male");
+        custom_fields_label.put(COLUMN_TOTAL, "Total");
+
 
         uni_map.put("Kabul University", "KU");
         uni_map.put("Kabul Polytechnic University", "KPU");

@@ -212,7 +212,10 @@ public class ServletUtil {
                     userInfo.put(MappingValues.USER_COLUMN_FULLNAME, fullname);
                     break;
                 case MappingValues.USER_COLUMN_USERNAME:
-                    userInfo.put(MappingValues.USER_COLUMN_USERNAME,user.getUsername());
+                    String usernameField = user.getUsername();
+                    usernameField = "<a href=\"/syncendpoint/reports/userinfo/?username=" +
+                            usernameField + "\">" + usernameField + "</a>";
+                    userInfo.put(MappingValues.USER_COLUMN_USERNAME,usernameField);
                     break;
                 case MappingValues.USER_COLUMN_UNIVERSITY:
                     //System.out.println("Getting university..");

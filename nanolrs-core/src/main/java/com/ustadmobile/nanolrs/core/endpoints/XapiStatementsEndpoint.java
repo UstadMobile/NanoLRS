@@ -25,8 +25,11 @@ public class XapiStatementsEndpoint {
 
     public static String putStatement(JSONObject stmt, Object dbContext) {
         try {
-            XapiStatement stmtProxy =PersistenceManager.getInstance().getManager(XapiStatementManager.class).createSync(dbContext);
-            XapiAgent agent = XapiAgentEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("actor"));
+            XapiStatement stmtProxy =
+                    PersistenceManager.getInstance().getManager(
+                            XapiStatementManager.class).createSync(dbContext);
+            XapiAgent agent =
+                    XapiAgentEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("actor"));
             stmtProxy.setAgent(agent);
             if(stmt.has("id")) {
                 stmtProxy.setUuid(stmt.getString("id"));
@@ -49,7 +52,8 @@ public class XapiStatementsEndpoint {
             stmtProxy.setVerb(verb);
 
             //Check activity
-            XapiActivity activity = XapiActivityEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("object"));
+            XapiActivity activity =
+                    XapiActivityEndpoint.createOrUpdate(dbContext, stmt.getJSONObject("object"));
             stmtProxy.setActivity(activity);
 
             //check registration
@@ -95,14 +99,16 @@ public class XapiStatementsEndpoint {
                 if(result.has("extensions")) {
                     JSONObject extensions = result.getJSONObject("extensions");
                     if(extensions.has("https://w3id.org/xapi/cmi5/result/extensions/progress")){
-                        stmtProxy.setResultProgress(extensions.getInt("https://w3id.org/xapi/cmi5/result/extensions/progress"));
+                        stmtProxy.setResultProgress(extensions.getInt(
+                                "https://w3id.org/xapi/cmi5/result/extensions/progress"));
                     }
                 }
             }
 
             stmtProxy.setFullStatement(stmt.toString());
 
-            PersistenceManager.getInstance().getManager(XapiStatementManager.class).persistSync(dbContext, stmtProxy);
+            PersistenceManager.getInstance().getManager(
+                    XapiStatementManager.class).persistSync(dbContext, stmtProxy);
 
             return stmtProxy.getUuid();
         }catch(JSONException e) {
@@ -125,19 +131,28 @@ public class XapiStatementsEndpoint {
      * @param limit
      * @return
      */
-    public static List<? extends XapiStatement> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, long since, long until, int limit) {
+    public static List<? extends XapiStatement> getStatements(Object dbContext,
+        String statementid, String voidedStatemendid, String agentJSON, String verb,
+        String activity, String registration, boolean relatedActivities, boolean relatedAgents,
+                                                              long since, long until, int limit) {
         try {
-            XapiAgent agent = agentJSON != null ? XapiAgentEndpoint.createOrUpdate(dbContext, new JSONObject(agentJSON)) : null;
-            XapiStatementManager manager = PersistenceManager.getInstance().getManager(XapiStatementManager.class);
+            XapiAgent agent = agentJSON != null ? XapiAgentEndpoint.createOrUpdate(dbContext,
+                    new JSONObject(agentJSON)) : null;
+            XapiStatementManager manager =
+                    PersistenceManager.getInstance().getManager(XapiStatementManager.class);
 
-            return manager.findByParams(dbContext, statementid, voidedStatemendid, agent, verb, activity, registration, relatedActivities, relatedAgents, since, until, limit);
+            return manager.findByParams(dbContext, statementid, voidedStatemendid, agent, verb,
+                    activity, registration, relatedActivities, relatedAgents, since, until, limit);
         }catch(JSONException e) {
             throw new IllegalArgumentException("Invalid JSON supplied", e);
         }
 
     }
 
-    public static List<? extends XapiStatement> getStatements(Object dbContext, String statementid, String voidedStatemendid, String agentJSON, String verb, String activity, String registration, boolean relatedActivities, boolean relatedAgents, String since, String until, int limit) {
+    public static List<? extends XapiStatement> getStatements(Object dbContext, String statementid,
+      String voidedStatemendid, String agentJSON, String verb, String activity, String registration,
+        boolean relatedActivities, boolean relatedAgents, String since, String until, int limit) {
+
         long sinceLong = -1, untilLong = -1;
         if(since != null) {
             sinceLong = ParseUtil.parse8601Timestamp(since).getTimeInMillis();
@@ -147,7 +162,8 @@ public class XapiStatementsEndpoint {
             untilLong = ParseUtil.parse8601Timestamp(until).getTimeInMillis();
         }
 
-        return getStatements(dbContext, statementid, voidedStatemendid, agentJSON, verb,activity, registration, relatedActivities, relatedAgents, sinceLong, untilLong, limit);
+        return getStatements(dbContext, statementid, voidedStatemendid, agentJSON, verb,activity,
+                registration, relatedActivities, relatedAgents, sinceLong, untilLong, limit);
     }
 
 

@@ -7,6 +7,7 @@ import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.util.ServletUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -159,9 +160,8 @@ public class EnrollmentReportServlet extends HttpServlet {
                     }
                 }
 
-                JSONObject userInfoJSON = new JSONObject();
-                userInfoJSON.put("username", username );
-                userInfoJSON.put("fullname", ucfManager.getUserField(user, custom_fields_map.get("fullname"), dbContext) );
+                JSONObject userInfoJSON = ServletUtil.getUserInfo(user, dbContext);
+
                 String user_university = ucfManager.getUserField(user,
                         custom_fields_map.get("university"), dbContext);
 
@@ -188,15 +188,6 @@ public class EnrollmentReportServlet extends HttpServlet {
                     continue;
                 }
                 System.out.println("NO");
-
-
-                userInfoJSON.put("university_name", user_university);
-                if(uni_map.containsKey(user_university)){
-                    userInfoJSON.put("university", uni_map.get(user_university));
-                }else{
-                    userInfoJSON.put("university", "");
-                }
-
 
                 if (enrolledUsers.contains(user)) {
                     userInfoJSON.put("enrolled", "true");

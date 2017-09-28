@@ -7,10 +7,10 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title> Ustad Mobile Cloud Reports </title>
 		<%@include  file="base.html" %>
-		
-		
+
+
 		<script type="text/javascript">
-			
+
 			//UI
 			$(function() {
 				$('#thisbutton').puibutton();
@@ -19,12 +19,12 @@
 				$('#report_submit').puibutton();
 				//$('#university').puidropdown();
 			});
-			
+
 			function hideAjaxSpinnerImage(){
 				$('#ajaxSpinnerImage').hide();
 			}
-			
-			//On load - load data 
+
+			//On load - load data
 			window.onload = function(){
 				console.log("On load..");
 				$('#ajaxSpinnerImage').show();
@@ -32,16 +32,16 @@
 					console.log("Auto click..");
 					$('#report_submit').click();
 				}, 500);
-			  }		
-		
+			  }
+
 			$(document).on("submit", "#report_form", function(event) {
 				console.log("On submit..");
 				var $form = $(this);
 				event.preventDefault(); // Important! Prevents submitting the form.
 			});
-			
+
 			//Show result table:
-			function showTable(jsonData) { 
+			function showTable(jsonData) {
 				console.log("Show Table..");
 				$('#report_result').dynatable({
 				features: {
@@ -49,7 +49,7 @@
 						search: true,
 						recordCount: true,
 					sorting: true,
-					
+
 					},
 				dataset: {records : jsonData}
 				})
@@ -86,6 +86,12 @@
 						$(this).closest('td').css('font-size', '0');
 
 					}
+
+					//Replace undefined with blank
+					if ($(this).text() == 'undefined'){
+                        //$(this).closest('td').css('background-color', '#bbff00');
+                        $(this).text("");
+                    }
 				});
 			}
 
@@ -99,7 +105,7 @@
 						console.log("Fired") ;
 						changeColor();
 					});
-					
+
                     $('#university').multiselect();
                     var return_json;
 
@@ -142,10 +148,10 @@
 										//Populate the table here..
 										//console.log(response);
 										hideAjaxSpinnerImage();
-										
+
 										//Populate table:
 										console.log("Show Table..");
-										
+
 										$('#report_result').dynatable({
 											features: {
 												paginate: true,
@@ -159,9 +165,9 @@
 										});
 										$('#report_result').data('dynatable').settings.dataset.records = return_json;
 										$('#report_result').data('dynatable').dom.update();
-										
+
 										changeColor();
-										
+
 									}
 								},
 								success: function(response){
@@ -173,18 +179,18 @@
 						}); //end of ajax
 				}); //end of form submit event
 			});//end of jQuery ready
-			
+
 			//If you want to disbale anything, put it here.
 			function disableall(){
 				//$('input[type=radio]').prop('checked',false);
 				//$('input[type=radio]').parents('tr').css('background-color','');
 			}
-			
-			
 
-			
+
+
+
 		</script>
-		 
+
 		<!-- Overriding dynatables' row css -->
 		<style>
 			th a{
@@ -194,11 +200,11 @@
 			}
 		</style>
 	</head>
-	
+
     <body>
-	
+
 		<!-- Header -->
-    	<%@include  file="header.html" %>
+    	<%@include  file="../header.html" %>
 
     	<p></p>
 
@@ -207,40 +213,40 @@
 
     	<div id="page">
 			<!-- Main Content -->
-			<div id="content">		
+			<div id="content">
 				<!--Loading spinner-->
 				<div id="ajaxSpinnerContainer" class="spinner">
 					<div id="ajaxSpinnerImage" title="Crunching report..">
 						<img src="/syncendpoint/media/spinner.gif" title="Working..">
 					</div>
 				</div>
-				
+
 				<!--POST request FORM-->
 				<form id="report_form" name="report_form" action="enrollment/" method="POST">
-					
+
 					<center>
 						<h2>Enrollment Reports</h2>
-					</center>				
-					
+					</center>
+
 					<div style="" id="selection" name="selection">
-					 
+
 					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
-						
+
 						<select multiple="multiple" name="university" id="university" required>
 							<option selected value="ALL" required>All universities</option>
 							<option value="Kabul University">Kabul University</option>
 							<option value="Kabul Polytechnic University">Kabul Polytechnic University</option>
 							<option value="Kabul Education University">Kabul Education University</option>
 						</select>
-						
-						<button id="report_submit" type="submit" 
+
+						<button id="report_submit" type="submit"
 							name="report_submit" value="submit-value" style="padding: 4.6px 12px;">Filter</button>
 						<p></p>
-						
+
 					 </div> <!--Alignment div-->
 					</div><!--Selection div-->
 				 </form><!--Submit Form-->
-				
+
 				<!-- Report Table goes here -->
 				<table id="report_result">
 				  <thead>
@@ -249,22 +255,22 @@
 					<th data-dynatable-column="university" style="display:none;">Uni id</th>
 					<th data-dynatable-column="university_name">University</th>
 					<th data-dynatable-column="enrolled">Started</th>
-					
+
 				  </thead>
 				  <tbody></tbody>
 				</table>
-				
+
 				<p></p>
 				<div id="map_wrapper">
 					<div id="map_canvas" class="mapping"></div>
 				</div>
 				<br></br>
-				
+
 				<!-- Footer -->
 				<%@include  file="footer.html" %>
 			</div> <!--Content div-->
 		</div> <!--Page div-->
-		
+
     </body>
 </html>
 

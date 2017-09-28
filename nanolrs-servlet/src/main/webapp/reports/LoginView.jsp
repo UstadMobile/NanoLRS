@@ -33,7 +33,7 @@
     <body>
 	
 		<!-- Header -->
-    	<%@include  file="header.html" %>
+    	<%@include  file="../header.html" %>
 
     	<p></p>
 		

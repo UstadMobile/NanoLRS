@@ -6,7 +6,6 @@ import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
-import com.ustadmobile.nanolrs.core.model.XapiState;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.util.MappingValues;
 import com.ustadmobile.nanolrs.util.Module;
@@ -16,11 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,14 +35,14 @@ import javax.servlet.http.HttpSession;
  * Created by varuna on 7/25/2017.
  */
 
-public class CompletionReportServlet extends HttpServlet {
+public class FinishedReportServlet extends HttpServlet {
 
 
     public static final String UNIVERSITY_FILTER_NAME = "universities_filter_names[]";
 
-    public CompletionReportServlet() {
+    public FinishedReportServlet() {
         super();
-        System.out.println("In CompletionReportServlet()..");
+        System.out.println("In FinishedReportServlet()..");
     }
 
     @Override
@@ -55,7 +51,8 @@ public class CompletionReportServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         System.out.println("In CompletionReportServlet.doGet()..");
 
         //TODO: automate this.
@@ -66,11 +63,11 @@ public class CompletionReportServlet extends HttpServlet {
         table_headers_html.put(MappingValues.USER_COLUMN_TAZKIRA_ID, "Tazkira ID");
         table_headers_html.put(MappingValues.USER_COLUMN_GENDER, "Gender");
 
-        for(Module everyModule: MappingValues.ALL_MODULES){
-            table_headers_html.put(everyModule.getShortID(), everyModule.getName());
-        }
+        table_headers_html.put(MappingValues.USER_COLUMN_ALL_COMPLETED,
+                MappingValues.custom_fields_label.get(MappingValues.USER_COLUMN_ALL_COMPLETED));
+        table_headers_html.put(MappingValues.USER_COLUMN_POST_TEST_COMPLETED,
+            MappingValues.custom_fields_label.get(MappingValues.USER_COLUMN_POST_TEST_COMPLETED));
 
-        table_headers_html.put("all_completed", "All Completed");
         HttpSession session=request.getSession();
         String sessionAdmin = (String)session.getAttribute(MappingValues.SUPER_ADMIN_USERNAME);
         if(sessionAdmin != null){
@@ -101,30 +98,22 @@ public class CompletionReportServlet extends HttpServlet {
     }
 
     @Override
-    protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doHead(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.doHead(req, resp);
     }
 
-    public boolean agentModulePresentInStatement(XapiAgent agent, String verb, List<String> activities, Object dbContext){
+    public boolean agentModulePresentInStatement(XapiAgent agent, String verb,
+                                                 List<String> activities, Object dbContext){
         //Managers:
         PersistenceManager pm = PersistenceManager.getInstance();
-        UserManager userManager = pm.getManager(UserManager.class);
         XapiStatementManager statementManager = pm.getManager(XapiStatementManager.class);
-        XapiAgentManager agentManager = pm.getManager(XapiAgentManager.class);
-        UserCustomFieldsManager ucfManager = pm.getManager(UserCustomFieldsManager.class);
 
         if(agent == null){
             return false;
         }
 
-        /*
-        Object dbContext, String statementid, String voidedStatemendid,
-        XapiAgent agent, String verb, String activity, String registration,
-        boolean relatedActivities, boolean relatedAgents, long since,
-        long until, int limit);
-         */
         Iterator<String> activitiesIterator = activities.iterator();
-        //List allStatements = new ArrayList();
         boolean result = false;
         while(activitiesIterator.hasNext()){
             String activity = activitiesIterator.next();
@@ -134,15 +123,26 @@ public class CompletionReportServlet extends HttpServlet {
                 result = true;
             }
         }
-
         return result;
 
     }
 
+    /**
+     * Make statement . Sends the statement to endpoint.
+     * @param fromUser
+     * @param forUser
+     * @param statement
+     */
+    public void makeStatement(User fromUser, User forUser, JSONObject statement){
+
+    }
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("In CompletionReportServlet.doPost()..");
-        Object dbContext = getServletContext().getAttribute(NanoLrsContextListener.ATTR_CONNECTION_SOURCE);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        System.out.println("In FinishedReportServlet.doPost()..");
+        Object dbContext =
+                getServletContext().getAttribute(NanoLrsContextListener.ATTR_CONNECTION_SOURCE);
 
         //Managers:
         PersistenceManager pm = PersistenceManager.getInstance();
@@ -198,82 +198,40 @@ public class CompletionReportServlet extends HttpServlet {
                 JSONObject userInfoJSON = ServletUtil.getUserInfo(user, dbContext);
 
                 boolean allCompleted = true;
+                boolean postTestCompleted = false;
 
                 /* University Filter */
                 String user_university = ucfManager.getUserField(
                         user, MappingValues.custom_fields_map.get("university"), dbContext);
 
                 boolean iWantToBreakFree =
-                        ServletUtil.shouldIShowThisUserWithFilter(user_university, allChoosenUniNames);
+                        ServletUtil.shouldIShowThisUserWithFilter(user_university,
+                                allChoosenUniNames);
                 if(iWantToBreakFree){
                     continue;
                 }
 
 
                 for(Module everyModule:MappingValues.ALL_MODULES){
-                    boolean completed = agentModulePresentInStatement(agent, MappingValues.XAPI_PASSED_VERB,
-                            everyModule.getIds(), dbContext);
+                    boolean completed = agentModulePresentInStatement(agent,
+                            MappingValues.XAPI_PASSED_VERB, everyModule.getIds(), dbContext);
                     if(!completed){
                         allCompleted = false;
                     }
                     userInfoJSON.put(everyModule.getShortID(), String.valueOf(completed));
                 }
-                /*
-                String m1result= "";
-                String m2result = "";
-                String m3result = "";
-                String m4result = "";
-
-                boolean m1resultpass = agentModulePresentInStatement(agent,
-                        MappingValues.XAPI_PASSED_VERB, MappingValues.MODULE_1_IDS, dbContext);
-                boolean m1resultfail = agentModulePresentInStatement(agent,
-                        MappingValues.XAPI_PASSED_VERB, MappingValues.MODULE_1_IDS, dbContext);
-                if(m1resultpass){
-                    m1result="true";
-                }else if(m1resultfail){
-                    m1result = "false";
-                }
-
-                boolean m2resultpass = agentModulePresentInStatement(agent,
-                        MappingValues.XAPI_PASSED_VERB, MappingValues.MODULE_2_IDS, dbContext);
-                boolean m2resultfail = agentModulePresentInStatement(agent,
-                        MappingValues.XAPI_PASSED_VERB, MappingValues.MODULE_2_IDS, dbContext);
-                if(m2resultpass){
-                    m2result="true";
-                }else if(m2resultfail){
-                    m2result = "false";
-                }
-
-                boolean m3resultpass = agentModulePresentInStatement(agent,
-                        MappingValues.XAPI_PASSED_VERB, MappingValues.MODULE_3_IDS, dbContext);
-                boolean m3resultfail = agentModulePresentInStatement(agent,
-                        MappingValues.XAPI_PASSED_VERB, MappingValues.MODULE_3_IDS, dbContext);
-                if(m3resultpass){
-                    m3result="true";
-                }else if(m3resultfail){
-                    m3result = "false";
-                }
-
-                boolean m4resultpass = agentModulePresentInStatement(agent,
-                        MappingValues.XAPI_PASSED_VERB, MappingValues.MODULE_4_IDS, dbContext);
-                boolean m4resultfail = agentModulePresentInStatement(agent,
-                        MappingValues.XAPI_PASSED_VERB, MappingValues.MODULE_4_IDS, dbContext);
-                if(m4resultpass){
-                    m4result="true";
-                }else if(m4resultfail){
-                    m4result = "false";
-                }
-
-                userInfoJSON.put("m1",m1result);
-                userInfoJSON.put("m2",m2result);
-                userInfoJSON.put("m3",m3result);
-                userInfoJSON.put("m4",m4result);
-                */
 
                 if(allCompleted){
                     userInfoJSON.put(MappingValues.USER_COLUMN_ALL_COMPLETED, "true");
                 }else{
                     userInfoJSON.put(MappingValues.USER_COLUMN_ALL_COMPLETED, "false");
+                }
+
+                if(postTestCompleted){
+                    userInfoJSON.put(MappingValues.USER_COLUMN_POST_TEST_COMPLETED, "true");
+                }else{
+                    userInfoJSON.put(MappingValues.USER_COLUMN_POST_TEST_COMPLETED, "false");
+
                 }
 
                 userEnrollmentJSONArray.put(userInfoJSON);
@@ -299,27 +257,32 @@ public class CompletionReportServlet extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.doDelete(req, resp);
     }
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.doOptions(req, resp);
     }
 
     @Override
-    protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doTrace(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.doTrace(req, resp);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.service(req, resp);
     }
 
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+    public void service(ServletRequest req, ServletResponse res)
+            throws ServletException, IOException {
         super.service(req, res);
     }
 }

@@ -60,5 +60,18 @@ public interface NanoLrsManagerSyncable<T extends NanoLrsModelSyncable, P> exten
     List<NanoLrsModel> getAllSinceTwoSequenceNumber(User user, String host,
         long fromSeqNum, long toSeqNum, Object dbContext) throws SQLException;
 
+    /**
+     * Get all entities in a list between two dates. This will search in date_created field.
+     *
+     * @param user
+     * @param fromDate
+     * @param toDate
+     * @param dbContext
+     * @return
+     * @throws SQLException
+     */
+    List<NanoLrsModel> getAllSinceTwoDates(long fromDate, long toDate,
+                                                    Object dbContext) throws SQLException;
+
 
 }

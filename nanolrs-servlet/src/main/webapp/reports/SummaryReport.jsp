@@ -33,6 +33,7 @@
 				setTimeout(function () {
 					console.log("Auto click..");
 					$('#report_submit').click();
+					//hideAjaxSpinnerImage();
 				}, 500);
 			  }
 
@@ -47,10 +48,10 @@
 				console.log("Show Table..");
 				$('#report_result').dynatable({
 				features: {
-					paginate: true,
+					paginate: false,
 					search: true,
 					recordCount: true,
-					sorting: true,
+					sorting: false,
 					},
 				dataset: {records : jsonData}
 				})
@@ -74,6 +75,12 @@
 						$(this).closest('td').css('background-position', 'center');
                         $(this).closest('td').css('font-size', '0');
 
+                    }
+
+					//Replace undefined with blank
+					if ($(this).text() == 'undefined'){
+                        //$(this).closest('td').css('background-color', '#bbff00');
+                        $(this).text("");
                     }
                 });
             }
@@ -110,6 +117,7 @@
                     console.log("Getting Repot Exported..");
 					console.log(return_json);
                     $('#ajaxSpinnerImage').show();
+
                     $.ajax( {
 						type: 'post',
 						dataType: 'json',
@@ -140,27 +148,6 @@
 					changeColor();
 				});
 
-				//University Filter:
-				$('#university').multiselect();
-				$('#universities_filter').multiselect();
-				//var return_json;
-
-                var university_names = [];
-                var university_names = $('#university').val();
-                var universitynames = [];
-                if(!university_names){
-                        university_names=[];
-                }
-                for (var i = 0; i < university_names.length; i++) {
-                        universitynames.push(university_names[i]);
-                }
-
-                var universities_filter_names = [];
-                var universities_filter = $('#universities_filter').val();
-                for(var i=0;i<universities_filter.length; i++){
-                    universities_filter_names.push(universities_filter[i]);
-                }
-
 
 				$('#report_form').on('submit', function(e) {
                     var university_names = [];
@@ -173,6 +160,8 @@
                             universitynames.push(university_names[i]);
                     }
 					university_names=universitynames;
+
+					var days = $('#days').val();
 
 
 					var universities_filter = [];
@@ -188,12 +177,16 @@
 
 					console.log("Getting DATA from API..");
 					$('#ajaxSpinnerImage').show();
+					var username = '${param.username}';
+					console.log("Username is: " + username);
 					$.ajax( {
                         type: 'post',
                         dataType: 'json',
                         data: {
                             university_names : universitynames,
-                            universities_filter_names : universities_filter_names
+                            universities_filter_names : universities_filter_names,
+							username: username,
+							days: days
                         },
                         url:  '',
                         complete: function(response){
@@ -206,10 +199,10 @@
 
                                 $('#report_result').dynatable({
                                     features: {
-                                        paginate: true,
+                                        paginate: false,
                                         search: true,
                                         recordCount: true,
-                                        sorting: true,
+                                        sorting: false,
                                     },
                                     dataset: {
                                         records: return_json
@@ -220,6 +213,8 @@
 
                                 changeColor();
 
+                            }else{
+                                hideAjaxSpinnerImage();
                             }
                         },
                         success: function(response){
@@ -249,6 +244,8 @@
 			$('#report_result').change( function(){
 				changeColor();
 			} );
+
+
 
 		</script>
 
@@ -283,33 +280,29 @@
 					</div>
 				</div>
 
+				<center>
+                    <h2>Summary Report</h2>
+
+                </center>
+
 				<!--POST request FORM-->
+
 				<form id="report_form" name="report_form" action="completion/" method="POST">
-
-					<center>
-						<h2>Completion Reports</h2>
-					</center>
-
 					<div style="" id="selection" name="selection">
 					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
 
-						<select multiple="multiple" name="universities_filter" id="universities_filter" required>
-						    <option selected value="ALL" required>All universities</option>
-						    <c:forEach items="${universities}" var="uniValue">
-                                <option value="${uniValue}"> ${uniValue} </option>
-                            </c:forEach>
-						</select>
-
+                        <i id="daystext" name="daystext">From today through </i><input type="text" id="days" name="days" for="report_form" value="${days}"> Days </input>
+						<p></p>
 						<button id="report_submit" type="submit"
 							name="report_submit" value="submit-value" style="padding: 4.6px 12px;">Filter</button>
 						<p></p>
 
-					 </div> <!--Alignment div-->
-					</div><!--Selection div-->
-				 </form><!--Submit Form-->
+					 </div>
+					</div>
+				 </form>
+
 
                 <!-- Report Table goes here -->
-                <!-- style="width:15%;" -->
 				<table id="report_result">
                   <thead>
                     <c:forEach items="${table_headers_html}" var="column_map">
@@ -319,15 +312,7 @@
                   <tbody></tbody>
                 </table>
 				<p></p>
-				<!-- Export Report data to csv/xls -->
-                <form id="export_report_form" name="export_report_form" method="post" action="../export/">
-                      <input type="hidden" name="return_json" id="return_json" value="Moo">
-                      <input type="hidden" name="table_headers_html" id="table_headers_html" value="Bah">
-                      <button id="export_report_button"
-                          name="export_report_button" style="padding: 4.6px 12px; float:right;">
-                          Export
-                      </button>
-                 </form>
+
 				<p></p>
 				<br></br>
 				<br></br>

@@ -43,9 +43,11 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
         return XapiStatementEntity.class;
     }
 
+    //Update: We may not be using this anywhere..
     @Override
     public List<NanoLrsModelSyncable> findAllRelatedToUser(Object dbContext, User user)
             throws SQLException {
+
         // Return all user entities realted to user.
         //You will only return this user as a prepared Query
         long localSeq = 0;
@@ -60,10 +62,6 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
         subQueryColumnWhere.and().gt(XapiStatementEntity.COLNAME_LOCAL_SEQUENCE, localSeq);
         PreparedQuery<XapiStatementEntity> subQueryColumnPQ = subQueryQBColumn.prepare();
 
-
-
-
-        ////Testing:
 
         ///Daos:
         Dao<XapiActivityEntity, String> xapiActivityDao =
@@ -98,7 +96,6 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
 
         //xapiActivityWhere.eq()
 
-
         return null;
     }
 
@@ -126,7 +123,6 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
 
         subQueryColumnWhere.eq(XapiStatementEntity.COLNAME_AGENT, userCorrespondingAgent.getUuid()
             ).or().eq(XapiStatementEntity.COLNAME_ACTOR, userCorrespondingAgent.getUuid());
-
 
 
         PreparedQuery<XapiStatementEntity> subQueryColumnPQ = subQueryQBColumn.prepare();
@@ -189,15 +185,6 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        /*
-        try {
-            Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
-            dao.createOrUpdate((XapiStatementEntity)stmt);
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "persisted stmt");
-        }catch(SQLException e) {
-            e.printStackTrace();
-        }
-        */
     }
 
     @Override
@@ -207,7 +194,8 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
                                                   boolean relatedActivities, boolean relatedAgents,
                                                   long since, long until, int limit) {
         try {
-            Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
+            Dao<XapiStatementEntity, String> dao =
+                    persistenceManager.getDao(XapiStatementEntity.class, dbContext);
             QueryBuilder<XapiStatementEntity, String> queryBuilder = dao.queryBuilder();
             Where<XapiStatementEntity, String> where = queryBuilder.where();
 
@@ -274,9 +262,12 @@ public class XapiStatementManagerOrmLite extends BaseManagerOrmLiteSyncable impl
     }
 
     @Override
-    public List<? extends XapiStatement> findByProgress(Object dbContext, String[] activityIds, XapiAgent agent, String registration, String[] verbIds, int minProgress) {
+    public List<? extends XapiStatement> findByProgress(Object dbContext, String[] activityIds,
+                                                        XapiAgent agent, String registration,
+                                                        String[] verbIds, int minProgress) {
         try {
-            Dao<XapiStatementEntity, String> dao = persistenceManager.getDao(XapiStatementEntity.class, dbContext);
+            Dao<XapiStatementEntity, String> dao =
+                    persistenceManager.getDao(XapiStatementEntity.class, dbContext);
             QueryBuilder<XapiStatementEntity, String> queryBuilder = dao.queryBuilder();
             Where<XapiStatementEntity, String> where = queryBuilder.where();
 

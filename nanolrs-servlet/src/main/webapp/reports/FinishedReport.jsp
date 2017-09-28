@@ -75,6 +75,11 @@
                         $(this).closest('td').css('font-size', '0');
 
                     }
+                    //Replace undefined with blank
+                    if ($(this).text() == 'undefined'){
+                        //$(this).closest('td').css('background-color', '#bbff00');
+                        $(this).text("");
+                    }
                 });
             }
 
@@ -287,7 +292,7 @@
 				<form id="report_form" name="report_form" action="completion/" method="POST">
 
 					<center>
-						<h2>Completion Reports</h2>
+						<h2>Post Test Reports</h2>
 					</center>
 
 					<div style="" id="selection" name="selection">
@@ -309,7 +314,6 @@
 				 </form><!--Submit Form-->
 
                 <!-- Report Table goes here -->
-                <!-- style="width:15%;" -->
 				<table id="report_result">
                   <thead>
                     <c:forEach items="${table_headers_html}" var="column_map">
@@ -319,15 +323,7 @@
                   <tbody></tbody>
                 </table>
 				<p></p>
-				<!-- Export Report data to csv/xls -->
-                <form id="export_report_form" name="export_report_form" method="post" action="../export/">
-                      <input type="hidden" name="return_json" id="return_json" value="Moo">
-                      <input type="hidden" name="table_headers_html" id="table_headers_html" value="Bah">
-                      <button id="export_report_button"
-                          name="export_report_button" style="padding: 4.6px 12px; float:right;">
-                          Export
-                      </button>
-                 </form>
+
 				<p></p>
 				<br></br>
 				<br></br>

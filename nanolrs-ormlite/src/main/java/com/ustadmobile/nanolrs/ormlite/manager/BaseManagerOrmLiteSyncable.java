@@ -72,6 +72,58 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
     }
 
     @Override
+    public List<NanoLrsModel> getAllSinceTwoDates(long fromDate, long toDate,
+                                                  Object dbContext) throws SQLException {
+        Dao thisDao = persistenceManager.getDao(getEntityImplementationClasss(), dbContext);
+
+        /*
+        //Get user speific uuids
+        List<String> uuidList = new ArrayList<>();
+        List<NanoLrsModel> blank = new ArrayList<>();
+        if(user == null){
+            return blank;
+        }
+
+        //Get user's specific subQuery:
+        PreparedQuery<NanoLrsModel> subQueryPQ = findAllRelatedToUserQuery(dbContext, user);
+        if(subQueryPQ == null){
+            return blank;
+        }
+        //Get list of uuids from subQuery
+        List<String[]> subQueryColResultSingle =
+                thisDao.queryRaw(subQueryPQ.getStatement()).getResults();
+        for(String[] thisEntry:subQueryColResultSingle){
+            if(thisEntry[0] != null) {
+                uuidList.add(thisEntry[0]);
+            }
+        }
+        if(uuidList.isEmpty()){
+            return blank;
+        }
+
+        String pkField = getPrimaryKeyFromEntity(getEntityImplementationClasss());
+
+        */
+
+
+        QueryBuilder<NanoLrsModel, String> qb = thisDao.queryBuilder();
+        Where where = qb.where();
+
+        where.gt("date_created", fromDate);
+        where.and().lt("date_created", toDate);
+
+        //where.and().in(pkField, uuidList);
+
+        PreparedQuery<NanoLrsModel> pq =
+                qb.prepare();
+        System.out.println(pq.getStatement());
+        List<NanoLrsModel> entities =
+                thisDao.query(pq);
+
+        return entities;
+    }
+
+    @Override
     public List<NanoLrsModel> getAllSinceSequenceNumber(
             User user, Object dbContext, String host, long seqNum) throws SQLException {
         return getAllSinceTwoSequenceNumber(user, host, seqNum, -1, dbContext);

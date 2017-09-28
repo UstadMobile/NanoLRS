@@ -18,6 +18,8 @@
 				$('#report4').puibutton();
 				$('#report5').puibutton();
                 $('#report6').puibutton();
+                $('#report7').puibutton();
+                $('#report8').puibutton();
 				}
 			);
 			
@@ -39,7 +41,7 @@
     <body>
 	
 		<!-- Header -->
-    	<%@include  file="header.html" %>
+    	<%@include  file="../header.html" %>
 
     	<p></p>
 		
@@ -58,6 +60,11 @@
 					    <a href="../reports/enrollment/"><button id="report3" type="button" style="width:200px;height:100px" >ENROLLMENT REPORTS</button></a>
                         <a href="../reports/completion/"><button id="report4" type="button" style="width:200px;height:100px" >COMPLETION REPORTS</button></a>
                         <a href="../reports/usagescore/"><button id="report6" type="button" style="width:200px;height:100px" >USAGE/SCORE REPORTS</button></a>
+                        <a href="../reports/summary/"><button id="report7" type="button" style="width:200px;height:100px" >SUMMARY REPORTS</button></a>
+
+                        <!--
+                        <a href="../reports/posttest/"><button id="report8" type="button" style="width:200px;height:100px" >POST TEST REPORTS</button></a>
+                        -->
 
 						<!--
 						<a href="DurationReport.jsp"><button id="report1" type="button"style="width:200px;height:100px">Duration Report</button></a>

@@ -70,6 +70,18 @@
         <servlet-name>CourseUsageReportServlet</servlet-name>
         <servlet-class>com.ustadmobile.nanolrs.servlet.CourseUsageReportServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UserInfoReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.UserInfoReportServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SummaryReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.SummaryReportServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FinishedReportServlet</servlet-name>
+        <servlet-class>com.ustadmobile.nanolrs.servlet.FinishedReportServlet</servlet-class>
+    </servlet>
 
     <!--STATEMENTS-->
     <servlet-mapping>
@@ -131,6 +143,21 @@
     <servlet-mapping>
         <servlet-name>CourseUsageReportServlet</servlet-name>
         <url-pattern>/reports/usagescore/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UserInfoReportServlet</servlet-name>
+        <url-pattern>/reports/userinfo/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SummaryReportServlet</servlet-name>
+        <url-pattern>/reports/summary/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FinishedReportServlet</servlet-name>
+        <url-pattern>/reports/posttest/</url-pattern>
     </servlet-mapping>
 
     <!--static files mapping-->
