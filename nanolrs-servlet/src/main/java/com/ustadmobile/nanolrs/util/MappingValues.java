@@ -66,8 +66,13 @@ public class MappingValues {
     public static final String MODULE_NO_ATTEMPTS_BIT = "_noattempts";
     public static final String MODULE_NO_ATTEMPTS_STRING = "No. of Attempts";
 
-    public static String[] universities = {"Kabul University", "Kabul Polytechnic University",
-            "Kabul Education University", "Other", "I don't know"};
+    public static String[] universities = {
+            "Kabul University", "Kabul University of Medical Science",
+            "Kabul Polytechnic University", "Shaheed Rabbani Education University",
+            "Jawzjan University", "Herat University", "Balkh University",
+            "Nangahar University", "Sheikh Zayed University (Khost)", "Kandahar University",
+            "Kunduz University", "Other", "I don't know"};
+
     public static String[] gender = {"Female", "Male"};
     public static String[] faculty = {};
     public static String[] relationship={"Single", "Married"};

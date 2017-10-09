@@ -7,6 +7,7 @@ import com.ustadmobile.nanolrs.core.manager.XapiStatementManager;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.util.MappingValues;
 import com.ustadmobile.nanolrs.util.ServletUtil;
 
 import org.json.JSONArray;
@@ -61,7 +62,8 @@ public class EnrollmentReportServlet extends HttpServlet {
             if(sessionAdmin.equals("admin")){
                 request.setAttribute("table_headers_html",table_headers_html);
                 request.setAttribute("static","/syncendpoint/");
-                //response.sendRedirect("../EnrollmentReport.jsp");
+                request.setAttribute("universities", MappingValues.universities);
+                request.getSession().setAttribute("universities", MappingValues.universities);
                 request.getRequestDispatcher("../EnrollmentReport.jsp").forward(request, response);
             }else{
                 response.sendRedirect("../../Login.jsp");

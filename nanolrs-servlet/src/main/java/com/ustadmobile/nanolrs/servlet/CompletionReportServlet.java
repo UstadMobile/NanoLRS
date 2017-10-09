@@ -81,8 +81,6 @@ public class CompletionReportServlet extends HttpServlet {
                 request.getSession().setAttribute("table_headers_html",table_headers_html);
                 request.getSession().setAttribute("static","/syncendpoint/");
                 request.getSession().setAttribute("universities", MappingValues.universities);
-
-                //response.sendRedirect("../CompletionReport.jsp");
                 System.out.println("Forwarding..");
 
                 request.getRequestDispatcher("../CompletionReport.jsp").forward(request, response);
