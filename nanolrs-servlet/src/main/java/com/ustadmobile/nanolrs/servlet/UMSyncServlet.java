@@ -175,7 +175,8 @@ public class UMSyncServlet extends HttpServlet {
         switch(result.getStatus()) {
             case 200:
                 //Update only if sync OK
-                if(result.getHeader(UMSyncEndpoint.RESPONSE_SYNCED_STATUS).equals(UMSyncEndpoint.RESPONSE_SYNC_OK)){
+                if(UMSyncEndpoint.getHeader(result.getHeaders(),
+                        UMSyncEndpoint.RESPONSE_SYNCED_STATUS).equals(UMSyncEndpoint.RESPONSE_SYNC_OK)){
                     //Update sync status
                     System.out.println("UMSyncServlet: Incoming Sync OK. Updating SyncStatus");
                     resp.setHeader(UMSyncEndpoint.RESPONSE_SYNCED_STATUS, UMSyncEndpoint.RESPONSE_SYNC_OK);

@@ -20,6 +20,7 @@ public class UMSyncResult {
 
     private InputStream responseData;
     private long responseLength;
+    long entitiesCount;
 
     public UMSyncResult(){
        //Blank space
@@ -50,6 +51,17 @@ public class UMSyncResult {
         this.postSyncChangeSeqMap = postSyncChangeSeqMap;
     }
 
+    public UMSyncResult(int status, Map headers, InputStream responseData,
+                        long responseLength, Map<Class,Long> postSyncChangeSeqMap, long ec){
+        this.status = status;
+        this.headers = headers;
+        this.responseData = responseData;
+        this.responseLength = responseLength;
+        this.postSyncChangeSeqMap = postSyncChangeSeqMap;
+        this.entitiesCount = ec;
+
+    }
+
     public int getStatus() {
         return status;
     }
@@ -72,26 +84,6 @@ public class UMSyncResult {
 
     public void setHeaders(Map headers) {
         this.headers = headers;
-    }
-
-    public String getHeader(String headerName){
-        //Enabling support for old header names.
-        String oldHeaderName = null;
-        if(headerName.startsWith("X-UM-")){
-            oldHeaderName = headerName.substring("X-UM-".length(), headerName.length());
-        }
-        if(getHeaderObj(headerName) == null){
-            if(getHeaderObj(oldHeaderName) != null) {
-                String value = getHeaderObj(oldHeaderName).toString();
-                //if (value != null) {
-                //    System.out.println("OLD HEADER VALUE");
-                //}
-                return value;
-            }else{
-                return "";
-            }
-        }
-        return getHeaderObj(headerName).toString();
     }
 
     public Object getHeaderObj(String headerName){
@@ -120,5 +112,13 @@ public class UMSyncResult {
 
     public void setResponseData(InputStream responseData) {
         this.responseData = responseData;
+    }
+
+    public long getEntitiesCount() {
+        return entitiesCount;
+    }
+
+    public void setEntitiesCount(long entitiesCount) {
+        this.entitiesCount = entitiesCount;
     }
 }

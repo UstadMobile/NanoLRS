@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -39,6 +40,7 @@ public class SyncUriResponder extends NanoLrsResponder{
         }
     }
 
+    /*
     private String getHeaderVal(NanoHTTPD.IHTTPSession session, String headerName){
 
         //Enabling support for old header names.
@@ -46,22 +48,23 @@ public class SyncUriResponder extends NanoLrsResponder{
         if(headerName.startsWith("X-UM-")){
             oldHeaderName = headerName.substring("X-UM-".length(), headerName.length());
         }
-        if(session.getHeaders().get(headerName) == null){
+        if(session.getHeaders().get(headerName) == null &&
+                session.getHeaders().get(headerName.toLowerCase()) == null){
             String value = session.getHeaders().get(oldHeaderName);
             if(value!= null){
                 System.out.println("OLD HEADER VALUE");
             }
             return value;
         }
-        return session.getHeaders().get(headerName);
-
-        /*
-        if(session.getHeaders().containsKey(headerName)) {
-            return session.getHeaders().get(headerName);
+        String val;
+        val = session.getHeaders().get(headerName);
+        if(val==null){
+            val = session.getHeaders().get(headerName.toLowerCase());
         }
-        return null;
-        */
+
+        return val;
     }
+    */
 
     public static String convertStreamToString2(InputStream is, String encoding) throws IOException {
         final int bufferSize = 1024;
@@ -124,14 +127,14 @@ public class SyncUriResponder extends NanoLrsResponder{
         byte[] postBodyReceived = NanoLrsHttpd.getRequestContent(session);
         //send the data received to the handleIncomingSync method
 
-        String userUuid = getHeaderVal(session, UMSyncEndpoint.HEADER_USER_UUID);
-        String username = getHeaderVal(session, UMSyncEndpoint.HEADER_USER_USERNAME);
-        String password = getHeaderVal(session, UMSyncEndpoint.HEADER_USER_PASSWORD);
-        String isNewUser = getHeaderVal(session, UMSyncEndpoint.HEADER_USER_IS_NEW);
-        String nodeUuid = getHeaderVal(session, UMSyncEndpoint.HEADER_NODE_UUID);
-        String nodetHostName = getHeaderVal(session, UMSyncEndpoint.HEADER_NODE_HOST);
-        String nodeHostUrl = getHeaderVal(session, UMSyncEndpoint.HEADER_NODE_URL);
-        String nodeRole = getHeaderVal(session, UMSyncEndpoint.HEADER_NODE_ROLE);
+        String userUuid = UMSyncEndpoint.getHeader(session.getHeaders(), UMSyncEndpoint.HEADER_USER_UUID);
+        String username = UMSyncEndpoint.getHeader(session.getHeaders(), UMSyncEndpoint.HEADER_USER_USERNAME);
+        String password = UMSyncEndpoint.getHeader(session.getHeaders(), UMSyncEndpoint.HEADER_USER_PASSWORD);
+        String isNewUser = UMSyncEndpoint.getHeader(session.getHeaders(), UMSyncEndpoint.HEADER_USER_IS_NEW);
+        String nodeUuid = UMSyncEndpoint.getHeader(session.getHeaders(), UMSyncEndpoint.HEADER_NODE_UUID);
+        String nodetHostName = UMSyncEndpoint.getHeader(session.getHeaders(), UMSyncEndpoint.HEADER_NODE_HOST);
+        String nodeHostUrl = UMSyncEndpoint.getHeader(session.getHeaders(), UMSyncEndpoint.HEADER_NODE_URL);
+        String nodeRole = UMSyncEndpoint.getHeader(session.getHeaders(), UMSyncEndpoint.HEADER_NODE_ROLE);
 
         //could send name, etc
         PersistenceManager pm = PersistenceManager.getInstance();
@@ -187,15 +190,31 @@ public class SyncUriResponder extends NanoLrsResponder{
         }
 
         NanoHTTPD.Response.IStatus status = null;
+        String syncStatus = UMSyncEndpoint.RESPONSE_SYNC_FAIL;
         switch(result.getStatus()) {
             case 200:
                 status = NanoHTTPD.Response.Status.OK;
+                syncStatus = UMSyncEndpoint.RESPONSE_SYNC_OK;
                 break;
             default:
                 status = RouterNanoHTTPD.Response.Status.INTERNAL_ERROR;
         }
-        return NanoHTTPD.newFixedLengthResponse(status, "application/json", result.getResponseData(),
+        status = NanoHTTPD.Response.Status.lookup(result.getStatus());
+
+        NanoHTTPD.Response added = NanoHTTPD.newFixedLengthResponse(status, "application/json", result.getResponseData(),
                 result.getResponseLength());
+
+
+        Map<String, String> sessionHeaders = session.getHeaders();
+        Iterator<Map.Entry<String, String>> iterator = sessionHeaders.entrySet().iterator();
+        long headerSize = 0;
+        while(iterator.hasNext()){
+            Map.Entry<String, String> entry = iterator.next();
+            headerSize = headerSize + entry.getKey().length() + entry.getValue().length();
+        }
+
+        added.addHeader(UMSyncEndpoint.RESPONSE_SYNCED_STATUS, syncStatus);
+        return added;
     }
 
     @Override

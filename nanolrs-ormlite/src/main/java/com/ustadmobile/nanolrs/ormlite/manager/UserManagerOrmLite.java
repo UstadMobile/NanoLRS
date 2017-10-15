@@ -58,6 +58,9 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
                 //Since we changed the username. we persist again to bump local seq
                 //That way it goes back to other nodes.
                 super.persist(dbContext, data);
+            }else{
+                //Added: Setting master -1 for new Users
+                ( (User)data).setMasterSequence(-1);
             }
         }else{
             //If an update, it is probably a mistake. We should ignore this push

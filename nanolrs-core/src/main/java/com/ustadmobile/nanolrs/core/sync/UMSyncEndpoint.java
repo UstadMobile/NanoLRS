@@ -40,15 +40,19 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * This sync endpoint is responsible for syncing databases between servers and other UstadMobile
- * instances. Sync is initiated on client and is communicated between other UstadMobile devices
+ * This sync endpoint is responsible for syncing databases inter-between servers or other UstadMobile
+ * instances (nodes). Sync is initiated on client and is communicated between other UstadMobile devices
  * and servers via HTTP request.
+ *
  * Created by varuna on 6/27/2017.
  */
 public class UMSyncEndpoint {
 
-    //TODODone: Change all our headers to X-UM-<name>
-    //TODODone: Add support for old header naming convention for old devices
+    public static final String REQUEST_CONTENT_LENGTH = "Content-Length";
+    public static final String REQUEST_CONTENT_TYPE = "Content-Type";
+    public static final String REQUEST_ACCEPT = "Accept";
+
+    //Custom headers starting with X-UM-..
     public static final String HEADER_NODE_NAME = "X-UM-nodename";
     public static final String HEADER_NODE_HOST = "X-UM-nodehost";
     public static final String HEADER_NODE_URL = "X-UM-nodeurl";
@@ -62,74 +66,35 @@ public class UMSyncEndpoint {
     public static final String HEADER_USER_UUID = "X-UM-useruuid";
     public static final String HEADER_USER_IS_NEW = "X-UM-isnewuser";
 
-    public static final String ENTITY_INFO_CLASS_NAME = "pCls";
-    public static final String ENTITY_INFO_TABLE_NAME = "tableName";
-    public static final String ENTITY_INFO_COUNT = "count";
-    public static final String ENTITY_INFO_PRIMARY_KEY = "pk";
+    public static final String RESPONSE_CHANGE_USERNAME = "X-UM-changeusernameto";
+    public static final String RESPONSE_SEND_USER_AGAIN = "X-UM-senduseragain";
+    public static final String RESPONSE_SYNCED_STATUS = "X-UM-syncstatus";
+
+    public static final String RESPONSE_SYNC_OK = "OK";
+    public static final String RESPONSE_SYNC_FAIL = "FAIL";
 
     public static final String RESPONSE_ENTITIES_DATA = "data";
     public static final String RESPONSE_ENTITIES_INFO = "info";
     public static final String RESPONSE_CONFLICT = "conflict";
 
-    public static final String RESPONSE_CHANGE_USERNAME = "X-UM-changeusernameto";
-    public static final String RESPONSE_SEND_USER_AGAIN = "X-UM-senduseragain";
-    public static final String RESPONSE_SYNCED_STATUS = "X-UM-syncstatus";
-    public static final String RESPONSE_SYNC_OK = "OK";
-    public static final String RESPONSE_SYNC_FAIL = "FAIL";
+    public static final String ENTITY_INFO_CLASS_NAME = "pCls";
+    public static final String ENTITY_INFO_TABLE_NAME = "tableName";
+    public static final String ENTITY_INFO_COUNT = "count";
+    public static final String ENTITY_INFO_PRIMARY_KEY = "pk";
 
     public static final String JSON_MIMETYPE = "application/json";
-
-    public static final String REQUEST_CONTENT_LENGTH = "Content-Length";
-    public static final String REQUEST_CONTENT_TYPE = "Content-Type";
-    public static final String REQUEST_ACCEPT = "Accept";
-
     public static final String UTF_ENCODING = "UTF-8";
 
-    /*
-    //TODODone: Find a central place for this and other mappings..
-    //Map of entity names to the proxy class
-    private static HashMap<String, Class> proxyNameToClassMap = new HashMap<>();
-    private static HashMap<Class, Class> proxyClassToManagerMap = new HashMap<>();
-    static {
-        proxyNameToClassMap.put(User.class.getName(), User.class);
-        proxyClassToManagerMap.put(User.class, UserManager.class);
-
-        proxyNameToClassMap.put(UserCustomFields.class.getName(), UserCustomFields.class);
-        proxyClassToManagerMap.put(UserCustomFields.class, UserCustomFieldsManager.class);
-
-        proxyNameToClassMap.put(XapiStatement.class.getName(), XapiStatement.class);
-        proxyClassToManagerMap.put(XapiStatement.class, XapiStatementManager.class);
-
-        proxyNameToClassMap.put(XapiActivity.class.getName(), XapiActivity.class);
-        proxyClassToManagerMap.put(XapiActivity.class, XapiActivityManager.class);
-
-        proxyNameToClassMap.put(XapiAgent.class.getName(), XapiAgent.class);
-        proxyClassToManagerMap.put(XapiAgent.class, XapiAgentManager.class);
-
-        //proxyNameToClassMap.put(XapiDocument.class.getName(),XapiDocument.class);
-        //proxyClassToManagerMap.put(XapiDocument.class,XapiDocumentManager.class);
-
-        proxyNameToClassMap.put(XapiForwardingStatement.class.getName(), XapiForwardingStatement.class);
-        proxyClassToManagerMap.put(XapiForwardingStatement.class, XapiForwardingStatementManager.class);
-
-        proxyNameToClassMap.put(XapiState.class.getName(), XapiState.class);
-        proxyClassToManagerMap.put(XapiState.class, XapiStateManager.class);
-
-        proxyNameToClassMap.put(XapiVerb.class.getName(), XapiVerb.class);
-        proxyClassToManagerMap.put(XapiVerb.class, XapiVerbManager.class);
-    }
-    */
-
     /**
-     * Common method to return primary key when supplied a class entity
+     * Common method to return primary key field name when supplied a class entity
      *
-     * @param syncableEntity eg: User.class
-     * @return primary key field
+     * @param syncableEntity    the Class. eg: User.class
+     * @return String           the primary key field name. eg: "username"
      */
     public static String getPrimaryKeyFromClass(Class syncableEntity){
         Method[] allEntityMethods = syncableEntity.getMethods();
         String pkMethod = null;
-        String pkField = null;
+        String pkField;
         for(Method method : allEntityMethods) {
             if(method.isAnnotationPresent(PrimaryKeyAnnotationClass.class)) {
                 pkMethod = method.getName();
@@ -143,41 +108,32 @@ public class UMSyncEndpoint {
             prefixLen = 3;
         pkField = Character.toLowerCase(pkMethod.charAt(3)) +
                 pkMethod.substring(prefixLen+1);
-        //System.out.println("!!!!DEBUG: pkField: " + pkField + " and pkMethod: " + pkMethod + "!!!!!");
         return pkField;
     }
 
     /**
-     * Common method to return primary key when supplied a class entity
+     * Common method to return primary key method name when supplied a class entity
      *
-     * @param syncableEntity eg: User.class
-     * @return primary key field
+     * @param syncableEntity    the Class. eg: User.class
+     * @return String           primary key method. eg: "getUsername"
      */
     public static String getPrimaryKeyMethodFromClass(Class syncableEntity){
         Method[] allEntityMethods = syncableEntity.getMethods();
         String pkMethod = null;
-        String pkField = null;
         for(Method method : allEntityMethods) {
             if(method.isAnnotationPresent(PrimaryKeyAnnotationClass.class)) {
                 pkMethod = method.getName();
                 break;
             }
         }
-        int prefixLen = 0;
-        if(pkMethod.startsWith("is"))
-            prefixLen = 2;
-        else if(pkMethod.startsWith("get"))
-            prefixLen = 3;
-        pkField = Character.toLowerCase(pkMethod.charAt(3)) +
-                pkMethod.substring(prefixLen+1);
-        //System.out.println("!!!!DEBUG: pkField: " + pkField + " and pkMethod: " + pkMethod + "!!!!!");
         return pkMethod;
     }
 
     /**
-     * Common method to return manager from a proxy class
-     * @param syncableEntity eg: User.class
-     * @return
+     * Common method to return entity manager from a proxy class (of that entity)
+     *
+     * @param syncableEntity            The Entity's proxy class. eg: User.class
+     * @return  NanoLrsManagerSyncable  The Entity's Manager class. eg: UserManager.class
      */
     public static NanoLrsManagerSyncable getManagerFromProxyClass(Class syncableEntity){
         Class managerClass = ModelManagerMapping.proxyClassToManagerMap.get(syncableEntity);
@@ -187,9 +143,10 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Get manager from proxy class name
-     * @param thisProxyClassName
-     * @return
+     * Common method to get entity's manager from a string proxy class name (of that entity)
+     *
+     * @param thisProxyClassName        The Entity's proxy class name. eg: "User"
+     * @return NanoLrsManagerSyncable   The Entity's Manager class. eg: UserManager.class
      */
     public static NanoLrsManagerSyncable getManagerFromProxyName(String thisProxyClassName){
         Class thisProxyClass = ModelManagerMapping.proxyNameToClassMap.get(thisProxyClassName);
@@ -197,24 +154,11 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Common method to return Info JSON about the entity for a given class
-     * @param syncableEntity eg: User.class
-     * @return
-     */
-    public static JSONObject createJSONFromClass(Class syncableEntity){
-        JSONObject jsonInfo = new JSONObject();
-        jsonInfo.put(ENTITY_INFO_CLASS_NAME, syncableEntity.getName());
-        jsonInfo.put(ENTITY_INFO_TABLE_NAME, getTableNameFromClass(syncableEntity));
-        jsonInfo.put(ENTITY_INFO_COUNT, 0);
-        jsonInfo.put(ENTITY_INFO_PRIMARY_KEY, getPrimaryKeyFromClass(syncableEntity));
-
-        return jsonInfo;
-    }
-
-    /**
-     * Common method to return the table name from Proxy Class
-     * @param syncableEntity eg: User.class
-     * @return
+     * Common method to return the table name from Proxy Class. Note that table names
+     *  are upper cased for consistency.
+     *
+     * @param syncableEntity    The Entity's proxy class. eg: User.class
+     * @return String           The Entity's table name (in database). eg: "USER"
      */
     public static String getTableNameFromClass(Class syncableEntity){
         String tableName = convertCamelCaseNameToUnderscored(
@@ -226,6 +170,14 @@ public class UMSyncEndpoint {
         return tableName;
     }
 
+    /**
+     * Common method to convert input-stream to string with encoding provided.
+     *
+     * @param is                InputStream
+     * @param encoding          encoding
+     * @return String           The string from the InputStream.
+     * @throws IOException      Because we are doing I/O operations.
+     */
     public static String convertStreamToString2(InputStream is, String encoding) throws IOException {
         final int bufferSize = 1024;
         final char[] buffer = new char[bufferSize];
@@ -241,9 +193,10 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Gets all syncable entities' next change seq number and stores it in a map against entity
-     * @param dbContext
-     * @return
+     * Gets all syncable entities' next change seq number and stores it in a map against entity.
+     *
+     * @param dbContext               The databse context.
+     * @return Map<Class, Long>       Map of every class and its' next change seq number.
      * @throws SQLException
      */
     public static Map<Class, Long> getAllEntitiesSeqNum(Object dbContext) throws SQLException {
@@ -253,35 +206,36 @@ public class UMSyncEndpoint {
 
         for(Class thisEntity:ModelManagerMapping.SYNCABLE_ENTITIES){
             //Pre-Sync : Add existing ChangeSeq value to preSyncAllEntitiesSeqMap
-            String proxyClassName = thisEntity.getName();
             String tableName = getTableNameFromClass(thisEntity);
             long preSyncEntitySeqNum =
                     changeSeqManager.getNextChangeByTableName(tableName, dbContext);
             allEntitiesSeqMap.put(thisEntity, preSyncEntitySeqNum);
         }
-
         return allEntitiesSeqMap;
     }
 
 
     /**
-     * Converts entitiesJSON to Entities mapped to their entity proxy class
-     * @param entitiesJSON
-     * @param dbContext
-     * @return
+     * Converts entitiesJSON to Entities mapped to their entity proxy class.
+     *
+     * @param entitiesJSON      The JSON Array to convert to entities
+     * @param dbContext         The database connection source
+     * @return  Map             The map of entities with their proxy class name.
+     *                  eg:
+     *                      <User1 object, "com.ustadmobile.nanolrs.core.model.User";
+     *                      Statement1 object, "com.ustadmobile.nanolrs.core.model.XapiStatement";
+     *                      ...>
      */
     public static Map<NanoLrsModelSyncable, String> entitiesJSONToEntitiesMap(
             JSONArray entitiesJSON, Object dbContext){
         Map<NanoLrsModelSyncable, String> allNewEntitiesMap = new HashMap<>();
         //Create Entity Map of <Entity Object, Proxy Class Name>
         for(int i=0; i < entitiesJSON.length(); i++){
-            //System.out.println(" -->JSON->Object");
             JSONObject entityJSON = entitiesJSON.getJSONObject(i);
             NanoLrsModel thisEntity = ProxyJsonSerializer.toEntity(entityJSON, dbContext);
             String thisProxyClass =
                     entityJSON.getString(ProxyJsonSerializer.PROXY_CLASS_JSON_FIELD);
             allNewEntitiesMap.put((NanoLrsModelSyncable)thisEntity, thisProxyClass);
-            //System.out.println("   ->OK.");
         }
         return allNewEntitiesMap;
     }
@@ -289,9 +243,10 @@ public class UMSyncEndpoint {
     /**
      * Update changeSeq with increment based on Entities info JSON, return preSync Map for every
      * entity.
-     * @param entitiesInfoJSON
-     * @param dbContext
-     * @return
+     *
+     * @param entitiesInfoJSON      The entities info JSON that has the count
+     * @param dbContext             The database context
+     * @return  Map<String, Long>   Map containing presync change Seq frr every entity type
      * @throws SQLException
      */
     public static Map<String, Long> getEntityChangeSeqAndIncrementItForInfo(
@@ -322,32 +277,24 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Returns an empty UMSyncResult with the given status code
-     * @param resultStatus
-     * @return
+     * Returns an empty UMSyncResult with the given status code.
+     *
+     * @param resultStatus  The result status code.
+     * @return  UMSyncResult object which is empty except for status code given.
      * @throws UnsupportedEncodingException
      */
     public static UMSyncResult returnEmptyUMSyncResult(int resultStatus)
             throws UnsupportedEncodingException {
-        /*
-        String emptyResponseString = "";
-        InputStream responseData = new ByteArrayInputStream(emptyResponseString.getBytes(UTF_ENCODING));
-        long responseLength = 0;
-        Map responseHeaders = new HashMap();
-
-        UMSyncResult resultResponse = new UMSyncResult(resultStatus,responseHeaders,
-                responseData, responseLength);
-
-        return resultResponse;
-        */
         Map responseHeaders = new HashMap();
         return returnEmptyUMSyncResultWithHeader(resultStatus, responseHeaders);
     }
 
     /**
-     * Returns an empty UMSyncResult with the given status code
-     * @param resultStatus
-     * @return
+     * Returns an empty UMSyncResult with the given status code and headers.
+     *
+     * @param resultStatus          The result status code.
+     * @param responseHeaders       Map of headers to associate UMSyncResult object
+     * @return UMSyncResult         object which is empty except for code and headers.
      * @throws UnsupportedEncodingException
      */
     public static UMSyncResult returnEmptyUMSyncResultWithHeader(int resultStatus, Map responseHeaders)
@@ -362,29 +309,36 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Converts a property name from e.g. from fullName to full_name
+     * Common method that converts name from camel case to snake case. eg: fullName to full_name .
      *
      * @param propertyName Property Name e.g. propertyName
-     *
      * @return Property named in lower case separated by underscores e.g. property_name
      */
     public static String convertCamelCaseNameToUnderscored(String propertyName) {
-        String undererScoredName = "";
+        String underScoredName = "";
         for(int i = 0; i < propertyName.length(); i++) {
-            if(Character.isUpperCase(propertyName.charAt(i)) && (i == 0 || Character.isLowerCase(propertyName.charAt(i-1)))) {
-                undererScoredName += "_";
+            if(Character.isUpperCase(propertyName.charAt(i)) &&
+                    (i == 0 || Character.isLowerCase(propertyName.charAt(i-1)))) {
+                underScoredName += "_";
             }
-            undererScoredName += Character.toLowerCase(propertyName.charAt(i));
+            underScoredName += Character.toLowerCase(propertyName.charAt(i));
         }
-
-        return undererScoredName;
+        return underScoredName;
     }
 
     /**
-     * Creates a JOSNInfo Object from class with count
-     * @param syncableEntity
-     * @param count
-     * @return
+     * Creates a JOSNInfo Object from class with count.
+     *
+     * @param syncableEntity    The Entity proxy class. eg: User.class
+     * @param count             The count of this type of entity. eg: 42
+     * @return JSONObject
+     * eg:
+     *
+     *          {"pCls":"com.ustadmobile.nanolrs.core.model.User",
+     *          "tableName":"USER",
+     *          "count":42,
+     *          "pk":"username"}
+     *
      */
     public static JSONObject createJSONInfoFromClass(Class syncableEntity, int count){
         JSONObject thisEntityInfo = new JSONObject();
@@ -399,9 +353,12 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Gets the latest seqNum for an array of one entitytyped array list
-     * @param pendingEntitesToBeSynced
-     * @return
+     * Gets the latest seqNum for an array of one entity typed array list. To be used for only
+     *  one type of entity specified.
+     *
+     * @param pendingEntitesToBeSynced  List of entities pending to be synced (of one type).
+     *                                  eg: <User3, User88, User42, User23>
+     * @return  long    latest seq Number for that entity type. eg: 89
      */
     public static long getLatestSeqNumFromEntityArray(List<NanoLrsModel> pendingEntitesToBeSynced){
         long latestSeqNum = -1;
@@ -426,18 +383,18 @@ public class UMSyncEndpoint {
         }else{
             return latestSeqNum;
         }
-
     }
 
     /**
      * Crates a map of the entities in JSON Array and their Info summed up. To be used for only
      * one type of Entitiy specified.
-     * @param pendingEntitesToBeSynced
-     * @param syncableEntity
-     * @return
+     *
+     * @param pendingEntitesToBeSynced  List of entities to create json data (Only of one type)
+     * @param syncableEntity    The type of entity specified. eg: User.class
+     * @return  Map.Entry of data and info.
      */
     public static Map.Entry<JSONArray, JSONObject> createJSONDataFromEntityArray(List<NanoLrsModel>
-                                                                                         pendingEntitesToBeSynced, Class syncableEntity){
+                                                 pendingEntitesToBeSynced, Class syncableEntity){
 
         int count = 0;
         long latestSeqNumToUpdateSyncStatus = -1;
@@ -463,14 +420,14 @@ public class UMSyncEndpoint {
 
         Map.Entry<JSONArray, JSONObject> entitiesDataInfoEntry = entitiesDataInfoMap.entrySet().iterator().next();
         return entitiesDataInfoEntry;
-        //return entitiesDataInfoMap;
     }
 
     /**
-     * Creates headers needed for sync request
-     * @param user
-     * @param node
-     * @return
+     * Creates headers needed for sync request.
+     *
+     * @param user  The user making the sync request.
+     * @param node  The node making the sync request.
+     * @return Map of headers and values.
      */
     public static Map <String, String> createSyncHeader(User user, Node node){
         //Headers if any..
@@ -508,15 +465,14 @@ public class UMSyncEndpoint {
 
             headers.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
         }
-
         return headers;
-
     }
 
     /**
-     * Creates parameters needed for sync request (doesnt do anything now)
-     * @param user
-     * @param node
+     * Creates parameters needed for sync request. (doesnt do anything now).
+     *
+     * @param user The user making the sync request.
+     * @param node The node making the sync request.
      * @return
      */
     public static Map<String, String> createSyncParameters(User user, Node node){
@@ -526,21 +482,10 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Store syncable entities.
-     * TODODone: Put this in one common place
-     */
-    /*
-    public static Class[] SYNCABLE_ENTITIES = new Class[]{
-            User.class, XapiStatement.class, XapiActivity.class, XapiAgent.class,
-            //XapiDocument.class, XapiForwardingState.class  //Disabled: not needed?
-            XapiState.class, XapiVerb.class, UserCustomFields.class
-    };
-    */
-
-    /**
-     * Sets headers to the connection from a given header Map
-     * @param connection
-     * @param headers
+     * Sets headers to the connection from a given header Map.
+     *
+     * @param connection    The connection where we set the headers.
+     * @param headers       A map of headers with values.
      * @throws IOException
      */
     private static void setHeaders(HttpURLConnection connection, Map headers) throws IOException {
@@ -552,16 +497,19 @@ public class UMSyncEndpoint {
         }
     }
 
-
     /**
      * Find all pending entities needed to be synced for all entities at this moment, or since the
-     * given changeSeq numbers map. Also give back the latest changeseq mapping
-     * The reason in returning two objects as entry is if we seperate it out, we may have an edge
+     * given changeSeq numbers map. Also give back the latest ChangeSeq mapping. This is so that we
+     * can update it.
+     * The reason in returning two objects as entry is if we separate it out, we may have an edge
      * case between methods of new entities.
-     * @param thisUser
-     * @param node
-     * @param dbContext
-     * @return
+     *
+     * @param thisUser  The User starting the sync request.
+     * @param node      The node starting the sync request.
+     * @param fromSeq   From Sequence Number (if provided).
+     * @param toSeq     To Sequence Number (if provided).
+     * @param dbContext Database context.
+     * @return Map.Entry of UMSyncData and entity type<->latest ChangeSeq mapping.
      * @throws SQLException
      * @throws IOException
      */
@@ -633,10 +581,13 @@ public class UMSyncEndpoint {
     /**
      * Find all pending JSON needed to be synced for all entities at this moment, or since the
      * given changeSeq numbers map.
-     * @param thisUser
-     * @param node
-     * @param dbContext
-     * @return
+     *
+     * @param thisUser      The user starting the sync request.
+     * @param node          The node starting the sync request.
+     * @param fromSeq       From seq number (optional).
+     * @param toSeq         To seq number (optional).
+     * @param dbContext     Database context.
+     * @return  Map.Entry of JSONObject of new entities and changeseq mapping as of right now.
      * @throws SQLException
      * @throws IOException
      */
@@ -714,7 +665,8 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Get response headers from connection
+     * Get response headers from HttpURLConnection object.
+     *
      * @param conn  HttpURLConnection object
      * @return  Map of response headers
      */
@@ -729,16 +681,18 @@ public class UMSyncEndpoint {
         }
         return headers;
     }
+
     /**
-     * Makes Sync Request with given JSON, headers, etc. Returns a UMSyncResult object
-     * @param destURL
-     * @param method
-     * @param headers
-     * @param parameters
-     * @param dataJSON
-     * @param contentType
-     * @param content
-     * @return
+     * Makes Sync Request with given JSON, headers, etc. Returns a UMSyncResult object.
+     *
+     * @param destURL       The endpoint url
+     * @param method        The method type (usually POST)
+     * @param headers       The request headers.
+     * @param parameters    The request parameters (if any).
+     * @param dataJSON      The JSON to sent as part of the request.
+     * @param contentType   The content type to send as part of the request.
+     * @param content       The database context.
+     * @return UMSyncResult The Sync result as an object.
      */
     public static UMSyncResult makeSyncRequest(String destURL, String method, Map headers,
                                                Map parameters, JSONObject dataJSON, String contentType, byte[] content) {
@@ -746,7 +700,6 @@ public class UMSyncEndpoint {
 
         HttpURLConnection con = null;
         OutputStream out = null;
-//        OutputStreamWriter outw = null;
         try {
             URL url = new URL(destURL);
             con = (HttpURLConnection) url.openConnection();
@@ -804,16 +757,17 @@ public class UMSyncEndpoint {
                 catch(IOException e) {}
             }
         }
-
         return response;
     }
 
     /**
-     * Checks, updates, creats persists all JSON in given to database for a sender and receiver node.
-     * @param entitiesWithInfoJSON
-     * @param senderNode
-     * @param thisNode
-     * @param dbContext
+     * Persists json to database : Checks, updates, creates,  persists all JSON in given data
+     * to database for a sender and receiver node.
+     *
+     * @param entitiesWithInfoJSON  The JSONObject that has data and info of the entities coming in.
+     * @param senderNode            The sender's Node.
+     * @param thisNode              The receiver's Node.
+     * @param dbContext             The Database context.
      * @throws SQLException
      */
     public static boolean jsonToDB(JSONObject entitiesWithInfoJSON, Node senderNode, Node thisNode,
@@ -870,7 +824,6 @@ public class UMSyncEndpoint {
                     continue;
                 }
             }
-
 
             NanoLrsManagerSyncable thisManager = getManagerFromProxyClass(thisProxyClass);
 
@@ -933,18 +886,18 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Validates a stream if its a valid UM Sync Stream
-     * @param inputStream
-     * @return
+     * Validates a stream if its a valid UM Sync Stream.
+     *
+     * @param inputStream InputStream to validate
+     * @return UMSyncResult object with result status.
      * @throws UnsupportedEncodingException
      */
     public static UMSyncResult validateUMSyncStream(InputStream inputStream)
             throws UnsupportedEncodingException {
         String streamString;
-        JSONObject entitiesWithInfoJSON;
         try {
             streamString = convertStreamToString2(inputStream, UTF_ENCODING);
-            return validateUMSyncSring(streamString);
+            return validateUMSyncString(streamString);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -954,12 +907,13 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Validates a stream if its a valid UM Sync Stream
-     * @param streamString
-     * @return
+     * Validates a stream if its a valid UM Sync Stream.
+     *
+     * @param streamString  The stream string.
+     * @return UMSyncresult object with result status.
      * @throws UnsupportedEncodingException
      */
-    public static UMSyncResult validateUMSyncSring(String streamString)
+    public static UMSyncResult validateUMSyncString(String streamString)
             throws UnsupportedEncodingException {
         JSONObject entitiesWithInfoJSON;
         try {
@@ -993,10 +947,11 @@ public class UMSyncEndpoint {
 
     /**
      * Checks if this username is available for a new user creation/conflict
-     *  in incoming registration
-     * @param username
-     * @param dbContext
-     * @return
+     *  in incoming registration.
+     *
+     * @param username  The username to check.
+     * @param dbContext The database context.
+     * @return boolean true if username is available; false if not.
      */
     public static boolean isThisUsernameAvailable(String username, Object dbContext){
         UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
@@ -1008,10 +963,11 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Gets next available username
-     * @param username  The username that is already taken
-     * @param dbContext The database context
-     * @return  String new username value
+     * Gets next available username.
+     *
+     * @param username  The username that is already taken.
+     * @param dbContext The database context.
+     * @return  String new username value.
      */
     public static String getNextAvailableUsername(String username, Object dbContext){
 
@@ -1031,31 +987,47 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Get header with oldHeader check.
-     * @param headers
-     * @param headerName
-     * @return
+     * Get header with oldHeader check. Gets a specific header from header map. Also checks old
+     * header naming convention.
+     * TODO: Phase out old header check after next few versions of the app.
+     *
+     * @param headers       Map of headers/
+     * @param headerName    The header to check.
+     * @return String The header value.
      */
-    public static String getHeader(Map headers, String headerName){
+    public static String getHeader(Map<String, String> headers, String headerName){
         //Enabling support for old header names.
         String oldHeaderName = null;
         if(headerName.startsWith("X-UM-")){
             oldHeaderName = headerName.substring("X-UM-".length(), headerName.length());
         }
-        if(headers.get(headerName) == null){
-            String value = headers.get(oldHeaderName).toString();
-            if(value!= null){
-               //System.out.println("OLD HEADER VALUE");
+
+        if(headers.get(headerName) == null && headers.get(headerName.toLowerCase()) == null){
+            String value = headers.get(oldHeaderName);
+            if(value == null){
+                if(headers.get(oldHeaderName.toLowerCase()) != null){
+                    value = headers.get(oldHeaderName.toLowerCase());
+                }
             }
             return value;
         }
-        return headers.get(headerName).toString();
+
+        //Checking lower case header name
+        String val;
+        val = headers.get(headerName);
+        if(val==null){
+            if(headers.get(headerName.toLowerCase()) != null){
+                val = headers.get(headerName.toLowerCase());
+            }
+        }
+        return val;
     }
 
 
     /**
      * Handles incoming sync requests. Essentially an endpoint to process request and
-     * update database and handle it
+     * update database and handle it.
+     *
      * REMEMBER TO CALL updateSyncStatus() AFTER THIS METHOD !
      * @param inputStream   The request inputStream.
      * @param node This is the node that sent the sync request
@@ -1174,6 +1146,17 @@ public class UMSyncEndpoint {
         //thisUser = userManager.findById(dbContext,userUuid); //Get the user(it might have synced now)
         String userTableName = UMSyncEndpoint.getTableNameFromClass(User.class);
         if(isNew.equals("true")){
+
+            //Sync compatibility check
+            if(!thisNode.isMaster() && !thisNode.isProxy()){
+                System.out.println("\nSorry Client-Client not allowed.\n");
+                return returnEmptyUMSyncResult(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+            }
+            if(thisNode.isProxy()){
+                System.out.println("\nProxy here. I don't have the new user syncing with me.\n" +
+                        "Don't think I'm going to accept user from client. I'll wait till I sync with master instead.\n");
+            }
+
             //Check if username given
             if(userUsername != null && !userUsername.isEmpty()){
                 //Check if username exists :
@@ -1227,6 +1210,7 @@ public class UMSyncEndpoint {
                 if(!thisNode.isMaster() && !thisNode.isProxy()){
                     //Client. Should we create a user here?
                     System.out.println("\nSorry Client-Client not allowed.\n");
+                    return returnEmptyUMSyncResult(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
                 }
                 if(thisNode.isProxy()){
                     //Proxy. Create it here? or we wait till syncs with master ?
@@ -1285,7 +1269,11 @@ public class UMSyncEndpoint {
             thisNodeHost = "Not set";
         }
 
-        System.out.println("UMSYNC: Incoming: Getting sync for user: " + thisUser.getUsername()
+        String thisUsername = "null";
+        if(thisUser != null){
+            thisUsername = thisUser.getUsername();
+        }
+        System.out.println("UMSYNC: Incoming: Getting sync for user: " + thisUsername
                 + " isNew?: " + isNew + " from Node:" + node.getHost()
                 + " . I am Node: " + thisNodeHost);
 
@@ -1390,15 +1378,17 @@ public class UMSyncEndpoint {
             responseLength = resultForClient.length();
         }
 
+        long dataSize = entitiesWithInfoJSON.optJSONArray(RESPONSE_ENTITIES_DATA).length();
         resultResponse = new UMSyncResult(resultStatus,responseHeaders,
-                responseData, responseLength, returnEntitiesChangeSeq);
+                responseData, responseLength, returnEntitiesChangeSeq, dataSize);
 
         return resultResponse;
     }
 
     /**
-     * Method to update the sync status
+     * Method to update the sync status.
      *   eg: upon successful incoming sync on returned entities
+     *
      * @param syncResult    The previous sync's result that has the entity<->ChangeSeq map
      * @param node          The node where the sync was made to
      * @param dbContext     Database context
@@ -1435,9 +1425,10 @@ public class UMSyncEndpoint {
      * Handles sync process : gets all entities to be synced from syncstatus seqnum and
      * builds entities list to convert to json array to send in a request to host's
      * syncURL endpoint. This should only be run if current node is set (thisNode).
+     *
      * @param thisUser      The user starting the sync request
      * @param node          The node to with which we wish to sync
-     * @param dbContext     The databse context
+     * @param dbContext     The database context
      * @return              SyncResult Object
      * @throws SQLException because we are doing sql updates
      * @throws IOException  because of i/o exceptions
@@ -1499,12 +1490,16 @@ public class UMSyncEndpoint {
         //Make a request with the JSON in POST body and return the UMSyncResult
         UMSyncResult syncResult = makeSyncRequest(node.getUrl(), "POST", headers, parameters,
                 pendingEntitiesWithInfo, JSON_MIMETYPE, null);
+        syncResult.setEntitiesCount(syncInfo.getKey().getEntities().size());
         Map responseHeaders = syncResult.getHeaders();
         if(syncResult.getStatus() == 200){
 
             //Check that its actually a request sent to a sync endpoint..
             //Maybe we want to enable trust esp against main node. TODO
-            if (syncResult.getHeader(RESPONSE_SYNCED_STATUS).equals(RESPONSE_SYNC_OK)) {
+            //if (syncResult.getHeader(RESPONSE_SYNCED_STATUS).equals(RESPONSE_SYNC_OK)) {
+            String syncStatusHeader = UMSyncEndpoint.getHeader(syncResult.getHeaders(),
+                    RESPONSE_SYNCED_STATUS);
+            if(syncStatusHeader != null && syncStatusHeader.equals(RESPONSE_SYNC_OK)){
                 //Update the SyncStatus with latest value of seq num for this host and every entity
                 Iterator<Map.Entry<Class, Long>> latestChangeSeqIterator =
                         entityToLatestLocalSeqNum.entrySet().iterator();
@@ -1561,7 +1556,9 @@ public class UMSyncEndpoint {
                 System.out.println("Username update for existence failed.");
             }else{
                 System.out.println("\nstartSync HTTP CONFLICT : RESPONSE HEADERS:\n" + responseHeaders);
-                String newUsername = syncResult.getHeader(RESPONSE_CHANGE_USERNAME).toString();
+                //String newUsername = syncResult.getHeader(RESPONSE_CHANGE_USERNAME).toString();
+                String newUsername = UMSyncEndpoint.getHeader(syncResult.getHeaders(),
+                        RESPONSE_CHANGE_USERNAME);
 
                 //Check: Conflict of username exists
                 if (newUsername != null && !newUsername.isEmpty()) {
@@ -1648,12 +1645,13 @@ public class UMSyncEndpoint {
     /**
      * Checks if this entity should be persisted. Check conflicts, if its a valid
      * update/new entity or if we should reject it.
-     * @param thisNewEntity
-     * @param thisProxyClass
-     * @param senderNode
-     * @param thisNode
-     * @param dbContext
-     * @return
+     *
+     * @param thisNewEntity     The entity (new/update) to be checked.
+     * @param thisProxyClass    The entity's proxy class. eg: User.class
+     * @param senderNode        The node that sent this entity (new/update)
+     * @param thisNode          The node that accepted the entity.
+     * @param dbContext         The database context.
+     * @return boolean, true if persisting this entity OK. false if not (conflict, etc).
      * @throws SQLException
      */
     public static boolean shouldIPersistThisEntity(NanoLrsModelSyncable thisNewEntity,
@@ -1687,20 +1685,6 @@ public class UMSyncEndpoint {
             e.printStackTrace();
         }
 
-        //Get existingEntity for user ... //OR we just change PK to username..
-        /*
-        if(thisProxyClass == User.class){
-            User userEntity = (User)thisNewEntity;
-            String userEntityUsername = userEntity.getUsername();
-            UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
-            List<User> allUsers = userManager.findByUsername(dbContext, userEntityUsername);
-            if(allUsers != null ){
-                if(!allUsers.isEmpty()){
-                    existingEntityToBeUpdated = allUsers.get(0);
-                }
-            }
-        }
-        */
 
         ////////////////////////////////////
         ///  UPDATE CONFLICT RESOLUTION  ///

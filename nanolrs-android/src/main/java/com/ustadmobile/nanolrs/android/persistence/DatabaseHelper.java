@@ -146,6 +146,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         //TODODone: Check if we want to get device's name & info
         //Update: Sticking with UUID for now
         String thisNodeName = "node:" + thisNodeUUID;
+        String thisNodeHostName = "host:" + thisNodeUUID;
 
         nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName,
                 thisNodeUrl, false, false, context);
