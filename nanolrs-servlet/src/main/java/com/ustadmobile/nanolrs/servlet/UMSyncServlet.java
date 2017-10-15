@@ -133,6 +133,11 @@ public class UMSyncServlet extends HttpServlet {
 
 
                 nodeManager.persist(dbContext, node);
+            }else{
+                if (!node.getHost().equals(nodeHostUrl)){
+                    node.setHost(nodeHostUrl);
+                    nodeManager.persist(dbContext, node);
+                }
             }
 
         } catch (SQLException e) {

@@ -2,6 +2,7 @@ package com.ustadmobile.nanolrs.android.persistence;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -148,7 +149,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         String thisNodeName = "node:" + thisNodeUUID;
         String thisNodeHostName = "host:" + thisNodeUUID;
 
-        nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName,
+        try{
+            String reqString = Build.MANUFACTURER
+                    + " " + Build.MODEL + " " + Build.VERSION.RELEASE
+                    + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
+            thisNodeHostName = "device:" + reqString.replaceAll(" ", "_");
+
+        }catch (Exception e){
+            System.out.println("Cannot get device info exception : " + e);
+        }
+
+        nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName, thisNodeHostName,
                 thisNodeUrl, false, false, context);
     }
 

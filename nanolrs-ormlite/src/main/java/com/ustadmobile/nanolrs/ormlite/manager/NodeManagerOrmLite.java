@@ -68,8 +68,8 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
         }
     }
     @Override
-    public Node createThisDeviceNode(String uuid, String thisNodeName, String endpointUrl,
-                                     boolean isMaster, boolean isProxy,
+    public Node createThisDeviceNode(String uuid, String thisNodeName, String thisHostName,
+                                     String endpointUrl, boolean isMaster, boolean isProxy,
                                      Object dbContext) throws SQLException {
         Dao thisDao = persistenceManager.getDao(NodeEntity.class, dbContext);
         Node thisNode = getThisNode(dbContext);
@@ -79,7 +79,7 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
             thisNode.setUUID(uuid);
             thisNode.setName(thisNodeName);
             thisNode.setStoredDate(System.currentTimeMillis());
-            thisNode.setHost("host:" + uuid);
+            thisNode.setHost(thisHostName);
             thisNode.setNotes("this_node");
             //*Role is always local.*
             thisNode.setRole("this_node");
@@ -88,6 +88,12 @@ public class NodeManagerOrmLite extends BaseManagerOrmLite implements NodeManage
             thisNode.setProxy(isProxy);
 
             thisDao.createOrUpdate(thisNode);
+        }
+
+        if(thisNode.getHost() == null || thisNode.getHost().startsWith("host:")){
+            thisNode.setHost(thisHostName);
+            thisDao.createOrUpdate(thisNode);
+            thisNode = getThisNode(dbContext);
         }
         return thisNode;
     }

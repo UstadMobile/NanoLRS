@@ -37,7 +37,7 @@ public interface NodeManager extends NanoLrsManager {
      * @return
      * @throws SQLException
      */
-    Node createThisDeviceNode(String uuid, String deviceName, String endpointUrl,
+    Node createThisDeviceNode(String uuid, String deviceName, String hostName, String endpointUrl,
                               boolean isMaster, boolean isProxy,
                               Object dbContext) throws SQLException;
 

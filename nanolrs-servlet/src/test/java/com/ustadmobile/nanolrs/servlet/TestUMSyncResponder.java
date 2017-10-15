@@ -117,7 +117,7 @@ public class TestUMSyncResponder  extends Mockito {
         ConnectionSource dbContext = new JdbcPooledConnectionSource(TestUtilis.getJDBCUrl());
 
         NodeManager nodeManager = PersistenceManager.getInstance().getManager(NodeManager.class);
-        Node servletNode = nodeManager.createThisDeviceNode("test","test","/test/",true, false, dbContext);
+        Node servletNode = nodeManager.createThisDeviceNode("test","test","/test/","host:test", true, false, dbContext);
 
         ServletOutputStream mockOutput = mock(ServletOutputStream.class);
 

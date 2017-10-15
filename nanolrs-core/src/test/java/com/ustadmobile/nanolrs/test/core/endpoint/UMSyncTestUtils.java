@@ -138,7 +138,7 @@ public class UMSyncTestUtils {
         }
         String thisNodeName = "node:" + thisNodeUUID;
 
-        nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName,
+        nodeManager.createThisDeviceNode(thisNodeUUID, thisNodeName, "host:" + thisNodeUUID,
                 thisNodeUrl, false, false, context);
     }
 
