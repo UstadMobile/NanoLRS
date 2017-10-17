@@ -63,6 +63,7 @@ public class StatementsServlet extends HttpServlet {
             String username = getUsernameFromBasicAuth(request);
             String password = getPasswordFromBasicAuth(request);
 
+            //TODO: Authenticate with hashit after migrating db passwords to hash
             boolean correctLogin = userManager.authenticate(dbContext, username, password);
 
             if (correctLogin) {

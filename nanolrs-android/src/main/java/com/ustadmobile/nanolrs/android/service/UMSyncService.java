@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.User;
-import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,7 +21,6 @@ import java.util.TimerTask;
 
 public class UMSyncService extends Service {
 
-
     private UMSyncBinder mBinder = new UMSyncBinder();
 
     private Object context = null;
@@ -34,6 +30,8 @@ public class UMSyncService extends Service {
     private User loggedInUser;
 
     private Node endNode;
+
+    private String password;
 
     //Frequency of forwarding statements ( in ms ?) [ 60k = 1 minute ]
     public static int FORWARD_INTERVAL = 300000; //5 minutes slowed down
@@ -52,6 +50,10 @@ public class UMSyncService extends Service {
 
     public void setEndNode(Node node){
         endNode = node;
+    }
+
+    public void setPassword(String pass){
+        password = pass;
     }
 
     public void setContext(){
@@ -87,9 +89,13 @@ public class UMSyncService extends Service {
                 System.out.println("  UMSyncService: UMSyncTimerTask ..");
                 if(loggedInUser != null && endNode != null && context != null){
                     //Attempt to set the user and node
+                    System.out.println("\n  UMSyncService: All valid: Starting Sync for user: " +
+                            loggedInUser.getUsername());
 
-                    System.out.println("\n  UMSyncService: All valid: Starting Sync for user: " + loggedInUser.getUsername());
+                    //TODO: New way:
+                    //UMSyncEndpoint.startSync(loggedInUser, password, endNode, context);
                     UMSyncEndpoint.startSync(loggedInUser, endNode, context);
+
                 }else{
                     System.out.println("\n  UMSyncService: Cannot start sync. User and Node not set.\n");
                 }

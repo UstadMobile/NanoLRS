@@ -125,7 +125,7 @@ public class UMSyncTests {
         long userSeqNum = allEntitiesSeqNum.get(User.class).longValue();
 
         //Add 1 new user:
-        UMSyncTestUtils.addUser("testuser1", context);
+        UMSyncTestUtils.addUser("testuser1", "secrettestuse1", context);
 
         //Test that adding a new user +1 s the change seq number
         Map<Class, Long> allEntitiesSeqNum2 = UMSyncEndpoint.getAllEntitiesSeqNum(context);
@@ -136,8 +136,8 @@ public class UMSyncTests {
                 UMSyncEndpoint.getLatestSeqNumFromEntityArray(allUsers);
 
         //Add two users.
-        UMSyncTestUtils.addUser("testuser2", context);
-        UMSyncTestUtils.addUser("testuser3", context);
+        UMSyncTestUtils.addUser("testuser2", "secrettestuser2", context);
+        UMSyncTestUtils.addUser("testuser3", "secrettestuser3", context);
         allUsers = userManager.getAllEntities(context);
 
         //Test that the new change seq number accounts for new additions
@@ -158,7 +158,7 @@ public class UMSyncTests {
     public void testUserSyncBits() throws Exception {
 
         //Create sync user and get this node
-        User syncUser = UMSyncTestUtils.addUser("syncuser01", context);
+        User syncUser = UMSyncTestUtils.addUser("syncuser01", "secretsyncuser01", context);
         UMSyncTestUtils.checkAndCreateThisNode(null, context);
         Node thisNode = nodeManager.getThisNode(context);
 

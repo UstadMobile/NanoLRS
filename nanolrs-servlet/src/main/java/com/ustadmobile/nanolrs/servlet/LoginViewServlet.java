@@ -77,7 +77,8 @@ public class LoginViewServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-
+        //TODO: make this use hashit after db passwords are migrated to hashes.
+        //TODO: Were not going to use the old method because this is only used server
         if(userManager.authenticate(dbContext, username, password)){
             if(!username.equals("admin")){
 

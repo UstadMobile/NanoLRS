@@ -11,6 +11,7 @@ import com.ustadmobile.nanolrs.core.sync.UMSyncResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,21 +44,10 @@ public class UMSyncServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         System.out.println("In UMSyncServlet.doGet()..");
-
         response.sendRedirect("home/");
-
-        /*
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        String name = request.getParameter("name");
-        out.println(
-                "<html><body>" +
-                        "<h1>" + "Hi, " + name + "</h1>" +
-                        "</body></html>");
-        */
-        //super.doGet(request, response);
 
     }
 
@@ -72,8 +62,10 @@ public class UMSyncServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Object dbContext = getServletContext().getAttribute(NanoLrsContextListener.ATTR_CONNECTION_SOURCE);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        Object dbContext =
+                getServletContext().getAttribute(NanoLrsContextListener.ATTR_CONNECTION_SOURCE);
 
         String userUuid = getHeaderVal(req, UMSyncEndpoint.HEADER_USER_UUID);
         String username = getHeaderVal(req, UMSyncEndpoint.HEADER_USER_USERNAME);
@@ -85,13 +77,64 @@ public class UMSyncServlet extends HttpServlet {
         String nodeHostUrl = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_URL);
         String nodeRole = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_ROLE);
 
+        String basicAuth = getHeaderVal(req, UMSyncEndpoint.REQUEST_AUTHORIZATION);
         String syncStatus = getHeaderVal(req, UMSyncEndpoint.RESPONSE_SYNCED_STATUS);
 
         PersistenceManager pm = PersistenceManager.getInstance();
 
         UserManager userManager = pm.getManager(UserManager.class);
 
-        if (userManager.authenticate(dbContext, username, password) == false){
+        /*** EXPLANATION OF HASHING PASSWORD LOGIC
+         *
+            //Note: In the case where when user is null (ie new user) but using old app:
+            //the password wil be saved at endpoint as a hash (we hash it). but not as a
+            //hash on device (its still plain text on device) until app on device is updated.
+            //Which means:
+            // i. We can either update the local seq here so the user details
+            //      are an update to device.
+            //      In that case the hash password is updated at device (hash).
+            // But the problem is:
+            // >>> Upon second sync, the hash will not be in basic auth. We don't
+            //      want to double hash it.
+            //SOLUTION:
+            // iii. We DON'T UPDATE THE LOCAL SEQ TO MARK THE USER AS AN UPDATE AT ENDPOINT.
+            // If user password is hashed on endpoint, there is no point updating it on device
+            // with an old app
+            //
+            //ie: no point syncing it as the password on device will be a hash and login
+            //system will fail on device. That means we hash password only when they update the app.
+            //that's why we're not +1 ing the change seq such that the hashed password gets updated
+            //to all devices upon next sync.
+            // Basically the new version of the app is a critical update.
+        */
+
+        //Get username and password from basic authentication :
+        String authUsername = getUsernameFromBasicAuth(req);
+        String authPassword = getPasswordFromBasicAuth(req);
+
+        //With the new app, only real cred (text password) is in basic auth.
+        //In the old app, real cred (text password) is in header.
+        // Note: Laid out below for explanation.
+        if(authUsername != null && authPassword != null){ //if basic auth exists
+            username = authUsername;
+            password = authPassword; //the plain text password from basic auth.
+
+            //Assumption 1: Since we got this cred from BASIC Auth,
+            // its safe to assume that the password on device is hashed as well.
+            //Assumption 2: Endpoint Database passwords are all hashed (and they should be).
+
+        }
+        //Assumption 2: Endpoint DB passwords are all hashed (and they should be).
+
+        //Assumption 3: If no Basic Auth present in request (old app),
+        // password gotten from header which is also plain text. Password on
+        // device is not hashed.
+
+
+        //We hash it cause all passwords stored in endpoint db are hashed.
+
+        //Always authenticate via hashed password because of Assumption 2.
+        if (userManager.authenticate(dbContext, username, password, true) == false){
             User existingUser = userManager.findByUsername(dbContext, username);
             if(existingUser == null){
                 if(isNewUser.equals("true")){
@@ -100,8 +143,21 @@ public class UMSyncServlet extends HttpServlet {
                         User newUser = (User)userManager.makeNew();
                         newUser.setUuid(userUuid);
                         newUser.setUsername(username);
+
+                        //Always hash passwords at endpoint db. (Assumption 2)
+                        if(password != null && !password.isEmpty()){
+                            try {
+                                //hash it.
+                                password = userManager.hashPassword(password);
+                            } catch (NoSuchAlgorithmException e) {
+                                System.out.println("Cannot hash password.: " + e);
+                                e.printStackTrace();
+                            }
+                        }
+
                         newUser.setPassword(password);
                         userManager.persist(dbContext, newUser);
+
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -131,7 +187,6 @@ public class UMSyncServlet extends HttpServlet {
                     node.setMaster(true);
                 }
 
-
                 nodeManager.persist(dbContext, node);
             }else{
                 if (!node.getHost().equals(nodeHostUrl)){
@@ -144,6 +199,7 @@ public class UMSyncServlet extends HttpServlet {
             e.printStackTrace();
         }
 
+        //Form headers from request
         Map<String, String> reqHeaders = new HashMap<>();
         reqHeaders.put(UMSyncEndpoint.HEADER_USER_UUID, userUuid);
         reqHeaders.put(UMSyncEndpoint.HEADER_USER_USERNAME, username);
@@ -155,15 +211,17 @@ public class UMSyncServlet extends HttpServlet {
         reqHeaders.put(UMSyncEndpoint.HEADER_NODE_URL, nodeHostUrl);
         reqHeaders.put(UMSyncEndpoint.HEADER_NODE_ROLE, nodeRole);
 
-        reqHeaders.put(UMSyncEndpoint.RESPONSE_SYNCED_STATUS, UMSyncEndpoint.RESPONSE_SYNC_OK);
+        //todo test these?
+        reqHeaders.put(UMSyncEndpoint.RESPONSE_SYNCED_STATUS, syncStatus);
+        reqHeaders.put(UMSyncEndpoint.REQUEST_AUTHORIZATION, basicAuth);
 
+        //Form parameters (if applicable)
         Map<String, String> reqParams = new HashMap<>();
 
-        //reqHeaders = getHeadersFromRequest(req);
-        //reqParams = getParamsFromRequest(req);
-
+        //Form InputStream from request
         InputStream reqInputStream = req.getInputStream();
 
+        //Handle Incoming Sync:
         UMSyncResult result = null;
         try {
             result = UMSyncEndpoint.handleIncomingSync(
@@ -184,7 +242,8 @@ public class UMSyncServlet extends HttpServlet {
                         UMSyncEndpoint.RESPONSE_SYNCED_STATUS).equals(UMSyncEndpoint.RESPONSE_SYNC_OK)){
                     //Update sync status
                     System.out.println("UMSyncServlet: Incoming Sync OK. Updating SyncStatus");
-                    resp.setHeader(UMSyncEndpoint.RESPONSE_SYNCED_STATUS, UMSyncEndpoint.RESPONSE_SYNC_OK);
+                    resp.setHeader(UMSyncEndpoint.RESPONSE_SYNCED_STATUS,
+                            UMSyncEndpoint.RESPONSE_SYNC_OK);
                     try {
                         UMSyncEndpoint.updateSyncStatus(result, node, dbContext);
                     } catch (SQLException e) {
@@ -204,43 +263,48 @@ public class UMSyncServlet extends HttpServlet {
         resp.setContentLength((int)result.getResponseLength());
 
         ServletOutputStream sos = resp.getOutputStream();
-        //TODODone: this Check this
-        //Update: Been working OK. passing..
-        String responseDataString = convertStreamToString(result.getResponseData(), UMSyncEndpoint.UTF_ENCODING);
+
+        String responseDataString = convertStreamToString(result.getResponseData(),
+                UMSyncEndpoint.UTF_ENCODING);
         byte[] responseDataBytes = responseDataString.getBytes();
         sos.write(responseDataBytes);
         sos.close();
 
-
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.doPut(req, resp);
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.doDelete(req, resp);
     }
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.doOptions(req, resp);
     }
 
     @Override
-    protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doTrace(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.doTrace(req, resp);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         super.service(req, resp);
     }
 
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+    public void service(ServletRequest req, ServletResponse res)
+            throws ServletException, IOException {
         super.service(req, res);
     }
 }

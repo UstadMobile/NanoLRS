@@ -50,7 +50,11 @@ public class ServletUtil {
      */
     public static String getUsernameFromBasicAuth(HttpServletRequest request){
         String[] credentials = getCredentialStringFromBasicAuth(request);
-        return credentials[0];
+        if(credentials != null && credentials.length > 0) {
+            return credentials[0];
+        }
+        return null;
+
     }
 
     /**
@@ -60,7 +64,10 @@ public class ServletUtil {
      */
     public static String getPasswordFromBasicAuth(HttpServletRequest request){
         String[] credentials = getCredentialStringFromBasicAuth(request);
-        return credentials[1];
+        if(credentials != null && credentials.length > 0) {
+            return credentials[1];
+        }
+        return null;
     }
 
     /**

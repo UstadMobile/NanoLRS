@@ -12,6 +12,8 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -24,14 +26,29 @@ import java.util.UUID;
 
 public class UMSyncTestUtils {
 
-    public static User addUser(String username, Object context) throws SQLException {
+    public static User addUser(String username, String password, Object context) throws SQLException {
         UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
 
         String newTestingUserID = UUID.randomUUID().toString();
         User testingUser = (User)userManager.makeNew();
         testingUser.setUuid(newTestingUserID);
         testingUser.setUsername(username);
-        testingUser.setPassword("secret");
+
+        String hashPassword = null;
+        try {
+            hashPassword = userManager.hashPassword(password);
+            testingUser.setPassword(hashPassword);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Cannot get hash " + e);
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Cannot get hash.. " + e);
+            e.printStackTrace();
+        }
+
+        //or:
+        //testingUser = userManager.updatePassword(password, testingUser, context);
+        //update: not using the above, persists it. not meant over here.
 
         userManager.persist(context, testingUser);
 

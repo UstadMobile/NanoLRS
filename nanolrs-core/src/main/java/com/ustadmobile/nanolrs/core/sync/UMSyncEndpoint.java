@@ -14,6 +14,7 @@ import com.ustadmobile.nanolrs.core.model.Node;
 import com.ustadmobile.nanolrs.core.model.SyncStatus;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
+import com.ustadmobile.nanolrs.core.util.Base64CoderNanoLrs;
 import com.ustadmobile.nanolrs.core.util.JsonUtil;
 
 
@@ -31,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +53,7 @@ public class UMSyncEndpoint {
     public static final String REQUEST_CONTENT_LENGTH = "Content-Length";
     public static final String REQUEST_CONTENT_TYPE = "Content-Type";
     public static final String REQUEST_ACCEPT = "Accept";
+    public static final String REQUEST_AUTHORIZATION = "Authorization";
 
     //Custom headers starting with X-UM-..
     public static final String HEADER_NODE_NAME = "X-UM-nodename";
@@ -423,18 +426,32 @@ public class UMSyncEndpoint {
     }
 
     /**
-     * Creates headers needed for sync request.
+     * Creates headers needed for sync request. Defaults password to user's password.
+     * This is most likely a hash. This method shouldn't be used. Keeping it for old version.
+     * TODO: Get rid of me and my mentions.
      *
      * @param user  The user making the sync request.
      * @param node  The node making the sync request.
      * @return Map of headers and values.
      */
     public static Map <String, String> createSyncHeader(User user, Node node){
+        return createSyncHeader(user, user.getPassword(), node);
+    }
+
+    /**
+     * Creates headers needed for sync request.
+     *
+     * @param user  The user making the sync request.
+     * @param cred  The password in plain text.
+     * @param node  The node making the sync request.
+     * @return Map of headers and values.
+     */
+    public static Map <String, String> createSyncHeader(User user, String cred, Node node){
         //Headers if any..
         Map <String, String> headers = new HashMap<String, String>();
         if(user != null) {
             headers.put(HEADER_USER_USERNAME, user.getUsername());
-            headers.put(HEADER_USER_PASSWORD, user.getPassword());
+            headers.put(HEADER_USER_PASSWORD, cred);
             headers.put(HEADER_USER_UUID, user.getUuid());
             String isNewUser = "false";
             //Watch out: master will always go to 0 if there is a local update.
@@ -683,10 +700,23 @@ public class UMSyncEndpoint {
     }
 
     /**
+     * encode username password string to basic auth
+     * @param username
+     * @param password
+     * @return
+     */
+    public static String encodeBasicAuth(String username, String password) {
+        return "Basic " + Base64CoderNanoLrs.encodeString(username +
+                ':' + password);
+    }
+
+    /**
      * Makes Sync Request with given JSON, headers, etc. Returns a UMSyncResult object.
      *
      * @param destURL       The endpoint url
      * @param method        The method type (usually POST)
+     * @param username      The username for basic auth.
+     * @param password      The password for basic auth.
      * @param headers       The request headers.
      * @param parameters    The request parameters (if any).
      * @param dataJSON      The JSON to sent as part of the request.
@@ -694,12 +724,25 @@ public class UMSyncEndpoint {
      * @param content       The database context.
      * @return UMSyncResult The Sync result as an object.
      */
-    public static UMSyncResult makeSyncRequest(String destURL, String method, Map headers,
-                                               Map parameters, JSONObject dataJSON, String contentType, byte[] content) {
-        UMSyncResult response = new UMSyncResult();
+    public static UMSyncResult makeSyncRequest(String destURL, String method, String username,
+                                               String password, Map headers, Map parameters,
+                                               JSONObject dataJSON, String contentType,
+                                               byte[] content) {
 
+        UMSyncResult response = new UMSyncResult();
         HttpURLConnection con = null;
         OutputStream out = null;
+
+        //Get basic auth string for this username and password
+        String basicAuthString = null;
+        if(username != null && password != null){
+            if(username.length() > 0 && password.length() > 0){
+                basicAuthString = encodeBasicAuth(username, password);
+                System.out.print("got basic: " + basicAuthString);
+                headers.put(REQUEST_AUTHORIZATION, basicAuthString);
+            }
+        }
+
         try {
             URL url = new URL(destURL);
             con = (HttpURLConnection) url.openConnection();
@@ -1005,7 +1048,8 @@ public class UMSyncEndpoint {
         if(headers.get(headerName) == null && headers.get(headerName.toLowerCase()) == null){
             String value = headers.get(oldHeaderName);
             if(value == null){
-                if(headers.get(oldHeaderName.toLowerCase()) != null){
+                if(oldHeaderName != null &&
+                        headers.get(oldHeaderName.toLowerCase()) != null){
                     value = headers.get(oldHeaderName.toLowerCase());
                 }
             }
@@ -1021,6 +1065,27 @@ public class UMSyncEndpoint {
             }
         }
         return val;
+    }
+
+
+    public static String[] getCredFromAuthString(String authorization){
+        if (authorization != null && authorization.startsWith("Basic")) {
+            // Authorization: Basic base64credentials
+            String base64Credentials = authorization.substring("Basic".length()).trim();
+            String credentials = Base64CoderNanoLrs.decodeString(base64Credentials);
+            // credentials = username:password
+            final String[] values = credentials.split(":", 2);
+            return values;
+        }
+        return null;
+    }
+
+    public static String getPasswordFromBasicAuthString(String authorization){
+        String[] credentials = getCredFromAuthString(authorization);
+        if(credentials != null && credentials.length > 0) {
+            return credentials[1];
+        }
+        return null;
     }
 
 
@@ -1086,18 +1151,10 @@ public class UMSyncEndpoint {
         Node thisNode = nodeManager.getThisNode(dbContext);
 
         //Get this user details
-        /*
-        String userUsername = headers.get(HEADER_USER_USERNAME).toString();
-        String userPassword = headers.get(HEADER_USER_PASSWORD).toString();
-        String userUUID = headers.get(HEADER_USER_UUID).toString();
-        String isNew = headers.get(HEADER_USER_IS_NEW).toString();
-        */
-
         String userUsername = getHeader(headers, HEADER_USER_USERNAME);
         String userPassword = getHeader(headers, HEADER_USER_PASSWORD);
         String userUUID = getHeader(headers, HEADER_USER_UUID);
         String isNew = getHeader(headers, HEADER_USER_IS_NEW);
-
         User thisUser = null;
 
         //Get all syncable entities pre sync seq and put it in preSyncSeqMap
@@ -1132,34 +1189,44 @@ public class UMSyncEndpoint {
 
         } catch (IOException e) {
             e.printStackTrace();
-            //Cannot proceed. Stream is fauly. Skip?
+            //Cannot proceed. Stream is faulty. Skip?
             return returnEmptyUMSyncResult(HttpURLConnection.HTTP_BAD_REQUEST);
+        }
+
+
+        ////////////////////////////////
+        //  SYNC COMPATIBILITY CHECK  //
+        ////////////////////////////////
+        //Sync compatibility check: Client<->Client
+        if(!thisNode.isMaster() && !thisNode.isProxy()){
+            System.out.println("\nSorry Client-Client not allowed.\n");
+            return returnEmptyUMSyncResult(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+        }
+        //Sync compatibility check: Proxy<->[Client, Master]
+        if(thisNode.isProxy()){
+            System.out.println("\nProxy here. I don't have the new user syncing with me.\n" +
+                    "Don't think I'm going to accept user from client. " +
+                    "I'll wait till I sync with master instead.\n");
         }
 
         ////////////////////////////////
         //       VALIDATE USER        //
         ////////////////////////////////
-        //TODODone: Test this
-        //Tested and more tests coming..
-        //TODODone: Also authenticate before proceeding..
-        //Update: WE are authenticating it below
-        //thisUser = userManager.findById(dbContext,userUuid); //Get the user(it might have synced now)
-        String userTableName = UMSyncEndpoint.getTableNameFromClass(User.class);
+        //Get Password from Basic Auth:
+        String basicAuthCred = null;
+        String basicAuthString = getHeader(headers, REQUEST_AUTHORIZATION);
+        if(basicAuthString != null && !basicAuthString.isEmpty()){
+            basicAuthCred = getPasswordFromBasicAuthString(basicAuthString);
+            if(basicAuthCred != null && !basicAuthCred.isEmpty()){
+                //If password in Basic Auth exists, we use that.
+                userPassword = basicAuthCred;
+            }
+        }
         if(isNew.equals("true")){
-
-            //Sync compatibility check
-            if(!thisNode.isMaster() && !thisNode.isProxy()){
-                System.out.println("\nSorry Client-Client not allowed.\n");
-                return returnEmptyUMSyncResult(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
-            }
-            if(thisNode.isProxy()){
-                System.out.println("\nProxy here. I don't have the new user syncing with me.\n" +
-                        "Don't think I'm going to accept user from client. I'll wait till I sync with master instead.\n");
-            }
-
-            //Check if username given
+            //Check if username given in header is valid
             if(userUsername != null && !userUsername.isEmpty()){
-                //Check if username exists :
+
+                //Check if username already exists:
                 User ifIExistChangeUsername = userManager.findByUsername(dbContext, userUsername);
                 if(ifIExistChangeUsername != null){
                     System.out.println("\nUsername already exists for new user.\n" +
@@ -1169,11 +1236,12 @@ public class UMSyncEndpoint {
                     changeYourUsernameHeader.put(RESPONSE_CHANGE_USERNAME, newAvailableUsername);
                     return returnEmptyUMSyncResultWithHeader(
                             HttpURLConnection.HTTP_CONFLICT, changeYourUsernameHeader);
+
                 }else {
-                    //Username is new and valid, is available. Its a new user . So we make it..
+                    //Username is new and valid, is available. Its a new user .
+                    // So we make it..
+
                     if(userPassword != null && !userPassword.isEmpty()){
-                        //TODODone: Add password and username rules
-                        //Update: Restricting on registration front.
                         thisUser = (User)userManager.makeNew();
                         thisUser.setUsername(userUsername);
                         if(userUUID != null && !userUUID.isEmpty()){
@@ -1181,13 +1249,32 @@ public class UMSyncEndpoint {
                         }else{
                             thisUser.setUuid(UUID.randomUUID().toString());
                         }
+
+                        //The password in the header(old) and basic auth(new) is plain text.
+                        // and it needs to be hashed.
+                        try {
+                            userPassword = userManager.hashPassword(userPassword);
+                        } catch (NoSuchAlgorithmException e) {
+                            System.out.println("Could not hash password for new user in " +
+                                    "handleIncomingSync() : " + e);
+                            e.printStackTrace();
+                        }
                         thisUser.setPassword(userPassword);
+
                         /*
+                        //This code block was +1 ing the change seq so that the user is an update.
+                        // Not required anymore since we don't need to update it. The sync entities
+                        // will most likely have it.
+
+                        String userTableName = UMSyncEndpoint.getTableNameFromClass(User.class);
                         long newUserLocalSeq =
                                 changeSeqManager.getNextChangeAddSeqByTableName(userTableName,
                                         1, dbContext);
                         thisUser.setLocalSequence(newUserLocalSeq);
                         */
+
+                        //Persist without +1-ing change seq because for new entities
+                        // because all details will come as part of this sync..
                         userManager.persist(dbContext, thisUser, false);
                     }else{
                         //No password given. BAD request
@@ -1195,8 +1282,7 @@ public class UMSyncEndpoint {
                     }
                 }
             }else{
-                //No usrname value given. Have to null it. BAD request
-                thisUser = null;
+                //No username value given. Have to null it. BAD request
                 System.out.println("No username given. BAD REQUEST!");
                 return returnEmptyUMSyncResult(HttpURLConnection.HTTP_BAD_REQUEST);
             }
@@ -1207,18 +1293,7 @@ public class UMSyncEndpoint {
             if(thisUser == null){
                 //Existing User does not exist in the system.
                 System.out.println("SYNCED USER DOES NOT EXIST HERE..");
-                if(!thisNode.isMaster() && !thisNode.isProxy()){
-                    //Client. Should we create a user here?
-                    System.out.println("\nSorry Client-Client not allowed.\n");
-                    return returnEmptyUMSyncResult(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
-                }
-                if(thisNode.isProxy()){
-                    //Proxy. Create it here? or we wait till syncs with master ?
-                    //TODODone: Yes. Let this allow.
-                    //Update: Allowing..
-                    System.out.println("\nProxy here. I don't have the new user syncing with me.\n" +
-                            "Don't think I'm going to accept user from client. I'll wait till I sync with master instead.\n");
-                }
+
                 if(thisNode.isMaster()){
                     //Master. Odd since if master doesn't have it,
                     // and isNewUser is not true, it shouldn't even get to here.
@@ -1226,9 +1301,20 @@ public class UMSyncEndpoint {
                     //We should create it.
                     System.out.println("\nMaster here. I have a new user that's supposed to be with me,\n" +
                             " but i dont have it. I'll create it anyway.. \n");
+
                     if(userPassword != null && !userPassword.isEmpty()) {
                         thisUser = (User) userManager.makeNew();
                         thisUser.setUsername(userUsername);
+
+                        //hash it. storing hashes from now on only.
+                        try {
+                            userPassword = userManager.hashPassword(userPassword);
+                        } catch (NoSuchAlgorithmException e) {
+                            System.out.println("Unable to hash password for master in " +
+                                    "handleIncomingSync() " + e);
+                            e.printStackTrace();
+                        }
+
                         thisUser.setPassword(userPassword);
                         if(userUUID != null && !userUUID.isEmpty()){
                             thisUser.setUuid(userUUID);
@@ -1253,12 +1339,14 @@ public class UMSyncEndpoint {
                     }
                 }
             }else{
+
                 //Authenticate it..
-                if(!userManager.authenticate(dbContext, userUsername, userPassword)){
+                if(!userManager.authenticate(dbContext, userUsername, userPassword, true)){
                     //Not valid login.
                     System.out.println("Sorry, Username and password does not match for sync");
                     return returnEmptyUMSyncResult(HttpURLConnection.HTTP_UNAUTHORIZED);
                 }
+
             }
         }
 
@@ -1328,7 +1416,7 @@ public class UMSyncEndpoint {
         ////////////////////////////////
         //   CONSTRUCT THE RESPONSE   //
         ////////////////////////////////
-        Map<String, String> responseHeaders = createSyncHeader(thisUser, node);
+        Map<String, String> responseHeaders = createSyncHeader(thisUser, userPassword, node);
         if(allgood){
             System.out.println("UMSync: Incoming: jsonToDB all good (for user:" +
                     thisUser.getUsername() + ").");
@@ -1421,6 +1509,11 @@ public class UMSyncEndpoint {
         return allgood;
     }
 
+    public static UMSyncResult startSync(User thisUser, Node node, Object dbContext)
+            throws SQLException, IOException {
+        return startSync(thisUser, null, node, dbContext);
+    }
+
     /**
      * Handles sync process : gets all entities to be synced from syncstatus seqnum and
      * builds entities list to convert to json array to send in a request to host's
@@ -1433,8 +1526,8 @@ public class UMSyncEndpoint {
      * @throws SQLException because we are doing sql updates
      * @throws IOException  because of i/o exceptions
      */
-    public static UMSyncResult startSync(User thisUser, Node node, Object dbContext)
-            throws SQLException, IOException {
+    public static UMSyncResult startSync(User thisUser, String thisUserCred,  Node node,
+                                         Object dbContext) throws SQLException, IOException {
 
         //Get managers
         SyncStatusManager syncStatusManager=
@@ -1452,7 +1545,7 @@ public class UMSyncEndpoint {
         Map<Class, Long> entityToLatestMasterSeqNum = new HashMap<>();
 
         //Get sync headers and parameters
-        Map<String, String> headers = createSyncHeader(thisUser, thisNode);
+        Map<String, String> headers = createSyncHeader(thisUser, thisUserCred, thisNode);
         Map<String, String> parameters = createSyncParameters(thisUser, thisNode);
 
         //Set thisUser master to 0 if its -1 (ie: its a new user (never synced with master)
@@ -1470,16 +1563,6 @@ public class UMSyncEndpoint {
         //The sync JSON to send to node
         JSONObject pendingEntitiesWithInfo;
 
-        /*
-        TODO: Remove after testing
-        //Get all entities since now into a JSON and
-        // get every entity type's last change seq number
-        Map.Entry<JSONObject, Map<Class, Long>> entitiesJSONAndChangeSeqMap =
-                getNewEntriesJSON(thisUser, node, null, null, dbContext);
-        pendingEntitiesWithInfo = entitiesJSONAndChangeSeqMap.getKey();
-        entityToLatestLocalSeqNum = entitiesJSONAndChangeSeqMap.getValue();
-        */
-
         Map.Entry<UMSyncData, Map<Class,Long>> syncInfo =
                 getSyncInfo(thisUser, node, null, null, dbContext);
         pendingEntitiesWithInfo = syncInfo.getKey().toSyncJSON();
@@ -1488,8 +1571,9 @@ public class UMSyncEndpoint {
         headers.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
 
         //Make a request with the JSON in POST body and return the UMSyncResult
-        UMSyncResult syncResult = makeSyncRequest(node.getUrl(), "POST", headers, parameters,
-                pendingEntitiesWithInfo, JSON_MIMETYPE, null);
+        UMSyncResult syncResult = makeSyncRequest(node.getUrl(), "POST",
+                thisUser.getUsername(), thisUserCred, headers, parameters, pendingEntitiesWithInfo,
+                JSON_MIMETYPE, null);
         syncResult.setEntitiesCount(syncInfo.getKey().getEntities().size());
         Map responseHeaders = syncResult.getHeaders();
         if(syncResult.getStatus() == 200){

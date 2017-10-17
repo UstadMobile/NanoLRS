@@ -29,24 +29,18 @@ public class TestEntitiesToJsonArray {
 
         //Get all entities since sequence number 0
         long sequenceNumber = 0;
-        /*
-        User testingUser=null;
-        List<User> testingUsers = userManager.findByUsername(context, "testinguser");
-        if(testingUsers == null || testingUsers.isEmpty()){
-        */
+
         User testingUser = userManager.findByUsername(context, "testinguser");
         if(testingUser == null){
             testingUser = (User)userManager.makeNew();
             testingUser.setUsername("testinguser");
-            testingUser.setPassword("secret");
+            String password = "secret";
+            password = userManager.hashPassword(password);
+            testingUser.setPassword(password);
             testingUser.setUuid(UUID.randomUUID().toString());
             userManager.persist(context, testingUser);
         }
-        /*
-        else {
-            testingUser = testingUsers.get(0);
-        }
-        */
+
         String host = "testing_host";
 
         /* Test that our list is not null and includes every entity */

@@ -54,12 +54,22 @@ public interface UserManager extends NanoLrsManagerSyncable {
     boolean authenticate(Object dbContext, String username, String password);
 
     /**
+     * Authenticate locally the user with given username and password (hashed or not)
+     * @param dbContext
+     * @param username
+     * @param password
+     * @param hashit    If password should be hashed before authenticating
+     * @return
+     */
+    boolean authenticate(Object dbContext, String username, String password, boolean hashit);
+
+    /**
      * Save password in user table as a hash
      * @param password  User's password in plain text
      * @param dbContext Database context
      * @return  true if password update a success, fail if not.
      */
-    boolean updatePassword(String password, User user, Object dbContext)
+    User updatePassword(String password, User user, Object dbContext)
             throws UnsupportedEncodingException, NoSuchAlgorithmException, SQLException ;
 
     /**
@@ -72,5 +82,13 @@ public interface UserManager extends NanoLrsManagerSyncable {
      */
     boolean updateUsername(String username, User user, Object dbContext)
         throws SQLException;
+
+    /**
+     * Hash's password. Returns hashed password. Simple stuff.
+     * @param password
+     * @return
+     */
+    String hashPassword(String password)
+            throws UnsupportedEncodingException, NoSuchAlgorithmException;
 
 }

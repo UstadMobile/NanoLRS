@@ -85,7 +85,9 @@ public class TestUMSync {
     public void testSeqNumBehaviour() throws Exception{
         UserManager userManager = PersistenceManager.getInstance().getManager(UserManager.class);
 
-        User testingUser = UMSyncTestUtils.addUser("testingUserSeqNum", context);
+        String testingUserUsername = "testingUserSeqNum";
+        String testingUserPassword = "testingUserPassword";
+        User testingUser = UMSyncTestUtils.addUser(testingUserUsername, testingUserPassword, context);
         ChangeSeqManager changeSeqManager = PersistenceManager.getInstance().getManager(
                 ChangeSeqManager.class);
         String tableName = UMSyncEndpoint.getTableNameFromClass(User.class);
@@ -108,7 +110,8 @@ public class TestUMSync {
 
         //Test entity update and seq number behaviour then.
         String newUserUsername = "testingUserSeqNum2";
-        UMSyncTestUtils.addUser(newUserUsername, context);
+        String newUserPassword = "secret";
+        UMSyncTestUtils.addUser(newUserUsername, newUserPassword, context);
 
         //Test that the user's local sequence number got created and set.
         User theUser = (User)userManager.findByPrimaryKey(context, newUserUsername);
@@ -134,10 +137,18 @@ public class TestUMSync {
                 PersistenceManager.getInstance().getManager(UserCustomFieldsManager.class);
 
         //Create sync User here
-        User syncUser = UMSyncTestUtils.addUser("syncUser", context);
+        String syncUserUsername = "syncUser";
+        String syncUserPassword = "secret";
+        User syncUser = UMSyncTestUtils.addUser(syncUserUsername, syncUserPassword, context);
+
+        //Test sync continues if password not given:
+        UMSyncResult noPasswordResult = UMSyncEndpoint.startSync(syncUser, syncUserPassword,
+                endpointNode, context);
+        Assert.assertEquals(noPasswordResult.getStatus(), HttpURLConnection.HTTP_NOT_ACCEPTABLE);
 
         //Test that client-client sync isn't supported (right now)
-        UMSyncResult clientToClientResult = UMSyncEndpoint.startSync(syncUser, endpointNode, context);
+        UMSyncResult clientToClientResult =
+                UMSyncEndpoint.startSync(syncUser, syncUserPassword, endpointNode, context);
         Assert.assertEquals(clientToClientResult.getStatus(), HttpURLConnection.HTTP_NOT_ACCEPTABLE);
 
         //Update endpoint to master
@@ -148,7 +159,7 @@ public class TestUMSync {
 
         //Start sync with no statement data but user data:
         UMSyncResult oneDirectionResult =
-                UMSyncEndpoint.startSync(syncUser, endpointNode, context);
+                UMSyncEndpoint.startSync(syncUser, syncUserPassword, endpointNode, context);
         long entitiesCount = oneDirectionResult.getEntitiesCount();
         Assert.assertEquals(oneDirectionResult.getStatus(), HttpURLConnection.HTTP_OK);
         Assert.assertEquals(entitiesCount, 1);
@@ -161,7 +172,7 @@ public class TestUMSync {
                 endpointContext);
 
         //Start sync - test updateNote came back.
-        UMSyncEndpoint.startSync(syncUser, endpointNode, context);
+        UMSyncEndpoint.startSync(syncUser, syncUserPassword, endpointNode, context);
         String syncUserUpdatedNote =
                 userManager.findByUsername(context, syncUser.getUsername()).getNotes();
         if(!updateNote.equals(syncUserUpdatedNote)){
@@ -170,7 +181,7 @@ public class TestUMSync {
 
         //Test no more entities to be sent
         UMSyncResult syncAgainResult =
-                UMSyncEndpoint.startSync(syncUser, endpointNode, context);
+                UMSyncEndpoint.startSync(syncUser, syncUserPassword, endpointNode, context);
         Assert.assertEquals(syncAgainResult.getEntitiesCount(), 0);
 
         //Create statements and fields locally
@@ -184,7 +195,7 @@ public class TestUMSync {
         Assert.assertEquals(allStatementsThere.size(), 0);
 
         //Start Sync - test statements and fields now at endpoint.
-        UMSyncEndpoint.startSync(syncUser, endpointNode, context);
+        UMSyncEndpoint.startSync(syncUser, syncUserPassword, endpointNode, context);
         List allUCFHere = ucfManager.getAllEntities(context);
         allUCFThere = ucfManager.getAllEntities(endpointContext);
         allStatementsThere = statementManager.getAllEntities(endpointContext);

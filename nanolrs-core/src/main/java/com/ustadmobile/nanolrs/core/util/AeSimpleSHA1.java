@@ -6,6 +6,8 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by varuna on 8/24/2017.
+ * copied (shamelessly) from:
+ * https://stackoverflow.com/questions/5980658/how-to-sha1-hash-a-string-in-android
  */
 
 public class AeSimpleSHA1 {

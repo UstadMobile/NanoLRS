@@ -136,6 +136,12 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
 
     @Override
     public boolean authenticate(Object dbContext, String username, String password) {
+        return authenticate(dbContext, username, password, false);
+    }
+
+    @Override
+    public boolean authenticate(Object dbContext, String username, String password, boolean hashIt) {
+
         User user = findByUsername(dbContext, username);
         if(user == null){
             return false;
@@ -146,7 +152,21 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
         if(user.getPassword() == null || password == null){
             return false;
         }
-        if(user.getPassword().equals(password)){
+        String checkThisPassword = password;
+
+        if(hashIt){
+            try {
+                checkThisPassword = hashPassword(password);
+            } catch (UnsupportedEncodingException e) {
+                System.out.println("Cannot hash password in authenticate");
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                System.out.println("Cannot hash password in authenticate..");
+                e.printStackTrace();
+            }
+        }
+
+        if(user.getPassword().equals(checkThisPassword)){
             return true;
         }else{
             return false;
@@ -154,27 +174,44 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
     }
 
     /**
-     * Save password in user as hash
+     * Update password (text -> hash) for already existing user. Includes checks, and persists.
+     *
      * @param password The password in plain text form.
      * @param dbContext Database context
-     * @return
+     * @return  user with updated hashed password. null if password is empty or null.
      */
     @Override
-    public boolean updatePassword(String password, User user, Object dbContext)
+    public User updatePassword(String password, User user, Object dbContext)
             throws UnsupportedEncodingException, NoSuchAlgorithmException, SQLException {
         if(password != null && !password.isEmpty()){
-            String hashPassword = AeSimpleSHA1.SHA1(password);
+            String hashPassword = hashPassword(password);
             user.setPassword(hashPassword);
             persist(dbContext, user);
-            return true;
+            return user;
         }
-        return false;
+        return null;
+    }
+
+    /**
+     * Hash's password. Simple stuff. Just returns the value.
+     *
+     * @param password
+     * @return
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
+     */
+    @Override
+    public String hashPassword(String password)
+            throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        return AeSimpleSHA1.SHA1(password);
     }
 
     @Override
-    public boolean updateUsername(String newUsername, User user, Object dbContext) throws SQLException {
+    public boolean updateUsername(String newUsername, User user, Object dbContext)
+            throws SQLException {
 
-        XapiAgentManager agentManager = PersistenceManager.getInstance().getManager(XapiAgentManager.class);
+        XapiAgentManager agentManager =
+                PersistenceManager.getInstance().getManager(XapiAgentManager.class);
         user.setUsername(newUsername);
         persist(dbContext, user);
 
