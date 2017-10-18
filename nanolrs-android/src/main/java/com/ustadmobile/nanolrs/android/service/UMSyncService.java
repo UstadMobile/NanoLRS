@@ -92,9 +92,9 @@ public class UMSyncService extends Service {
                     System.out.println("\n  UMSyncService: All valid: Starting Sync for user: " +
                             loggedInUser.getUsername());
 
-                    //TODO: New way:
-                    //UMSyncEndpoint.startSync(loggedInUser, password, endNode, context);
-                    UMSyncEndpoint.startSync(loggedInUser, endNode, context);
+                    //TODO: Test this
+                    UMSyncEndpoint.startSync(loggedInUser, password, endNode, context);
+                    //UMSyncEndpoint.startSync(loggedInUser, endNode, context);
 
                 }else{
                     System.out.println("\n  UMSyncService: Cannot start sync. User and Node not set.\n");
