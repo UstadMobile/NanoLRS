@@ -12,6 +12,7 @@ import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.util.AeSimpleSHA1;
+import com.ustadmobile.nanolrs.core.util.DjangoHasher;
 import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
 
 import java.io.UnsupportedEncodingException;
@@ -155,6 +156,14 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
         String checkThisPassword = password;
 
         if(hashIt){
+
+            DjangoHasher hasher = new DjangoHasher();
+
+            boolean dHasherCheck = hasher.checkPassword(checkThisPassword, user.getPassword());
+            if(dHasherCheck){
+                return true;
+            }
+
             try {
                 checkThisPassword = hashPassword(password);
             } catch (UnsupportedEncodingException e) {
@@ -203,7 +212,9 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
     @Override
     public String hashPassword(String password)
             throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        return AeSimpleSHA1.SHA1(password);
+        //return AeSimpleSHA1.SHA1(password);
+        DjangoHasher hasher = new DjangoHasher();
+        return hasher.encode(password);
     }
 
     @Override
