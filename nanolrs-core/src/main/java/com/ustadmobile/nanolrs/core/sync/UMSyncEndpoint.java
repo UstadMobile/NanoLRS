@@ -509,8 +509,11 @@ public class UMSyncEndpoint {
         Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            connection.setRequestProperty(pair.getKey().toString(), pair.getValue().toString());
-            it.remove(); // avoids a ConcurrentModificationException
+            if(pair.getKey() != null && pair.getValue() != null){
+                connection.setRequestProperty(pair.getKey().toString(), pair.getValue().toString());
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+
         }
     }
 
