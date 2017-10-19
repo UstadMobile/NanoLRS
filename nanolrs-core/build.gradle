@@ -22,6 +22,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.json:json:20160212";
     compile "joda-time:joda-time:2.9.9"
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16
+    // for PBKDF2WithHmacSHA256 in Java 7 used by Django Hasher
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46'
     testCompile 'junit:junit:4.12'
     testCompile project(":nanolrs-ormlite")
     testCompile project(":nanolrs-jdbc")

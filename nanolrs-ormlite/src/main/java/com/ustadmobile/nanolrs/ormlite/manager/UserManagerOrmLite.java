@@ -214,7 +214,8 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             throws UnsupportedEncodingException, NoSuchAlgorithmException {
         //return AeSimpleSHA1.SHA1(password);
         DjangoHasher hasher = new DjangoHasher();
-        return hasher.encode(password);
+        String hashedPassword = hasher.encode(password);
+        return hashedPassword;
     }
 
     @Override

@@ -10,34 +10,68 @@ package com.ustadmobile.nanolrs.core.util;
  *
  * Django code: https://github.com/django/django/blob/1.6.5/django/contrib/auth/hashers.py#L221
  */
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.Arrays;
 import java.util.Random;
-//import java.util.Base64;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
+import org.bouncycastle.crypto.generators.PKCS5S1ParametersGenerator;
+import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 
 public class DjangoHasher {
+
     public final Integer DEFAULT_ITERATIONS = 12000;
     public final String algorithm = "pbkdf2_sha256";
 
     public DjangoHasher() {}
 
+    // Returns only the last part of whole encoded password using Bouncy castle for Java 7
+    public String getEncodedHash7(String password, String salt, int iterations) {
+        // Returns only the last part of whole encoded password
+        //PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA256Digest());
+        PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator();
+
+        try {
+            gen.init(password.getBytes("UTF-8"), salt.getBytes(), iterations);
+        } catch (UnsupportedEncodingException ex) {
+            System.out.println(DjangoHasher.class.getName() + "EXCEPTION" + ex);
+        }
+        byte[] dk = ((KeyParameter) gen.generateDerivedParameters(256)).getKey();
+
+        //byte[] hashBase64 = Base64.encodeBase64(dk);
+        byte[] hashBase64 = new String(Base64CoderNanoLrs.encode(dk)).getBytes();
+        return new String(hashBase64);
+    }
+
+
+
     // Returns only the last part of whole encoded password
     public String getEncodedHash(String password, String salt, int iterations) {
+
+        // NEEDED if you are using a Java version without SHA-256
+        Security.addProvider(new BouncyCastleProvider());
 
         SecretKeyFactory keyFactory = null;
         try {
             keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         } catch (NoSuchAlgorithmException e) {
-            System.err.println("Could NOT retrieve PBKDF2WithHmacSHA256 algorithm");
-            return null;
+            System.err.println("Could NOT retrieve PBKDF2WithHmacSHA256 algorithm. " +
+                    "Trying bouncy castle (Java 7)");
+            //return getEncodedHash7(password, salt, iterations);
+
         }
+
         KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt.getBytes(Charset.forName("UTF-8")), iterations, 256);
         SecretKey secret = null;
         try {
@@ -57,6 +91,7 @@ public class DjangoHasher {
     // returns hashed password, along with algorithm, number of iterations and salt
     public String encode(String password, String salt, int iterations) {
         String hash = getEncodedHash(password, salt, iterations);
+        //String hash = getEncodedHash7(password, salt, iterations);
         return String.format("%s$%d$%s$%s", algorithm, iterations, salt, hash);
     }
 
