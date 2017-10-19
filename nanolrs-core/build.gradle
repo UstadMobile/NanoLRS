@@ -25,7 +25,12 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16
     // for PBKDF2WithHmacSHA256 in Java 7 used by Django Hasher
-    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
+    //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
+    //compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46' //doesnt have
+    //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54'
+    compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.58'
+
+
 
 
     testCompile 'junit:junit:4.12'

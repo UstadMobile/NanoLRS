@@ -154,6 +154,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     + " " + Build.MODEL + " " + Build.VERSION.RELEASE
                     + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
             thisNodeHostName = "device:" + reqString.replaceAll(" ", "_");
+            //eg:
+            //device:LGE_LG-H870S_7.0_M
 
         }catch (Exception e){
             System.out.println("Cannot get device info exception : " + e);
