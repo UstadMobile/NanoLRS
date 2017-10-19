@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 ext {
-    nanolrsversion = "0.2.395"
+    nanolrsversion = "0.2.396"
 }
 
 buildscript {
