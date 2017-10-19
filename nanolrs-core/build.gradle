@@ -23,13 +23,8 @@ dependencies {
     compile "org.json:json:20160212";
     compile "joda-time:joda-time:2.9.9"
 
-    //Trying a new one:
-    //compile 'de.qaware.heimdall:heimdall:1.5.1'
-    compile "com.github.amdelamar:jhash:v1.1.0"
-
     // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16
     // for PBKDF2WithHmacSHA256 in Java 7 used by Django Hasher
-    //compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.45'
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
 
 
