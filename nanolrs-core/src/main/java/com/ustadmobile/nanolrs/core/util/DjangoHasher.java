@@ -17,21 +17,7 @@ import org.spongycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.spongycastle.crypto.params.KeyParameter;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.Random;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
-/*
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
-import org.bouncycastle.crypto.params.KeyParameter;
-*/
-
 
 public class DjangoHasher {
 
@@ -55,38 +41,6 @@ public class DjangoHasher {
 
         //byte[] hashBase64 = Base64.encodeBase64(dk);
         byte[] hashBase64 = new String(Base64CoderNanoLrs.encode(dk)).getBytes();
-        return new String(hashBase64);
-    }
-
-
-    // Returns only the last part of whole encoded password
-    public String getEncodedHash(String password, String salt, int iterations) {
-
-
-        SecretKeyFactory keyFactory = null;
-        try {
-            keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("Could NOT retrieve PBKDF2WithHmacSHA256 algorithm. " +
-                    "Trying bouncy castle (Java 7)");
-            return null;
-            //return getEncodedHash7(password, salt, iterations);
-
-        }
-
-        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt.getBytes(Charset.forName("UTF-8")), iterations, 256);
-        SecretKey secret = null;
-        try {
-            secret = keyFactory.generateSecret(keySpec);
-        } catch (InvalidKeySpecException e) {
-            System.out.println("Could NOT generate secret key");
-            e.printStackTrace();
-        }
-
-        byte[] rawHash = secret.getEncoded();
-        //byte[] hashBase64 = getEncoder().encode(rawHash);
-        byte[] hashBase64 = new String(Base64CoderNanoLrs.encode(rawHash)).getBytes();
-
         return new String(hashBase64);
     }
 

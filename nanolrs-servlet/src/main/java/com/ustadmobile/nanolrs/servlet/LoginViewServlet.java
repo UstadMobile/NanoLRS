@@ -79,7 +79,7 @@ public class LoginViewServlet extends HttpServlet {
 
         //TODO: make this use hashit after db passwords are migrated to hashes.
         //TODO: Were not going to use the old method because this is only used server
-        if(userManager.authenticate(dbContext, username, password)){
+        if(userManager.authenticate(dbContext, username, password, true)){
             if(!username.equals("admin")){
 
                 //RequestDispatcher rs = req.getRequestDispatcher("/login/");

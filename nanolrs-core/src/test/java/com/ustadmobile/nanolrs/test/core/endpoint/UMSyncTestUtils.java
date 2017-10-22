@@ -46,10 +46,6 @@ public class UMSyncTestUtils {
             e.printStackTrace();
         }
 
-        //or:
-        //testingUser = userManager.updatePassword(password, testingUser, context);
-        //update: not using the above, persists it. not meant over here.
-
         userManager.persist(context, testingUser);
 
         return testingUser;

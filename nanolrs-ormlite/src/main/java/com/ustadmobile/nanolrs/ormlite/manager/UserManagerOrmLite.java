@@ -68,6 +68,16 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             System.out.println("\nUser getting an update.\n\n");
         }
 
+        String userPassword = ((User) data).getPassword();
+        if(userPassword != null && !userPassword.isEmpty()
+                && !(userPassword.startsWith("pbkdf2_sha256"))){
+            DjangoHasher dh = new DjangoHasher();
+            String hashedPassword = dh.encode(userPassword);
+            if(hashedPassword != null && !hashedPassword.isEmpty()) {
+                ((User) data).setPassword(hashedPassword);
+            }
+        }
+
         super.persist(dbContext, data);
 
     }
@@ -178,6 +188,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
         if(user.getPassword().equals(checkThisPassword)){
             return true;
         }else{
+            System.out.println("User: " + username + " authentication FAILED.");
             return false;
         }
     }

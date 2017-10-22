@@ -69,11 +69,13 @@ public class StatementsServlet extends HttpServlet {
             if (correctLogin) {
                 //Authorized OK
                 System.out.println("StatementsServlet: Login OK");
+                System.out.println("    for " + username);
                 response.setContentType("text/plain");
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 //Unauthorized
                 System.out.println("StatementsServlet: Login FAIL");
+                System.out.println("    for " + username);
                 response.setContentType("text/plain");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }

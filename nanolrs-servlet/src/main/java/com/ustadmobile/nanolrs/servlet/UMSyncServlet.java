@@ -77,9 +77,11 @@ public class UMSyncServlet extends HttpServlet {
         String nodeHostUrl = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_URL);
         String nodeRole = getHeaderVal(req, UMSyncEndpoint.HEADER_NODE_ROLE);
 
-        String basicAuth = getHeaderVal(req, UMSyncEndpoint.REQUEST_AUTHORIZATION);
+        String basicAuth = null;
+        if(req.getHeader(UMSyncEndpoint.REQUEST_AUTHORIZATION) != null) {
+             basicAuth = getHeaderVal(req, UMSyncEndpoint.REQUEST_AUTHORIZATION);
+        }
         String syncStatus = getHeaderVal(req, UMSyncEndpoint.RESPONSE_SYNCED_STATUS);
-
         PersistenceManager pm = PersistenceManager.getInstance();
 
         UserManager userManager = pm.getManager(UserManager.class);
