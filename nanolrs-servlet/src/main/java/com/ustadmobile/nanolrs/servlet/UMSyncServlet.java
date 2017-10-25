@@ -117,7 +117,10 @@ public class UMSyncServlet extends HttpServlet {
         //With the new app, only real cred (text password) is in basic auth.
         //In the old app, real cred (text password) is in header.
         // Note: Laid out below for explanation.
-        if(authUsername != null && authPassword != null){ //if basic auth exists
+        if(authUsername != null && authPassword != null &&
+                !authPassword.isEmpty() && !authUsername.isEmpty()){ //if basic auth exists
+            System.out.println("UMSyncServlet: Got password from Basic Auth.");
+
             username = authUsername;
             password = authPassword; //the plain text password from basic auth.
 
@@ -125,6 +128,13 @@ public class UMSyncServlet extends HttpServlet {
             // its safe to assume that the password on device is hashed as well.
             //Assumption 2: Endpoint Database passwords are all hashed (and they should be).
 
+        }else{
+            String usernameString = "";
+            if (username != null){
+                usernameString = username;
+            }
+            System.out.println("UMSyncServlet: USER: (" + usernameString + ") " +
+                    "DID NOT GET PASSWORD FROM BASIC AUTH. USING HEADER");
         }
         //Assumption 2: Endpoint DB passwords are all hashed (and they should be).
 
@@ -141,6 +151,7 @@ public class UMSyncServlet extends HttpServlet {
             if(existingUser == null){
                 if(isNewUser.equals("true")){
                     //Create the new user
+                    System.out.println("UMSyncServlet: Creating new user: (" + username + ") for sync.");
                     try {
                         User newUser = (User)userManager.makeNew();
                         newUser.setUuid(userUuid);
@@ -155,6 +166,10 @@ public class UMSyncServlet extends HttpServlet {
                                 System.out.println("Cannot hash password.: " + e);
                                 e.printStackTrace();
                             }
+                        }else{
+                            System.out.println(" UMSyncServlet: Password given is null or empty!" +
+                                    " BAD request.");
+                            //TODO: Send back response.
                         }
 
                         newUser.setPassword(password);
@@ -163,6 +178,9 @@ public class UMSyncServlet extends HttpServlet {
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
+                }else{
+                    System.out.println("UMSyncServlet: USER set to New but already exists. " +
+                        "handleIncomingSync() will return RESPONSE_CHANGE_USERNAME");
                 }
             }
         }

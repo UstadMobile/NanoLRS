@@ -69,12 +69,23 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
         }
 
         String userPassword = ((User) data).getPassword();
-        if(userPassword != null && !userPassword.isEmpty()
-                && !(userPassword.startsWith("pbkdf2_sha256"))){
-            DjangoHasher dh = new DjangoHasher();
-            String hashedPassword = dh.encode(userPassword);
-            if(hashedPassword != null && !hashedPassword.isEmpty()) {
-                ((User) data).setPassword(hashedPassword);
+        if(userPassword != null){
+            if(!userPassword.isEmpty()) {
+                if (!userPassword.startsWith("pbkdf2_sha256")) {
+                    String username = "";
+                    try {
+                        username = ((User) data).getUsername();
+                    } catch (Exception e) {
+                        System.out.println("UserManager: Getting username exception. " + e);
+                    }
+                    System.out.println("UserManager: User password (user:" + username + ") coming " +
+                            "is in clear text. Hashing it..");
+                    DjangoHasher dh = new DjangoHasher();
+                    String hashedPassword = dh.encode(userPassword);
+                    if (hashedPassword != null && !hashedPassword.isEmpty()) {
+                        ((User) data).setPassword(hashedPassword);
+                    }
+                }
             }
         }
 
