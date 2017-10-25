@@ -1225,6 +1225,13 @@ public class UMSyncEndpoint {
                 userPassword = basicAuthCred;
             }
         }
+        if(userUsername == null || userUsername.isEmpty() ||
+                userPassword == null || userPassword.isEmpty()){
+            System.out.println("UMSyncEndpoint: Username or Password is empty. BAD Request. " +
+                    "Check startSync(). Might be a bug. Rejecting.");
+            return returnEmptyUMSyncResult(HttpURLConnection.HTTP_BAD_REQUEST);
+        }
+
         if(isNew.equals("true")){
             //Check if username given in header is valid
             if(userUsername != null && !userUsername.isEmpty()){
@@ -1232,7 +1239,7 @@ public class UMSyncEndpoint {
                 //Check if username already exists:
                 User ifIExistChangeUsername = userManager.findByUsername(dbContext, userUsername);
                 if(ifIExistChangeUsername != null){
-                    System.out.println("\nUsername already exists for new user.\n" +
+                    System.out.println("\nUsername: (" + userUsername + ") already exists for new user.\n" +
                             "Changing it rejecting incoming sync with new username header.\n");
                     String newAvailableUsername = getNextAvailableUsername(userUsername, dbContext);
                     Map<String, String> changeYourUsernameHeader = new HashMap<>();
@@ -1346,7 +1353,11 @@ public class UMSyncEndpoint {
                 //Authenticate it..
                 if(!userManager.authenticate(dbContext, userUsername, userPassword, true)){
                     //Not valid login.
-                    System.out.println("Sorry, Username and password does not match for sync");
+                    if(userUsername == null){
+                        userUsername = "";
+                    }
+                    System.out.println("Sorry, Username (user:" + userUsername + ") and " +
+                            "password does not match for sync");
                     return returnEmptyUMSyncResult(HttpURLConnection.HTTP_UNAUTHORIZED);
                 }
 
