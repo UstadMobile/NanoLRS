@@ -201,6 +201,7 @@ public class SyncUriResponder extends NanoLrsResponder{
         //We hash it cause all passwords stored in endpoint db are hashed.
 
         User newUser = null;
+        String justCreated = "false";
         //Always authenticate via hashed password because of Assumption 2.
         if (userManager.authenticate(dbContext, username, password, true) == false){
             User existingUser = userManager.findByUsername(dbContext, username);
@@ -227,6 +228,7 @@ public class SyncUriResponder extends NanoLrsResponder{
 
                         newUser.setPassword(password);
                         userManager.persist(dbContext, newUser);
+                        justCreated="true";
 
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -277,6 +279,8 @@ public class SyncUriResponder extends NanoLrsResponder{
         reqHeaders.put(UMSyncEndpoint.RESPONSE_SYNCED_STATUS, syncStatus);
         reqHeaders.put(UMSyncEndpoint.REQUEST_AUTHORIZATION, basicAuth);
 
+        reqHeaders.put(UMSyncEndpoint.RESPONSE_USER_JUST_CREATED, justCreated);
+
         //Form parameters (if applicable)
         Map<String, String> reqParams = new HashMap<>();
 
@@ -305,14 +309,36 @@ public class SyncUriResponder extends NanoLrsResponder{
         switch(result.getStatus()) {
             case 200:
                 status = NanoHTTPD.Response.Status.OK;
-                syncStatus = UMSyncEndpoint.RESPONSE_SYNC_OK;
+                if(UMSyncEndpoint.getHeader(result.getHeaders(),
+                        UMSyncEndpoint.RESPONSE_SYNCED_STATUS).equals(UMSyncEndpoint.RESPONSE_SYNC_OK)){
+                    try {
+                        UMSyncEndpoint.updateSyncStatus(result, node, dbContext);
+                        //Update response sync header result as RESPONSE_SYNC_OK
+                        System.out.println("SyncUriResponder: Incoming Sync OK. Updating SyncStatus.\n");
+                        syncStatus = UMSyncEndpoint.RESPONSE_SYNC_OK;
+
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        System.out.println("SyncUriResponder: Exception in updating Sync Status : " + e);
+                        System.out.println("SyncUriResponder: Updating response sync status as fail.\n");
+                        syncStatus = UMSyncEndpoint.RESPONSE_SYNC_FAIL;
+                    }
+                }
+
+
                 break;
             default:
                 status = RouterNanoHTTPD.Response.Status.INTERNAL_ERROR;
+                System.out.println("SyncUriResponder: Incoming Sync FAILED.\n");
                 if(newUser != null){
                     //Delete user created.
+                    System.out.println("SyncUriResponder: Deleting temp user created.");
                     userManager.delete(dbContext, newUser);
                 }
+
+                //should we ?
+                //UMSyncEndpoint.resetNewUser(newUser, true, dbContext);
+                //Update: Its deleted, so no.
         }
         status = NanoHTTPD.Response.Status.lookup(result.getStatus());
 

@@ -73,6 +73,8 @@ public class UMSyncEndpoint {
     public static final String RESPONSE_SEND_USER_AGAIN = "X-UM-senduseragain";
     public static final String RESPONSE_SYNCED_STATUS = "X-UM-syncstatus";
 
+    public static final String RESPONSE_USER_JUST_CREATED = "X-UM-userjustcreated";
+
     public static final String RESPONSE_SYNC_OK = "OK";
     public static final String RESPONSE_SYNC_FAIL = "FAIL";
 
@@ -830,7 +832,6 @@ public class UMSyncEndpoint {
 
         //Get data and info separately
         JSONArray entitiesJSON = entitiesWithInfoJSON.getJSONArray(RESPONSE_ENTITIES_DATA);
-        //System.out.println("UMSync: Incoming: Converting : " + entitiesJSON.toString() + " to entity.");
         JSONArray entitiesInfoJSON = entitiesWithInfoJSON.getJSONArray(RESPONSE_ENTITIES_INFO);
 
         //Create Entity Map of <Entity Object, Proxy Class Name>
@@ -900,7 +901,19 @@ public class UMSyncEndpoint {
             //persist without doing a +1 to its change seq.
             //because we have already set it above (from pool)
             if(doIPersist) {
-                thisManager.persist(dbContext, thisNewEntity, false);
+                //thisManager.persist(dbContext, thisNewEntity, false);
+                System.out.println("jsonToDB(): Persisting entity's manager..");
+                try {
+                    Method persistMethod = thisManager.getClass().getMethod(
+                            "persist", Object.class, NanoLrsModel.class, boolean.class);
+                    persistMethod.invoke(thisManager, dbContext, (NanoLrsModel)thisNewEntity, false);
+                    //thisManager.persist(dbContext, thisNewEntity, false);
+                } catch (Exception e){
+                    System.out.println("jsonToDB(): EXCEPTION Invoking Entity specific " +
+                            "persist(). Running the general persist anyway..");
+                    thisManager.persist(dbContext, thisNewEntity, false);
+                }
+
                 //System.out.println(" -> Persisting OK..");
                 //+1 on the map
                 preSyncEntitySeqNumMap.put(thisProxyClassName, thisNewEntityNewSeq+1);
@@ -915,7 +928,7 @@ public class UMSyncEndpoint {
             if(thisNewEntityNewSeq > currentSent){
                 ss.setSentSeq(thisNewEntityNewSeq);
                 syncStatusManager.persist(dbContext, ss);
-                System.out.println("Sync Status updated OK..");
+                //System.out.println("Sync Status updated OK..");
             }
 
             //TODO: PROXY: For Proxy: Update received?
@@ -1158,6 +1171,10 @@ public class UMSyncEndpoint {
         String userPassword = getHeader(headers, HEADER_USER_PASSWORD);
         String userUUID = getHeader(headers, HEADER_USER_UUID);
         String isNew = getHeader(headers, HEADER_USER_IS_NEW);
+        String justCreated = getHeader(headers, RESPONSE_USER_JUST_CREATED);
+        if(justCreated == null){
+            justCreated = "false";
+        }
         User thisUser = null;
 
         //Get all syncable entities pre sync seq and put it in preSyncSeqMap
@@ -1233,25 +1250,36 @@ public class UMSyncEndpoint {
         }
 
         if(isNew.equals("true")){
+
             //Check if username given in header is valid
             if(userUsername != null && !userUsername.isEmpty()){
 
                 //Check if username already exists:
                 User ifIExistChangeUsername = userManager.findByUsername(dbContext, userUsername);
+
                 if(ifIExistChangeUsername != null){
-                    System.out.println("\nUsername: (" + userUsername + ") already exists for new user.\n" +
-                            "Changing it rejecting incoming sync with new username header.\n");
-                    String newAvailableUsername = getNextAvailableUsername(userUsername, dbContext);
-                    Map<String, String> changeYourUsernameHeader = new HashMap<>();
-                    changeYourUsernameHeader.put(RESPONSE_CHANGE_USERNAME, newAvailableUsername);
-                    return returnEmptyUMSyncResultWithHeader(
-                            HttpURLConnection.HTTP_CONFLICT, changeYourUsernameHeader);
+                    if(justCreated.equals("true")){
+                        System.out.println("User: (" + userUsername + ") just got created. " +
+                                "Not checking for existing username. Already satisfied.");
+                        thisUser = ifIExistChangeUsername;
+                    }else {
+                        //TODO: Check if we will ever oome to this code block.
+                        System.out.println("\nUsername: (" + userUsername + ") already exists for new user.\n" +
+                                "Changing it rejecting incoming sync with new username header.\n");
+                        String newAvailableUsername = getNextAvailableUsername(userUsername, dbContext);
+                        Map<String, String> changeYourUsernameHeader = new HashMap<>();
+                        changeYourUsernameHeader.put(RESPONSE_CHANGE_USERNAME, newAvailableUsername);
+                        return returnEmptyUMSyncResultWithHeader(
+                                HttpURLConnection.HTTP_CONFLICT, changeYourUsernameHeader);
+                    }
 
                 }else {
                     //Username is new and valid, is available. Its a new user .
                     // So we make it..
-
                     if(userPassword != null && !userPassword.isEmpty()){
+                        System.out.println("UMSyncEndpoint: handleIncomingSync: " +
+                                "Username is valid and available. New user: (" + userUsername + ").");
+
                         thisUser = (User)userManager.makeNew();
                         thisUser.setUsername(userUsername);
                         if(userUUID != null && !userUUID.isEmpty()){
@@ -1288,12 +1316,14 @@ public class UMSyncEndpoint {
                         userManager.persist(dbContext, thisUser, false);
                     }else{
                         //No password given. BAD request
+                        System.out.println("UMSyncEndpoint: handleIncomingSync(): " +
+                                "No password given for new user ("+userUsername+"). BAD request.");
                         return returnEmptyUMSyncResult(HttpURLConnection.HTTP_BAD_REQUEST);
                     }
                 }
             }else{
                 //No username value given. Have to null it. BAD request
-                System.out.println("No username given. BAD REQUEST!");
+                System.out.println("UMSyncEndpoint.handleIncomingSync(): No username given. BAD REQUEST!");
                 return returnEmptyUMSyncResult(HttpURLConnection.HTTP_BAD_REQUEST);
             }
 
@@ -1346,8 +1376,12 @@ public class UMSyncEndpoint {
                         return returnEmptyUMSyncResultWithHeader(
                                 HttpURLConnection.HTTP_CONFLICT, sendUserAgainHeader);
                         */
+                    }else{
+                        System.out.println("UMSyncEndpoint.handleIncomingSync(): " +
+                                "New user with null/empty password given.");
                     }
                 }
+                //TODO: Add for proxy/client
             }else{
 
                 //Authenticate it..
@@ -1356,13 +1390,15 @@ public class UMSyncEndpoint {
                     if(userUsername == null){
                         userUsername = "";
                     }
-                    System.out.println("Sorry, Username (user:" + userUsername + ") and " +
+                    System.out.println("UMSyncEndpoint.handleIncomingSync(): " +
+                            "Sorry, Username (user:" + userUsername + ") and " +
                             "password does not match for sync");
                     return returnEmptyUMSyncResult(HttpURLConnection.HTTP_UNAUTHORIZED);
                 }
 
             }
         }
+
 
         String thisNodeHost;
         try {
@@ -1432,7 +1468,7 @@ public class UMSyncEndpoint {
         ////////////////////////////////
         Map<String, String> responseHeaders = createSyncHeader(thisUser, userPassword, node);
         if(allgood){
-            System.out.println("UMSync: Incoming: jsonToDB all good (for user:" +
+            System.out.println(" UMSync: Incoming: jsonToDB all good (for user:" +
                     thisUser.getUsername() + ").");
             resultStatus = HttpURLConnection.HTTP_OK;
             responseHeaders.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
@@ -1565,8 +1601,7 @@ public class UMSyncEndpoint {
         //Set thisUser master to 0 if its -1 (ie: its a new user (never synced with master)
         // so that we don't send that over
         boolean userWasNew = false;
-        //Set not new for user so when we send the
-        // request, IS NEW header will not be sent
+        //Set not new for user so when we send the request, IS NEW header will not be sent
         if(thisUser.getMasterSequence() < 0){
             userWasNew = true;
             thisUser.setMasterSequence(0);
@@ -1582,6 +1617,7 @@ public class UMSyncEndpoint {
         pendingEntitiesWithInfo = syncInfo.getKey().toSyncJSON();
         entityToLatestLocalSeqNum = syncInfo.getValue();
 
+        //Adding a header that sync was sent by a valid request.
         headers.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
 
         //Make a request with the JSON in POST body and return the UMSyncResult
@@ -1590,14 +1626,15 @@ public class UMSyncEndpoint {
                 JSON_MIMETYPE, null);
         syncResult.setEntitiesCount(syncInfo.getKey().getEntities().size());
         Map responseHeaders = syncResult.getHeaders();
-        if(syncResult.getStatus() == 200){
 
+        if(syncResult.getStatus() == 200){
             //Check that its actually a request sent to a sync endpoint..
             //Maybe we want to enable trust esp against main node. TODO
-            //if (syncResult.getHeader(RESPONSE_SYNCED_STATUS).equals(RESPONSE_SYNC_OK)) {
             String syncStatusHeader = UMSyncEndpoint.getHeader(syncResult.getHeaders(),
                     RESPONSE_SYNCED_STATUS);
-            if(syncStatusHeader != null && syncStatusHeader.equals(RESPONSE_SYNC_OK)){
+            if(syncStatusHeader != null && syncStatusHeader.equals(RESPONSE_SYNC_OK))
+            {
+
                 //Update the SyncStatus with latest value of seq num for this host and every entity
                 Iterator<Map.Entry<Class, Long>> latestChangeSeqIterator =
                         entityToLatestLocalSeqNum.entrySet().iterator();
@@ -1626,35 +1663,28 @@ public class UMSyncEndpoint {
                             dbContext);
                 }
             }else{
-                //sync didn't happen, lets set is new back to true..
-                if(userWasNew){
-                    thisUser.setMasterSequence(-1);
-                    //persist without updating its seq num
-                    userManager.persist(dbContext, thisUser, false);
-                    //TODO: Check testing
-                }
+                System.out.println("UMSyncEndpoint.statSync(): " +
+                        "200 response but NO/FALSE RESPONSE_SYNCED_STATUS. IGNORING.");
+                resetNewUser(thisUser, userWasNew, dbContext);
             }
 
         }else if(syncResult.getStatus() == 500){
-            //Server busy, Something is up. If you want the endpoint
-            // to do something here in addition to returning the object
-            // put it here..
+            //Server busy, Something is up. If you want the endpoint to do something
+            // here in addition to returning the object put it here..
+            System.out.println("UMSyncEndpoint.startSync(): Sync SERVER ERROR: 500. IGNORING.");
 
-            //sync didn't happen, lets set is new back to true..
-            if(userWasNew){
-                thisUser.setMasterSequence(-1);
-                //persist without updating its seq num
-                userManager.persist(dbContext, thisUser, false);
-                //TODO: check testing
-            }
+            resetNewUser(thisUser, userWasNew, dbContext);
+
         }else if(syncResult.getStatus() == HttpURLConnection.HTTP_CONFLICT){
-
+            //Server says there was a conflict with the request.
+            System.out.println("UMSyncEndpoint.startSync(): Sync : CONFLICT..");
             if(responseHeaders == null){
                 //fail.
                 System.out.println("Username update for existence failed.");
+                resetNewUser(thisUser, userWasNew, dbContext);
             }else{
-                System.out.println("\nstartSync HTTP CONFLICT : RESPONSE HEADERS:\n" + responseHeaders);
-                //String newUsername = syncResult.getHeader(RESPONSE_CHANGE_USERNAME).toString();
+                System.out.println("\nUMSyncEndpoint.startSync(): Sync: HTTP CONFLICT : " +
+                        "RESPONSE HEADERS:\n" + responseHeaders);
                 String newUsername = UMSyncEndpoint.getHeader(syncResult.getHeaders(),
                         RESPONSE_CHANGE_USERNAME);
 
@@ -1662,21 +1692,25 @@ public class UMSyncEndpoint {
                 if (newUsername != null && !newUsername.isEmpty()) {
                     //Since its going to be a new one, set MS back to -1
                     // so that "is new" header will be set to true.
-                    if(userWasNew){
-                        thisUser.setMasterSequence(-1);
-                        userManager.persist(dbContext, thisUser ,false);
-                    }
+                    resetNewUser(thisUser, userWasNew, dbContext);
+
                     //Update username
-                    /*
-                    thisUser.setUsername(newUsername);
-                    userManager.persist(dbContext, thisUser);
-                    */
-                    //TODODone: Update all statements as well.
                     userManager.updateUsername(newUsername, thisUser, dbContext);
                     //TODODone: Delete the old User (since it will still exist)
                     //Update: We just changed the user's username, thats all. Ignoring..
                 }
             }
+        }else if(syncResult.getStatus() == HttpURLConnection.HTTP_NOT_ACCEPTABLE ||
+                syncResult.getStatus() == HttpURLConnection.HTTP_BAD_REQUEST ){
+            //Server doesn't accept request as its either BAD (not complete) or Not acceptable
+            System.out.println("UNSyncEndpoint.startSync(): " +
+                    "Sync didn't happen because of BAD/NOT_ACCEPTABLE request.");
+            resetNewUser(thisUser, userWasNew, dbContext);
+        }else{
+            //Default that sync did not happen.
+            System.out.println("UMSyncEndpoint.startSync(): Sync didn't happen because of unknown status: "
+                + syncResult.getStatus());
+            resetNewUser(thisUser, userWasNew, dbContext);
         }
 
         //Check if response has conflicts, entities for us to process, etc
@@ -1741,6 +1775,28 @@ public class UMSyncEndpoint {
     }
 
     /**
+     * Resets new user's MS to -1 if userWasNew set to true. This method is often called when sync
+     * fails and new users need to be reset for future syncs to work okay.
+     *
+     * @param thisUser
+     * @param userWasNew
+     * @param dbContext
+     * @throws SQLException
+     */
+    public static void resetNewUser(User thisUser, boolean userWasNew, Object dbContext)
+            throws SQLException {
+        UserManager userManager =
+                PersistenceManager.getInstance().getManager(UserManager.class);
+        if(userWasNew){
+            System.out.println("UMSyncEndpoint.startSync(): Resetting new user.\n");
+            thisUser.setMasterSequence(-1);
+            //persist without updating its seq num
+            userManager.persist(dbContext, thisUser, false);
+        }
+
+    }
+
+    /**
      * Checks if this entity should be persisted. Check conflicts, if its a valid
      * update/new entity or if we should reject it.
      *
@@ -1769,12 +1825,10 @@ public class UMSyncEndpoint {
         //Get local version and check if its new or an update : Using reflection
         NanoLrsModelSyncable existingEntityToBeUpdated = null;
         try {
-            //System.out.println("!!!!!DEBUG:GETTING PK METHOD!!!!!");
             Method pkMethod = thisProxyClass.getMethod(pkMethodName);
-            //System.out.println("!!!!DEBUG: PK METHOD:" + pkMethod +"!!!!!");
             existingEntityToBeUpdated = (NanoLrsModelSyncable)
                     thisManager.findByPrimaryKey(dbContext, pkMethod.invoke(thisNewEntity));
-            System.out.println("ENTITY UPDATE: " + pkMethod.invoke(thisNewEntity) + " (" + thisProxyClass.getSimpleName()+ ")");
+            System.out.println("    ENTITY UPDATE: " + pkMethod.invoke(thisNewEntity) + " (" + thisProxyClass.getSimpleName()+ ")");
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -1782,7 +1836,6 @@ public class UMSyncEndpoint {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
 
         ////////////////////////////////////
         ///  UPDATE CONFLICT RESOLUTION  ///

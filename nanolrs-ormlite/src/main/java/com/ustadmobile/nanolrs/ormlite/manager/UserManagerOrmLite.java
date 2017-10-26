@@ -43,6 +43,11 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
 
     @Override
     public void persist(Object dbContext, NanoLrsModel data) throws SQLException {
+        persist(dbContext, data, true);
+    }
+
+    //@Override
+    public void persist(Object dbContext, NanoLrsModel data, boolean incrementChangeSeq) throws SQLException {
         //Check username
         User user = (User) data;
         String givenUsername = user.getUsername();
@@ -51,24 +56,39 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
         User existingUser = findByUsername(dbContext, givenUsername);
         if(existingUser == null){
             //Likely a new user creation not an update
+            System.out.println("UserManager: New user creation.");
             User usersWithSameUsername = findByUsername(dbContext, givenUsername);
+
+            //The below code will never run since were checking above. TODO: Check and remove.
             if(usersWithSameUsername != null){
+                System.out.println("UserManager: PLEASE CHECK. THIS SHOULD NOT HAPPEN." +
+                        "For user: (" + existingUser.getUsername() + " / "
+                            + usersWithSameUsername.getUsername() +").");
                 newUsername = givenUsername + (int)Math.floor(Math.random() * 101);
                 ((User) data).setUsername(newUsername);
 
                 //Since we changed the username. we persist again to bump local seq
                 //That way it goes back to other nodes.
-                super.persist(dbContext, data);
+                super.persist(dbContext, data, incrementChangeSeq);
+
             }else{
                 //Added: Setting master -1 for new Users
+                System.out.println("UserManager: Master set to -1 for new users.");
                 ( (User)data).setMasterSequence(-1);
             }
         }else{
             //If an update, it is probably a mistake. We should ignore this push
-            System.out.println("\nUser getting an update.\n\n");
+            System.out.println("UserManager: User: (" + givenUsername +
+                    ") getting an update.");
         }
 
+        if(newUsername != null){
+            givenUsername = newUsername;
+        }
+
+        System.out.println("UserManager: Updating password for : " + givenUsername);
         String userPassword = ((User) data).getPassword();
+        System.out.println("    password: " + userPassword + "");
         if(userPassword != null){
             if(!userPassword.isEmpty()) {
                 if (!userPassword.startsWith("pbkdf2_sha256")) {
@@ -78,7 +98,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
                     } catch (Exception e) {
                         System.out.println("UserManager: Getting username exception. " + e);
                     }
-                    System.out.println("UserManager: User password (user:" + username + ") coming " +
+                    System.out.println(" UserManager: User password (user:" + username + ") coming " +
                             "is in clear text. Hashing it..");
                     DjangoHasher dh = new DjangoHasher();
                     String hashedPassword = dh.encode(userPassword);
@@ -88,9 +108,10 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
                 }
             }
         }
+        System.out.println(" UserManager: custom persist done.");
 
-        super.persist(dbContext, data);
-
+        super.persist(dbContext, data, incrementChangeSeq);
+        System.out.println(" UserManager: super persist done.");
     }
 
     @Override

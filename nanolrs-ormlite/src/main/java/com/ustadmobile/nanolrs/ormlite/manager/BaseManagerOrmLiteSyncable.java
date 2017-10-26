@@ -214,6 +214,7 @@ public abstract class BaseManagerOrmLiteSyncable<T extends NanoLrsModelSyncable,
     @Override
     public void persist(Object dbContext, NanoLrsModel data, boolean incrementChangeSeq)
             throws SQLException {
+        System.out.println("BaseManagerOrmLiteSyncable.persist().");
         NanoLrsModelSyncable dataS = (NanoLrsModelSyncable)data;
         ChangeSeqManager changeSeqManager =
                 PersistenceManager.getInstance().getManager(ChangeSeqManager.class);

@@ -19,6 +19,15 @@ import org.spongycastle.crypto.params.KeyParameter;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
+/*
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+*/
+
 public class DjangoHasher {
 
     public final Integer DEFAULT_ITERATIONS = 12000;
@@ -26,11 +35,29 @@ public class DjangoHasher {
 
     public DjangoHasher() {}
 
+    /*
+    public static String getJava8EncryptedPassword(String password, String salts,
+                                                   int iterations ) throws
+            NoSuchAlgorithmException, InvalidKeySpecException {
+
+        byte[] salt = salts.getBytes();
+        //KeySpec spec = new PBEKeySpec(password.toCharArray(), salt,
+        //        iterations, derivedKeyLength * 8);
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt,
+                iterations);
+
+        SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+
+        byte[] hashBase64 = f.generateSecret(spec).getEncoded();
+
+        return new String(hashBase64);
+    }
+    */
+
     // Returns only the last part of whole encoded password using Bouncy castle for Java 7
     public String getEncodedHash7(String password, String salt, int iterations) {
         // Returns only the last part of whole encoded password
         PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA256Digest());
-
 
         try {
             gen.init(password.getBytes("UTF-8"), salt.getBytes(), iterations);
