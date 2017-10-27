@@ -27,7 +27,7 @@ dependencies {
     // for PBKDF2WithHmacSHA256 in Java 7 used by Django Hasher
     // Update removed on client to reduce size (sc=>3 mb)
     // Keeping in Server.
-    compile group: 'com.madgag.spongycastle', name: 'pg', version: '1.54.0.0'
+    //compile group: 'com.madgag.spongycastle', name: 'pg', version: '1.54.0.0'
 
 
     testCompile 'junit:junit:4.12'

@@ -201,9 +201,11 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
 
             DjangoHasher hasher = new DjangoHasher();
 
+
             /**
              * SERVER SPECIFIC CODE. TODO: Remove when all migrated.
              */
+            /*
             System.out.println("UserManagerOrmlite: SERVER: Checking SHA256..");
             boolean dHasherCheckSHA256 = hasher.checkPasswordSHA256(checkThisPassword,
                     user.getPassword());
@@ -228,6 +230,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
 
                 //Not returning anything. SHA1 auth should be true below.
             }
+            */
             /**
              * SERVER SPECIFIC CODE ENDS. TODO: Remove when all migrated.
              */

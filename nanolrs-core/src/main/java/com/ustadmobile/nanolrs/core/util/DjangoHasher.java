@@ -14,10 +14,11 @@ package com.ustadmobile.nanolrs.core.util;
  * UPDATE: NOT USING SHA255. INSTEAD USING SHA1
  */
 
-
+/*
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.spongycastle.crypto.params.KeyParameter;
+*/
 
 import java.io.UnsupportedEncodingException;
 
@@ -99,6 +100,7 @@ public class DjangoHasher {
 
 
 
+    /*
     // Returns only the last part of whole encoded password using Bouncy castle for Java 7
     public String getEncodedHash7SHA256(String password, String salt, int iterations) {
         // Returns only the last part of whole encoded password
@@ -115,6 +117,7 @@ public class DjangoHasher {
         byte[] hashBase64 = new String(Base64CoderNanoLrs.encode(dk)).getBytes();
         return new String(hashBase64);
     }
+    */
 
 
     // returns hashed password, along with algorithm, number of iterations and salt
@@ -146,6 +149,7 @@ public class DjangoHasher {
         return hash.equals(hashedPassword);
     }
 
+    /*
     // returns hashed password, along with algorithm, number of iterations and salt
     public String encodeSHA256(String password, String salt, int iterations) {
         String hash = getEncodedHash7SHA256(password, salt, iterations);
@@ -174,6 +178,7 @@ public class DjangoHasher {
 
         return hash.equals(hashedPassword);
     }
+    */
 
     /**
      * Creates random salt of 12 characters length.
