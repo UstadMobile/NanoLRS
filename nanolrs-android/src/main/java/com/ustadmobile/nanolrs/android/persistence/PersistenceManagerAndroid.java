@@ -22,6 +22,7 @@ public class PersistenceManagerAndroid extends PersistenceManagerORMLite {
 
     private List<DatabaseCreateOrUpdateListener> createOrUpdateListeners;
 
+    private DatabaseHelper dbHelper;
 
     public static PersistenceManagerAndroid getInstanceAndroid() {
         return (PersistenceManagerAndroid) getInstance();
@@ -46,28 +47,13 @@ public class PersistenceManagerAndroid extends PersistenceManagerORMLite {
         createOrUpdateListeners.remove(listener);
     }
 
-
-    public DatabaseHelper getHelperForContext(Context context) {
-        DatabaseHelper helper = helpersMap.get(context);
-        if(helper == null) {
-            helper = new DatabaseHelper(context);
-            helpersMap.put(context, helper);
-        }
-
-        return helper;
-    }
-
-    public void releaseHelperForContext(Context context) {
-        if(helpersMap.containsKey(context)) {
-            helpersMap.get(context).close();
-            helpersMap.remove(context);
-        }
-    }
-
     @Override
     public <D extends Dao<T, ?>, T> D getDao(Class<T> clazz, Object dbContext)
             throws SQLException {
-        return getHelperForContext((Context)dbContext).getDao(clazz);
+        if(dbHelper == null)
+            dbHelper = new DatabaseHelper(((Context)dbContext).getApplicationContext());
+
+        return dbHelper.getDao(clazz);
     }
 
     @Override

@@ -56,7 +56,6 @@ public class XapiStatementForwardingService extends Service {
         System.out.println("XapiStatementForwardingService : onDestroy()");
         mTimer.cancel();
         mTimer = null;
-        PersistenceManagerAndroid.getInstanceAndroid().releaseHelperForContext(this);
     }
 
 
