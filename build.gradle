@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 ext {
-    nanolrsversion = "0.2.406"
+    nanolrsversion = "0.2.4088"
 }
 
 buildscript {
@@ -21,7 +21,6 @@ ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.def
 if(project.file("buildconfig.local.properties").exists()) {
     ext.buildConfigProperties.load(new FileInputStream(project.file("buildconfig.local.properties")))
 }
-
 
 allprojects {
     repositories {

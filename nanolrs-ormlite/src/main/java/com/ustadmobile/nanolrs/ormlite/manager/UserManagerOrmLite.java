@@ -91,7 +91,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
         System.out.println("    password: " + userPassword + "");
         if(userPassword != null){
             if(!userPassword.isEmpty()) {
-                if (!userPassword.startsWith("pbkdf2_sha256")) {
+                if (!userPassword.startsWith("pbkdf2_sha")) {
                     String username = "";
                     try {
                         username = ((User) data).getUsername();
@@ -201,11 +201,44 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
 
             DjangoHasher hasher = new DjangoHasher();
 
+            /**
+             * SERVER SPECIFIC CODE. TODO: Remove when all migrated.
+             */
+            System.out.println("UserManagerOrmlite: SERVER: Checking SHA256..");
+            boolean dHasherCheckSHA256 = hasher.checkPasswordSHA256(checkThisPassword,
+                    user.getPassword());
+            if(dHasherCheckSHA256){
+                //Password is in SHA256. We need to convert it to SHA1
+                System.out.println("UserManagerOrmlite: SERVER: USER (" +
+                        user.getUsername() + ") PASSWORD IS IN SHA256. Converting..");
+                String sha1HashedPassword = null;
+                sha1HashedPassword = hasher.encode(password);
+                user.setPassword(sha1HashedPassword);
+                try {
+                    persist(dbContext, user);
+                    //Note: This will +1 Seq Num so new password should go to client
+                    // upon next sync.
+                    System.out.println("UserManagerOrmlite: SERVER: Updated user: (" +
+                            user.getUsername()+") SHA256 password to SHA1.");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    System.out.println("UserManagerOrmlite: SERVER: Unable to persist new" +
+                            " SHA1 password to user: " + user.getUsername());
+                }
+
+                //Not returning anything. SHA1 auth should be true below.
+            }
+            /**
+             * SERVER SPECIFIC CODE ENDS. TODO: Remove when all migrated.
+             */
+
+            System.out.println("UserManagerOrmlite: SERVER: Checking SHA1..");
             boolean dHasherCheck = hasher.checkPassword(checkThisPassword, user.getPassword());
             if(dHasherCheck){
                 return true;
             }
 
+            System.out.println("UserManagerOrmlite: SERVER: Checking SELF HASHED");
             try {
                 checkThisPassword = hashPassword(password);
             } catch (UnsupportedEncodingException e) {

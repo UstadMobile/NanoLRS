@@ -9,6 +9,9 @@ package com.ustadmobile.nanolrs.core.util;
  * Currently it would work only for pbkdf2_sha256 algorithm
  *
  * Django code: https://github.com/django/django/blob/1.6.5/django/contrib/auth/hashers.py#L221
+ *
+ *
+ * UPDATE: NOT USING SHA255. INSTEAD USING SHA1
  */
 
 
@@ -17,45 +20,87 @@ import org.spongycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.spongycastle.crypto.params.KeyParameter;
 
 import java.io.UnsupportedEncodingException;
+
+
+import java.nio.charset.Charset;
+
+import java.security.SecureRandom;
 import java.util.Random;
 
-/*
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
-*/
+import javax.crypto.spec.SecretKeySpec;
+
 
 public class DjangoHasher {
 
     public final Integer DEFAULT_ITERATIONS = 12000;
-    public final String algorithm = "pbkdf2_sha256";
+    public final String algorithm = "pbkdf2_sha1";
+    public final String algorithm256 = "pbkdf2_sha256";
 
     public DjangoHasher() {}
 
-    /*
-    public static String getJava8EncryptedPassword(String password, String salts,
-                                                   int iterations ) throws
-            NoSuchAlgorithmException, InvalidKeySpecException {
 
-        byte[] salt = salts.getBytes();
-        //KeySpec spec = new PBEKeySpec(password.toCharArray(), salt,
-        //        iterations, derivedKeyLength * 8);
-        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt,
-                iterations);
+    public String getEncodedHashJava8SHA256(String password, String salt, int iterations) {
+        // Returns only the last part of whole encoded password
+        SecretKeyFactory keyFactory = null;
+        try {
+            keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Could NOT retrieve PBKDF2WithHmacSHA256 algorithm");
+            System.exit(1);
+        }
+        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt.getBytes(Charset.forName("UTF-8")), iterations, 256);
+        SecretKey secret = null;
+        try {
+            secret = keyFactory.generateSecret(keySpec);
+        } catch (InvalidKeySpecException e) {
+            System.out.println("Could NOT generate secret key");
+            e.printStackTrace();
+        }
 
-        SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        byte[] rawHash = secret.getEncoded();
+        char[] a = Base64CoderNanoLrs.encode(rawHash);
+        return new String(a);
 
-        byte[] hashBase64 = f.generateSecret(spec).getEncoded();
-
-        return new String(hashBase64);
     }
-    */
+
+    public String getEncodedHashJava7SHA1(String password, String salt, int iterations) {
+        // Returns only the last part of whole encoded password
+        SecretKeyFactory keyFactory = null;
+        try {
+            keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Could NOT retrieve PBKDF2WithHmacSHA256 algorithm");
+            System.exit(1);
+        }
+        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt.getBytes(Charset.forName("UTF-8")), iterations, 256);
+        SecretKey secret = null;
+        try {
+            secret = keyFactory.generateSecret(keySpec);
+        } catch (InvalidKeySpecException e) {
+            System.out.println("Could NOT generate secret key");
+            e.printStackTrace();
+        }
+
+        byte[] rawHash = secret.getEncoded();
+        char[] a = Base64CoderNanoLrs.encode(rawHash);
+        return new String(a);
+
+    }
+
+
 
     // Returns only the last part of whole encoded password using Bouncy castle for Java 7
-    public String getEncodedHash7(String password, String salt, int iterations) {
+    public String getEncodedHash7SHA256(String password, String salt, int iterations) {
         // Returns only the last part of whole encoded password
         PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA256Digest());
 
@@ -71,9 +116,10 @@ public class DjangoHasher {
         return new String(hashBase64);
     }
 
+
     // returns hashed password, along with algorithm, number of iterations and salt
     public String encode(String password, String salt, int iterations) {
-        String hash = getEncodedHash7(password, salt, iterations);
+        String hash = getEncodedHashJava7SHA1(password, salt, iterations);
         return String.format("%s$%d$%s$%s", algorithm, iterations, salt, hash);
     }
 
@@ -96,6 +142,35 @@ public class DjangoHasher {
         Integer iterations = Integer.parseInt(parts[1]);
         String salt = parts[2];
         String hash = encode(password, salt, iterations);
+
+        return hash.equals(hashedPassword);
+    }
+
+    // returns hashed password, along with algorithm, number of iterations and salt
+    public String encodeSHA256(String password, String salt, int iterations) {
+        String hash = getEncodedHash7SHA256(password, salt, iterations);
+        return String.format("%s$%d$%s$%s", algorithm256, iterations, salt, hash);
+    }
+
+    public String encodeSHA256(String password, String salt) {
+        return this.encodeSHA256(password, salt, this.DEFAULT_ITERATIONS);
+    }
+
+    public String encodeSHA256(String password){
+        return this.encodeSHA256(password, createRandomSaltString(), this.DEFAULT_ITERATIONS);
+    }
+
+    public boolean checkPasswordSHA256(String password, String hashedPassword) {
+        // hashedPassword consist of: ALGORITHM, ITERATIONS_NUMBER, SALT and
+        // HASH; parts are joined with dollar character ("$")
+        String[] parts = hashedPassword.split("\\$");
+        if (parts.length != 4) {
+            // wrong hash format
+            return false;
+        }
+        Integer iterations = Integer.parseInt(parts[1]);
+        String salt = parts[2];
+        String hash = encodeSHA256(password, salt, iterations);
 
         return hash.equals(hashedPassword);
     }
@@ -192,6 +267,53 @@ public class DjangoHasher {
         } else {
             System.out.println(" => OK (password didn't match)");
         }
+    }
+
+    //Testing this:
+
+    public byte[] deriveKey(String p, byte[] s, int i, int l) throws Exception {
+        PBEKeySpec ks = new PBEKeySpec(p.toCharArray(), s, i, l);
+        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        return skf.generateSecret(ks).getEncoded();
+    }
+
+    public String encryptCustom7(String s, String p, int iteration) throws Exception {
+        SecureRandom r = SecureRandom.getInstance("SHA1PRNG");
+
+        // Generate 160 bit Salt for Encryption Key
+        byte[] esalt = new byte[20]; r.nextBytes(esalt);
+        // Generate 128 bit Encryption Key
+        byte[] dek = deriveKey(p, esalt, 100000, 128);
+
+        // Perform Encryption
+        SecretKeySpec eks = new SecretKeySpec(dek, "AES");
+        Cipher c = Cipher.getInstance("AES/CTR/NoPadding");
+        c.init(Cipher.ENCRYPT_MODE, eks, new IvParameterSpec(new byte[16]));
+        //byte[] es = c.doFinal(s.getBytes(StandardCharsets.UTF_8));
+        byte[] es = c.doFinal(s.getBytes(Charset.forName("UTF-8")));
+
+        // Generate 160 bit Salt for HMAC Key
+        byte[] hsalt = new byte[20]; r.nextBytes(hsalt);
+        // Generate 160 bit HMAC Key
+        byte[] dhk = deriveKey(p, hsalt,iteration, 160);
+
+        // Perform HMAC using SHA-256
+        SecretKeySpec hks = new SecretKeySpec(dhk, "HmacSHA256");
+        Mac m = Mac.getInstance("HmacSHA256");
+        m.init(hks);
+        byte[] hmac = m.doFinal(es);
+
+        // Construct Output as "ESALT + HSALT + CIPHERTEXT + HMAC"
+        byte[] os = new byte[40 + es.length + 32];
+        System.arraycopy(esalt, 0, os, 0, 20);
+        System.arraycopy(hsalt, 0, os, 20, 20);
+        System.arraycopy(es, 0, os, 40, es.length);
+        System.arraycopy(hmac, 0, os, 40 + es.length, 32);
+
+        // Return a Base64 Encoded String
+        String hash = new String(Base64CoderNanoLrs.encode(os));
+
+        return hash;
     }
 
 }

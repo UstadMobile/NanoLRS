@@ -10,6 +10,7 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.core.sync.UMSyncData;
 import com.ustadmobile.nanolrs.core.sync.UMSyncEndpoint;
 import com.ustadmobile.nanolrs.core.sync.UMSyncResult;
+import com.ustadmobile.nanolrs.core.util.DjangoHasher;
 import com.ustadmobile.nanolrs.test.core.NanoLrsPlatformTestUtil;
 
 import org.json.JSONObject;
@@ -152,6 +153,16 @@ public class UMSyncTests {
         Assert.assertTrue(UMSyncEndpoint.isThisUsernameAvailable(
                 UMSyncEndpoint.getNextAvailableUsername("testuser3", context), context));
 
+    }
+
+    @Test
+    public void testPasswordHash() throws Exception {
+        DjangoHasher dj = new DjangoHasher();
+        String textPassword = "password";
+        String hashPassword = dj.encode(textPassword);
+        System.out.println("text: " + textPassword + " hash: " + hashPassword);
+        boolean result = dj.checkPassword(textPassword, hashPassword);
+        Assert.assertTrue(result);
     }
 
     @Test
