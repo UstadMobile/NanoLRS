@@ -1391,8 +1391,7 @@ public class UMSyncEndpoint {
                         userUsername = "";
                     }
                     System.out.println("UMSyncEndpoint.handleIncomingSync(): " +
-                            "Sorry, Username (user:" + userUsername + ") and " +
-                            "password does not match for sync");
+                            "Username and password dont match for:" + userUsername );
                     return returnEmptyUMSyncResult(HttpURLConnection.HTTP_UNAUTHORIZED);
                 }
 
@@ -1411,10 +1410,15 @@ public class UMSyncEndpoint {
         if(thisUser != null){
             thisUsername = thisUser.getUsername();
         }
+
+        /*
         System.out.println("UMSYNC: Incoming: Getting sync for user: " + thisUsername
                 + " isNew?: " + isNew + " from Node:" + node.getHost()
                 + " . I am Node: " + thisNodeHost);
+        */
 
+        System.out.println("UMSYNC: Incoming: " + thisUsername + "(new:" + isNew +
+                ", node: " + node.getHost() + ", me:" + thisNodeHost + ")") ;
         ////////////////////////////////
         //    INCOMING JSON TO DB     //
         ////////////////////////////////
@@ -1468,11 +1472,13 @@ public class UMSyncEndpoint {
         ////////////////////////////////
         Map<String, String> responseHeaders = createSyncHeader(thisUser, userPassword, node);
         if(allgood){
-            System.out.println(" UMSync: Incoming: jsonToDB all good (for user:" +
-                    thisUser.getUsername() + ").");
+            //System.out.println(" UMSync: Incoming: jsonToDB all good (for user:" +
+            //        thisUser.getUsername() + ").");
             resultStatus = HttpURLConnection.HTTP_OK;
             responseHeaders.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_OK);
         }else{
+            System.out.println(" UMSync: Incoming: jsonToDB NOT good (for user:" +
+                    thisUser.getUsername() + ").");
             resultStatus = HttpURLConnection.HTTP_INTERNAL_ERROR;
             responseHeaders.put(RESPONSE_SYNCED_STATUS, RESPONSE_SYNC_FAIL);
         }

@@ -32,7 +32,8 @@
 				$('#ajaxSpinnerImage').show();
 				setTimeout(function () {
 					console.log("Auto click..");
-					$('#report_submit').click();
+					//$('#report_submit').click();
+					hideAjaxSpinnerImage();
 				}, 500);
 			  }
 
@@ -148,7 +149,7 @@
 
 				//University Filter:
 				$('#university').multiselect();
-				$('#universities_filter').multiselect();
+				//$('#universities_filter').multiselect();
 				//var return_json;
 
                 var university_names = [];

@@ -32,8 +32,8 @@
 				$('#ajaxSpinnerImage').show();
 				setTimeout(function () {
 					console.log("Auto click..");
-					$('#report_submit').click();
-					//hideAjaxSpinnerImage();
+					//$('#report_submit').click();
+					hideAjaxSpinnerImage();
 				}, 500);
 			  }
 
@@ -104,7 +104,8 @@
 
 
                     var universities_filter = [];
-                    var universities_filter = $('#universities_filter').val();
+                    //Commenting for now
+                    //var universities_filter = $('#universities_filter').val();
                     var universities_filter_names = [];
                     if(!universities_filter){
                         universities_filter=[];
@@ -142,6 +143,31 @@
 			$(document).ready(function(){
 				console.log("On Ready..");
 
+                //University Filter:
+                $('#university').multiselect();
+                //$('#universities_filter').multiselect();
+                //var return_json;
+
+                var university_names = [];
+                var university_names = $('#university').val();
+                var universitynames = [];
+                if(!university_names){
+                        university_names=[];
+                }
+                for (var i = 0; i < university_names.length; i++) {
+                        universitynames.push(university_names[i]);
+                }
+
+                var universities_filter_names = [];
+                var universities_filter = [];
+                //Commenting for now
+                //var universities_filter = $('#universities_filter').val();
+                for(var i=0;i<universities_filter.length; i++){
+                    universities_filter_names.push(universities_filter[i]);
+                }
+
+
+
 				var table = $('#report_result');
 				table.bind('dynatable:afterUpdate', function(e, dynatable){
 					console.log("Fired") ;
@@ -165,7 +191,8 @@
 
 
 					var universities_filter = [];
-                    var universities_filter = $('#universities_filter').val();
+					//Commenting for now
+                    //var universities_filter = $('#universities_filter').val();
                     var universities_filter_names = [];
                     if(!universities_filter){
                         universities_filter=[];
@@ -290,6 +317,14 @@
 				<form id="report_form" name="report_form" action="completion/" method="POST">
 					<div style="" id="selection" name="selection">
 					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
+                         <!--
+                         <select multiple="multiple" name="universities_filter" id="universities_filter" required>
+                            <option selected value="ALL" required>All universities</option>
+                            <c:forEach items="${universities}" var="uniValue">
+                                 <option value="${uniValue}"> ${uniValue} </option>
+                             </c:forEach>
+                        </select>
+                        -->
 
                         <i id="daystext" name="daystext">From today through </i><input type="text" id="days" name="days" for="report_form" value="${days}"> Days </input>
 						<p></p>

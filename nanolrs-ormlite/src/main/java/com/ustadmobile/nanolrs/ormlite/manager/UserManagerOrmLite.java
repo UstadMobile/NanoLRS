@@ -204,7 +204,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
             /**
              * SERVER SPECIFIC CODE. TODO: Remove when all migrated.
              */
-            System.out.println("UserManagerOrmlite: SERVER: Checking SHA256..");
+            //System.out.println("UserManagerOrmlite: SERVER: Checking SHA256..");
             boolean dHasherCheckSHA256 = hasher.checkPasswordSHA256(checkThisPassword,
                     user.getPassword());
             if(dHasherCheckSHA256){
@@ -232,13 +232,13 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
              * SERVER SPECIFIC CODE ENDS. TODO: Remove when all migrated.
              */
 
-            System.out.println("UserManagerOrmlite: SERVER: Checking SHA1..");
+            //System.out.println("UserManagerOrmlite: SERVER: Checking SHA1..");
             boolean dHasherCheck = hasher.checkPassword(checkThisPassword, user.getPassword());
             if(dHasherCheck){
                 return true;
             }
 
-            System.out.println("UserManagerOrmlite: SERVER: Checking SELF HASHED");
+            //System.out.println("UserManagerOrmlite: SERVER: Checking SELF HASHED");
             try {
                 checkThisPassword = hashPassword(password);
             } catch (UnsupportedEncodingException e) {
@@ -253,7 +253,7 @@ public class UserManagerOrmLite extends BaseManagerOrmLiteSyncable implements Us
         if(user.getPassword().equals(checkThisPassword)){
             return true;
         }else{
-            System.out.println("User: " + username + " authentication FAILED.");
+            //System.out.println("User: " + username + " authentication FAILED.");
             return false;
         }
     }

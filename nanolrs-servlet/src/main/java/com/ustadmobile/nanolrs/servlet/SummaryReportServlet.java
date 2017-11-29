@@ -9,28 +9,19 @@ import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.model.XapiStatement;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.util.MappingValues;
-import com.ustadmobile.nanolrs.util.Module;
-import com.ustadmobile.nanolrs.util.ServletUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -187,53 +178,87 @@ public class SummaryReportServlet extends HttpServlet {
      * @return
      * @throws SQLException
      */
-    public SummaryResult getSummaryResult(long fromDate, long toDate, Object dbContext)
-        throws SQLException{
+    public SummaryResult getSummaryResult( long fromDate, long toDate, Object dbContext)
+            throws SQLException{
+
+        return getSummaryResult(null, fromDate, toDate, dbContext);
+    }
+
+    /**
+     * Get summary report result that has enrolled users, active users,
+     * completed users and duration map.
+     * @param fromDate
+     * @param toDate
+     * @param dbContext
+     * @return
+     * @throws SQLException
+     */
+    public SummaryResult getSummaryResult(List<User> allUsers, long fromDate, long toDate,
+                                          Object dbContext) throws SQLException{
 
         //Managers:
         PersistenceManager pm = PersistenceManager.getInstance();
         UserManager userManager = pm.getManager(UserManager.class);
         XapiAgentManager agentManager = pm.getManager(XapiAgentManager.class);
-        List<User> allUsers = userManager.getAllEntities(dbContext);
 
+        //Get all Users
+        if(allUsers == null) {
+            allUsers = userManager.getAllEntities(dbContext);
+        }
+
+        System.out.println("Getting list of enrolledUsers..");
         List<User> enrolledUsers = userManager.getAllSinceTwoDates(fromDate, toDate, dbContext);
         List<User> activeUsers = new LinkedList<>();
         List<User> completedUsers = new LinkedList<>();
         Map<String, Long> durationMap = new LinkedHashMap<>();
 
+        System.out.println("SummaryResult: Main loop");
         for(User user: allUsers){
+            //System.out.println("    Report Loop User: " + user.getUsername());
             XapiAgent agent;
+            long duration = 0;
             //Get agent:
+            //System.out.println("    Getting agent..");
             List<XapiAgent> agents = agentManager.findByUser(dbContext, user);
             if(agents != null && !agents.isEmpty()){
                 agent = agents.get(0);
             }else{
-                //System.out.println("Agent is null for : " + user.getUsername());
+                //System.out.println("    Agent is null for : " + user.getUsername());
                 agent = null;
             }
 
-            List<XapiStatement> statements = getStatementsInTimeRange(user, agent, fromDate,
-                    toDate, null, dbContext);
-            if(statements.size() > 0){
-                activeUsers.add(user);
+            if(agent != null){
+                //System.out.println("    statements..");
+                List<XapiStatement> statements = getStatementsInTimeRange(user, agent, fromDate,
+                        toDate, null, dbContext);
+                if(statements.size() > 0){
+                    activeUsers.add(user);
+                }
+                //System.out.println("    statementsCompleted..");
+                List<XapiStatement> statementsCompleted = getStatementsInTimeRange(user, agent, fromDate,
+                        toDate, MappingValues.XAPI_COMPLETED_VERB, dbContext);
+                if(statementsCompleted.size() > 0){
+                    completedUsers.add(user);
+                }
+
+                //System.out.println("    statementsDuration..");
+                List<XapiStatement> statementsDuration =
+                        getStatementsInTimeRange(user, agent, fromDate,
+                                toDate, MappingValues.XAPI_ANSWERED_VERB, dbContext);
+                //System.out.println("    getting duration..");
+                for(XapiStatement statement: statementsDuration){
+                    long thisDuration = statement.getResultDuration();
+                    duration = duration + thisDuration;
+                }
             }
 
-            List<XapiStatement> statementsCompleted = getStatementsInTimeRange(user, agent, fromDate,
-                    toDate, MappingValues.XAPI_COMPLETED_VERB, dbContext);
-            if(statementsCompleted.size() > 0){
-                completedUsers.add(user);
-            }
-
-            long duration = 0;
-            List<XapiStatement> statementsDuration =
-                    getStatementsInTimeRange(user, agent, fromDate,
-                            toDate, MappingValues.XAPI_ANSWERED_VERB, dbContext);
-            for(XapiStatement statement: statementsDuration){
-                long thisDuration = statement.getResultDuration();
-                duration = duration + thisDuration;
-            }
             durationMap.put(user.getUsername(), duration);
+            //System.out.println("    durationMap done.");
+            //System.out.println("");
+
         }
+        System.out.println("SummaryResult: end of main loop");
+        System.out.println("");
         SummaryResult result = new SummaryResult(enrolledUsers, activeUsers, completedUsers,
                 durationMap);
         return result;
@@ -251,7 +276,7 @@ public class SummaryReportServlet extends HttpServlet {
      * @throws SQLException
      */
     public List<XapiStatement> getStatementsInTimeRange(User user, XapiAgent agent, long fromDate,
-                                long toDate, String verb, Object dbContext) throws SQLException {
+                                                        long toDate, String verb, Object dbContext) throws SQLException {
         //Managers:
         PersistenceManager pm = PersistenceManager.getInstance();
         XapiStatementManager statementManager = pm.getManager(XapiStatementManager.class);
@@ -285,6 +310,8 @@ public class SummaryReportServlet extends HttpServlet {
         try {
             allUsers = userManager.getAllEntities(dbContext);
 
+            //UPDATE: Summary Report doesnt have a Uni Filter yet.
+            /* uncomment and use after Uni filter in report implemented.
             //Get choosen uni filter (if any)
             ArrayList allChoosenUniNames = new ArrayList();
             if(uni_names != null) {
@@ -295,9 +322,11 @@ public class SummaryReportServlet extends HttpServlet {
                     }
                 }
             }
+            */
 
-            //Map Users to University
+            //Map of [University -> <Users>]
             Map<String, List<User>> userToUniMap = new LinkedHashMap<>();
+            //Loop through all users to : Map Users to University
             for(User user:allUsers){
 
                 //Don't show testing users
@@ -308,11 +337,16 @@ public class SummaryReportServlet extends HttpServlet {
                     }
                 }
 
+                //Get this user's university
                 String userUniversity = ucfManager.getUserField(user,
                         MappingValues.custom_fields_map.get("university"), dbContext);
+
+                //Put all Null/Empty Universities into "Other" category
                 if(userUniversity == null || userUniversity.isEmpty()){
                     userUniversity = "Other";
                 }
+
+                //Put User into the Uni-><User> map.
                 if(userToUniMap.containsKey(userUniversity)){
                     List<User> thisUniUsers = userToUniMap.get(userUniversity);
                     thisUniUsers.add(user);
@@ -322,24 +356,30 @@ public class SummaryReportServlet extends HttpServlet {
                     newUniUsers.add(user);
                     userToUniMap.put(userUniversity, newUniUsers);
                 }
-            }
 
+            }//end of University-><Users> map generation.
+
+            //Create enrollment JSON Objects
             JSONArray enrollmentRows = new JSONArray();
             JSONObject enrollmentRowHeader = new JSONObject();
             JSONObject enrollmentRowTotal = new JSONObject();
 
+            //Create active JSON Objects
             JSONArray activeRows = new JSONArray();
             JSONObject activeRowHeader = new JSONObject();
             JSONObject activeRowTotal = new JSONObject();
 
+            //Create completed JSON Objects
             JSONArray completedRows = new JSONArray();
             JSONObject completedRowHeader = new JSONObject();
             JSONObject completedRowTotal = new JSONObject();
 
+            //Create duration JSON Objects
             JSONArray timeRows = new JSONArray();
             JSONObject timeRowHeader = new JSONObject();
             JSONObject timeRowTotal = new JSONObject();
 
+            //Counters for enrollment, active, completed and time
             int totalMaleEnrollments = 0;
             int totalFemaleEnrollments = 0;
             int totalEnrollments = 0;
@@ -352,8 +392,8 @@ public class SummaryReportServlet extends HttpServlet {
             long totalMaleTime = 0;
             long totalFemaleTime = 0;
             long totalTime = 0;
-            String daysString = req.getParameter("days");
 
+            String daysString = req.getParameter("days");
             String from = req.getParameter("from");
             String to = req.getParameter("to");
 
@@ -367,32 +407,43 @@ public class SummaryReportServlet extends HttpServlet {
             if(days < 1){
                 days = DEFAULT_DAYS_TO_LOOK_BACK;
             }
+
             System.out.println("Days given: " + days);
             Long fromDate = getDateBeforeDays(days); //default
             Long toDate = System.currentTimeMillis();
             System.out.println("From date: " + fromDate + " , to date: " + toDate);
 
-            //Get result
-            SummaryResult result = getSummaryResult(fromDate, toDate, dbContext);
+            //Get Summary result
+            //System.out.println("Getting Summary Result..");
+            //SummaryResult result = getSummaryResult(fromDate, toDate, dbContext);
+
+            SummaryResult result = getSummaryResult(allUsers, fromDate, toDate, dbContext);
+
+            //System.out.println("Got SummaryResult");
 
             List<String> enrolledUsersUsername = new LinkedList<>();
             for(User u:result.getEnrolled()){
                 enrolledUsersUsername.add(u.getUsername());
             }
+            //System.out.println("Populated enrolled Users");
 
             List<String> activeUsersUsername = new LinkedList<>();
             for(User u:result.getActive()){
                 activeUsersUsername.add(u.getUsername());
             }
+            //System.out.println("Populated active Users");
 
             List<String> completedUsersUsername = new LinkedList<>();
             for(User u:result.getCompleted()){
                 completedUsersUsername.add(u.getUsername());
             }
+            //System.out.println("Populated completd Users");
 
+            //Duration map
             Map<String, Long> userDuration = result.getDurationMap();
 
             //Iterate over user university map
+            //System.out.println("Iterating over university-><users> map..");
             Iterator<Map.Entry<String, List<User>>> userUniIterator = userToUniMap.entrySet().iterator();
             while(userUniIterator.hasNext()){
                 Map.Entry<String, List<User>> uniUsers = userUniIterator.next();
@@ -425,64 +476,88 @@ public class SummaryReportServlet extends HttpServlet {
 
                 //Calculate Enrollments (created)
                 for(User user: users){
+
+                    //Get User's Gender
                     String userGender = ucfManager.getUserField(user,
                             MappingValues.custom_fields_map.get("gender"),
                             dbContext).toLowerCase();
 
+                    //Get enrollment data..
+                    // ..(entry for this user and add it to enrolment entry for this uni)
                     if(enrolledUsersUsername.contains(user.getUsername())){
+                        //Regardless of male/female/not specified, we add to total
+                        totalEnrollments++;
+                        enrollment.put(MappingValues.COLUMN_TOTAL,
+                                (int)enrollment.get(MappingValues.COLUMN_TOTAL) + 1);
+
+                        if(userGender.contains("female")){
+                            //System.out.println("F");
+                            totalFemaleEnrollments++;
+                            enrollment.put(MappingValues.COLUMN_NO_FEMALES,
+                                    (int)enrollment.get(MappingValues.COLUMN_NO_FEMALES) + 1);
+                        }else
                         if(userGender.contains("male")){
                             totalMaleEnrollments++;
                             enrollment.put(MappingValues.COLUMN_NO_MALES,
                                     (int)enrollment.get(MappingValues.COLUMN_NO_MALES) + 1);
                         }
-                        if(userGender.contains("female")){
-                            totalFemaleEnrollments++;
-                            enrollment.put(MappingValues.COLUMN_NO_MALES,
-                                    (int)enrollment.get(MappingValues.COLUMN_NO_MALES) + 1);
-                        }
-                        //Regardless of male/female/not specified, we add to total
-                        totalEnrollments++;
-                        enrollment.put(MappingValues.COLUMN_TOTAL,
-                                (int)enrollment.get(MappingValues.COLUMN_TOTAL) + 1);
-                    }
 
+
+                    }
+                    //System.out.println("enrollment total: " +
+                    //        enrollment.get(MappingValues.COLUMN_TOTAL));
+
+                    //Get active usage data
                     if (activeUsersUsername.contains(user.getUsername())) {
+                        //Regardless of male/female/not specified, we add to total
+                        totalActiveUsers++;
+                        active.put(MappingValues.COLUMN_TOTAL,
+                                (int)active.get(MappingValues.COLUMN_TOTAL) + 1);
+
+                        if(userGender.contains("female")){
+                            totalFemaleActiveUsers++;
+                            active.put(MappingValues.COLUMN_NO_FEMALES,
+                                    (int)active.get(MappingValues.COLUMN_NO_FEMALES) + 1);
+                        }else
                         if(userGender.contains("male")){
                             totalMaleActiveUsers++;
                             active.put(MappingValues.COLUMN_NO_MALES,
                                     (int)active.get(MappingValues.COLUMN_NO_MALES) + 1);
                         }
-                        if(userGender.contains("female")){
-                            totalFemaleActiveUsers++;
-                            active.put(MappingValues.COLUMN_NO_MALES,
-                                    (int)active.get(MappingValues.COLUMN_NO_MALES) + 1);
-                        }
-                        //Regardless of male/female/not specified, we add to total
-                        totalActiveUsers++;
-                        active.put(MappingValues.COLUMN_TOTAL,
-                                (int)active.get(MappingValues.COLUMN_TOTAL) + 1);
+
                     }
 
+                    //Get completed data
                     if (completedUsersUsername.contains(user.getUsername())) {
+                        //Regardless of male/female/not specified, we add to total
+                        totalCompleted++;
+                        completed.put(MappingValues.COLUMN_TOTAL,
+                                (int)completed.get(MappingValues.COLUMN_TOTAL) + 1);
+
+                        if(userGender.contains("female")){
+                            totalFemaleCompleted++;
+                            completed.put(MappingValues.COLUMN_NO_FEMALES,
+                                    (int)completed.get(MappingValues.COLUMN_NO_FEMALES) + 1);
+                        }else
                         if(userGender.contains("male")){
                             totalMaleCompleted++;
                             completed.put(MappingValues.COLUMN_NO_MALES,
                                     (int)completed.get(MappingValues.COLUMN_NO_MALES) + 1);
                         }
-                        if(userGender.contains("female")){
-                            totalFemaleCompleted++;
-                            completed.put(MappingValues.COLUMN_NO_MALES,
-                                    (int)completed.get(MappingValues.COLUMN_NO_MALES) + 1);
-                        }
-                        //Regardless of male/female/not specified, we add to total
-                        totalCompleted++;
-                        completed.put(MappingValues.COLUMN_TOTAL,
-                                (int)completed.get(MappingValues.COLUMN_TOTAL) + 1);
+
                     }
 
+                    //Get duration data
                     if(userDuration.containsKey(user.getUsername())){
                         long duration = userDuration.get(user.getUsername());
                         long durationSeconds = duration/1000;
+
+                        if(userGender.contains("female")){
+                            long currentFemaleTime = time.getLong(MappingValues.COLUMN_NO_FEMALES);
+                            totalFemaleTime = totalFemaleTime + durationSeconds;
+                            time.put(MappingValues.COLUMN_NO_FEMALES,
+                                    currentFemaleTime + durationSeconds);
+                        }else
                         if(userGender.contains("male")){
                             totalMaleTime = totalMaleTime+durationSeconds;
                             long currentMaleTime = time.getLong(MappingValues.COLUMN_NO_MALES);
@@ -490,12 +565,7 @@ public class SummaryReportServlet extends HttpServlet {
                                     currentMaleTime + durationSeconds);
 
                         }
-                        if(userGender.contains("female")){
-                            long currentFemaleTime = time.getLong(MappingValues.COLUMN_NO_FEMALES);
-                            totalFemaleTime = totalFemaleTime + durationSeconds;
-                            time.put(MappingValues.COLUMN_NO_FEMALES,
-                                    currentFemaleTime + durationSeconds);
-                        }
+
                         //System.out.println("male/female/total" + totalMaleTime + "/" +
                         //    totalFemaleTime + "/" + totalTime);
                         //Regardless of male/female/not specified, we add to total
@@ -504,7 +574,9 @@ public class SummaryReportServlet extends HttpServlet {
                         time.put(MappingValues.COLUMN_TOTAL, currentTotal + durationSeconds);
                     }
 
-                }
+                } //end of all users in this Uni loop.
+                //System.out.println("");
+
                 String uniMaleTimeReadable =
                         CourseUsageReportServlet.getDurationBreakdown(
                                 time.getLong(MappingValues.COLUMN_NO_MALES) * 1000);
@@ -524,7 +596,8 @@ public class SummaryReportServlet extends HttpServlet {
                 completedRows.put(completed);
                 timeRows.put(time);
 
-            }
+            }//end of uni-><Users> map loop
+            //System.out.println("..iteration done.");
 
             /* handling it above, since we may need to add more genders/time
             totalEnrollments = totalMaleEnrollments + totalFemaleEnrollments;
@@ -533,7 +606,10 @@ public class SummaryReportServlet extends HttpServlet {
             totalTime = totalMaleTime + totalFemaleTime;
             */
 
+            //Calculating totals
+            //System.out.println("Rendering values..");
 
+            //Enrollment Totals:
             enrollmentRowHeader.put(MappingValues.COLUMN_TITLE,
                     "<b>" + MappingValues.ROW_NO_ENROLLMENT + "</b>");
 
@@ -543,6 +619,7 @@ public class SummaryReportServlet extends HttpServlet {
             enrollmentRowTotal.put(MappingValues.COLUMN_NO_FEMALES, totalFemaleEnrollments);
             enrollmentRowTotal.put(MappingValues.COLUMN_TOTAL, totalEnrollments);
 
+            //Active usage totals
             activeRowHeader.put(MappingValues.COLUMN_TITLE,
                     "<b>" + MappingValues.ROW_NO_ACTIVE_USERS + "</b>");
 
@@ -552,6 +629,7 @@ public class SummaryReportServlet extends HttpServlet {
             activeRowTotal.put(MappingValues.COLUMN_NO_FEMALES, totalFemaleActiveUsers);
             activeRowTotal.put(MappingValues.COLUMN_TOTAL, totalActiveUsers);
 
+            //Completed usage totals
             completedRowHeader.put(MappingValues.COLUMN_TITLE,
                     "<b>" + MappingValues.ROW_NO_COMPLETED_USERS + "</b>");
 
@@ -561,9 +639,9 @@ public class SummaryReportServlet extends HttpServlet {
             completedRowTotal.put(MappingValues.COLUMN_NO_FEMALES, totalFemaleCompleted);
             completedRowTotal.put(MappingValues.COLUMN_TOTAL, totalCompleted);
 
+            //Duration totals
             timeRowHeader.put(MappingValues.COLUMN_TITLE,
                     "<b>" + MappingValues.ROW_TOTAL_TIME + "</b>");
-
 
             String totalMaleTimeReadable =
                     CourseUsageReportServlet.getDurationBreakdown(totalMaleTime * 1000);
@@ -577,7 +655,6 @@ public class SummaryReportServlet extends HttpServlet {
             timeRowTotal.put(MappingValues.COLUMN_NO_MALES, totalMaleTimeReadable);
             timeRowTotal.put(MappingValues.COLUMN_NO_FEMALES, totalFemaleTimeReadable);
             timeRowTotal.put(MappingValues.COLUMN_TOTAL, totalTimeReadable);
-
 
 
             reportJSONArray.put(enrollmentRowHeader);
@@ -613,6 +690,7 @@ public class SummaryReportServlet extends HttpServlet {
             reportJSONArray.put(new JSONObject());
 
             jsonToReturn = reportJSONArray.toString();
+            System.out.println("...rendering done.");
 
         } catch (SQLException e) {
             e.printStackTrace();

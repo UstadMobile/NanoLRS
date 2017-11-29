@@ -64,6 +64,10 @@ public class UMSyncServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
+        //Disable post for now:
+        //super.doPost(req, resp);
+
         Object dbContext =
                 getServletContext().getAttribute(NanoLrsContextListener.ATTR_CONNECTION_SOURCE);
 
@@ -114,13 +118,15 @@ public class UMSyncServlet extends HttpServlet {
         String authUsername = getUsernameFromBasicAuth(req);
         String authPassword = getPasswordFromBasicAuth(req);
 
+        boolean oldApp = false;
+
         //With the new app, only real cred (text password) is in basic auth.
         //In the old app, real cred (text password) is in header.
         // Note: Laid out below for explanation.
         if(authUsername != null && authPassword != null &&
                 !authPassword.isEmpty() && !authUsername.isEmpty()){ //if basic auth exists
-            System.out.println("UMSyncServlet: Got Basic Auth (New App version)");
-
+            //System.out.println("UMSyncServlet: Got Basic Auth (New App version)");
+            oldApp = false;
             username = authUsername;
             password = authPassword; //the plain text password from basic auth.
 
@@ -133,8 +139,9 @@ public class UMSyncServlet extends HttpServlet {
             if (username != null){
                 usernameString = username;
             }
-            System.out.println("UMSyncServlet: User: (" + usernameString + ") " +
-                    "No BASIC Auth. Using Header (Old app version)");
+            oldApp = true;
+            //System.out.println("UMSyncServlet: User: (" + usernameString + ") " +
+            //        "No BASIC Auth. Using Header (Old app version)");
         }
         //Assumption 2: Endpoint DB passwords are all hashed (and they should be).
 
@@ -261,7 +268,12 @@ public class UMSyncServlet extends HttpServlet {
                         "Incoming Sync Authentication OK... BAD REQUEST. UMSyncEndpoint will" +
                         "handle this.");
             }else{
-                System.out.println("UMSyncServlet: Authentication Success. Proceeding..");
+                String oas = "New App";
+                if(oldApp){
+                    oas = "Old App";
+                }
+                System.out.println("UMSyncServlet: Authentication Success (" + username + ") using " +
+                        oas +"...");
             }
         }
 
@@ -345,7 +357,8 @@ public class UMSyncServlet extends HttpServlet {
                     try {
                         UMSyncEndpoint.updateSyncStatus(result, node, dbContext);
                         //Update response sync header result as RESPONSE_SYNC_OK
-                        System.out.println("UMSyncServlet: Incoming Sync OK. Updating SyncStatus.\n");
+                        //System.out.println("UMSyncServlet: Incoming Sync OK. Updating SyncStatus.\n");
+                        //System.out.println("UMSyncServlet: Incoming Sync OK. Updating SyncStatus.\n");
                         resp.setHeader(UMSyncEndpoint.RESPONSE_SYNCED_STATUS,
                                 UMSyncEndpoint.RESPONSE_SYNC_OK);
 
