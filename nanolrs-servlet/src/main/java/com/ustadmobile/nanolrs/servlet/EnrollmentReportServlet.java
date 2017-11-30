@@ -51,9 +51,9 @@ public class EnrollmentReportServlet extends HttpServlet {
         Map<String, String> table_headers_html = new HashMap<String, String>();
 
         table_headers_html.put("username", "Username");
-        table_headers_html.put("name", "Name");
-        table_headers_html.put("university", "uid");
-        table_headers_html.put("university_name", "University");
+        table_headers_html.put("fullname", "Name");
+        table_headers_html.put("university", "University");
+        //table_headers_html.put("university_name", "University Name");
         table_headers_html.put("enrolled", "Status");
 
         HttpSession session=request.getSession();

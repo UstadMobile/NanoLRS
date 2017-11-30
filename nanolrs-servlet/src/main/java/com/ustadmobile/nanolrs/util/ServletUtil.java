@@ -235,7 +235,8 @@ public class ServletUtil {
                     userInfo.put(MappingValues.USER_COLUMN_UNIVERSITY, university);
 
                     if(MappingValues.uni_map.containsKey(university)){
-                        userInfo.put("university", MappingValues.uni_map.get(university));
+                        //userInfo.put("university", MappingValues.uni_map.get(university));
+                        userInfo.put("university", university);
                     }else{
                         userInfo.put("university", "");
                     }
