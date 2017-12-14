@@ -10,6 +10,11 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title> Ustad Mobile Cloud Reports </title>
 		<%@include  file="base.html" %>
+        <style>
+            td, th{
+              width:auto;
+            }
+        </style>
 
 		<script type="text/javascript">
 
@@ -20,6 +25,29 @@
 				$('#ajaxSpinnerImage').puipanel();
 				$('#report_submit').puibutton();
 				$('#export_report_button').puibutton();
+				$('#since_1').puiinputtext();
+                $('#until_1').puiinputtext();
+
+
+                $('#since_1_disabled').datetimepicker({
+                        altField: "#since_1_alt",
+                        altFieldTimeOnly: false,
+                        altFormat: "yy-mm-dd",
+                        altTimeFormat: "h:m",
+                        altSeparator: "T",
+                        setDate: "7"
+                });
+                $('#until_1_disabled').datetimepicker({
+                        altField: "#until_1_alt",
+                        altFieldTimeOnly: false,
+                        altFormat: "yy-mm-dd",
+                        altTimeFormat: "h:m",
+                        altSeparator: "T",
+                        maxDate: "2",
+                        setDate: "1"
+
+                });
+
 			});
 
 			function hideAjaxSpinnerImage(){
@@ -189,6 +217,8 @@
 
 					var days = $('#days').val();
 
+                    var since_1 = $('#since_1').val();
+                    var until_1 = $('#until_1').val();
 
 					var universities_filter = [];
 					//Commenting for now
@@ -213,7 +243,9 @@
                             university_names : universitynames,
                             universities_filter_names : universities_filter_names,
 							username: username,
-							days: days
+							days: days,
+							from: since_1,
+							to: until_1
                         },
                         url:  '',
                         complete: function(response){
@@ -272,12 +304,10 @@
 				changeColor();
 			} );
 
-
-
 		</script>
 
 
-		<!-- Overriding dynatables' row css -->
+		<!-- Overriding dynatables row css -->
 		<style>
 			th a{
 				color: white;
@@ -300,6 +330,7 @@
     	<div id="page">
 			<!-- Main Content -->
 			<div id="content">
+
 				<!--Loading spinner-->
 				<div id="ajaxSpinnerContainer" class="spinner">
 					<div id="ajaxSpinnerImage" title="Crunching report..">
@@ -309,32 +340,37 @@
 
 				<center>
                     <h2>Summary Report</h2>
-
                 </center>
 
-				<!--POST request FORM-->
+                <!--POST request FORM-->
+                <form id="report_form" name="report_form" action="completion/" method="POST">
+                    <div style="text-align: center;padding-top:10px;padding-bottom:0px;" id="selection" name="selection">
 
-				<form id="report_form" name="report_form" action="completion/" method="POST">
-					<div style="" id="selection" name="selection">
-					 <div style="text-align: center;padding-top:10px;padding-bottom:0px;">
-                         <!--
-                         <select multiple="multiple" name="universities_filter" id="universities_filter" required>
-                            <option selected value="ALL" required>All universities</option>
-                            <c:forEach items="${universities}" var="uniValue">
-                                 <option value="${uniValue}"> ${uniValue} </option>
-                             </c:forEach>
-                        </select>
+                        <!-- Start and End dates -->
+                        <div style="padding-bottom:10px;">
+                            <!--Since:-->
+                            <label>Start date</label>
+                            <input type="date" name="since_1" id="since_1" style="height: 30px; width: 250px;" placeholder="Since" value="" required/>*
+                        </div>
+                        <div style="display: none;">
+                            <input type="text" name="since_1_alt" id="since_1_alt" value="" style="cursor: pointer;">
+                        </div>
+                        <div style="padding-bottom:10px;">
+                            <label>End date</label>
+                            <!--Until:&nbsp;&nbsp;-->
+                            <input type="date" name="until_1" id="until_1" style="height: 30px; width: 250px;" placeholder="Until"  value="" required/>*
+                        </div>
+
+                        <!--
+                        <i id="daystext" name="daystext"> From today through </i>
                         -->
-
-                        <i id="daystext" name="daystext">From today through </i><input type="text" id="days" name="days" for="report_form" value="${days}"> Days </input>
-						<p></p>
-						<button id="report_submit" type="submit"
-							name="report_submit" value="submit-value" style="padding: 4.6px 12px;">Filter</button>
-						<p></p>
-
-					 </div>
-					</div>
-				 </form>
+                        <input type="hidden" id="days" name="days" for="report_form" value="${days}"> </input>
+                        <p></p>
+                        <button id="report_submit" type="submit"
+                            name="report_submit" value="submit-value" style="padding: 4.6px 12px;">Filter</button>
+                        <p></p>
+                    </div>
+                 </form>
 
 
                 <!-- Report Table goes here -->
@@ -348,12 +384,11 @@
                 </table>
 				<p></p>
 
-				<p></p>
-				<br></br>
-				<br></br>
+				<p></p><br></br><br></br>
 
 				<!-- Footer -->
 				<%@include  file="footer.html" %>
+
 			</div> <!--Content div-->
 		</div> <!--Page div-->
 

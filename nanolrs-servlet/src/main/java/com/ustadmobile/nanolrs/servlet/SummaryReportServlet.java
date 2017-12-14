@@ -15,6 +15,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -167,6 +169,21 @@ public class SummaryReportServlet extends HttpServlet {
         Date fromDateDate = cal.getTime();
         long pastDate = fromDateDate.getTime();
         return pastDate;
+    }
+
+    public long getDateFromString(String date){
+        //12/01/2017 00:00 - Dec 1st 2017
+        //"MM/dd/yyyy HH:mm"
+        String format = "yyyy-MM-dd";
+        SimpleDateFormat f = new SimpleDateFormat(format);
+        Date d = null;
+        try {
+            d = f.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            //return 0;
+        }
+        return d.getTime();
     }
 
     /**
@@ -397,6 +414,7 @@ public class SummaryReportServlet extends HttpServlet {
             String from = req.getParameter("from");
             String to = req.getParameter("to");
 
+
             int days=0;
             try {
                 days = Integer.parseInt(daysString);
@@ -410,16 +428,16 @@ public class SummaryReportServlet extends HttpServlet {
 
             System.out.println("Days given: " + days);
             Long fromDate = getDateBeforeDays(days); //default
+            if(from != null && !from.isEmpty()){
+                fromDate = getDateFromString(from);
+            }
             Long toDate = System.currentTimeMillis();
+            if(to != null && !to.isEmpty()){
+                toDate = getDateFromString(to);
+            }
             System.out.println("From date: " + fromDate + " , to date: " + toDate);
 
-            //Get Summary result
-            //System.out.println("Getting Summary Result..");
-            //SummaryResult result = getSummaryResult(fromDate, toDate, dbContext);
-
             SummaryResult result = getSummaryResult(allUsers, fromDate, toDate, dbContext);
-
-            //System.out.println("Got SummaryResult");
 
             List<String> enrolledUsersUsername = new LinkedList<>();
             for(User u:result.getEnrolled()){
