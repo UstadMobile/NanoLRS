@@ -11,6 +11,21 @@
 		<title> Ustad Mobile Cloud Reports </title>
 		<%@include  file="base.html" %>
 
+        <script src="//cdn.jsdelivr.net/webshim/1.14.5/polyfiller.js"></script>
+        <script>
+                webshims.setOptions('forms-ext', {types: 'date'});
+                webshims.polyfill('forms forms-ext');
+                $.webshims.formcfg = {
+                    en: {
+                        dFormat: '-',
+                        dateSigns: '-',
+                        patterns: {
+                            d: "yy-mm-dd"
+                        }
+                    }
+                };
+        </script>
+
 		<script type="text/javascript">
 
 			//UI

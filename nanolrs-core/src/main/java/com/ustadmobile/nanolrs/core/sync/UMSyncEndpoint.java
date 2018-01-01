@@ -5,12 +5,14 @@ import com.ustadmobile.nanolrs.core.ProxyJsonSerializer;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManagerSyncable;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
+import com.ustadmobile.nanolrs.core.manager.NodeSyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.UserManager;
 import com.ustadmobile.nanolrs.core.mapping.ModelManagerMapping;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 import com.ustadmobile.nanolrs.core.model.NanoLrsModelSyncable;
 import com.ustadmobile.nanolrs.core.model.Node;
+import com.ustadmobile.nanolrs.core.model.NodeSyncStatus;
 import com.ustadmobile.nanolrs.core.model.SyncStatus;
 import com.ustadmobile.nanolrs.core.model.User;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
@@ -1586,6 +1588,8 @@ public class UMSyncEndpoint {
                 PersistenceManager.getInstance().getManager(NodeManager.class);
         UserManager userManager =
                 PersistenceManager.getInstance().getManager(UserManager.class);
+        NodeSyncStatusManager nodeSyncStatusManager =
+                PersistenceManager.getInstance().getManager(NodeSyncStatusManager.class);
 
         //Get this device/node
         Node thisNode = nodeManager.getThisNode(dbContext);
@@ -1597,6 +1601,15 @@ public class UMSyncEndpoint {
         //Get sync headers and parameters
         Map<String, String> headers = createSyncHeader(thisUser, thisUserCred, thisNode);
         Map<String, String> parameters = createSyncParameters(thisUser, thisNode);
+
+        //Create a Node<->NodeSyncStatus entry that this sync has started.
+        NodeSyncStatus nodeSyncStatus = (NodeSyncStatus) nodeSyncStatusManager.makeNew();
+        nodeSyncStatus.setUUID(UUID.randomUUID().toString());
+        nodeSyncStatus.setNode(node);
+        nodeSyncStatus.setHost(node.getHost());
+        nodeSyncStatus.setSyncDate(System.currentTimeMillis());
+        nodeSyncStatus.setSyncResult("");
+        nodeSyncStatusManager.persist(dbContext, nodeSyncStatus);
 
         //Set thisUser master to 0 if its -1 (ie: its a new user (never synced with master)
         // so that we don't send that over
@@ -1771,6 +1784,9 @@ public class UMSyncEndpoint {
 
         } //if response stream has something..end.
 
+        nodeSyncStatus.setSyncDate(System.currentTimeMillis());
+        nodeSyncStatus.setSyncResult(String.valueOf(syncResult.getStatus()));
+        nodeSyncStatusManager.persist(dbContext, nodeSyncStatus);
         return syncResult;
     }
 

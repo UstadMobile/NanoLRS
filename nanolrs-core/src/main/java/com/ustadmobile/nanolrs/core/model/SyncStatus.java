@@ -5,6 +5,11 @@ package com.ustadmobile.nanolrs.core.model;
 
 import com.ustadmobile.nanolrs.core.model.NanoLrsModel;
 
+/**
+ * This Model is used in UMSync Process. Its primary role is
+ * to save sent and received (not implemented yet) statuses
+ * with every syncable table.
+ */
 public interface SyncStatus extends NanoLrsModel{
     /**
      * Tells the generator that this is the primary key.
@@ -15,7 +20,6 @@ public interface SyncStatus extends NanoLrsModel{
     String getUUID();
 
     void setUUID(String uuid);
-
 
     String getHost();
     void setHost(String host);

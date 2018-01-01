@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
 import com.ustadmobile.nanolrs.core.manager.NanoLrsManager;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
+import com.ustadmobile.nanolrs.core.manager.NodeSyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.SyncStatusManager;
 import com.ustadmobile.nanolrs.core.manager.UserCustomFieldsManager;
 import com.ustadmobile.nanolrs.core.manager.XapiActivityManager;
@@ -19,6 +20,7 @@ import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.manager.BaseManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.ChangeSeqManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.NodeManagerOrmLite;
+import com.ustadmobile.nanolrs.ormlite.manager.NodeSyncStatusManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.SyncStatusManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.UserCustomFieldsManagerOrmLite;
 import com.ustadmobile.nanolrs.ormlite.manager.XapiActivityManagerOrmLite;
@@ -63,6 +65,7 @@ public abstract class PersistenceManagerORMLite extends PersistenceManager {
         registerManagerImplementation(SyncStatusManager.class, SyncStatusManagerOrmLite.class);
         registerManagerImplementation(NodeManager.class, NodeManagerOrmLite.class);
         registerManagerImplementation(UserCustomFieldsManager.class, UserCustomFieldsManagerOrmLite.class);
+        registerManagerImplementation(NodeSyncStatusManager.class, NodeSyncStatusManagerOrmLite.class);
 
     }
 

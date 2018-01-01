@@ -10,8 +10,10 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.ustadmobile.nanolrs.core.manager.NodeManager;
 import com.ustadmobile.nanolrs.core.model.Node;
+import com.ustadmobile.nanolrs.core.model.NodeSyncStatus;
 import com.ustadmobile.nanolrs.core.persistence.PersistenceManager;
 import com.ustadmobile.nanolrs.ormlite.generated.EntitiesToTable;
+import com.ustadmobile.nanolrs.ormlite.generated.model.NodeSyncStatusEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.UserEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiDocumentEntity;
 import com.ustadmobile.nanolrs.ormlite.generated.model.XapiStateEntity;
@@ -34,7 +36,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      */
     private static final String DATABASE_NAME="nanolrs21.db";
 
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 25;
 
     private Context context;
 
@@ -52,14 +54,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
         this.context = context;
     }
-
-    /*
-    public static Class[] TABLE_CLASSES = new Class[]{ XapiActivityEntity.class, XapiAgentEntity.class,
-            XapiStatementEntity.class, XapiVerbEntity.class, XapiForwardingStatementEntity.class,
-            UserEntity.class, XapiDocumentEntity.class, XapiStateEntity.class, ChangeSeqEntity.class,
-            SyncStatusEntity.class, NodeEntity.class, UserCustomFieldsEntity.class
-    };
-    */
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
@@ -88,6 +82,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
+
+            if(oldVersion < 25){
+                TableUtils.createTableIfNotExists(connectionSource, NodeSyncStatusEntity.class);
+            }
 
             if(oldVersion < 9) {
                 TableUtils.createTable(connectionSource, UserEntity.class);

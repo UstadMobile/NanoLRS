@@ -18,6 +18,8 @@ import com.ustadmobile.nanolrs.core.model.XapiVerb;
 import com.ustadmobile.nanolrs.core.manager.XapiVerbManager;
 import com.ustadmobile.nanolrs.core.model.ChangeSeq;
 import com.ustadmobile.nanolrs.core.manager.ChangeSeqManager;
+import com.ustadmobile.nanolrs.core.model.NodeSyncStatus;
+import com.ustadmobile.nanolrs.core.manager.NodeSyncStatusManager;
 import com.ustadmobile.nanolrs.core.model.XapiAgent;
 import com.ustadmobile.nanolrs.core.manager.XapiAgentManager;
 import com.ustadmobile.nanolrs.core.model.XapiState;
@@ -62,6 +64,10 @@ public class ModelManagerMapping {
 		proxyNameToClassMap.put(ChangeSeq.class.getName(),ChangeSeq.class);
 
 		proxyClassToManagerMap.put(ChangeSeq.class,ChangeSeqManager.class);
+
+		proxyNameToClassMap.put(NodeSyncStatus.class.getName(),NodeSyncStatus.class);
+
+		proxyClassToManagerMap.put(NodeSyncStatus.class,NodeSyncStatusManager.class);
 
 		proxyNameToClassMap.put(XapiAgent.class.getName(),XapiAgent.class);
 
