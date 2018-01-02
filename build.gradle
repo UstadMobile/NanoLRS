@@ -2,7 +2,7 @@
 
 ext {
     //Major.Minor.Commit.Database
-    nanolrsversion = "0.2.46.25"
+    nanolrsversion = "0.2.47.25"
 }
 
 buildscript {

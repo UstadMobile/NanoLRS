@@ -1755,23 +1755,25 @@ public class UMSyncEndpoint {
             ///      HANDLE CONFLICTS        ///
             ////////////////////////////////////
             if(conflictData != null){
-                //TODODone: Handle Conflict and/or entities as they come back.
-                //Update: We are handling conflicts on reception side.
-                /*
-                Handle Conflict:
-                Step 1: Get JSON of conflict's data and info
-                Step 2: Map both out for this process
-                Step 3: Increment ChangeSeq for every entity to number of conflicts
-                    for that entity
-                Step 4: Measure for every entity, the changeSeq where it was at before
-                    this conflict resolution
-                Step 3: Loop through entities and increment localSequence to 1 from
-                    the changeSeq above and ++ that for the next one.
-                Step 4: Persist with changesEq boolean to false
-                 */
-                //...
-                System.out.println("\n!!THERE WEERE CONFLICTS AFTER SERVER CHECK EVEN> " +
-                        "\nPLEASE HANDLE THEM!\n");
+                if(conflictData.length() > 0) {
+                    //TODODone: Handle Conflict and/or entities as they come back.
+                    //Update: We are handling conflicts on reception side.
+                    /*
+                    Handle Conflict:
+                    Step 1: Get JSON of conflict's data and info
+                    Step 2: Map both out for this process
+                    Step 3: Increment ChangeSeq for every entity to number of conflicts
+                        for that entity
+                    Step 4: Measure for every entity, the changeSeq where it was at before
+                        this conflict resolution
+                    Step 3: Loop through entities and increment localSequence to 1 from
+                        the changeSeq above and ++ that for the next one.
+                    Step 4: Persist with changesEq boolean to false
+                     */
+                    //...
+                    System.out.println("\n!!THERE WEERE CONFLICTS AFTER SERVER CHECK EVEN> " +
+                            "\nPLEASE HANDLE THEM!\n");
+                }
             }
 
             ////////////////////////////////////
