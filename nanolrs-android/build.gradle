@@ -5,12 +5,12 @@ apply plugin: 'maven-publish'
 
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -42,16 +42,16 @@ jacoco {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support.test:runner:0.4+'
-    compile 'com.android.support:appcompat-v7:25+'
-    compile 'com.android.support:support-v4:25+'
-    compile project(":nanolrs-ormlite")
-    compile project(":nanolrs-http")
-    androidTestCompile project(":nanolrs-core-tests")
-    compile "com.j256.ormlite:ormlite-android:5.0"
+    testImplementation'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    implementation group: 'com.android.support', name: "appcompat-v7", version: "[26+, 27+]"
+    implementation group: 'com.android.support', name: "appcompat-v7", version: "[26+, 27+]"
+    implementation project(":nanolrs-ormlite")
+    implementation project(":nanolrs-http")
+    androidTestImplementation project(":nanolrs-core-tests")
+    implementation "com.j256.ormlite:ormlite-android:5.0"
 
-    compile 'com.evernote:android-job:1.1.11'
+    implementation 'com.evernote:android-job:1.1.11'
 }
 
 

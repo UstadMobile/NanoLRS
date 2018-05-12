@@ -2,15 +2,16 @@
 
 ext {
     //Major.Minor.Commit.Database
-    nanolrsversion = "0.2.48.25"
+    nanolrsversion = "0.2.49.25"
 }
 
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:3.1.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -26,6 +27,7 @@ if(project.file("buildconfig.local.properties").exists()) {
 allprojects {
     repositories {
         jcenter()
+        google()
     }
 }
 
